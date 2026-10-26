@@ -1,0 +1,41 @@
+@switch (state()) {
+  @case ('working') {
+    <div><h1>Unsubscribing</h1></div>
+    <tm-spinner label="Turning off news from Tutu Much…" />
+  }
+  @case ('unsubscribed') {
+    <div>
+      <h1>You’re unsubscribed</h1>
+      <p class="text-muted unsubscribe__lead">
+        You won’t get news from Tutu Much any more. Account security and order emails still arrive.
+      </p>
+    </div>
+    <div class="stack">
+      <a tmButton="primary" size="lg" [block]="true" routerLink="/">Back to shop</a>
+      <a tmButton size="lg" [block]="true" routerLink="/account/emails">Manage your emails</a>
+    </div>
+  }
+  @case ('invalid') {
+    <div>
+      <h1>This link doesn’t work</h1>
+      <p class="text-muted unsubscribe__lead">
+        It may be incomplete. You can turn off news from Tutu Much in your email settings.
+      </p>
+    </div>
+    <div class="stack">
+      <a tmButton="primary" size="lg" [block]="true" routerLink="/account/emails">Manage your emails</a>
+    </div>
+  }
+  @case ('error') {
+    <div>
+      <h1>Couldn’t unsubscribe you</h1>
+      <p class="text-muted unsubscribe__lead">Something went wrong on our side.</p>
+    </div>
+    <span class="ref">{{ ref() }}</span>
+    <div class="stack">
+      <button tmButton="primary" size="lg" [block]="true" type="button" (click)="unsubscribe()">
+        <tm-icon name="refresh" />Try again
+      </button>
+    </div>
+  }
+}

@@ -1,0 +1,28 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Order history
+
+Container(web, "Tutu Much Web", "Angular", "PurchasesPage, SalesPage, OrderDetailPage, SaleDetailPage, OrdersApiService")
+Container_Boundary(api, "Tutu Much API") {
+  Component(pc, "PurchasesController", "ASP.NET Core controller", "GET /api/purchases, /api/purchases/{id}")
+  Component(sc, "SalesController", "ASP.NET Core controller", "GET /api/sales, /api/sales/{id}")
+  Component(lq, "ListOrdersQueryHandler", "MediatR handler", "Newest-first keyset pages by role")
+  Component(bq, "GetPurchaseDetailQueryHandler", "MediatR handler", "Buyer projection")
+  Component(sq, "GetSaleDetailQueryHandler", "MediatR handler", "Seller projection with address rule")
+  Component(vis, "ShippingAddressVisibility", "Domain policy", "Seller only, until EndedAt + 30 days")
+  Component(enc, "AesGcmFieldEncryptor", "EF Core value converter (privacy)", "Decrypts ShippingAddressCipher")
+}
+ContainerDb(db, "Tutu Much database", "SQL Server", "Orders")
+Rel(web, pc, "Calls", "JSON/HTTPS")
+Rel(web, sc, "Calls", "JSON/HTTPS")
+Rel(pc, lq, "Sends ListOrdersQuery(Buyer)")
+Rel(sc, lq, "Sends ListOrdersQuery(Seller)")
+Rel(pc, bq, "Sends GetPurchaseDetailQuery")
+Rel(sc, sq, "Sends GetSaleDetailQuery")
+Rel(sq, vis, "Asks IsVisible")
+Rel(sq, enc, "Reads address through")
+Rel(lq, db, "Reads", "SQL")
+Rel(bq, db, "Reads", "SQL")
+Rel(sq, db, "Reads", "SQL")
+@enduml

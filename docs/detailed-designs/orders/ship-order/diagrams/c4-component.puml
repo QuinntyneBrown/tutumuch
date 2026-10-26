@@ -1,0 +1,34 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Ship an order
+
+Container(web, "Tutu Much Web", "Angular", "@tutumuch/orders: SaleDetailPage, AddTrackingDialog, OrderDetailPage; @tutumuch/api: OrdersApi, CheckoutApi")
+Container_Boundary(api, "Tutu Much API") {
+  Component(ctrl, "OrdersController", "ASP.NET Core controller", "GET /api/sales/{id}, POST /api/orders/{id}/shipment")
+  Component(pur, "CheckoutsController", "ASP.NET Core controller", "GET /api/purchases/{id}")
+  Component(cwh, "CarrierWebhookController", "ASP.NET Core controller", "POST /api/carriers/webhook")
+  Component(h, "AddTrackingCommandHandler", "MediatR handler", "Checks the tracking format, applies Paid to Shipped")
+  Component(hd, "CarrierWebhookHandler", "MediatR handler", "Applies Shipped to Delivered")
+  Component(order, "Order", "Domain aggregate", "TransitionTo with OrderStateMachine and OrderStatusChanges")
+  Component(port, "ICarrierTracking", "Application port", "Verifies and reads carrier webhooks")
+  Component(repo, "TutuMuchDbContext", "EF Core", "Orders (Status as concurrency token), OrderStatusChanges, Refunds")
+}
+Container_Boundary(worker, "Tutu Much Worker") {
+  Component(dl, "ShipDeadlineJob", "Hosted service", "Sends CancelUnshippedOrdersCommand every 5 minutes")
+}
+ContainerDb(db, "Tutu Much database", "SQL Server", "Order state and history")
+System_Ext(pay, "Payment provider", "IPaymentProvider")
+
+Rel(web, ctrl, "Calls", "JSON/HTTPS")
+Rel(web, pur, "Calls", "JSON/HTTPS")
+Rel(ctrl, h, "Sends AddTrackingCommand")
+Rel(cwh, hd, "Sends HandleCarrierWebhookCommand")
+Rel(hd, port, "Reads event with")
+Rel(h, order, "Calls MarkShipped")
+Rel(hd, order, "Calls MarkDelivered(Carrier)")
+Rel(dl, order, "Calls Cancel(System)")
+Rel(dl, pay, "Refunds in full", "RefundAsync")
+Rel(h, repo, "Saves order and status change")
+Rel(repo, db, "Persists", "SQL")
+@enduml

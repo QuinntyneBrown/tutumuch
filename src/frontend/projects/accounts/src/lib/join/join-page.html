@@ -1,0 +1,102 @@
+@if (state() === 'success') {
+  <div><h1>Check your email</h1></div>
+  <div class="empty__icon join__icon"><tm-icon name="mail" size="lg" /></div>
+  <p>
+    We sent a link to <strong>{{ email() }}</strong
+    >. It works for 24 hours.
+  </p>
+  @if (resend() === 'sent') {
+    <tm-alert tone="success" heading="Link sent" live="polite">Earlier links no longer work.</tm-alert>
+  } @else if (resend() === 'limited') {
+    <tm-alert tone="warning" heading="Too many requests" icon="clock"
+      >You can request 3 links an hour. Try again later.</tm-alert
+    >
+  }
+  <div class="stack">
+    <a tmButton="primary" size="lg" [block]="true" routerLink="/">Browse while you wait</a>
+    <button tmButton="link" type="button" [busy]="resend() === 'busy'" (click)="resendEmail()">Resend email</button>
+  </div>
+} @else {
+  <div>
+    <h1>Join Tutu Much</h1>
+    <p class="text-muted join__lead">Buy and sell with one account.</p>
+  </div>
+  <tm-error-summary [errors]="summary()" />
+  @if (failure() !== null) {
+    <tm-alert tone="danger" heading="Couldn’t create your account"
+      >Try again in a moment. <span class="ref">{{ failure() }}</span></tm-alert
+    >
+  }
+  <form class="stack stack--lg" novalidate [formGroup]="form" (ngSubmit)="submit()">
+    <tm-form-field
+      #name
+      fieldId="display-name"
+      label="Display name"
+      help="3–30 letters, numbers, _ or -. Shown publicly."
+      [error]="errors()['display-name']"
+    >
+      <input
+        class="input"
+        id="display-name"
+        type="text"
+        autocomplete="username"
+        formControlName="displayName"
+        [readonly]="state() === 'submitting'"
+        [attr.aria-describedby]="name.describedBy()"
+        [attr.aria-invalid]="name.invalid()"
+      />
+    </tm-form-field>
+    <tm-form-field #mail fieldId="email" label="Email" [error]="errors().email">
+      <input
+        class="input"
+        id="email"
+        type="email"
+        autocomplete="email"
+        formControlName="email"
+        [readonly]="state() === 'submitting'"
+        [attr.aria-describedby]="mail.describedBy()"
+        [attr.aria-invalid]="mail.invalid()"
+      />
+    </tm-form-field>
+    <tm-form-field #pass fieldId="password" label="Password" help="At least 12 characters." [error]="errors().password">
+      <input
+        class="input"
+        id="password"
+        type="password"
+        autocomplete="new-password"
+        formControlName="password"
+        [readonly]="state() === 'submitting'"
+        [attr.aria-describedby]="pass.describedBy()"
+        [attr.aria-invalid]="pass.invalid()"
+      />
+    </tm-form-field>
+    <div class="stack stack--sm">
+      <tm-choice #age inputId="age" [error]="errors().age">
+        <input
+          type="checkbox"
+          id="age"
+          formControlName="ageConfirmed"
+          [attr.aria-describedby]="age.describedBy()"
+          [attr.aria-invalid]="age.invalid()"
+        />
+        I’m 18 or older
+      </tm-choice>
+      <tm-choice #terms inputId="terms" [error]="errors().terms">
+        <input
+          type="checkbox"
+          id="terms"
+          formControlName="termsAccepted"
+          [attr.aria-describedby]="terms.describedBy()"
+          [attr.aria-invalid]="terms.invalid()"
+        />
+        I accept the <a routerLink="/terms">terms</a> and <a routerLink="/rules">marketplace rules</a>
+      </tm-choice>
+    </div>
+    <div class="stack">
+      <button tmButton="primary" size="lg" [block]="true" type="submit" [busy]="state() === 'submitting'">
+        Join Tutu Much
+      </button>
+    </div>
+  </form>
+  <p class="text-sm text-muted">Already a member? <a routerLink="/sign-in">Sign in</a></p>
+}

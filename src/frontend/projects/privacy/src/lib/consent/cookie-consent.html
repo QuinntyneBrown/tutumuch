@@ -1,0 +1,3 @@
+@if (consent.consent() === 'unknown') {
+  <tm-consent-banner (accepted)="accept()" (declined)="decline()" (settings)="settings.open()" />
+}

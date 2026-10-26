@@ -1,0 +1,73 @@
+@startuml
+title UML sequence behaviour — Change email settings
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Member" as actor
+box "Frontend — Tutu Much Web application" #E0F2FE
+  participant "NotificationSettingsPageComponent" as page
+  participant "NotificationPreferencesApi" as client
+end box
+box "Backend — Tutu Much API application" #D1FADF
+  participant "NotificationPreferencesController" as controller
+end box
+box "Backend — TutuMuch Application and Domain" #ECFDF3
+  participant "UpdateNotificationPreferencesCommandHandler" as handler
+  participant "NotificationPreferences" as entity
+end box
+box "Backend — TutuMuch Infrastructure" #FFF4E5
+  database "Tutu Much database" as db
+end box
+actor -> page : Open /account/emails
+page -> client : get()
+client -> controller : GET /api/me/notification-preferences
+controller --> client : 200 categories, ETag
+alt load failed
+  client --> page : Problem details
+  page --> actor : "Couldn’t load email settings", Ref, "Try again"
+else loaded
+  page --> actor : Account security and Orders on and disabled (L2-043), Reviews on, News from Tutu Much off
+  actor -> page : Turn Reviews off, "Save"
+  page --> actor : "Save" aria-busy, switches disabled
+  page -> client : update({reviewEmails: false, marketingEmails: false})
+  client -> controller : PUT /api/me/notification-preferences, If-Match
+  controller -> controller : Signed in, both values present (422)
+  controller -> handler : Send UpdateNotificationPreferencesCommand
+  handler -> db : Load NotificationPreferences
+  db --> handler : Row
+  handler -> entity : Update(false, false, now)
+  note right of entity
+    The request has no field for Account security
+    or Orders, so they stay on (L2-043)
+  end note
+  handler -> handler : Version = If-Match?
+  handler -> db : Save, Version as concurrency token
+  alt Version changed elsewhere
+    db --> handler : Old version or DbUpdateConcurrencyException
+    handler --> controller : Stale
+    controller --> client : 412 NOTIFICATION_PREFERENCES_CHANGED
+    page --> actor : Warning toast with the title, values reloaded
+  else committed
+    db --> handler : Commit result
+    handler --> controller : NotificationPreferencesDto
+    controller --> client : 200, new ETag
+    client --> page : Saved
+    page --> actor : "Email settings saved"
+  end
+end
+note over db
+  The dispatcher reads the row at send time, so an email
+  of a category the member turned off is suppressed (L2-043)
+end note
+@enduml

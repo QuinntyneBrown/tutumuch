@@ -1,0 +1,65 @@
+@startuml
+title UML sequence behaviour — Buyer reports a problem
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+skinparam sequenceMessageAlign left
+skinparam maxMessageSize 260
+actor "Buyer" as actor
+box "Frontend — Tutu Much Web application" #E0F2FE
+  participant "OrderDetailPage" as page
+  participant "ReportProblemDialog" as dlg
+  participant "ProblemsApi (@tutumuch/api)" as client
+end box
+box "Backend — Tutu Much API application (TutuMuch.Api)" #D1FADF
+  participant "OrderProblemsController" as ctrl
+end box
+box "Backend — TutuMuch.Application and TutuMuch.Domain" #ECFDF3
+  participant "ReportProblemCommandHandler" as h
+  participant "Order" as order
+  participant "OrderProblem" as prob
+end box
+box "Backend — TutuMuch.Infrastructure" #FFF4E5
+  participant "IPhotoStorage" as store
+  database "Tutu Much database" as db
+end box
+page -> page : Offer "Report a problem" only while Order.CanReportProblem
+actor -> dlg : Pick "What's wrong?", describe it, add up to 4 photos, "Send to Tutu Much"
+alt no reason or no description
+  dlg --> actor : "Choose what's wrong" / "Tell us what happened" (invalid state)
+else complete
+  dlg -> client : reportProblem(orderId, form) (busy state)
+  client -> ctrl : POST /api/orders/{id}/problem (multipart)
+  ctrl -> h : ReportProblemCommand
+  h -> db : Load order where BuyerId = caller
+  h -> order : CanReportProblem(now)
+  alt not Shipped or Delivered, or DeliveredAt + 3 days passed (L2-036 criterion 2)
+    h --> ctrl : 409 "PROBLEM_WINDOW_CLOSED"
+    ctrl --> dlg : Failed state
+  else a problem already exists
+    h --> ctrl : 409 "PROBLEM_ALREADY_REPORTED"
+  else within window
+    h -> h : IImageInspector checks type from content and size of each photo (L2-017 rules)
+    alt photo rejected
+      h --> ctrl : 413, 415 or 422 per photo
+    else photos valid
+      h -> store : Strip metadata, re-encode, store privately at problems/{problemId}/{photoId}
+      h -> prob : Open(order, reason, description, photos, now)
+      h -> db : Insert OrderProblem (Reference P-1001 and up), photos, Payout.HoldForProblem(), enqueue ProblemReported to the seller and every administrator, one save (L2-036 criterion 1)
+      ctrl --> client : 201 ProblemDto
+      page --> actor : "We're on it" with "Problem open · Wrong size" and the thread
+    end
+  end
+end
+@enduml

@@ -1,0 +1,65 @@
+@startuml
+title UML sequence behaviour — Withdraw a listing
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Seller" as actor
+box "Frontend — @tutumuch/catalog and @tutumuch/api" #E0F2FE
+  participant "WithdrawListingDialog" as dialog
+  participant "ListingsApi" as client
+end box
+box "Backend — Tutu Much API application" #D1FADF
+  participant "ListingsController" as controller
+end box
+box "Backend — TutuMuch Application and Domain" #ECFDF3
+  participant "WithdrawListingCommandHandler" as handler
+  participant "Listing" as entity
+end box
+box "Backend — TutuMuch Infrastructure" #FFF4E5
+  database "Tutu Much database" as db
+end box
+actor -> dialog : Choose "Withdraw" on own listing detail
+dialog --> actor : "Withdraw “Arizona sandals”?" with focus on "Keep listing"
+actor -> dialog : Confirm "Withdraw"
+dialog -> dialog : Busy: Withdraw aria-busy, Keep listing disabled
+dialog -> client : withdraw(reference)
+client -> controller : POST /api/listings/{reference}/withdraw
+controller -> handler : Send WithdrawListingCommand
+handler -> db : Load caller's listing
+alt not found or not owned
+  handler --> controller : NotFound
+  controller --> client : 404
+else
+  alt status Reserved, Sold or Draft (L2-020)
+    handler --> controller : LISTING_RESERVED, LISTING_SOLD or LISTING_NOT_EDITABLE
+    controller --> client : 409, listing unchanged
+    client --> dialog : Failed state "Couldn't withdraw" with "Try again"
+  else already withdrawn
+    controller --> client : 200 status Removed
+  else status Active
+    handler -> entity : Withdraw(now)
+    entity --> handler : Removed, RemovalReason Withdrawn, Version + 1
+    handler -> db : SaveChanges with Version check
+    alt concurrency conflict (buyer reserved it first)
+      db --> handler : DbUpdateConcurrencyException
+      controller --> client : 409 LISTING_RESERVED
+      client --> dialog : Failed state, "Your listing is still live."
+    else committed
+      controller --> client : 200 status Removed
+      client --> dialog : Close; listing leaves catalog and search
+      dialog --> actor : Navigate to Your listings
+    end
+  end
+end
+@enduml

@@ -1,0 +1,7 @@
+:host {
+  display: contents;
+}
+.error-summary__list {
+  margin: 0;
+  padding-left: var(--space-5);
+}

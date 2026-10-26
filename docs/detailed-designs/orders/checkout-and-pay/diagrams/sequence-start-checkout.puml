@@ -1,0 +1,65 @@
+@startuml
+title UML sequence behaviour — Start checkout and reserve the listing
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+skinparam sequenceMessageAlign left
+skinparam maxMessageSize 260
+actor "Buyer" as actor
+box "Frontend — Tutu Much Web application" #E0F2FE
+  participant "ListingDetailPage" as ld
+  participant "CheckoutPage" as page
+  participant "CheckoutApi (@tutumuch/api)" as client
+end box
+box "Backend — Tutu Much API application (TutuMuch.Api)" #D1FADF
+  participant "CheckoutsController" as ctrl
+end box
+box "Backend — TutuMuch.Application and TutuMuch.Domain" #ECFDF3
+  participant "StartCheckoutCommandHandler" as h
+  participant "Listing" as listing
+end box
+box "Backend — TutuMuch.Infrastructure" #FFF4E5
+  database "Tutu Much database" as db
+end box
+actor -> ld : Choose "Buy now"
+ld -> page : Navigate to /checkout/{reference} (loading skeleton)
+page -> client : startCheckout(listingReference)
+client -> ctrl : POST /api/checkouts { listingReference }
+ctrl -> ctrl : Authenticate; policy VerifiedMember (L2-010)
+ctrl -> h : Send StartCheckoutCommand
+h -> db : Load listing by Reference
+h -> listing : CanBePurchasedBy(buyerId)
+alt caller owns the listing (L2-026)
+  listing --> h : false
+  h --> ctrl : 422 "CANNOT_BUY_OWN_LISTING"
+else listing Sold, or Reserved by a live checkout
+  h --> ctrl : 409 "LISTING_UNAVAILABLE" or "LISTING_RESERVED"
+else Active, or Reserved with a lapsed reservation
+  h -> db : UPDATE Listings SET Status='Reserved' WHERE Id=@id AND (Status='Active' OR lapsed Reserved); INSERT Checkouts (Status Open)
+  alt 0 rows updated or UX_Checkouts_ListingId_Open violated (L2-029)
+    db --> h : Concurrency failure
+    h --> ctrl : 409 "LISTING_RESERVED"
+    ctrl --> client : 409 ProblemDetails
+    client --> page : Conflict
+    page --> actor : "Someone else is checking out" (conflict state)
+  else reservation won
+    db --> h : Committed
+    h -> db : Load SavedAddress for buyer (L2-027)
+    h --> ctrl : CheckoutDto (item, price, shipping, saved address, expiresAt)
+    ctrl --> client : 201 Created
+    client --> page : Checkout
+    page --> actor : Show summary, "Ship to" with saved address preselected, ReservationTimer "Reserved for you · 9:59 left"
+  end
+end
+@enduml

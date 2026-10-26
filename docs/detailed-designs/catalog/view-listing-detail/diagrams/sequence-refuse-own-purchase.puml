@@ -1,0 +1,43 @@
+@startuml
+title UML sequence behaviour — Refuse buying one's own listing
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+actor "Seller (member)" as actor
+box "Frontend — Tutu Much Web application" #E0F2FE
+  participant "ListingDetailPageComponent" as page
+  participant "BuyBarComponent" as bar
+end box
+box "Backend — Tutu Much API application" #D1FADF
+  participant "CatalogController" as controller
+  participant "Checkout endpoint (orders)" as checkoutApi
+end box
+box "Backend — TutuMuch Application and Domain" #ECFDF3
+  participant "Checkout start handler (orders)" as checkout
+  participant "Listing" as listing
+end box
+box "Backend — TutuMuch Infrastructure" #FFF4E5
+  database "Tutu Much database" as db
+end box
+actor -> page : Open own Active listing
+page -> controller : GET /api/catalog/listings/L-20790
+controller --> page : 200, viewer.relation = Seller
+page -> bar : primaryAction = manage
+bar --> actor : "Edit listing" and "Withdraw", no "Buy now" (L2-026)
+== Direct request that bypasses the page ==
+actor -> checkoutApi : Start checkout for L-20790
+checkoutApi -> checkout : Start checkout command(listing, buyer = seller)
+checkout -> db : Load Listing
+db --> checkout : Listing
+checkout -> listing : EnsureCanBePurchasedBy(buyerId)
+alt buyerId equals SellerId
+  listing --> checkout : DomainRuleException CANNOT_BUY_OWN_LISTING
+  checkout --> checkoutApi : Rule violation, nothing saved
+  checkoutApi --> actor : 422 problem details CANNOT_BUY_OWN_LISTING, no order (L2-026)
+else different buyer
+  listing --> checkout : allowed
+  checkout -> checkout : Continue with reservation (orders/checkout-and-pay, L2-028)
+end
+@enduml

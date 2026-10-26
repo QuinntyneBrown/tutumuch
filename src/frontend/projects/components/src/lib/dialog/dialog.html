@@ -1,0 +1,33 @@
+<div class="backdrop"></div>
+<div
+  class="dialog"
+  role="dialog"
+  aria-modal="true"
+  [attr.aria-labelledby]="id + '-title'"
+  [attr.aria-describedby]="id + '-desc'"
+>
+  <div class="dialog__panel" [class.dialog__panel--sm]="size() === 'sm'" [class.dialog__panel--lg]="size() === 'lg'">
+    <div class="dialog__header">
+      @if (icon(); as icon) {
+        <div
+          class="dialog__icon"
+          [class.dialog__icon--info]="tone() === 'info'"
+          [class.dialog__icon--danger]="tone() === 'danger'"
+          aria-hidden="true"
+        >
+          <tm-icon [name]="icon" />
+        </div>
+      }
+      <div class="dialog__heading">
+        <h2 class="dialog__title" [id]="id + '-title'">{{ heading() }}</h2>
+        <p class="text-muted dialog__description" [id]="id + '-desc'"><ng-content select="[description]" /></p>
+      </div>
+      <button tmButton="ghost" class="btn--icon" type="button" aria-label="Close" (click)="close()">
+        <tm-icon name="close" />
+      </button>
+    </div>
+    <div class="dialog__top"><ng-content select="[top]" /></div>
+    <div class="dialog__body stack"><ng-content /></div>
+    <div class="dialog__footer"><ng-content select="[footer]" /></div>
+  </div>
+</div>

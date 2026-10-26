@@ -1,0 +1,15 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Edit and withdraw a listing
+
+Person(seller, "Seller", "Owner of the listing")
+System_Boundary(tutumuch, "Tutu Much") {
+  Container(web, "Tutu Much Web", "Angular", "EditListingPage, WithdrawListingDialog, RelistDialog (Angular libraries)")
+  Container(api, "Tutu Much API", "ASP.NET Core", "Listing update, withdraw and relist endpoints")
+  ContainerDb(db, "Tutu Much database", "SQL Server", "Listings with Version, ListingPhotos")
+}
+Rel(seller, web, "Uses", "HTTPS")
+Rel(web, api, "Calls", "JSON/HTTPS")
+Rel(api, db, "Reads and writes with optimistic concurrency", "EF Core")
+@enduml

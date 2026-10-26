@@ -1,0 +1,85 @@
+<div class="page-header">
+  <div>
+    <h1>Your listings</h1>
+    @if (subtitle(); as subtitle) {
+      <p class="subtitle">{{ subtitle }}</p>
+    }
+  </div>
+  <a tmButton="primary" routerLink="/sell"><tm-icon name="plus" />Sell an item</a>
+</div>
+@if (showFilter()) {
+  <tm-filter-chips
+    label="Filter by status"
+    [options]="options()"
+    [selected]="selected()"
+    (selectedChange)="filter($event)"
+  />
+}
+@switch (view()) {
+  @case ('loading') {
+    <ul class="order-list" role="list" aria-busy="true" aria-label="Loading listings">
+      @for (row of [1, 2, 3, 4]; track row) {
+        <li>
+          <div class="item-row my-listings__skeleton-row">
+            <span class="skeleton skeleton--rect thumb thumb--lg"></span>
+            <div class="item-row__body">
+              <span class="skeleton skeleton--text my-listings__skeleton-title"></span>
+            </div>
+            <span class="skeleton skeleton--text my-listings__skeleton-price"></span>
+          </div>
+        </li>
+      }
+    </ul>
+  }
+  @case ('error') {
+    <tm-empty-state icon="refresh" heading="Couldn’t load your listings" tone="error">
+      Try again in a moment. <span class="ref">{{ errorRef() }}</span>
+      <button actions tmButton="primary" type="button" (click)="retry()"><tm-icon name="refresh" />Try again</button>
+    </tm-empty-state>
+  }
+  @default {
+    @if (listings(); as listings) {
+      @if (listings.counts.all === 0) {
+        <tm-empty-state icon="tag" heading="Nothing listed yet">
+          List a pair of 12s or something in L.
+          <a actions tmButton="primary" routerLink="/sell">Sell an item</a>
+        </tm-empty-state>
+      } @else {
+        <ul class="order-list" role="list">
+          @for (row of listings.items; track row.reference) {
+            <li>
+              <a [routerLink]="link(row)">
+                <tm-item-row [title]="title(row)">
+                  <div thumb class="thumb thumb--lg">
+                    @if (row.photo; as photo) {
+                      <div class="photo photo--6">
+                        <picture>
+                          <source type="image/webp" [attr.srcset]="photo.webp" sizes="96px" />
+                          <img
+                            [src]="photo.src"
+                            [attr.srcset]="photo.jpeg"
+                            sizes="96px"
+                            alt=""
+                            width="160"
+                            height="160"
+                          />
+                        </picture>
+                      </div>
+                    } @else {
+                      <div class="photo photo--none"><tm-icon name="image" /></div>
+                    }
+                  </div>
+                  <tm-status [tone]="tone(row.status)">{{ row.status }}</tm-status>
+                </tm-item-row>
+                <span class="order-list__end">
+                  <span class="price">{{ price(row.price) }}</span>
+                  <span class="text-caption">{{ date(row) }}</span>
+                </span>
+              </a>
+            </li>
+          }
+        </ul>
+      }
+    }
+  }
+}

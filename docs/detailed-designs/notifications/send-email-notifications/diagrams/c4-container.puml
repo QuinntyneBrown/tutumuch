@@ -1,0 +1,21 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Send email notifications
+
+Person(member, "Member", "Receives email")
+System_Boundary(tutumuch, "Tutu Much") {
+  Container(web, "Tutu Much Web", "Angular", "Pages that deep links open")
+  Container(api, "Tutu Much API", "ASP.NET Core", "Handlers enqueue EmailNotificationRequested with each state change")
+  Container(worker, "Tutu Much Worker", ".NET worker service", "OutboxEmailDispatcher: render, guard, send, retry")
+  ContainerDb(db, "Tutu Much database", "SQL Server", "OutboxMessages, Members, NotificationPreferences")
+}
+System_Ext(email, "Email provider", "Delivers email")
+
+Rel(member, web, "Opens deep links in", "HTTPS")
+Rel(web, api, "Calls", "JSON/HTTPS")
+Rel(api, db, "Writes state change and outbox message in one transaction", "EF Core")
+Rel(worker, db, "Claims due messages, reads recipients and preferences", "EF Core")
+Rel(worker, email, "Sends with idempotency key", "HTTPS API")
+Rel(email, member, "Delivers email to", "SMTP")
+@enduml

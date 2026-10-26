@@ -1,0 +1,73 @@
+<div class="page-header">
+  <div>
+    <h1>Emails</h1>
+    @if (view() !== 'error') {
+      <p class="subtitle">Security and order emails are always on.</p>
+    }
+  </div>
+</div>
+@switch (view()) {
+  @case ('loading') {
+    <div class="page--form">
+      <ul class="settings-list" aria-busy="true" aria-label="Loading">
+        @for (row of [1, 2, 3, 4]; track row) {
+          <li>
+            <div class="settings-list__body">
+              <span class="skeleton skeleton--text emails__skeleton-title"></span>
+              <span class="skeleton skeleton--text emails__skeleton-meta"></span>
+            </div>
+            <span class="skeleton skeleton--rect emails__skeleton-switch"></span>
+          </li>
+        }
+      </ul>
+    </div>
+  }
+  @case ('error') {
+    <tm-empty-state icon="refresh" heading="Couldn’t load email settings" tone="error">
+      Something went wrong on our side. <span class="ref">{{ errorRef() }}</span>
+      <button actions tmButton="primary" type="button" (click)="retry()"><tm-icon name="refresh" />Try again</button>
+    </tm-empty-state>
+  }
+  @default {
+    @if (saved()) {
+      <div class="emails__saved">
+        <tm-alert tone="success" heading="Email settings saved" live="polite" />
+      </div>
+    }
+    <form class="page--form" (submit)="save($event)">
+      <ul class="settings-list">
+        <li>
+          <div class="settings-list__body">
+            <span class="settings-list__title">Account security</span>
+            <span class="settings-list__meta">Sign-in alerts, password resets</span>
+          </div>
+          <tm-switch label="Account security emails, always on" [checked]="true" disabled />
+        </li>
+        <li>
+          <div class="settings-list__body">
+            <span class="settings-list__title">Orders</span>
+            <span class="settings-list__meta">Sales, shipping, delivery, refunds</span>
+          </div>
+          <tm-switch label="Order emails, always on" [checked]="true" disabled />
+        </li>
+        <li>
+          <div class="settings-list__body">
+            <span class="settings-list__title">Reviews</span>
+            <span class="settings-list__meta">When someone reviews you</span>
+          </div>
+          <tm-switch label="Review emails" [(checked)]="reviews" [disabled]="saving()" />
+        </li>
+        <li>
+          <div class="settings-list__body">
+            <span class="settings-list__title">News from Tutu Much</span>
+            <span class="settings-list__meta">New arrivals in your size, now and then</span>
+          </div>
+          <tm-switch label="Marketing emails" [(checked)]="marketing" [disabled]="saving()" />
+        </li>
+      </ul>
+      <div class="form-actions emails__actions">
+        <button tmButton="primary" type="submit" [busy]="saving()">Save</button>
+      </div>
+    </form>
+  }
+}

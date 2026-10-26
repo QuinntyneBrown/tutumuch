@@ -1,0 +1,80 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Keep Tutu Much available and recoverable
+
+class MaintenanceWindow {
+  +DateTimeOffset StartsAtUtc
+  +DateTimeOffset EndsAtUtc
+  +TimeSpan Duration
+}
+class MaintenanceOptions {
+  +IReadOnlyList<MaintenanceWindow> Windows
+  +bool Active
+  +int AnnounceDaysAhead = 7
+  +NextWindow(now: DateTimeOffset): MaintenanceWindow?
+  +CurrentWindow(now: DateTimeOffset): MaintenanceWindow?
+}
+class MaintenanceOptionsValidator {
+  -const int MaxWindowMinutes = 120
+  -const int MaxMonthlyMinutes = 120
+  -TimeZoneInfo easternTime
+  +Validate(name: string, options: MaintenanceOptions): ValidateOptionsResult
+}
+class SystemStatusController {
+  +GetStatus(): SystemStatusResponse
+}
+class SystemStatusResponse <<record>> {
+  +MaintenanceWindowDto? Maintenance
+}
+class MaintenanceModeMiddleware {
+  +InvokeAsync(context: HttpContext): Task
+}
+class ShutdownReadinessHealthCheck {
+  -IHostApplicationLifetime lifetime
+  +CheckHealthAsync(context, ct): Task<HealthCheckResult>
+}
+interface IRestoreCheck {
+  +string Name
+  +RunAsync(connection: DbConnection, restorePoint: DateTimeOffset): Task<RestoreCheckResult>
+}
+class MigrationsMatchCheck
+class CheckDbIntegrityCheck
+class BusinessInvariantsCheck
+class RecencyCheck
+class RestoreVerifier {
+  +RunAsync(connectionString, restorePoint): Task<RestoreReport>
+}
+class RestoreReport {
+  +DateTimeOffset StartedAt
+  +DateTimeOffset VerifiedAt
+  +TimeSpan Elapsed
+  +bool Passed
+  +IReadOnlyList<RestoreCheckResult> Checks
+}
+class RestoreCheckResult {
+  +string Name
+  +bool Passed
+  +string Detail
+}
+MaintenanceOptions "1" *-- "*" MaintenanceWindow
+MaintenanceOptionsValidator ..> MaintenanceOptions : validates
+SystemStatusController ..> MaintenanceOptions : reads
+SystemStatusController ..> SystemStatusResponse : returns
+MaintenanceModeMiddleware ..> MaintenanceOptions : reads
+MigrationsMatchCheck ..|> IRestoreCheck
+CheckDbIntegrityCheck ..|> IRestoreCheck
+BusinessInvariantsCheck ..|> IRestoreCheck
+RecencyCheck ..|> IRestoreCheck
+RestoreVerifier "1" o-- "4" IRestoreCheck
+RestoreVerifier ..> RestoreReport : produces
+RestoreReport "1" *-- "*" RestoreCheckResult
+@enduml

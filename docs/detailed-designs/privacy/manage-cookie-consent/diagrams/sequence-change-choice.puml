@@ -1,0 +1,49 @@
+@startuml
+title UML sequence behaviour — Change the consent choice
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Visitor" as actor
+box "Frontend — Tutu Much Web application" #E0F2FE
+  participant "tm-footer Cookie settings" as entry
+  participant "CookieSettingsDialog" as dialog
+  participant "CookieConsentService" as consent
+  participant "AnalyticsService" as analytics
+end box
+participant "Analytics provider" as provider
+actor -> entry : "Cookie settings"
+entry -> dialog : open()
+dialog -> consent : Read consent
+consent --> dialog : analytics (switch on)
+alt turn analytics off
+  actor -> dialog : Switch Analytics off, Save
+  dialog -> consent : save(false)
+  consent -> consent : Write tm_consent=v1.necessary
+  consent --> analytics : consent = necessary
+  analytics -> provider : Opt-out call (if script loaded)
+  analytics -> analytics : Delete environment.analytics.cookieNames (Max-Age=0) (L2-056)
+  analytics -> analytics : Stop page views
+  dialog --> actor : Dialog closes
+else turn analytics on
+  actor -> dialog : Switch Analytics on, Save
+  dialog -> consent : save(true)
+  consent -> consent : Write tm_consent=v1.analytics
+  consent --> analytics : consent = analytics
+  analytics -> provider : Load script, send page views
+  dialog --> actor : Dialog closes
+else Cancel
+  actor -> dialog : Cancel
+  dialog --> actor : Dialog closes, nothing changes
+end
+@enduml

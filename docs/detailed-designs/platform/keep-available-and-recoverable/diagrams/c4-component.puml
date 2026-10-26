@@ -1,0 +1,31 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Keep Tutu Much available and recoverable
+
+Container_Boundary(web, "Tutu Much Web") {
+  Component(status, "SystemStatusService", "Service", "Polls status; shows maintenance banner")
+  Component(mint, "MaintenanceInterceptor", "HttpInterceptorFn", "503 maintenance -> maintenance page")
+  Component(mpage, "MaintenancePageComponent", "Route component", "'Back at 3:00 AM ET', 'Check status'")
+}
+Container_Boundary(api, "Tutu Much API") {
+  Component(statusctrl, "SystemStatusController", "Controller", "GET /api/system/status")
+  Component(mmw, "MaintenanceModeMiddleware", "Middleware", "503 maintenance + Retry-After when active")
+  Component(mopts, "MaintenanceOptions + Validator", "Options", "Windows <= 120 min, outside 06:00-23:00 ET, <= 120 min per month")
+  Component(shutdown, "ShutdownReadinessHealthCheck", "IHealthCheck", "Unhealthy once stopping")
+}
+Container_Boundary(ops, "Operations tooling") {
+  Component(verifier, "TutuMuch.RestoreVerifier", "Console", "Migrations, CHECKDB, invariants, recency")
+  Component(migrator, "TutuMuch.Migrator", "Console", "Expand-then-contract migrations before rollout")
+}
+Container(lb, "Load balancer", "Hosting platform", "Readiness probe")
+ContainerDb(db, "Tutu Much database", "Managed SQL Server", "PITR 35 days")
+
+Rel(status, statusctrl, "Polls", "HTTPS")
+Rel(mint, mpage, "Navigates to")
+Rel(mmw, mopts, "Reads Active and window end")
+Rel(statusctrl, mopts, "Reads next window")
+Rel(lb, shutdown, "Probes via /health/ready")
+Rel(migrator, db, "Applies migrations")
+Rel(verifier, db, "Checks restored copy of")
+@enduml

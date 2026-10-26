@@ -1,0 +1,49 @@
+@startuml
+title UML sequence behaviour — Remind about and delete stale drafts
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+box "Backend — Tutu Much Worker application" #D1FADF
+  participant "DraftCleanupJob" as job
+  participant "OutboxDispatcher" as outbox
+end box
+box "Backend — TutuMuch Infrastructure" #FFF4E5
+  database "Tutu Much database" as db
+  participant "Email provider adapter" as email
+  participant "IPhotoStorage" as storage
+end box
+job -> job : Run daily (Listings:DraftCleanup:Interval)
+job -> db : Select drafts with UpdatedAt <= now - 83 days and DraftReminderSentAt null
+db --> job : Drafts due a reminder
+loop each draft
+  job -> db : Set DraftReminderSentAt, insert DraftExpiryReminderEmail outbox message, one transaction
+end
+outbox -> db : Claim DraftExpiryReminderEmail
+outbox -> email : Send "draft will be deleted on {date}" (L2-019)
+alt sent
+  outbox -> db : Complete message
+else provider failure
+  outbox -> db : Retry with back-off
+end
+job -> db : Select drafts with UpdatedAt <= now - 90 days and DraftReminderSentAt <= now - 7 days
+db --> job : Expired drafts
+loop each expired draft
+  job -> db : Delete Listings and ListingPhotos rows (status still Draft, Version check)
+  alt draft edited meanwhile
+    db --> job : Concurrency conflict, skip
+  else deleted
+    job -> storage : DeleteOriginalAsync, and DeletePublicAsync for versions no other photo shares
+  end
+end
+@enduml

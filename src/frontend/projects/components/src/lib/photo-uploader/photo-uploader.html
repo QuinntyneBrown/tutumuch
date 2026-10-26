@@ -1,0 +1,78 @@
+<ul class="uploader" role="list">
+  @for (tile of photos(); track tile.key; let i = $index) {
+    <li
+      #photoTile
+      class="uploader__tile"
+      tabindex="0"
+      [attr.aria-label]="'Photo ' + (i + 1) + ' of ' + photos().length + (i === 0 && cover() ? ', cover' : '')"
+      [attr.aria-describedby]="cover() ? inputId() + '-move' : null"
+      [attr.draggable]="cover() && tile.state === 'ready' ? 'true' : null"
+      (keydown)="onKeydown($event, i)"
+      (dragstart)="onDragStart($event, i)"
+      (dragover)="onDragOver($event)"
+      (drop)="onDrop($event, i)"
+      (dragend)="onDragEnd()"
+    >
+      <div class="photo photo--square">
+        @if (tile.src) {
+          <img [src]="tile.src" [alt]="'Photo ' + (i + 1)" width="400" height="400" draggable="false" />
+        } @else {
+          <span class="spinner" aria-hidden="true"></span>
+          <span class="visually-hidden" role="status">Uploading {{ tile.name }}</span>
+        }
+      </div>
+      @if (i === 0 && cover()) {
+        <span class="badge uploader__cover">Cover</span>
+      }
+      <button
+        class="btn btn--icon btn--sm uploader__remove"
+        type="button"
+        [attr.aria-label]="'Remove photo ' + (i + 1)"
+        (click)="removed.emit(tile.key)"
+      >
+        <tm-icon name="close" size="sm" />
+      </button>
+    </li>
+  }
+  @for (tile of rejected(); track tile.key) {
+    <li>
+      <div class="uploader__rejected">
+        <tm-icon name="x-circle" /><span>{{ tile.name }}</span
+        ><span>{{ tile.size }}</span>
+      </div>
+      <button
+        class="btn btn--icon btn--sm uploader__remove"
+        type="button"
+        [attr.aria-label]="'Remove ' + tile.name"
+        (click)="removed.emit(tile.key)"
+      >
+        <tm-icon name="close" size="sm" />
+      </button>
+    </li>
+  }
+  <li>
+    <label class="uploader__add" [attr.aria-invalid]="error() ? 'true' : null" [attr.aria-disabled]="full() || null">
+      <tm-icon name="camera" size="lg" /><span>{{ cover() ? 'Add photos' : 'Add photo' }}</span>
+      <span class="text-caption">{{ photos().length }} of {{ max() }}</span>
+      <input
+        class="visually-hidden"
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        multiple
+        [id]="inputId()"
+        [disabled]="full()"
+        [attr.aria-invalid]="error() ? 'true' : null"
+        [attr.aria-describedby]="describedBy()"
+        (change)="choose($event)"
+      />
+    </label>
+  </li>
+</ul>
+<span class="field__help" [id]="inputId() + '-help'"
+  >JPEG, PNG or WebP up to 10 MB.{{ cover() ? ' Drag to reorder; the first is the cover.' : '' }}</span
+>
+<span class="visually-hidden" [id]="inputId() + '-move'">Press the left or right arrow key to move this photo.</span>
+@if (error()) {
+  <span class="field__error" [id]="inputId() + '-error'">{{ error() }}</span>
+}
+<span class="visually-hidden" aria-live="polite">{{ announcement() }}</span>

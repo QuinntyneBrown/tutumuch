@@ -1,0 +1,46 @@
+@startuml
+title UML sequence behaviour — Enqueue a notification with the business change
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+participant "Payment provider" as provider
+box "Backend — Tutu Much API application" #D1FADF
+  participant "Payment webhook endpoint" as controller
+end box
+box "Backend — TutuMuch Application and Domain" #ECFDF3
+  participant "PaymentWebhookHandler (checkouts)" as handler
+  participant "IEmailOutbox / EmailOutbox" as publisher
+end box
+box "Backend — TutuMuch Infrastructure" #FFF4E5
+  database "Tutu Much database" as db
+end box
+provider -> controller : Signed webhook: buyer's payment succeeded
+controller -> handler : Send command to create the Paid order
+handler -> handler : Apply order state change
+handler -> publisher : Enqueue(SaleMade, sellerId, SaleMadeEmail) (L2-042)
+publisher -> db : Add OutboxMessage Pending, NextAttemptAt = now (member ID and model JSON, no address, no card data)
+handler -> db : SaveChanges: order and outbox in one transaction
+alt transaction rolls back
+  db --> handler : Error
+  handler --> controller : Failure, no outbox row exists, no email
+else committed
+  db --> handler : Commit result
+  handler --> controller : Order created
+  controller --> provider : 200
+  note right of db
+    EmailDispatchJob picks the row up
+    within 10 s (2-minute SLA, L2-042)
+  end note
+end
+@enduml

@@ -1,0 +1,53 @@
+@startuml
+title UML sequence behaviour — One member across several API instances
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Member" as actor
+box "Frontend — Tutu Much Web application" #E0F2FE
+  participant "Feature page" as page
+end box
+box "Backend — Load balancer" #FFF4E5
+  participant "Load balancer (round-robin)" as lb
+end box
+box "Backend — Tutu Much API application" #D1FADF
+  participant "API instance 1" as a1
+  participant "API instance 2" as a2
+end box
+box "Backend — Tutu Much Infrastructure" #FFF4E5
+  database "Distributed cache (Redis)" as redis
+  database "Tutu Much database" as db
+end box
+actor -> page : Browse, then start checkout
+page -> lb : GET /api/catalog (session cookie)
+lb -> a1 : Route
+a1 -> redis : Load Data Protection key ring; INCR rate-limit counter (L2-060)
+redis --> a1 : Keys, count
+a1 -> db : Catalog query (AsNoTracking)
+db --> a1 : Page of 24
+a1 --> page : 200
+page -> lb : POST /api/checkout/reservations
+lb -> a2 : Route to a different instance
+a2 -> redis : Same key ring decrypts the cookie; INCR shared counter (L2-060)
+redis --> a2 : Keys, count
+a2 -> db : Insert reservation; rowversion check on Listing
+alt Another instance reserved the listing first
+  db --> a2 : Concurrency or unique-index conflict
+  a2 --> page : 409 problem details (orders rules)
+else Reservation wins
+  db --> a2 : Committed
+  a2 --> page : 201 reservation
+end
+page --> actor : Show checkout or conflict
+@enduml

@@ -1,0 +1,15 @@
+@startuml
+!include <C4/C4_Context>
+LAYOUT_WITH_LEGEND()
+title System Context — Cancel an order
+
+Person(seller, "Seller", "Cancels or answers a cancellation request")
+Person(buyer, "Buyer", "Asks the seller to cancel")
+System(tutumuch, "Tutu Much", "Men's US 12 / L marketplace")
+System_Ext(pay, "Payment provider", "Refunds")
+System_Ext(email, "Email provider", "Transactional email")
+Rel(seller, tutumuch, "Cancels and responds to requests using")
+Rel(buyer, tutumuch, "Requests cancellation using")
+Rel(tutumuch, pay, "Refunds the buyer in full via", "HTTPS API")
+Rel(tutumuch, email, "Sends OrderCancelled and CancellationRequested email via", "HTTPS API")
+@enduml

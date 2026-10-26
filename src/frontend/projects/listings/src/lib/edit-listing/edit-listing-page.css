@@ -1,0 +1,16 @@
+:host {
+  display: block;
+}
+.sell {
+  max-width: 44rem;
+  margin-inline: auto;
+}
+.edit__tile {
+  aspect-ratio: 1;
+}
+.edit__label {
+  width: 20%;
+}
+.edit__control {
+  height: var(--control-height-md);
+}

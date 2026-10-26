@@ -1,0 +1,17 @@
+@startuml
+!include <C4/C4_Context>
+LAYOUT_WITH_LEGEND()
+title System Context — View a listing's detail
+
+Person(visitor, "Visitor", "Anonymous person deciding whether to buy")
+Person(member, "Member", "Signed-in buyer, or the listing's seller")
+System(tutumuch, "Tutu Much", "Marketplace for men's US 12 shoes and men's L clothing")
+System_Ext(cdn, "Photo CDN", "Serves content-addressed listing photos")
+System_Ext(pay, "Payment provider", "Takes payment once checkout starts")
+
+Rel(visitor, tutumuch, "Views listings and signs in to buy using", "HTTPS")
+Rel(member, tutumuch, "Views, buys or manages listings using", "HTTPS")
+Rel(visitor, cdn, "Loads gallery photos from", "HTTPS")
+Rel(member, cdn, "Loads gallery photos from", "HTTPS")
+Rel(tutumuch, pay, "Hands checkout to", "HTTPS")
+@enduml

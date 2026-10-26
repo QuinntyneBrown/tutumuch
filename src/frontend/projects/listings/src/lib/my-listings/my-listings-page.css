@@ -1,0 +1,12 @@
+:host {
+  display: block;
+}
+.my-listings__skeleton-row {
+  padding-block: var(--space-5);
+}
+.my-listings__skeleton-title {
+  width: 50%;
+}
+.my-listings__skeleton-price {
+  width: 4rem;
+}

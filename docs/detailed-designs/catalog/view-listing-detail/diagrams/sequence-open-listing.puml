@@ -1,0 +1,65 @@
+@startuml
+title UML sequence behaviour — Open a listing
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+actor "Visitor or member" as actor
+box "Frontend — Tutu Much Web application" #E0F2FE
+  participant "ListingDetailPage (@tutumuch/catalog)" as page
+  participant "ListingDetailStore" as store
+  participant "CatalogApi (@tutumuch/api)" as client
+end box
+box "Backend — Tutu Much API application" #D1FADF
+  participant "CatalogController" as controller
+end box
+box "Backend — TutuMuch Application and Domain" #ECFDF3
+  participant "GetListingDetailQueryHandler" as handler
+  participant "ListingDetailVisibility" as vis
+end box
+box "Backend — TutuMuch Infrastructure" #FFF4E5
+  participant "ITutuMuchDbContext (EF Core)" as rs
+  database "Tutu Much database" as db
+end box
+actor -> page : Open /items/L-20931
+page -> store : load("L-20931")
+store --> page : loading skeleton
+store -> client : listing("L-20931")
+client -> controller : GET /api/catalog/listings/L-20931 (cookie if signed in)
+controller -> controller : [AllowAnonymous], viewer from session cookie or anonymous
+controller -> handler : Send GetListingDetailQuery(reference, viewerId?)
+handler -> rs : Listing by reference, then seller and photos
+rs -> db : Queries by unique Reference
+db --> rs : Row or nothing
+rs --> handler : Listing?
+alt no row, or Draft/Removed and viewer is not seller
+  handler -> vis : CanView(status, sellerId, viewerId)
+  vis --> handler : false
+  handler --> controller : NotFound
+  controller --> client : 404 LISTING_NOT_FOUND (L2-025)
+  client --> store : ApiError 404
+  store --> page : unavailable
+  page --> actor : "This item isn't available", "Shop similar items"
+else visible
+    handler -> handler : Viewer relation, total = price + shipping, photo srcsets
+  handler --> controller : ListingDetailDto
+  controller --> client : 200 OK, Cache-Control private, no-store
+  client --> store : ListingDetailDto
+  store -> store : primaryAction from displayStatus and relation
+  alt Active and OtherMember
+    page --> actor : Gallery, details, seller, "Buy now" (L2-025)
+  else Active and Seller
+    page --> actor : "Edit listing" instead of "Buy now" (L2-026)
+  else Reserved
+    page --> actor : "Reserved" stamp, "In someone's checkout", no "Buy now" (L2-028)
+  else Sold
+    store -> client : listings(1, category), 4 other cards
+    page --> actor : "Sold" stamp, no "Buy now", "More in size 12"
+  end
+else server failure
+  controller --> client : 500 problem details with correlation ID
+  store --> page : error
+  page --> actor : "Couldn't load this item", Ref, "Try again"
+end
+@enduml

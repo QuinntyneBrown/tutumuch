@@ -1,0 +1,25 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Check out and pay
+
+Person(buyer, "Buyer", "Verified member")
+System_Boundary(tutumuch, "Tutu Much") {
+  Container(web, "Tutu Much Web", "Angular", "Checkout page, hosted card fields host, reservation timer, order confirmation")
+  Container(api, "Tutu Much API", "ASP.NET Core", "Checkout, payment and webhook endpoints")
+  Container(worker, "Tutu Much Worker", ".NET worker service", "Reservation expiry and outbox dispatch")
+  ContainerDb(db, "Tutu Much database", "SQL Server", "Listings, checkouts, payments, orders, webhook events, outbox")
+}
+System_Ext(pay, "Payment provider", "Hosted fields, payments, refunds, webhooks")
+System_Ext(email, "Email provider", "Transactional email")
+
+Rel(buyer, web, "Uses", "HTTPS")
+Rel(web, pay, "Loads hosted fields SDK and tokenizes card", "HTTPS")
+Rel(web, api, "Calls", "JSON/HTTPS")
+Rel(api, db, "Reads and writes", "EF Core")
+Rel(api, pay, "Creates and confirms payments, quotes tax", "HTTPS")
+Rel(pay, api, "Posts payment events", "Signed webhook")
+Rel(worker, db, "Expires reservations, reads outbox", "EF Core")
+Rel(worker, pay, "Issues duplicate-payment refunds", "HTTPS")
+Rel(worker, email, "Sends new-sale email", "HTTPS")
+@enduml

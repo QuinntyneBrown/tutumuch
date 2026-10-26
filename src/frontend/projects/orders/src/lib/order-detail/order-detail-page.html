@@ -1,0 +1,110 @@
+@switch (view()) {
+  @case ('loading') {
+    <h1 class="visually-hidden">Loading order</h1>
+    <div class="split order__loading" aria-busy="true">
+      <div class="stack stack--lg">
+        <span class="skeleton skeleton--title"></span>
+        <span class="skeleton skeleton--rect order__skeleton-block"></span>
+        <span class="skeleton skeleton--rect order__skeleton-block"></span>
+      </div>
+      <div class="panel stack">
+        <span class="skeleton skeleton--text"></span>
+        <span class="skeleton skeleton--text"></span>
+        <span class="skeleton skeleton--text"></span>
+      </div>
+    </div>
+  }
+  @case ('error') {
+    <tm-center-state heading="Couldn’t load this order">
+      <p class="text-muted">Something went wrong on our side. Try again in a moment.</p>
+      <span class="ref">{{ errorRef() }}</span>
+      <button actions tmButton="primary" type="button" (click)="retry()"><tm-icon name="refresh" />Try again</button>
+      <a actions tmButton routerLink="/account/purchases">Back to purchases</a>
+    </tm-center-state>
+  }
+  @default {
+    @if (order(); as order) {
+      <nav aria-label="Breadcrumb" class="order__crumbs">
+        <ol class="breadcrumb">
+          <li><a routerLink="/account/purchases">Purchases</a></li>
+          <li aria-current="page">{{ order.reference }}</li>
+        </ol>
+      </nav>
+      <div class="split order__body">
+        <div class="stack stack--lg">
+          <div class="stack stack--sm">
+            <p class="eyebrow">Order {{ order.reference }} · {{ day(order.paidAt) }}</p>
+            <h1>{{ heading() }}</h1>
+          </div>
+          @if (refundedOnProblem()) {
+            <tm-alert tone="success" heading="Refunded in full">{{ problemRefund() }}</tm-alert>
+            @if (order.problem?.resolvedAt; as resolvedAt) {
+              <p class="text-muted text-sm">Resolved {{ day(resolvedAt) }} by Tutu Much support.</p>
+            }
+            <div class="cluster">
+              <a tmButton routerLink="/account/purchases">Back to purchases</a>
+            </div>
+          } @else if (problemOpen() && order.problem; as problem) {
+            <tm-alert tone="warning" icon="flag" [heading]="'Problem open · ' + problem.reasonLabel"
+              >We’re holding the seller’s payout until our team decides. Usually within 2 business days.</tm-alert
+            >
+            <tm-thread [entries]="thread()" />
+          } @else if (ended()) {
+            <tm-alert tone="info" heading="Refunded in full">{{ refund() }}</tm-alert>
+            @if (order.cancellation?.note; as note) {
+              <tm-quote [text]="note" [cite]="order.sellerDisplayName" />
+            }
+            @if (order.status === 'Cancelled') {
+              <div class="cluster">
+                <a tmButton="primary" routerLink="/">Shop similar items</a>
+              </div>
+            }
+          } @else {
+            <tm-order-timeline [steps]="steps()" />
+            @if (order.tracking; as tracking) {
+              <tm-tracking-link [carrier]="tracking.carrier" [number]="tracking.number" [url]="tracking.url" />
+            }
+            @if (order.status === 'Paid') {
+              <p class="text-muted order__note">
+                {{ order.sellerDisplayName }} ships by {{ day(order.shipBy) }}. If not, you’re refunded automatically.
+              </p>
+            }
+            @if (requestNote()) {
+              <p class="order__request">{{ requestNote() }}</p>
+            }
+            @if (canAskToCancel()) {
+              <div class="cluster">
+                <button tmButton type="button" (click)="askToCancel()">Ask to cancel</button>
+              </div>
+            }
+            @if (order.status === 'Delivered' && order.autoCompletesAt) {
+              <p class="text-muted order__completes">
+                Completes automatically on {{ day(order.autoCompletesAt) }} unless you report a problem.
+              </p>
+            }
+            @if (canConfirm()) {
+              <div class="cluster">
+                <button tmButton="primary" type="button" (click)="confirmReceipt()">I received it</button>
+                @if (order.canReportProblem) {
+                  <button tmButton="ghost" type="button" (click)="reportProblem()">Report a problem</button>
+                }
+              </div>
+            }
+          }
+        </div>
+        @if (summaryItem(); as item) {
+          <tm-order-summary
+            heading=""
+            [item]="item"
+            [itemPrice]="money(order.itemPrice)"
+            [shipping]="money(order.shippingCost)"
+            [salesTax]="money(order.salesTax)"
+            [total]="money(order.total)"
+          >
+            <tm-order-party role="Seller" [displayName]="order.sellerDisplayName" />
+          </tm-order-summary>
+        }
+      </div>
+    }
+  }
+}

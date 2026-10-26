@@ -1,0 +1,26 @@
+<div class="seller">
+  <span class="avatar" aria-hidden="true">{{ initials() }}</span>
+  <div class="stack stack--sm seller__body">
+    <a class="seller__name" [routerLink]="['/members', seller().displayName]">{{ seller().displayName }}</a>
+    @if (isNew()) {
+      <span class="badge">New seller</span>
+    } @else {
+      <span class="seller__meta">{{ seller().completedSalesCount | number }} sales</span>
+      @if (seller().ratingAverage; as rating) {
+        <span
+          class="rating"
+          role="img"
+          [attr.aria-label]="'Rated ' + rating + ' out of 5 from ' + seller().publishedReviewCount + ' reviews'"
+        >
+          <span class="rating__stars">
+            @for (star of stars; track star) {
+              <tm-icon name="star" [class.rating__off]="star > rating + 0.5" />
+            }
+          </span>
+          <span class="rating__value">{{ rating | number: '1.1-1' }}</span>
+          <span class="text-muted">({{ seller().publishedReviewCount | number }} reviews)</span>
+        </span>
+      }
+    }
+  </div>
+</div>

@@ -1,0 +1,20 @@
+:host {
+  display: block;
+}
+.member-profile__skeleton-name {
+  width: 12rem;
+}
+.member-profile__location {
+  display: inline-flex;
+  gap: var(--space-1);
+  align-items: center;
+}
+.member-profile__bio {
+  white-space: pre-line;
+}
+.member-profile__section {
+  margin-top: var(--space-16);
+}
+.member-profile__reviews {
+  max-width: var(--layout-measure);
+}

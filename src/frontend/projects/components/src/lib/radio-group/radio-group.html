@@ -1,0 +1,7 @@
+<fieldset class="radio-group" [attr.aria-describedby]="error() ? errorId : null">
+  <legend>{{ legend() }}</legend>
+  <ng-content />
+  @if (error()) {
+    <span class="field__error" [id]="errorId">{{ error() }}</span>
+  }
+</fieldset>

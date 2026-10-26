@@ -1,0 +1,39 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Set up the workspace
+
+Container_Boundary(web, "Tutu Much Web (src/frontend)") {
+  Component(app, "projects/tutumuch", "Application", "AppComponent, AppShellComponent, HomePlaceholderPage, app.routes.ts")
+  Component(feat, "projects/accounts … privacy", "Six feature libraries", "Empty lazy route tables")
+  Component(apilib, "projects/api", "Library @tutumuch/api", "provideApi(), API_BASE_URL")
+  Component(comps, "projects/components", "Library @tutumuch/components", "tokens.css, components.css, tm-skip-link, tm-logo, tm-top-bar, tm-footer, tm-toast-region")
+  Component(e2e, "e2e/", "Playwright", "shell.page.ts, shell.spec.ts")
+}
+Container_Boundary(be, "Tutu Much API (src/backend)") {
+  Component(apiproj, "TutuMuch.Api", "ASP.NET Core", "HealthController: GET /api/health")
+  Component(appproj, "TutuMuch.Application", "Class library", "Marker only")
+  Component(dom, "TutuMuch.Domain", "Class library", "Marker only")
+  Component(infra, "TutuMuch.Infrastructure", "Class library", "Marker only")
+  Component(worker, "TutuMuch.Worker", "Worker service", "Empty hosted service")
+  Component(mig, "TutuMuch.Migrator", "Console", "No migrations yet")
+}
+Container_Boundary(t, "tests/") {
+  Component(apitests, "TutuMuch.Api.Tests", "xUnit", "HealthEndpointTests, StatelessApiTests (L2-060)")
+  Component(other, "TutuMuch.*.Tests", "xUnit", "One smoke test each")
+}
+Rel(app, feat, "loadChildren")
+Rel(app, comps, "Shell components")
+Rel(app, apilib, "provideApi()")
+Rel(feat, apilib, "Imports")
+Rel(feat, comps, "Imports")
+Rel(e2e, app, "Loads /")
+Rel(apiproj, appproj, "References")
+Rel(apiproj, infra, "References")
+Rel(appproj, dom, "References")
+Rel(infra, appproj, "References")
+Rel(worker, infra, "References")
+Rel(mig, infra, "References")
+Rel(apitests, apiproj, "WebApplicationFactory, NetArchTest")
+Rel(other, dom, "References each project")
+@enduml

@@ -1,0 +1,24 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Cancel an order
+
+Person(seller, "Seller", "Member")
+Person(buyer, "Buyer", "Member")
+System_Boundary(tutumuch, "Tutu Much") {
+  Container(web, "Tutu Much Web", "Angular", "Sale and order pages, cancellation and relist dialogs")
+  Container(api, "Tutu Much API", "ASP.NET Core", "Cancellation, request, response and relist endpoints; issues refunds")
+  Container(worker, "Tutu Much Worker", ".NET worker service", "Ship deadline job; outbox dispatch of email")
+  ContainerDb(db, "Tutu Much database", "SQL Server", "Orders, refunds, listings, outbox")
+}
+System_Ext(pay, "Payment provider", "Refunds")
+System_Ext(email, "Email provider", "Email")
+Rel(seller, web, "Uses", "HTTPS")
+Rel(buyer, web, "Uses", "HTTPS")
+Rel(web, api, "Calls", "JSON/HTTPS")
+Rel(api, db, "Reads and writes", "EF Core")
+Rel(api, pay, "Refunds in full", "HTTPS")
+Rel(worker, db, "Reads outbox, cancels overdue orders", "EF Core")
+Rel(worker, pay, "Refunds orders it cancels", "HTTPS")
+Rel(worker, email, "Sends email", "HTTPS")
+@enduml

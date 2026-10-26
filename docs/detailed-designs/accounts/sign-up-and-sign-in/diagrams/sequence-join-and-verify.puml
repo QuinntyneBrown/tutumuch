@@ -1,0 +1,69 @@
+@startuml
+title UML sequence behaviour — Join and verify
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Visitor" as actor
+box "Frontend — @tutumuch/accounts and @tutumuch/api" #E0F2FE
+  participant "JoinPage" as join
+  participant "VerifyEmailPage" as verify
+  participant "AccountsApi" as client
+end box
+box "Backend — Tutu Much API application" #D1FADF
+  participant "AuthController" as ctrl
+end box
+box "Backend — TutuMuch Application and Domain" #ECFDF3
+  participant "RegisterMemberCommandHandler" as reg
+  participant "VerificationEmails" as mails
+  participant "VerifyEmailCommandHandler" as ver
+end box
+box "Backend — TutuMuch Infrastructure" #FFF4E5
+  database "Tutu Much database" as db
+  participant "IEmailSender" as email
+end box
+actor -> join : Fill in the form, choose "Join Tutu Much"
+join -> join : Client checks; on failure error summary, focused
+join -> client : register(displayName, email, password, ageConfirmed, termsAccepted)
+client -> ctrl : POST /api/auth/register
+ctrl -> reg : RegisterMemberCommand
+reg -> db : Display name or email already used (ignoring case)?
+alt any rule fails (L2-001)
+  reg --> ctrl : REGISTRATION_INVALID with every failing field
+  ctrl --> client : 422 problem details
+  client --> join : Errors in the summary and inline
+else valid
+  reg -> db : Insert member (unverified, PBKDF2 hash)
+  reg -> mails : SendAsync(member)
+  mails -> db : Revoke earlier links, store the new link's hash (24 hours)
+  mails -> email : Link {App:BaseUrl}/verify?token=...
+  ctrl --> client : 201
+  join --> actor : "Check your email"
+end
+actor -> verify : Open the link
+verify -> client : verifyEmail(token)
+client -> ctrl : POST /api/auth/verify-email
+ctrl -> ver : VerifyEmailCommand
+ver -> db : Find the token by hash
+alt unknown, used or revoked
+  ctrl --> client : 400 VERIFICATION_LINK_USED
+  verify --> actor : "Link already used" with "Sign in"
+else older than 24 hours
+  ctrl --> client : 400 VERIFICATION_LINK_EXPIRED
+  verify --> actor : "This link has expired" with "Send a new link"
+else usable (L2-002)
+  ver -> db : Mark the token used and the member verified
+  ctrl --> client : 200
+  verify --> actor : "You're verified" with "Sell an item"
+end
+@enduml

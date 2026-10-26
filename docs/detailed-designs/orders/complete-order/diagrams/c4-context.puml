@@ -1,0 +1,11 @@
+@startuml
+!include <C4/C4_Context>
+LAYOUT_WITH_LEGEND()
+title System Context — Complete an order
+
+Person(buyer, "Buyer", "Received the item")
+Person(seller, "Seller", "Awaits the payout")
+System(tutumuch, "Tutu Much", "Men's US 12 / L marketplace")
+Rel(buyer, tutumuch, "Confirms receipt using")
+Rel(seller, tutumuch, "Sees the completed sale using")
+@enduml

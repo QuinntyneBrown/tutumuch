@@ -1,0 +1,10 @@
+<footer class="footer">
+  <tm-logo size="sm" />
+  <nav aria-label="Footer">
+    <a routerLink="/rules">Marketplace rules</a>
+    <a routerLink="/privacy">Privacy</a>
+    <a routerLink="/terms">Terms</a>
+    <button class="footer__link" type="button" (click)="cookieSettings.emit()">Cookie settings</button>
+  </nav>
+  <span>© {{ year }} Tutu Much</span>
+</footer>

@@ -1,0 +1,134 @@
+@switch (store.view()) {
+  @case ('loading') {
+    <h1 class="visually-hidden">Loading listing</h1>
+    <div class="detail" aria-busy="true" aria-label="Loading listing">
+      <div class="gallery"><span class="skeleton skeleton--photo"></span></div>
+      <div class="detail__info">
+        <div class="stack stack--sm">
+          <span class="skeleton skeleton--text skeleton--w20"></span>
+          <span class="skeleton skeleton--title skeleton--w80"></span>
+          <span class="skeleton skeleton--text skeleton--w35"></span>
+        </div>
+        <span class="skeleton skeleton--title skeleton--w30"></span>
+        <span class="skeleton skeleton--rect listing-detail__bar-skeleton"></span>
+        <div>
+          <span class="skeleton skeleton--text"></span>
+          <span class="skeleton skeleton--text"></span>
+          <span class="skeleton skeleton--text"></span>
+        </div>
+      </div>
+    </div>
+  }
+  @case ('unavailable') {
+    <tm-center-state code="404" heading="This item isn’t available">
+      <p class="text-muted">It may have been sold or taken down.</p>
+      <a actions tmButton="primary" routerLink="/">Shop similar items</a>
+    </tm-center-state>
+  }
+  @case ('error') {
+    <tm-center-state heading="Couldn’t load this item">
+      <p class="text-muted">It’s us, not you. Try again in a moment.</p>
+      <span class="ref">{{ store.errorRef() }}</span>
+      <button actions tmButton="primary" type="button" (click)="store.retry()">
+        <tm-icon name="refresh" />Try again
+      </button>
+      <a actions tmButton routerLink="/">Back to shop</a>
+    </tm-center-state>
+  }
+  @default {
+    @if (store.listing(); as listing) {
+      <nav aria-label="Breadcrumb" class="listing-detail__breadcrumb">
+        <ol class="breadcrumb">
+          <li><a routerLink="/">Shop</a></li>
+          <li>
+            <a [routerLink]="categoryPath()">{{ listing.category }}</a>
+          </li>
+          @if (listing.subcategory) {
+            <li aria-current="page">{{ listing.subcategory }}</li>
+          }
+        </ol>
+      </nav>
+      <div class="detail">
+        <tm-gallery [photos]="listing.photos" />
+        <div class="detail__info">
+          <div class="stack stack--sm">
+            @if (listing.status === 'Reserved') {
+              <span class="photo__stamp listing-detail__stamp">Reserved</span>
+            } @else if (listing.status === 'Sold') {
+              <span class="photo__stamp photo__stamp--sold listing-detail__stamp">Sold</span>
+            }
+            <span class="eyebrow">{{ listing.brand }}</span>
+            <h1 class="detail__title">{{ listing.title }}</h1>
+            <div class="cluster listing-detail__size">
+              <tm-size-tag [label]="listing.sizeLabel" [large]="true" />
+              <span class="text-muted">{{ listing.condition }}</span>
+            </div>
+          </div>
+          <div class="detail__price">
+            <span class="price price--lg">{{ money(listing.price) }}</span>
+            <span class="text-muted text-sm"
+              >{{ listing.shippingCost === '0.00' ? 'Free shipping' : money(listing.shippingCost) + ' shipping' }} ·
+              <span class="num">{{ money(listing.total) }}</span> total before tax</span
+            >
+          </div>
+          @switch (store.primaryAction()) {
+            @case ('buy') {
+              <tm-buy-bar [total]="money(listing.total)">
+                <a tmButton="primary" size="lg" [routerLink]="['/checkout', listing.reference]">Buy now</a>
+              </tm-buy-bar>
+            }
+            @case ('sign-in-to-buy') {
+              <tm-buy-bar [total]="money(listing.total)">
+                <a
+                  tmButton="primary"
+                  size="lg"
+                  routerLink="/sign-in"
+                  [queryParams]="{ returnUrl: '/items/' + listing.reference }"
+                  >Buy now</a
+                >
+              </tm-buy-bar>
+            }
+            @case ('manage') {
+              <tm-buy-bar [total]="money(listing.total)">
+                <a tmButton="primary" size="lg" [routerLink]="['/items', listing.reference, 'edit']"
+                  ><tm-icon name="edit" />Edit listing</a
+                >
+                <button tmButton size="lg" type="button" (click)="withdraw()">Withdraw</button>
+              </tm-buy-bar>
+            }
+          }
+          @if (listing.status === 'Reserved') {
+            <tm-alert tone="warning" icon="clock" heading="In someone’s checkout"
+              >If they don’t finish within 10 minutes, it’s back on sale.</tm-alert
+            >
+          }
+          @if (listing.flaws) {
+            <div class="flaws"><strong>Flaws:</strong> {{ listing.flaws }}</div>
+          }
+          <p class="listing-detail__description">{{ listing.description }}</p>
+          <dl class="facts">
+            <dt>Size</dt>
+            <dd>{{ fullSize() }}</dd>
+            <dt>Category</dt>
+            <dd>{{ listing.category }}{{ listing.subcategory ? ' · ' + listing.subcategory : '' }}</dd>
+            <dt>Condition</dt>
+            <dd>{{ listing.condition }}</dd>
+            <dt>Listed</dt>
+            <dd>
+              <time [attr.datetime]="listing.publishedAt">{{ listed() }}</time>
+            </dd>
+          </dl>
+          <tm-seller-summary [seller]="listing.seller" />
+        </div>
+      </div>
+      @if (similarCards().length > 0) {
+        <section class="section listing-detail__similar" aria-labelledby="similar-title">
+          <div class="section-head">
+            <h2 id="similar-title">More in size {{ listing.sizeLabel === 'L' ? 'L' : '12' }}</h2>
+          </div>
+          <tm-listing-grid [cards]="similarCards()" />
+        </section>
+      }
+    }
+  }
+}

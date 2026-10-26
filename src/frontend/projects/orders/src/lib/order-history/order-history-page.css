@@ -1,0 +1,18 @@
+:host {
+  display: block;
+}
+.history__skeleton-row {
+  padding-block: var(--space-5);
+}
+.history__skeleton-thumb {
+  height: 3.5rem;
+}
+.history__skeleton-title {
+  width: 50%;
+}
+.history__skeleton-meta {
+  width: 30%;
+}
+.history__skeleton-price {
+  width: 4rem;
+}

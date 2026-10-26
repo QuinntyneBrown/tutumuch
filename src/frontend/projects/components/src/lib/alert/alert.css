@@ -1,0 +1,9 @@
+:host {
+  display: contents;
+}
+.alert__actions:empty {
+  display: none;
+}
+.banner .alert__actions {
+  margin: 0;
+}

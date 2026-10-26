@@ -1,0 +1,105 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+hide empty members
+title Class structure — Resolve order problems
+
+enum ProblemReason {
+  NotReceived
+  NotAsDescribed
+  WrongSize
+  Counterfeit
+}
+enum ProblemStatus {
+  Open
+  Resolved
+}
+enum ProblemOutcome {
+  FullRefund
+  ReleaseToSeller
+}
+class OrderProblem <<aggregate root>> {
+  +Guid Id
+  +string Reference
+  +Guid OrderId
+  +ProblemReason Reason
+  +string Description
+  +ProblemStatus Status
+  +DateTimeOffset OpenedAt
+  +string? SellerResponse
+  +DateTimeOffset? SellerRespondedAt
+  +ProblemOutcome? Outcome
+  +Money? RefundAmount
+  +string? ResolutionReason
+  +Guid? ResolvedBy
+  +DateTimeOffset? ResolvedAt
+  +byte[] RowVersion
+  +{static} Open(order, reason, description, photos, at): OrderProblem
+  +RecordSellerResponse(text, at): void
+  +Resolve(outcome, amount, reason, adminId, at): void
+}
+class ProblemPhoto {
+  +Guid Id
+  +Guid ProblemId
+  +int Position
+  +string StorageKey
+  +string ContentType
+}
+class Order <<see ship-order>> {
+  +bool CanReportProblem(now): bool
+  +RefundForProblem(at): void
+  +Complete(actor, at): void
+}
+class Payout <<see seller-payouts>> {
+  +HoldForProblem(): void
+  +MarkReleasable(at): void
+  +Cancel(): void
+}
+class ReportProblemCommand {
+  +Guid OrderId
+  +ProblemReason Reason
+  +string Description
+  +IReadOnlyList<IFormFile> Photos
+}
+class ReportProblemCommandValidator
+class ReportProblemCommandHandler
+class RespondToProblemCommand {
+  +Guid OrderId
+  +string Message
+}
+class RespondToProblemCommandHandler
+class ResolveProblemCommand {
+  +string Reference
+  +ProblemOutcome Outcome
+  +Money? RefundAmount
+  +string Reason
+}
+class ResolveProblemCommandValidator
+class ResolveProblemCommandHandler
+class GetProblemDetailQueryHandler
+OrderProblem --> ProblemReason
+OrderProblem --> ProblemStatus
+OrderProblem --> ProblemOutcome
+OrderProblem "1" *-- "0..4" ProblemPhoto
+Order "1" -- "0..1" OrderProblem
+ReportProblemCommandHandler ..> ReportProblemCommand : handles
+ReportProblemCommandValidator ..> ReportProblemCommand : validates
+ReportProblemCommandHandler --> OrderProblem : Open
+ReportProblemCommandHandler --> Payout : HoldForProblem()
+RespondToProblemCommandHandler ..> RespondToProblemCommand : handles
+RespondToProblemCommandHandler --> OrderProblem : RecordSellerResponse
+ResolveProblemCommandHandler ..> ResolveProblemCommand : handles
+ResolveProblemCommandValidator ..> ResolveProblemCommand : validates
+ResolveProblemCommandHandler --> OrderProblem : Resolve
+ResolveProblemCommandHandler --> Order : Refund / Complete
+ResolveProblemCommandHandler --> Payout : Cancel (refund); OrderCompleted makes it Releasable (release)
+GetProblemDetailQueryHandler ..> OrderProblem
+@enduml

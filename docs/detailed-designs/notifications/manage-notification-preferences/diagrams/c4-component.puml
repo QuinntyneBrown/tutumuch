@@ -1,0 +1,35 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Manage notification preferences
+
+Container(web, "Tutu Much Web", "Angular", "NotificationSettingsPage and UnsubscribePage (@tutumuch/accounts), NotificationPreferencesApi (@tutumuch/api)")
+
+Container_Boundary(api, "Tutu Much API") {
+  Component(ctrl, "NotificationPreferencesController", "ASP.NET Core controller", "GET and PUT /api/me/notification-preferences for any signed-in member")
+  Component(uctrl, "UnsubscribeController", "ASP.NET Core controller", "Anonymous POST /api/notifications/unsubscribe")
+  Component(get, "GetNotificationPreferencesQueryHandler", "MediatR handler", "Returns 4 categories, 2 locked on")
+  Component(upd, "UpdateNotificationPreferencesCommandHandler", "MediatR handler", "Saves reviewEmails and marketingEmails")
+  Component(unsub, "UnsubscribeCommandHandler", "MediatR handler", "Turns marketing off from a valid token")
+  Component(tokens, "UnsubscribeTokens", "Application service", "HMAC-SHA256 signed tokens, key from secret store")
+  Component(entity, "NotificationPreferences", "Domain entity", "Optional flags and IsAllowed rule")
+}
+Container_Boundary(worker, "Tutu Much Worker") {
+  Component(reader, "INotificationPreferenceReader", "Read port", "Used by DispatchEmailsHandler; a missing row is the defaults")
+}
+ContainerDb(db, "Tutu Much database", "SQL Server", "NotificationPreferences")
+
+Rel(web, ctrl, "Calls", "JSON/HTTPS")
+Rel(web, uctrl, "Calls", "JSON/HTTPS")
+Rel(ctrl, get, "Sends GetNotificationPreferencesQuery")
+Rel(ctrl, upd, "Sends UpdateNotificationPreferencesCommand")
+Rel(uctrl, unsub, "Sends UnsubscribeCommand")
+Rel(unsub, tokens, "Validates token")
+Rel(upd, entity, "Update")
+Rel(unsub, entity, "UnsubscribeMarketing")
+Rel(reader, entity, "IsAllowed")
+Rel(get, db, "Reads", "EF Core")
+Rel(upd, db, "Writes with Version as concurrency token", "EF Core")
+Rel(unsub, db, "Writes", "EF Core")
+Rel(reader, db, "Reads", "EF Core")
+@enduml

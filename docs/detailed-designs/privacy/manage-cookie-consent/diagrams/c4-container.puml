@@ -1,0 +1,16 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Manage cookie consent
+
+Person(visitor, "Visitor", "Browser user")
+System_Boundary(tutumuch, "Tutu Much") {
+  Container(web, "Tutu Much Web", "Angular", "Consent banner, Cookie settings dialog, consent cookie, analytics loader")
+  Container(api, "Tutu Much API", "ASP.NET Core", "Sets only strictly necessary cookies")
+}
+System_Ext(analytics, "Analytics provider", "Script and collection endpoint")
+
+Rel(visitor, web, "Uses", "HTTPS")
+Rel(web, api, "Calls", "JSON/HTTPS")
+Rel(web, analytics, "Loads script and sends events when consent = analytics", "HTTPS")
+@enduml

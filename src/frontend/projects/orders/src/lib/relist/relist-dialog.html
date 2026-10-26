@@ -1,0 +1,27 @@
+<tm-dialog heading="Relist this item?" size="sm">
+  <span description>It goes back in the catalog with its original photos, price and description.</span>
+  @if (state() === 'failed') {
+    <tm-alert top tone="danger" heading="That didn’t go through"
+      >Nothing changed. Check your connection and try again.</tm-alert
+    >
+  }
+  <tm-item-row [title]="data.item.title" [meta]="meta">
+    <div thumb class="thumb">
+      <div class="photo photo--6">
+        @if (data.item.photo; as photo) {
+          <picture>
+            <source type="image/webp" [attr.srcset]="photo.webp" sizes="64px" />
+            <img [src]="photo.src" [attr.srcset]="photo.jpeg" sizes="64px" alt="" width="160" height="160" />
+          </picture>
+        }
+      </div>
+    </div>
+  </tm-item-row>
+  <ng-container ngProjectAs="[footer]">
+    <button tmButton type="button" [disabled]="state() === 'busy'" (click)="ref.close()">Not now</button>
+    <a tmButton [routerLink]="['/items', data.item.reference, 'edit']" (click)="ref.close()">Edit first</a>
+    <button tmButton="primary" type="button" data-autofocus [busy]="state() === 'busy'" (click)="submit()">
+      {{ state() === 'failed' ? 'Try again' : 'Relist' }}
+    </button>
+  </ng-container>
+</tm-dialog>

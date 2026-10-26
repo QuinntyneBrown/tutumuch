@@ -1,0 +1,6 @@
+:host {
+  display: contents;
+}
+.verify__lead {
+  margin-top: var(--space-2);
+}

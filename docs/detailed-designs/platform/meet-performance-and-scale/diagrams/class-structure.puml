@@ -1,0 +1,33 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Meet performance and scale targets
+
+package "Tutu Much API" {
+  enum EndpointKind {
+    Read
+    Write
+    PaymentBound
+  }
+  class EndpointKindAttribute {
+    +EndpointKind Kind
+  }
+  class RedisConnectionFactory {
+    +IConnectionMultiplexer Connection
+  }
+  class PerformanceOptions {
+    +int DbReadTimeoutSeconds = 5
+    +int DbWriteTimeoutSeconds = 15
+    +int DbContextPoolSize = 128
+  }
+}
+EndpointKindAttribute --> EndpointKind
+@enduml

@@ -1,0 +1,48 @@
+{
+  "name": "tutumuch-frontend",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve tutumuch",
+    "build:libs": "ng build api && ng build components && ng build accounts && ng build catalog && ng build listings && ng build orders && ng build reviews && ng build privacy",
+    "build:app": "ng build tutumuch",
+    "build:all": "npm run build:libs && npm run build:app",
+    "format": "prettier --write .",
+    "lint": "prettier --check . && eslint .",
+    "backend:restore": "dotnet restore ../backend/TutuMuch.sln",
+    "backend:format": "dotnet format ../backend/TutuMuch.sln --no-restore --verify-no-changes",
+    "backend:build": "dotnet build ../backend/TutuMuch.sln --no-restore -warnaserror",
+    "backend:test": "dotnet test ../backend/TutuMuch.sln --no-build",
+    "backend:verify": "npm run backend:restore && npm run backend:format && npm run backend:build && npm run backend:test",
+    "test:e2e": "playwright test",
+    "verify": "npm run backend:verify && npm run lint && npm run build:all && npm run test:e2e"
+  },
+  "private": true,
+  "packageManager": "npm@11.19.1",
+  "dependencies": {
+    "@angular/common": "^22.2.0",
+    "@angular/compiler": "^22.2.0",
+    "@angular/core": "^22.2.0",
+    "@angular/forms": "^22.2.0",
+    "@angular/platform-browser": "^22.2.0",
+    "@angular/router": "^22.2.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^22.2.4",
+    "@angular/cli": "^22.2.4",
+    "@angular/compiler-cli": "^22.2.0",
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.64.1",
+    "angular-eslint": "^22.6.0",
+    "eslint": "^10.13.0",
+    "ng-packagr": "^22.2.0",
+    "prettier": "^3.8.1",
+    "typescript": "~6.0.2",
+    "typescript-eslint": "^8.72.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

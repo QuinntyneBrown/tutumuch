@@ -1,0 +1,17 @@
+<div class="backdrop"></div>
+<div
+  class="menu-sheet"
+  [class.filter-sheet]="side()"
+  role="dialog"
+  aria-modal="true"
+  [attr.aria-labelledby]="id + '-title'"
+>
+  <div class="menu-sheet__head">
+    <h2 class="sheet__title" [id]="id + '-title'">{{ heading() }}</h2>
+    <button tmButton="ghost" class="btn--icon" type="button" [attr.aria-label]="closeLabel()" (click)="close()">
+      <tm-icon name="close" />
+    </button>
+  </div>
+  <div class="menu-sheet__body"><ng-content /></div>
+  <div class="menu-sheet__foot"><ng-content select="[footer]" /></div>
+</div>

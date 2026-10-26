@@ -1,0 +1,153 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Create a listing
+
+package "TutuMuch.Domain" {
+  enum ListingStatus {
+    Draft
+    Active
+    Reserved
+    Sold
+    Removed
+  }
+  enum ItemCondition {
+    NewWithTags
+    NewWithoutTags
+    UsedExcellent
+    UsedGood
+    UsedFair
+  }
+  class CategoryCatalog {
+    +IReadOnlyList<CategoryDefinition> All
+    +CategoryDefinition? Find(category)
+    +bool Accepts(category, subcategory?)
+    +string AcceptedSizeFor(category)
+  }
+  class CategoryDefinition {
+    +string Name
+    +IReadOnlyList<string> Subcategories
+    +string AcceptedSize
+    +string SizeLabel
+  }
+  class ListingDetails <<record>> {
+    +string? Category
+    +string? Subcategory
+    +string? Size
+    +string? Title
+    +string? Description
+    +string? Brand
+    +string? Condition
+    +string? Flaws
+    +decimal? Price
+    +decimal? ShippingCost
+  }
+  class RuleViolation <<record>> {
+    +string Field
+    +string Code
+    +string Message
+  }
+  class Listing {
+    +Guid Id
+    +long Number
+    +string Reference
+    +Guid SellerId
+    +ListingStatus Status
+    +string Category
+    +string? Subcategory
+    +string Size
+    +string? Title
+    +string? Description
+    +string? Brand
+    +ItemCondition? Condition
+    +string? Flaws
+    +decimal? Price
+    +decimal? ShippingCost
+    +DateTime? SizeConfirmedAt
+    +DateTime CreatedAt
+    +DateTime UpdatedAt
+    +DateTime? PublishedAt
+    +static CreateDraft(sellerId, number, details, now): Listing
+    +static CheckDraft(details): IReadOnlyList<RuleViolation>
+    +UpdateDetails(details, now): void
+    +Publish(sizeConfirmed, now): IReadOnlyList<RuleViolation>
+  }
+}
+
+package "TutuMuch.Application" {
+  class CreateListingDraftCommand {
+    +Guid SellerId
+    +ListingDetails Details
+  }
+  class UpdateListingDraftCommand {
+    +Guid SellerId
+    +string Reference
+    +ListingDetails Details
+  }
+  class PublishListingCommand {
+    +Guid SellerId
+    +string Reference
+    +bool SizeConfirmed
+  }
+  class PublishListingResult {
+    +string Reference
+    +string Status
+    +bool PayoutOnboardingRequired
+  }
+  class MyListingDto
+  class ListingCommandHandlers {
+    +Handle(CreateListingDraftCommand): Result<MyListingDto>
+    +Handle(UpdateListingDraftCommand): Result<MyListingDto>
+    +Handle(PublishListingCommand): Result<PublishListingResult>
+    +Handle(GetMyListingQuery): Result<MyListingDto>
+  }
+  class "Result<T>" as Result {
+    +T? Value
+    +Error? Error
+  }
+  interface ITutuMuchDbContext {
+    +DbSet<Listing> Listings
+  }
+  interface ISellerPayoutAccountReader {
+    +IsOnboardedAsync(sellerId): Task<bool>
+  }
+}
+
+package "TutuMuch.Api" {
+  class ListingsController {
+    +Create(body: ListingDetailsRequest)
+    +Update(reference, body: ListingDetailsRequest)
+    +Publish(reference, body: PublishRequest)
+    +GetMine(reference)
+  }
+  class CategoriesController {
+    +Categories()
+    +SellingOptions()
+  }
+}
+
+ListingsController ..> CreateListingDraftCommand : sends
+ListingsController ..> UpdateListingDraftCommand : sends
+ListingsController ..> PublishListingCommand : sends
+CategoriesController ..> CategoryCatalog : reads
+ListingCommandHandlers ..> Result : returns
+ListingCommandHandlers ..> PublishListingResult : returns
+ListingCommandHandlers ..> MyListingDto : returns
+ListingCommandHandlers --> Listing : creates / mutates
+ListingCommandHandlers ..> ITutuMuchDbContext : uses
+ListingCommandHandlers ..> ISellerPayoutAccountReader : uses
+Listing ..> ListingDetails : takes
+Listing ..> RuleViolation : reports
+Listing ..> CategoryCatalog : resolves size
+Listing --> ListingStatus : has
+Listing --> ItemCondition : has
+CategoryCatalog "1" *-- "4" CategoryDefinition
+@enduml

@@ -1,0 +1,66 @@
+@startuml
+title UML sequence behaviour — Signed payment webhook creates the order
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+skinparam sequenceMessageAlign left
+skinparam maxMessageSize 260
+participant "Payment provider" as pay
+box "Backend — Tutu Much API application (TutuMuch.Api)" #D1FADF
+  participant "PaymentWebhookController" as wh
+end box
+box "Backend — TutuMuch.Application and TutuMuch.Domain" #ECFDF3
+  participant "PaymentWebhookHandler" as h
+  participant "Order" as order
+end box
+box "Backend — TutuMuch.Infrastructure" #FFF4E5
+  participant "IPaymentProvider" as ppa
+  database "Tutu Much database" as db
+end box
+pay -> wh : POST /api/payments/webhook (raw body + Payment-Signature)
+wh -> h : Send HandlePaymentWebhookCommand(body, signature)
+h -> ppa : ReadWebhook(body, signature)
+alt invalid signature (L2-030 criterion 4)
+  ppa --> h : null
+  h --> wh : 400 "WEBHOOK_SIGNATURE_INVALID"
+  wh -> wh : Log security event payment.webhook.invalid_signature
+  wh --> pay : 400
+else valid
+  ppa --> h : PaymentEvent (event id, Tutu Much payment id, card brand, last four)
+  h -> db : Event id already in PaymentWebhookEvents?
+  alt duplicate event id (L2-030 criterion 5)
+    h --> wh : Duplicate
+    wh --> pay : 200, nothing changes
+  else new event
+    h -> db : Add PaymentWebhookEvent; load Payment and Checkout
+    alt payment.failed
+      h -> h : Payment Failed; Checkout Open with LastDeclineReason (L2-030 criterion 3)
+    else payment.succeeded
+      h -> h : Payment Succeeded with provider id, brand, last four
+      alt listing Reserved for this checkout or Active again, and no order for the listing
+        h -> order : CreatePaid(number, checkout, sellerId, payment, now)
+        h -> db : Insert Order (Paid); Listing Sold; Checkout Paid; upsert SavedAddress
+      else listing sold to another order or re-reserved (L2-029 criterion 2)
+        h -> db : Insert Refund (DuplicatePayment, full amount); no order
+      end
+    end
+    h -> db : SaveChanges (event key and order indexes reject a concurrent copy)
+    opt a refund was recorded
+      h -> ppa : RefundAsync(providerPaymentId, amount, refund id as key)
+      h -> db : Refund Issued
+    end
+    wh --> pay : 200
+  end
+end
+@enduml

@@ -1,0 +1,33 @@
+:host {
+  display: block;
+}
+.checkout__skeleton {
+  margin-top: var(--space-10);
+}
+.checkout__block {
+  height: 6rem;
+}
+.checkout__button {
+  height: 3rem;
+}
+.checkout__thumb {
+  height: 3.5rem;
+}
+.checkout__banner {
+  margin-top: var(--space-6);
+}
+.checkout__paying {
+  text-align: center;
+}
+.skeleton--w40 {
+  width: 40%;
+}
+.skeleton--w45 {
+  width: 45%;
+}
+.skeleton--w50 {
+  width: 50%;
+}
+.skeleton--w70 {
+  width: 70%;
+}

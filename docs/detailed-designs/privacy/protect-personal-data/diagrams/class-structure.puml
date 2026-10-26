@@ -1,0 +1,106 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Protect personal data
+
+interface IPublicDto
+class PublicListingCardDto <<record>> {
+  +Guid Id
+  +string Title
+  +string Brand
+  +string SizeLabel
+  +string Condition
+  +int PriceCents
+  +string PrimaryPhotoUrl
+  +string SellerDisplayName
+}
+class PublicMemberProfileDto <<record>> {
+  +string DisplayName
+  +string AvatarUrl
+  +string Bio
+  +string PublicLocation
+  +DateOnly MemberSince
+  +decimal RatingAverage
+  +int RatingCount
+  +int CompletedSales
+}
+class PublicReviewDto <<record>> {
+  +Guid Id
+  +int Rating
+  +string Text
+  +string ReviewerDisplayName
+  +string Role
+  +DateTimeOffset CreatedAt
+}
+class PublicResponseAttribute
+class PublicResponseGuardFilter {
+  +OnResultExecuting(context): void
+}
+class PersonalDataFieldNames <<static>> {
+  +IReadOnlySet<string> All
+}
+
+class ShippingAddress <<value object>> {
+  +string RecipientName
+  +string Line1
+  +string Line2
+  +string City
+  +string State
+  +string PostalCode
+  +string Country
+}
+interface IFieldEncryptor {
+  +Encrypt(plaintext: bytes, purpose: string): byte[]
+  +Decrypt(envelope: bytes, purpose: string): byte[]
+}
+class ShippingAddressProtector {
+  +Protect(address: ShippingAddress): byte[]
+  +Unprotect(envelope: byte[]): ShippingAddress
+}
+class AesGcmFieldEncryptor {
+  -FieldEncryptionKeyRing keyRing
+  +Encrypt(plaintext: bytes, purpose: string): byte[]
+  +Decrypt(envelope: bytes, purpose: string): byte[]
+}
+class FieldEncryptionKeyRing {
+  +Guid ActiveKeyId
+  +GetKey(keyId: Guid): byte[]
+}
+class EncryptedShippingAddressConverter {
+  +ConvertToProvider(address): byte[]
+  +ConvertFromProvider(envelope): ShippingAddress
+}
+class FieldDecryptionException
+class DatabaseEncryptionHealthCheck {
+  +CheckHealthAsync(): HealthCheckResult
+}
+class PhotoStorageEncryptionHealthCheck {
+  +CheckHealthAsync(): HealthCheckResult
+}
+class ReEncryptShippingAddressesJob {
+  +int BatchSize
+  +RunAsync(ct): Task
+}
+
+IPublicDto <|.. PublicListingCardDto
+IPublicDto <|.. PublicMemberProfileDto
+IPublicDto <|.. PublicReviewDto
+PublicResponseGuardFilter ..> PublicResponseAttribute : applies to tagged endpoints
+PublicResponseGuardFilter ..> IPublicDto : requires
+PersonalDataFieldNames <.. PublicResponseGuardFilter : architecture test
+IFieldEncryptor <|.. AesGcmFieldEncryptor
+AesGcmFieldEncryptor --> FieldEncryptionKeyRing : keys
+AesGcmFieldEncryptor ..> FieldDecryptionException : throws
+ShippingAddressProtector --> IFieldEncryptor
+ShippingAddressProtector ..> ShippingAddress : serialises
+EncryptedShippingAddressConverter --> ShippingAddressProtector
+ReEncryptShippingAddressesJob --> ShippingAddressProtector
+@enduml

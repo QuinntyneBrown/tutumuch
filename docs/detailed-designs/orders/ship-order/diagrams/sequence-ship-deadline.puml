@@ -1,0 +1,53 @@
+@startuml
+title UML sequence behaviour — Ship deadline job cancels and refunds
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+skinparam sequenceMessageAlign left
+skinparam maxMessageSize 260
+box "Backend — Tutu Much Worker application (TutuMuch.Worker)" #D1FADF
+  participant "ShipDeadlineJob" as dl
+end box
+box "Backend — TutuMuch.Application and TutuMuch.Domain" #ECFDF3
+  participant "CancelUnshippedOrdersHandler" as h
+  participant "Order" as order
+end box
+box "Backend — TutuMuch.Infrastructure" #FFF4E5
+  database "Tutu Much database" as db
+end box
+participant "Payment provider" as pay
+== Every Orders:DeadlineJobInterval (5 minutes) ==
+dl -> h : Send CancelUnshippedOrdersCommand (own scope)
+h -> db : Select Paid orders where ShipBy <= now (IX_Orders_Status_ShipBy)
+db --> h : Overdue order IDs
+loop each overdue order
+  h -> db : Load order and payment
+  h -> order : Cancel(System, now)
+  order -> order : Append Paid to Cancelled, actor System (L2-032)
+  h -> db : Save order and Refund(ShipDeadlinePassed, full amount) WHERE Status = 'Paid'
+  alt tracking added concurrently
+    db --> h : DbUpdateConcurrencyException
+    h -> h : Clear the change tracker, skip the order
+  else committed
+    h -> pay : RefundAsync(payment, amount, key = Refund.Id)
+    alt provider answers
+      pay --> h : Refund ID
+      h -> db : Refund Issued
+    else provider unavailable
+      h -> h : Refund stays Pending for the outbox
+    end
+  end
+end
+h --> dl : Number cancelled
+@enduml

@@ -1,0 +1,9 @@
+<div class="load-more">
+  <span class="text-sm text-muted">Showing {{ shown() | number }} of {{ total() | number }}</span>
+  @if (shown() < total()) {
+    <button tmButton type="button" [busy]="busy()" aria-describedby="lm-note" (click)="loadMore.emit()">
+      Load more
+    </button>
+    <span id="lm-note" class="visually-hidden">Loads the next {{ pageSize() }} items</span>
+  }
+</div>

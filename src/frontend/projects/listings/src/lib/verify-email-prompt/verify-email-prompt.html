@@ -1,0 +1,22 @@
+<tm-dialog heading="Verify your email first" icon="mail">
+  <span description
+    >Open the link we sent to <strong>{{ data.email }}</strong> to buy and sell.</span
+  >
+  @if (state() === 'sent') {
+    <tm-alert top tone="success" heading="Link sent" live="polite">Earlier links no longer work.</tm-alert>
+  } @else if (state() === 'limited') {
+    <tm-alert top tone="warning" heading="Too many requests" icon="clock"
+      >You can request 3 links an hour. Try again later.</tm-alert
+    >
+  }
+  <ng-container ngProjectAs="[footer]">
+    @if (state() === 'sent' || state() === 'limited') {
+      <button tmButton="primary" type="button" data-autofocus (click)="ref.close()">Done</button>
+    } @else {
+      <button tmButton type="button" (click)="ref.close()">Not now</button>
+      <button tmButton="primary" type="button" data-autofocus [busy]="state() === 'busy'" (click)="resend()">
+        Resend link
+      </button>
+    }
+  </ng-container>
+</tm-dialog>

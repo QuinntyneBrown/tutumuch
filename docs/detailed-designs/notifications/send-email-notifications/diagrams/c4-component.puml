@@ -1,0 +1,32 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Send email notifications
+
+Container_Boundary(api, "Tutu Much API") {
+  Component(producer, "Feature command handler", "MediatR handler", "For example PaymentWebhookHandler in checkouts")
+  Component(publisher, "EmailOutbox", "IEmailOutbox", "Adds an OutboxMessage to the DbContext")
+}
+Container_Boundary(worker, "Tutu Much Worker") {
+  Component(dispatcher, "EmailDispatchJob", "Hosted service", "Polls every 10 s, drains full batches of 50")
+  Component(reminders, "ShipReminderJob", "Hosted service", "Queues ship-by reminders every 15 min")
+  Component(handler, "DispatchEmailsHandler", "MediatR handler", "Claim, resolve, render, guard, send, record")
+  Component(renderer, "EmailTemplates", "Static", "Plain-text template and deep link per NotificationType")
+  Component(guard, "EmailContentGuard", "Static", "Blocks card numbers, security codes and passwords")
+  Component(sender, "IEmailSender", "Port", "Email provider adapter; LoggingEmailSender until a provider is chosen")
+  Component(outbox, "OutboxMessage", "Entity", "Retry state machine with back-off for 24 hours")
+}
+ContainerDb(db, "Tutu Much database", "SQL Server", "OutboxMessages, Members, Orders")
+System_Ext(email, "Email provider", "Delivers email")
+
+Rel(producer, publisher, "Enqueue(type, recipient, model)")
+Rel(publisher, db, "Inserts OutboxMessages in the same transaction", "EF Core")
+Rel(reminders, publisher, "Enqueue(ShipByReminder)")
+Rel(dispatcher, handler, "Sends DispatchEmailsCommand")
+Rel(handler, db, "Claims due messages with a claim-token check, reads Members", "EF Core")
+Rel(handler, renderer, "Renders subject and body")
+Rel(handler, guard, "Scans rendered content")
+Rel(handler, sender, "Sends with idempotency key")
+Rel(handler, outbox, "Records Sent, Suppressed, failure")
+Rel(sender, email, "Sends", "HTTPS API")
+@enduml

@@ -1,0 +1,107 @@
+@if (store.view() === 'offline') {
+  <tm-alert tone="warning" icon="wifi-off" live="polite" [banner]="true"
+    >You’re offline. Showing items from your last visit.</tm-alert
+  >
+}
+@if (query().q) {
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Search</p>
+      <h1>“{{ query().q }}”</h1>
+    </div>
+  </div>
+} @else if (categoryHeader(); as category) {
+  <div class="page-header">
+    <div class="stack stack--sm">
+      <h1>{{ category.label }}</h1>
+      <div><tm-size-tag [label]="category.sizeLabel" [large]="true" /></div>
+    </div>
+  </div>
+} @else if (filtered()) {
+  <div class="page-header"><h1>Shop</h1></div>
+} @else {
+  <section class="hero" aria-labelledby="hero-title">
+    <h1 class="display" id="hero-title">Size 12. Size L. <em>Nothing else.</em></h1>
+    <p class="lead">Every listing fits. Men’s US 12 shoes and men’s L clothing, new and used.</p>
+  </section>
+}
+<div class="catalog-layout">
+  <tm-filters-sidebar [query]="query()" [brands]="brands()" (apply)="show($event)" />
+  <section aria-label="Listings">
+    <div class="toolbar">
+      <div class="toolbar__left">
+        <button tmButton class="filters-toggle" type="button" (click)="openFilters()">Filters</button>
+        <span class="text-muted text-sm" aria-live="polite">
+          @switch (store.view()) {
+            @case ('loading') {
+              <span class="skeleton skeleton--text catalog__count-skeleton"></span>
+            }
+            @case ('offline') {
+              {{ store.totalCount() | number }} saved items
+            }
+            @case ('error') {}
+            @default {
+              {{ store.totalCount() | number }} items
+            }
+          }
+        </span>
+        @for (chip of chips(); track chip.label) {
+          <tm-chip [label]="chip.label" (remove)="show(chip.without)" />
+        }
+        @if (filtered() && store.view() !== 'empty') {
+          <button tmButton="link" class="btn--sm" type="button" (click)="clearAll()">Clear all</button>
+        }
+      </div>
+      <label class="sort">
+        <span class="text-sm text-muted">Sort</span>
+        <select #sort class="select input--sm" (change)="sortBy(sort.value)">
+          @for (option of sorts; track option.value) {
+            <option [value]="option.value" [selected]="query().sort === option.value">{{ option.label }}</option>
+          }
+        </select>
+      </label>
+    </div>
+    @switch (store.view()) {
+      @case ('empty') {
+        @if (filtered()) {
+          <tm-empty-state icon="search" heading="No items match">
+            Try fewer filters or a different word.
+            <button actions tmButton="primary" type="button" (click)="clearAll()">Clear search and filters</button>
+          </tm-empty-state>
+        } @else {
+          <tm-empty-state icon="tag" heading="Nothing listed yet">
+            Be the first to list a pair of 12s or something in L.
+            <a actions tmButton="primary" routerLink="/sell">Sell an item</a>
+          </tm-empty-state>
+        }
+      }
+      @case ('error') {
+        <tm-empty-state icon="refresh" heading="Couldn’t load items" tone="error">
+          Something went wrong on our side. <span class="ref">{{ store.errorRef() }}</span>
+          <button actions tmButton="primary" type="button" (click)="store.retry()">
+            <tm-icon name="refresh" />Try again
+          </button>
+        </tm-empty-state>
+      }
+      @default {
+        <tm-listing-grid [cards]="cards()" [loading]="store.view() === 'loading'" />
+        @if (store.moreErrorRef(); as ref) {
+          <div class="catalog__more-error">
+            <tm-alert tone="danger" heading="Couldn’t load more items"
+              >Something went wrong on our side. <span class="ref">{{ ref }}</span>
+              <button tmButton="link" type="button" (click)="store.loadMore()">Try again</button></tm-alert
+            >
+          </div>
+        }
+        @if (store.view() === 'loaded') {
+          <tm-load-more
+            [shown]="store.items().length"
+            [total]="store.totalCount()"
+            [busy]="store.loadingMore()"
+            (loadMore)="store.loadMore()"
+          />
+        }
+      }
+    }
+  </section>
+</div>

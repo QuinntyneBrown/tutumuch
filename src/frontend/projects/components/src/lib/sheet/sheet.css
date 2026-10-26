@@ -1,0 +1,9 @@
+:host {
+  display: contents;
+}
+.sheet__title {
+  font: var(--text-h4);
+}
+.menu-sheet__foot:empty {
+  display: none;
+}

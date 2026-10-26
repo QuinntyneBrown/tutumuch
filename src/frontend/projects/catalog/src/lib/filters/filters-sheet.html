@@ -1,0 +1,16 @@
+<tm-sheet heading="Filters" closeLabel="Close filters" [side]="true">
+  <tm-error-summary heading="Check the price range" [errors]="summary()" />
+  <tm-filter-form idPrefix="sheet" [query]="draft()" [brands]="data.brands" (changed)="edit($event)" />
+  <button footer tmButton type="button" (click)="clear()">Clear</button>
+  <button
+    footer
+    tmButton="primary"
+    type="button"
+    data-autofocus
+    [disabled]="!!error()"
+    [attr.aria-busy]="busy() ? 'true' : null"
+    (click)="apply()"
+  >
+    {{ label() }}
+  </button>
+</tm-sheet>

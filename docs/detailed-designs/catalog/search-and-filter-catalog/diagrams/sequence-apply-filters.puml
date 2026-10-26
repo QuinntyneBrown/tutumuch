@@ -1,0 +1,56 @@
+@startuml
+title UML sequence behaviour — Apply filters in the filter sheet
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+actor "Visitor or member" as actor
+box "Frontend — Tutu Much Web application" #E0F2FE
+  participant "CatalogPage" as page
+  participant "FiltersSheet" as panel
+  participant "FilterForm" as form
+  participant "CatalogApi" as client
+end box
+box "Backend — Tutu Much API application" #D1FADF
+  participant "CatalogController" as controller
+end box
+box "Backend — TutuMuch Application" #ECFDF3
+  participant "CountCatalogListingsQueryHandler" as count
+  participant "CatalogCriteria" as criteria
+end box
+box "Backend — TutuMuch Infrastructure" #FFF4E5
+  database "Tutu Much database" as db
+end box
+actor -> page : Tap "Filters" (viewport under 992 px)
+page -> panel : SheetService.open(FiltersSheet, query and brands)
+panel --> actor : Full screen under 768 px, side panel 768-991 px (L2-062)
+actor -> form : Choose Shoes, New with tags, price 200 to 50
+form -> panel : (changed) draft
+panel -> panel : priceError(draft)
+alt minimum greater than maximum
+  panel --> actor : "Check the price range", "Minimum price must be lower than maximum",\n"Show items" disabled (L2-024)
+else valid range (after correction to 20 to 200)
+  panel --> actor : busy, "Show items" aria-busy
+  panel -> client : count(draft) 300 ms after the last edit, stale answers ignored
+  client -> controller : GET /api/catalog/listings/count?category=shoes&condition=new-with-tags&min=20&max=200
+  controller -> count : Send CountCatalogListingsQuery
+  count -> criteria : From(filters)
+  alt filters invalid (direct request)
+    criteria --> count : CATALOG_PRICE_RANGE_INVALID or CATALOG_FILTER_INVALID
+    count --> controller : Error
+    controller --> client : 400 problem details
+  else filters valid
+    count -> db : COUNT with filters AND-ed, values OR-ed (L2-024)
+    db --> count : 38
+    count --> controller : 38
+    controller --> client : 200 {"totalCount": 38}
+    client --> panel : 38
+    panel --> actor : "Show 38 items"
+    actor -> panel : Choose "Show 38 items"
+    panel --> page : close(draft), focus returns to "Filters"
+    page -> page : navigate("/", toParams(draft)); parse URL and load results
+    page --> actor : Results with chips "Shoes", "New with tags", "$20–$200"
+  end
+end
+@enduml

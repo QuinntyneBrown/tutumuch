@@ -1,0 +1,28 @@
+<tm-dialog heading="Got it and all good?" size="sm">
+  <span description
+    >This completes the order and pays {{ data.sellerDisplayName }}. You can’t report a problem afterwards.</span
+  >
+  @if (state() === 'failed') {
+    <tm-alert top tone="danger" heading="That didn’t go through"
+      >Nothing changed. Check your connection and try again.</tm-alert
+    >
+  }
+  <tm-item-row [title]="data.item.title" [meta]="data.item.brand + ' · ' + data.item.size">
+    <div thumb class="thumb">
+      <div class="photo photo--1">
+        @if (data.item.photo; as photo) {
+          <picture>
+            <source type="image/webp" [attr.srcset]="photo.webp" sizes="64px" />
+            <img [src]="photo.src" [attr.srcset]="photo.jpeg" sizes="64px" alt="" width="160" height="160" />
+          </picture>
+        }
+      </div>
+    </div>
+  </tm-item-row>
+  <ng-container ngProjectAs="[footer]">
+    <button tmButton type="button" [disabled]="state() === 'busy'" (click)="ref.close()">Not yet</button>
+    <button tmButton="primary" type="submit" data-autofocus [busy]="state() === 'busy'" (click)="submit()">
+      {{ state() === 'failed' ? 'Try again' : 'Yes, complete order' }}
+    </button>
+  </ng-container>
+</tm-dialog>

@@ -1,0 +1,105 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Search and filter the catalog
+
+class CatalogFilters <<record>> {
+  +string? Q
+  +string? Category
+  +IReadOnlyList<string>? Subcategories
+  +IReadOnlyList<string>? Brands
+  +IReadOnlyList<string>? Conditions
+  +string? MinPrice
+  +string? MaxPrice
+  +string? Sort
+}
+
+class CatalogCriteria <<record>> {
+  +IReadOnlyList<string> Words
+  +string? Category
+  +IReadOnlyList<string> Subcategories
+  +IReadOnlyList<string> Brands
+  +IReadOnlyList<ItemCondition> Conditions
+  +decimal? MinPrice
+  +decimal? MaxPrice
+  +CatalogSort Sort
+  +{static} MaxSearchTermLength = 100
+  +{static} From(filters: CatalogFilters): Result<CatalogCriteria>
+  +Apply(listings: IQueryable<Listing>): IQueryable<Listing>
+  +Order(listings: IQueryable<Listing>): IOrderedQueryable<Listing>
+}
+
+enum CatalogSort {
+  Newest
+  PriceAscending
+  PriceDescending
+}
+
+enum ItemCondition {
+  NewWithTags
+  NewWithoutTags
+  UsedExcellent
+  UsedGood
+  UsedFair
+}
+
+class CategoryCatalog <<static>> {
+  +{static} All: IReadOnlyList<CategoryDefinition>
+}
+
+class BrowseCatalogQuery <<record>> {
+  +int Page
+  +int? PageSize
+  +CatalogFilters Filters
+}
+
+class CountCatalogListingsQuery <<record>> {
+  +CatalogFilters Filters
+}
+
+class GetCatalogBrandsQuery <<record>>
+
+class BrowseCatalogQueryHandler {
+  +Handle(q: BrowseCatalogQuery): Task<Result<CatalogPageDto>>
+}
+class CountCatalogListingsQueryHandler {
+  +Handle(q: CountCatalogListingsQuery): Task<Result<CatalogCountDto>>
+}
+class GetCatalogBrandsQueryHandler {
+  +Handle(q: GetCatalogBrandsQuery): Task<IReadOnlyList<CatalogBrandDto>>
+}
+
+interface ITutuMuchDbContext {
+  +Listings: DbSet<Listing>
+  +ListingPhotos: DbSet<ListingPhoto>
+}
+
+class CatalogBrandDto <<record>> {
+  +string Name
+  +int ListingCount
+}
+
+CatalogCriteria ..> CatalogFilters : built from
+CatalogCriteria --> CatalogSort
+CatalogCriteria --> "0..5" ItemCondition
+CatalogCriteria ..> CategoryCatalog : checks category and subcategory
+BrowseCatalogQuery --> CatalogFilters
+CountCatalogListingsQuery --> CatalogFilters
+BrowseCatalogQueryHandler ..> BrowseCatalogQuery : handles
+CountCatalogListingsQueryHandler ..> CountCatalogListingsQuery : handles
+GetCatalogBrandsQueryHandler ..> GetCatalogBrandsQuery : handles
+BrowseCatalogQueryHandler ..> CatalogCriteria
+CountCatalogListingsQueryHandler ..> CatalogCriteria
+BrowseCatalogQueryHandler --> ITutuMuchDbContext
+CountCatalogListingsQueryHandler --> ITutuMuchDbContext
+GetCatalogBrandsQueryHandler --> ITutuMuchDbContext
+GetCatalogBrandsQueryHandler ..> CatalogBrandDto : returns
+@enduml

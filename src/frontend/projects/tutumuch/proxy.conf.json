@@ -1,0 +1,10 @@
+{
+  "/api": {
+    "target": "http://localhost:5045",
+    "secure": false
+  },
+  "/photos": {
+    "target": "http://localhost:5045",
+    "secure": false
+  }
+}

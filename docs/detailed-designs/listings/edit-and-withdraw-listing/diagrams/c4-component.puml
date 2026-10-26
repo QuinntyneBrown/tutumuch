@@ -1,0 +1,27 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Edit and withdraw a listing
+
+Container(web, "Tutu Much Web", "Angular", "@tutumuch/listings EditListingPage and ListingFormComponent, @tutumuch/catalog WithdrawListingDialog, @tutumuch/orders RelistDialog, @tutumuch/api ListingsApi")
+Container_Boundary(api, "Tutu Much API") {
+  Component(ctrl, "ListingsController", "ASP.NET Core controller", "GET /api/me/listings/{reference} with ETag, PUT /api/listings/{reference} with If-Match, POST withdraw, POST relist")
+  Component(update, "ListingCommandHandlers", "MediatR handlers", "GetMyListingQuery; UpdateListingCommand: draft rules, or publish rules and version check")
+  Component(withdraw, "WithdrawListingCommandHandler", "MediatR handler", "Active to Removed (Withdrawn)")
+  Component(relist, "RelistListingCommandHandler", "MediatR handler", "Removed after cancellation to Active")
+  Component(attacher, "ListingPhotoAttacher", "Application service", "Orders and attaches photos")
+  Component(entity, "Listing", "Domain aggregate", "Guards editability and status transitions, bumps Version")
+  ComponentDb(db, "TutuMuchDbContext", "EF Core", "Listings (Version concurrency token), ListingPhotos")
+}
+Rel(web, ctrl, "Loads, saves, withdraws, relists", "JSON/HTTPS")
+Rel(ctrl, update, "Sends GetMyListingQuery, UpdateListingCommand")
+Rel(ctrl, withdraw, "Sends WithdrawListingCommand")
+Rel(ctrl, relist, "Sends RelistListingCommand")
+Rel(update, attacher, "Attaches photos")
+Rel(update, entity, "Edit")
+Rel(withdraw, entity, "Withdraw")
+Rel(relist, entity, "Relist")
+Rel(update, db, "Reads; saves with Version check")
+Rel(withdraw, db, "Saves with Version check")
+Rel(relist, db, "Saves")
+@enduml

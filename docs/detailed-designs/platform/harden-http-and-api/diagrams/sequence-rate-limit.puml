@@ -1,0 +1,48 @@
+@startuml
+title UML sequence behaviour — Rate limiting across API instances
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Visitor or member" as actor
+box "Frontend — Tutu Much Web application" #E0F2FE
+  participant "Feature page" as page
+  participant "RateLimitInterceptor" as rli
+end box
+box "Backend — Tutu Much API application" #D1FADF
+  participant "RedisRateLimitingMiddleware" as mw
+  participant "Feature controller" as ctrl
+end box
+box "Backend — Tutu Much Infrastructure" #FFF4E5
+  participant "RedisFixedWindowRateLimitStore" as store
+  database "Distributed cache (Redis)" as redis
+end box
+actor -> page : Trigger request
+page -> rli : HTTP request
+rli -> mw : Request (any API instance)
+mw -> mw : Resolve policy: anonymous 120/min per IP, member 300/min, register 5/h per IP (L2-051); the daily publish limit is counted by create-listing
+mw -> store : AcquireAsync(key, limit, window)
+store -> redis : EVAL INCR + EXPIRE on tutumuch:rl:{policy}:{partition}:{window}
+redis --> store : count, ttl
+alt count <= limit
+  store --> mw : Lease acquired
+  mw -> ctrl : Continue
+  ctrl --> rli : 2xx response
+  rli --> page : Result
+else count > limit
+  store --> mw : Lease refused, RetryAfter = ttl
+  mw --> rli : 429 code rate_limited + Retry-After (L2-051)
+  rli --> page : AppError rate-limited with retryAfter
+  page --> actor : Limit state, e.g. "That’s 20 listings today"
+end
+@enduml

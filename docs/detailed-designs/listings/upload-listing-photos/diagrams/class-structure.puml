@@ -1,0 +1,108 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Upload listing photos
+
+package "TutuMuch.Domain" {
+  enum PhotoFormat {
+    WebP
+    Jpeg
+  }
+  class ListingPhoto {
+    +Guid Id
+    +Guid OwnerId
+    +Guid? ListingId
+    +int? Position
+    +string OriginalKey
+    +string OriginalContentType
+    +long OriginalBytes
+    +string OriginalHash
+    +int Width
+    +int Height
+    +DateTime CreatedAt
+    +{static} Create(...): ListingPhoto
+    +AttachTo(listingId: Guid, position: int): void
+    +Detach(): void
+  }
+  class ListingPhotoVersion <<record>> {
+    +int Size
+    +PhotoFormat Format
+    +int Width
+    +int Height
+    +string Key
+    +long Bytes
+  }
+  class Listing {
+    +Publish(sizeConfirmed, now, photoCount): IReadOnlyList<RuleViolation>
+  }
+}
+
+package "TutuMuch.Application" {
+  class UploadListingPhotoCommand <<record>> {
+    +Guid OwnerId
+    +byte[] Content
+  }
+  class ListingPhotoHandlers {
+    +Handle(UploadListingPhotoCommand): Task<Result<PhotoDto>>
+    +Handle(GetPhotoUploadQuery): Task<Result<PhotoDto>>
+  }
+  class PhotoDto <<record>> {
+    +Guid Id
+    +string Url
+    +int Width
+    +int Height
+    +IReadOnlyList<PhotoVersionDto> Versions
+  }
+  class ListingPhotoAttacher {
+    +AttachAsync(ownerId, listingId, photoIds): Task<Error?>
+    +PhotosOfAsync(listingId): Task<IReadOnlyList<ListingPhoto>>
+  }
+  class PhotoOptions {
+    +long MaxBytes
+    +int MinShortSidePx
+    +long MaxPixels
+    +List<int> VersionSizes
+    +string PublicBaseUrl
+  }
+  interface IImageInspector {
+    +Inspect(content: byte[]): ImageInfo?
+  }
+  interface IListingPhotoProcessor {
+    +Process(original: byte[], sizes): IReadOnlyList<ProcessedPhotoVersion>
+  }
+  interface IPhotoStorage {
+    +SaveOriginalAsync(key, content, contentType): Task
+    +SavePublicAsync(key, content, contentType): Task
+    +ReadPublicAsync(key): Task<StoredObject?>
+  }
+}
+
+package "TutuMuch.Infrastructure" {
+  class SkiaImageInspector
+  class SkiaPhotoProcessor
+  class FileSystemPhotoStorage
+}
+
+ListingPhotoHandlers ..> UploadListingPhotoCommand : handles
+ListingPhotoHandlers ..> IImageInspector : uses
+ListingPhotoHandlers ..> IListingPhotoProcessor : uses
+ListingPhotoHandlers ..> IPhotoStorage : uses
+ListingPhotoHandlers ..> PhotoOptions : reads
+ListingPhotoHandlers ..> ListingPhoto : creates
+ListingPhotoHandlers ..> PhotoDto : returns
+ListingPhotoAttacher --> ListingPhoto : attaches / detaches
+ListingPhoto "1" *-- "6" ListingPhotoVersion : versions
+ListingPhotoVersion --> PhotoFormat
+Listing "1" o-- "0..8" ListingPhoto : ordered by Position
+SkiaImageInspector ..|> IImageInspector
+SkiaPhotoProcessor ..|> IListingPhotoProcessor
+FileSystemPhotoStorage ..|> IPhotoStorage
+@enduml

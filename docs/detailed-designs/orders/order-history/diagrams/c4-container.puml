@@ -1,0 +1,15 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Order history
+
+Person(member, "Member", "Signed-in member")
+System_Boundary(tutumuch, "Tutu Much") {
+  Container(web, "Tutu Much Web", "Angular", "Purchases, Sales, Order detail and Sale detail pages")
+  Container(api, "Tutu Much API", "ASP.NET Core", "Read-only order queries")
+  ContainerDb(db, "Tutu Much database", "SQL Server", "Orders, status history, problems, payouts")
+}
+Rel(member, web, "Uses", "HTTPS")
+Rel(web, api, "Calls", "JSON/HTTPS")
+Rel(api, db, "Reads with AsNoTracking projections", "EF Core")
+@enduml

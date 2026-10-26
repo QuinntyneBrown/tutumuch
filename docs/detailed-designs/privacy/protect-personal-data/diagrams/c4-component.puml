@@ -1,0 +1,35 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Protect personal data
+
+Container(web, "Tutu Much Web", "Angular", "Public pages and checkout")
+Container_Boundary(api, "Tutu Much API") {
+  Component(publicCtrl, "Public endpoints", "ASP.NET Core controllers", "Catalog, listing, profile and review reads tagged PublicResponseAttribute")
+  Component(guard, "PublicResponseGuardFilter", "Result filter", "Refuses any result that is not IPublicDto")
+  Component(publicQueries, "Public query handlers", "MediatR", "Map entities to public DTOs")
+  Component(orderHandlers, "Order handlers", "MediatR", "Checkout and seller order view (orders subsystem)")
+  Component(protector, "ShippingAddressProtector", "Application service", "Serialises and protects ShippingAddress")
+  Component(converter, "EncryptedShippingAddressConverter", "EF Core ValueConverter", "Encrypts on write, decrypts on read")
+  Component(encryptor, "AesGcmFieldEncryptor", "IFieldEncryptor", "AES-256-GCM envelope")
+  Component(keyring, "FieldEncryptionKeyRing", "Infrastructure", "Active and retired DEKs by key ID")
+  Component(dbHealth, "DatabaseEncryptionHealthCheck", "Health check", "Reads TDE state")
+  Component(photoHealth, "PhotoStorageEncryptionHealthCheck", "Health check", "Reads bucket encryption")
+}
+ContainerDb(db, "Tutu Much database", "SQL Server", "Orders, SavedAddresses")
+ContainerDb(photos, "Photo storage", "Object storage", "Photos")
+System_Ext(secrets, "Secret store", "Key ring")
+
+Rel(web, publicCtrl, "GET public resources", "JSON/HTTPS")
+Rel(publicCtrl, publicQueries, "Sends queries")
+Rel(publicCtrl, guard, "Result passes through")
+Rel(web, orderHandlers, "Checkout and order view", "JSON/HTTPS")
+Rel(orderHandlers, converter, "Persists ShippingAddress via")
+Rel(converter, protector, "Calls")
+Rel(protector, encryptor, "Encrypt / Decrypt")
+Rel(encryptor, keyring, "Gets key by ID")
+Rel(keyring, secrets, "Loads at start-up")
+Rel(converter, db, "Stores ciphertext", "EF Core")
+Rel(dbHealth, db, "Queries sys.dm_database_encryption_keys")
+Rel(photoHealth, photos, "Reads encryption setting")
+@enduml

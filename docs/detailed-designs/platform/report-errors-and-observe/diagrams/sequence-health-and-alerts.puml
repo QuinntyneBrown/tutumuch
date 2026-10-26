@@ -1,0 +1,47 @@
+@startuml
+title UML sequence behaviour — Readiness and alerting
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+participant "Load balancer" as lb
+box "Backend — Tutu Much API application" #D1FADF
+  participant "Health check endpoints" as health
+  participant "/metrics (management port)" as metrics
+end box
+box "Backend — Tutu Much Infrastructure" #FFF4E5
+  database "Tutu Much database" as db
+  participant "Photo storage" as photos
+end box
+participant "Monitoring platform" as mon
+participant "On-call channel" as oncall
+lb -> health : GET /health/live
+health --> lb : 200 {"status":"Healthy"}
+lb -> health : GET /health/ready
+health -> db : CanConnectAsync (3 s timeout)
+health -> photos : Metadata request (3 s timeout)
+alt Database or photo storage unreachable
+  db --> health : Failure
+  health --> lb : 503 {"status":"Unhealthy"}, no version or hostname (L2-070)
+else Both reachable
+  health --> lb : 200 {"status":"Healthy"}
+end
+loop Every scrape interval
+  mon -> metrics : Scrape
+  metrics --> mon : Request rate, errors, latency, checkout, webhook, job metrics (L2-069)
+end
+mon -> mon : Evaluate alerts.yml
+alt 5xx > 1% for 5 min, or p95 over the latency alert thresholds for 10 min, or webhook failure
+  mon -> oncall : Send alert (L2-069)
+end
+@enduml

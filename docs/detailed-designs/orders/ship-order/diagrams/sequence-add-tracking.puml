@@ -1,0 +1,76 @@
+@startuml
+title UML sequence behaviour — Add tracking and mark the order Shipped
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+skinparam sequenceMessageAlign left
+skinparam maxMessageSize 260
+actor "Seller" as actor
+box "Frontend — Tutu Much Web application" #E0F2FE
+  participant "SaleDetailPage\n(@tutumuch/orders)" as page
+  participant "AddTrackingDialog\n(@tutumuch/orders)" as dlg
+  participant "OrdersApi\n(@tutumuch/api)" as client
+end box
+box "Backend — Tutu Much API application (TutuMuch.Api)" #D1FADF
+  participant "OrdersController" as ctrl
+end box
+box "Backend — TutuMuch.Application and TutuMuch.Domain" #ECFDF3
+  participant "AddTrackingCommandHandler" as h
+  participant "Order" as order
+end box
+box "Backend — TutuMuch.Infrastructure" #FFF4E5
+  database "Tutu Much database" as db
+end box
+actor -> page : Choose "Add tracking"
+page -> dlg : DialogService.open(orderId, buyer display name)
+actor -> dlg : Choose carrier, enter tracking number, "Mark as shipped"
+alt tracking number empty
+  dlg --> actor : "Enter the tracking number." under the field, no request
+else entered
+  dlg -> client : addTracking(orderId, carrier, trackingNumber)
+  client -> ctrl : POST /api/orders/{id}/shipment
+  ctrl -> ctrl : Authenticate, VerifiedMember policy
+  ctrl -> h : Send AddTrackingCommand
+  h -> db : Load order where SellerId = caller, with status changes
+  alt not the seller of the order
+    db --> h : No row
+    ctrl --> client : 404 ORDER_NOT_FOUND
+  else unknown carrier or malformed number (L2-033 AC5)
+    h --> ctrl : TrackingNumbers.Normalise is null
+    ctrl --> client : 422 TRACKING_INVALID with carrier or trackingNumber field error
+    client --> dlg : Field error
+    dlg --> actor : Inline error, input kept and focused (invalid state)
+  else well formed
+    h -> order : MarkShipped(carrier, number, now)
+    alt status is not Paid (L2-032)
+      order --> h : InvalidOrderTransitionException
+      ctrl --> client : 409 ORDER_INVALID_TRANSITION
+      dlg --> actor : "That didn’t go through", inputs kept, "Try again"
+    else Paid
+      order -> order : Append OrderStatusChange Paid to Shipped, actor Seller
+      h -> db : Save WHERE Status = 'Paid' (concurrency token)
+      alt deadline job cancelled it first
+        db --> h : DbUpdateConcurrencyException
+        ctrl --> client : 409 ORDER_INVALID_TRANSITION
+      else committed
+        h --> ctrl : SaleDto with timeline and tracking link
+        ctrl --> client : 200 OK
+        client --> dlg : Shipped sale
+        dlg --> page : Close with the sale
+        page --> actor : "Shipped", timeline and tracking link
+      end
+    end
+  end
+end
+@enduml

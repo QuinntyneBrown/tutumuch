@@ -1,0 +1,71 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — View a member profile
+
+class Member {
+  +Guid Id
+  +string DisplayName
+  +string NormalizedDisplayName
+  +DateTime CreatedAt
+  +DateTime? ClosedAt
+  +bool IsClosed
+  +Close(now: DateTime): void
+}
+
+class PublicProfileDto {
+  +Guid MemberId
+  +string DisplayName
+  +string? AvatarUrl
+  +string? Bio
+  +string? PublicLocation
+  +DateOnly MemberSince
+  +RatingSummaryDto Rating
+  +int CompletedSales
+  +int ActiveListingCount
+}
+
+class RatingSummaryDto {
+  +decimal? Average
+  +int Count
+}
+
+class CatalogPageDto {
+  +IReadOnlyList<ListingCardDto> Items
+  +int Page
+  +int PageSize
+  +int TotalCount
+}
+
+class PublicMembers <<static>> {
+  +{static} ListingsPageSize = 24
+  +{static} Unavailable: Error
+  +{static} FindAsync(db, displayName): Task<Member?>
+}
+
+class GetPublicProfileQueryHandler {
+  +Handle(query: GetPublicProfileQuery): Task<Result<PublicProfileDto>>
+}
+class GetMemberListingsQueryHandler {
+  +Handle(query: GetMemberListingsQuery): Task<Result<CatalogPageDto>>
+}
+class CatalogCards <<static>> {
+  +{static} ToCardsAsync(db, listings, photoOptions): Task<List<ListingCardDto>>
+}
+
+PublicProfileDto *-- RatingSummaryDto
+GetPublicProfileQueryHandler ..> PublicMembers : finds open member
+GetMemberListingsQueryHandler ..> PublicMembers : finds open member
+PublicMembers ..> Member : skips closed
+GetPublicProfileQueryHandler ..> PublicProfileDto : returns
+GetMemberListingsQueryHandler ..> CatalogPageDto : returns
+GetMemberListingsQueryHandler ..> CatalogCards : maps
+@enduml

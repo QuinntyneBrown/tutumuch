@@ -1,0 +1,45 @@
+@startuml
+title UML sequence behaviour — Verify encryption at rest
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Hosting platform probe" as probe
+box "Backend — Tutu Much API application" #D1FADF
+  participant "Health endpoint /health/ready" as health
+end box
+box "Backend — TutuMuch.Infrastructure" #FFF4E5
+  participant "DatabaseEncryptionHealthCheck" as dbcheck
+  participant "PhotoStorageEncryptionHealthCheck" as photocheck
+  database "Tutu Much database" as db
+  participant "Photo storage" as photos
+end box
+probe -> health : GET /health/ready
+health -> dbcheck : CheckHealthAsync
+dbcheck -> db : SELECT encryption_state FROM sys.dm_database_encryption_keys
+db --> dbcheck : encryption_state
+alt encryption_state = 3
+  dbcheck --> health : Healthy
+else not encrypted
+  dbcheck --> health : Unhealthy "Database encryption at rest is off" (L2-054)
+end
+health -> photocheck : CheckHealthAsync
+photocheck -> photos : Read bucket encryption setting
+photos --> photocheck : Setting
+alt server-side encryption on
+  photocheck --> health : Healthy
+else off
+  photocheck --> health : Unhealthy "Photo storage encryption at rest is off" (L2-054)
+end
+health --> probe : 200 Healthy or 503 Unhealthy
+@enduml

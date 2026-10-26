@@ -1,0 +1,13 @@
+@startuml
+!include <C4/C4_Context>
+LAYOUT_WITH_LEGEND()
+title System Context — Seller payouts
+
+Person(seller, "Seller", "Member who sells items")
+System(tutumuch, "Tutu Much", "Men's US 12 / L marketplace")
+System_Ext(pay, "Payment provider", "Hosted payout onboarding, connected accounts, payouts, signed webhooks")
+Rel(seller, tutumuch, "Views earnings, fees and payouts using")
+Rel(seller, pay, "Completes payout onboarding on", "Provider-hosted page")
+Rel(tutumuch, pay, "Creates onboarding links and transfers payouts via", "HTTPS API")
+Rel(pay, tutumuch, "Reports account and payout status to", "Signed webhook")
+@enduml

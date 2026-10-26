@@ -1,0 +1,49 @@
+@startuml
+title UML sequence behaviour — Announce form errors
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Screen reader user" as actor
+box "Frontend — Tutu Much Web application" #E0F2FE
+  participant "Feature form page" as page
+  participant "FormErrorsDirective" as dir
+  participant "ErrorSummaryComponent" as summary
+  participant "LiveRegionService" as live
+  participant "Feature API service" as client
+end box
+box "Backend — Tutu Much API application" #D1FADF
+  participant "Feature controller" as api
+end box
+actor -> page : Submit form
+page -> dir : onSubmit()
+alt Client validation fails
+  dir -> summary : Render "Fix these to continue" with one link per field
+  dir -> live : assertive(first error message) (L2-065)
+  dir -> page : Focus first invalid field; aria-invalid=true
+else Client validation passes
+  dir -> client : Send request
+  client -> api : POST or PUT
+  alt 400 validation_failed with errors per field
+    api --> client : Problem details with errors (L2-068)
+    client --> dir : applyServerErrors(errors)
+    dir -> summary : Render server messages
+    dir -> live : assertive(first error message)
+    dir -> page : Focus first invalid field
+  else Success
+    api --> client : 2xx
+    client --> page : Result
+    page --> actor : Success state or toast
+  end
+end
+@enduml

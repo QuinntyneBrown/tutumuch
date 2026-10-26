@@ -1,0 +1,24 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — View a member profile
+
+Container(web, "Tutu Much Web", "Angular", "@tutumuch/reviews MemberProfilePage and MemberProfileStore; @tutumuch/api MembersApi; @tutumuch/components tm-rating-summary")
+
+Container_Boundary(api, "Tutu Much API") {
+  Component(ctrl, "MembersController", "ASP.NET Core controller", "Anonymous; Cache-Control public 60 s, no-store on 404")
+  Component(qprofile, "GetPublicProfileQueryHandler", "MediatR handler", "PublicProfileDto or MEMBER_UNAVAILABLE")
+  Component(qlist, "GetMemberListingsQueryHandler", "MediatR handler", "Active listings, 24 per page, newest first")
+  Component(cards, "CatalogCards", "Mapper", "ListingCardDto with the cover photo, shared with the catalog")
+  Component(port, "ITutuMuchDbContext", "Persistence port", "Members, Orders, Listings, ListingPhotos")
+}
+ContainerDb(db, "Tutu Much database", "SQL Server", "Members (ClosedAt), Orders, Listings, ListingPhotos")
+
+Rel(web, ctrl, "Calls", "JSON/HTTPS")
+Rel(ctrl, qprofile, "Sends GetPublicProfileQuery")
+Rel(ctrl, qlist, "Sends GetMemberListingsQuery")
+Rel(qlist, cards, "Maps listings")
+Rel(qprofile, port, "Member by NormalizedDisplayName; counts Completed sales and Active listings")
+Rel(qlist, port, "Pages Active listings")
+Rel(port, db, "Reads", "EF Core")
+@enduml

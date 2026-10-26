@@ -1,0 +1,23 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Keep Tutu Much available and recoverable
+
+Person(visitor, "Visitor or member", "Browser")
+System_Boundary(tutumuch, "Tutu Much") {
+  Container(lb, "Load balancer", "Hosting platform <TO SUPPLY>", "Probes /health/ready every 10 s; serves static maintenance page")
+  Container(web, "Tutu Much Web", "Angular", "Maintenance banner and page")
+  Container(api, "Tutu Much API (3+ instances)", "ASP.NET Core", "System status, maintenance mode, graceful shutdown")
+  Container(worker, "Tutu Much Worker (2+ instances)", ".NET worker", "Background jobs")
+  ContainerDb(db, "Tutu Much database", "Managed SQL Server", "PITR, 35-day retention")
+  ContainerDb(restored, "Restored copy", "Managed SQL Server", "Temporary database for the restore test")
+  Container(verifier, "TutuMuch.RestoreVerifier", ".NET console", "Checks restored data")
+}
+Rel(visitor, lb, "Requests", "HTTPS")
+Rel(lb, web, "Routes pages", "HTTPS")
+Rel(lb, api, "Routes API; probes readiness", "HTTPS")
+Rel(api, db, "Reads and writes", "EF Core")
+Rel(worker, db, "Reads and writes", "EF Core")
+Rel(db, restored, "Restored to point in time")
+Rel(verifier, restored, "Verifies", "SQL")
+@enduml

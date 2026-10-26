@@ -1,0 +1,17 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Complete an order
+
+Person(buyer, "Buyer", "Member")
+System_Boundary(tutumuch, "Tutu Much") {
+  Container(web, "Tutu Much Web", "Angular", "Order detail page, Confirm receipt dialog")
+  Container(api, "Tutu Much API", "ASP.NET Core", "Receipt endpoint")
+  Container(worker, "Tutu Much Worker", ".NET worker service", "OrderCompletionJob")
+  ContainerDb(db, "Tutu Much database", "SQL Server", "Orders, OrderStatusChanges")
+}
+Rel(buyer, web, "Uses", "HTTPS")
+Rel(web, api, "Calls", "JSON/HTTPS")
+Rel(api, db, "Reads and writes", "EF Core")
+Rel(worker, db, "Completes due orders", "EF Core")
+@enduml

@@ -1,0 +1,56 @@
+@startuml
+title UML sequence behaviour — Keyword search
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+actor "Visitor or member" as actor
+box "Frontend — Tutu Much Web application" #E0F2FE
+  participant "TopBarComponent" as form
+  participant "AppShellComponent" as shell
+  participant "CatalogPage" as page
+  participant "CatalogStore" as store
+  participant "CatalogApi" as client
+end box
+box "Backend — Tutu Much API application" #D1FADF
+  participant "CatalogController" as controller
+end box
+box "Backend — TutuMuch Application" #ECFDF3
+  participant "BrowseCatalogQueryHandler" as handler
+  participant "CatalogCriteria" as criteria
+end box
+box "Backend — TutuMuch Infrastructure" #FFF4E5
+  participant "ITutuMuchDbContext" as ctx
+  database "Tutu Much database" as db
+end box
+actor -> form : Submit "air max"
+form -> form : Trim, cut to 100 characters (L2-023)
+form -> shell : (searched) "air max"
+shell -> page : navigate("/", q = "air max", keep filters on the catalog)
+page -> page : parseQuery(queryParamMap), canonical check
+page -> store : load({ q: "air max", ... })
+store -> client : listings(1, params)
+client -> controller : GET /api/catalog/listings?q=air%20max
+controller -> handler : Send BrowseCatalogQuery
+handler -> criteria : From(filters)
+criteria --> handler : Words ["air", "max"]
+handler -> criteria : Apply, Order
+handler -> ctx : Query listings
+ctx -> db : WHERE visible AND each word LIKE in title, brand or description\nORDER BY tier (every word in title or brand ? 0 : 1), sort, Id DESC
+note right of db : Lower-cased match ignores case;\ntitle and brand above description (L2-023)
+db --> ctx : Ranked rows and count
+ctx --> handler : Listings
+handler --> controller : CatalogPageDto
+controller --> client : 200 OK
+client --> store : CatalogPageDto
+alt totalCount > 0
+  store --> page : loaded
+  page --> actor : Eyebrow "Search", heading “air max”, ranked cards
+else totalCount = 0
+  store --> page : empty
+  page --> actor : "No items match", "Clear search and filters"
+  actor -> page : Choose "Clear search and filters"
+  page -> page : navigate("/") with no parameters
+end
+@enduml

@@ -1,0 +1,17 @@
+node_modules/
+dist/
+coverage/
+test-results/
+playwright-report/
+.cache/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+.angular/
+bin/
+obj/
+.vs/
+*.user
+*.suo

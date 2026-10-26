@@ -1,0 +1,62 @@
+@startuml
+title UML sequence behaviour — Buyer confirms receipt
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+skinparam sequenceMessageAlign left
+skinparam maxMessageSize 260
+actor "Buyer" as actor
+box "Frontend — @tutumuch/orders and @tutumuch/api" #E0F2FE
+  participant "OrderDetailPage" as page
+  participant "ConfirmReceiptDialog" as dlg
+  participant "OrdersApi" as client
+end box
+box "Backend — Tutu Much API application (TutuMuch.Api)" #D1FADF
+  participant "OrdersController" as ctrl
+end box
+box "Backend — TutuMuch.Application and TutuMuch.Domain" #ECFDF3
+  participant "ConfirmReceiptCommandHandler" as h
+  participant "Order" as order
+end box
+box "Backend — TutuMuch.Infrastructure" #FFF4E5
+  database "Tutu Much database" as db
+end box
+actor -> page : Choose "I received it" (Shipped or Delivered)
+page -> dlg : Open "Got it and all good?"
+actor -> dlg : "Yes, complete order"
+dlg -> client : confirmReceipt(orderId) (busy state)
+client -> ctrl : POST /api/orders/{id}/receipt
+ctrl -> h : Send ConfirmReceiptCommand
+h -> db : Load order where BuyerId = caller
+alt not the buyer
+  h --> ctrl : 404 ORDER_NOT_FOUND
+else buyer
+  h -> order : ConfirmReceipt(now)
+  alt Status is Shipped
+    order -> order : MarkDelivered(Buyer, now)
+  end
+  order -> order : Complete(Buyer, now)
+  alt not Shipped or Delivered, or the status changed before the save
+    h --> ctrl : 409 ORDER_INVALID_TRANSITION
+    ctrl --> dlg : Failed state "That didn't go through"
+  else saved
+    h -> db : Save order and status changes in one transaction
+    h -> h : Publish OrderCompleted
+    h --> ctrl : PurchaseDto (Completed)
+    ctrl --> client : 200
+    client --> page : Updated order
+    page --> actor : "Completed" with the full timeline
+  end
+end
+@enduml

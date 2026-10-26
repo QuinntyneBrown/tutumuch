@@ -1,0 +1,102 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+hide empty members
+title Class structure — Order history
+
+enum OrderRole {
+  Buyer
+  Seller
+}
+class ListOrdersQuery {
+  +Guid MemberId
+  +OrderRole Role
+  +string? Cursor
+  +int PageSize
+}
+class ListOrdersQueryHandler {
+  +Handle(q): Task<OrderListDto>
+}
+class OrderListDto {
+  +IReadOnlyList<OrderListItemDto> Items
+  +OrderCountsDto Counts
+  +string? NextCursor
+}
+class OrderListItemDto {
+  +Guid Id
+  +string Number
+  +string ItemTitle
+  +string ThumbnailUrl
+  +string OtherPartyHandle
+  +Money Total
+  +OrderStatus Status
+  +DateTimeOffset Date
+  +DateTimeOffset? ShipBy
+}
+class OrderCountsDto {
+  +int OnTheWay
+  +int ToConfirm
+  +int ToShip
+}
+class GetPurchaseDetailQueryHandler
+class GetSaleDetailQueryHandler
+class OrderDetailDto {
+  +Guid Id
+  +string Number
+  +OrderStatus Status
+  +IReadOnlyList<StatusStepDto> Timeline
+  +ItemSummaryDto Item
+  +MoneyBreakdownDto Amounts
+  +string OtherPartyHandle
+  +TrackingDto? Tracking
+  +DateTimeOffset? ShipBy
+  +DateTimeOffset? AutoCompleteAt
+  +DateTimeOffset? ProblemDeadline
+  +ProblemSummaryDto? Problem
+  +CancellationSummaryDto? Cancellation
+  +RefundSummaryDto? Refund
+  +OrderActionsDto Actions
+}
+class SaleDetailDto {
+  +ShippingAddressDto? ShipTo
+  +bool ShipToRemoved
+  +PayoutSummaryDto? Payout
+}
+class OrderActionsDto {
+  +bool CanAddTracking
+  +bool CanCancel
+  +bool CanRequestCancellation
+  +bool CanRespondToCancellation
+  +bool CanConfirmReceipt
+  +bool CanReportProblem
+  +bool CanRespondToProblem
+  +bool CanRelist
+  +bool CanReview
+}
+class ShippingAddressVisibility <<domain policy>> {
+  +IsVisibleToSeller(order, now): bool
+}
+class Order <<see ship-order>>
+class OrderStatusChange <<see ship-order>>
+ListOrdersQueryHandler ..> ListOrdersQuery : handles
+ListOrdersQueryHandler ..> OrderListDto : returns
+OrderListDto *-- OrderListItemDto
+OrderListDto *-- OrderCountsDto
+ListOrdersQuery --> OrderRole
+GetPurchaseDetailQueryHandler ..> OrderDetailDto : returns
+GetSaleDetailQueryHandler ..> SaleDetailDto : returns
+SaleDetailDto --|> OrderDetailDto
+OrderDetailDto *-- OrderActionsDto
+GetSaleDetailQueryHandler ..> ShippingAddressVisibility
+GetPurchaseDetailQueryHandler ..> Order : reads
+GetSaleDetailQueryHandler ..> Order : reads
+Order *-- OrderStatusChange
+@enduml

@@ -1,0 +1,18 @@
+@startuml
+!include <C4/C4_Context>
+LAYOUT_WITH_LEGEND()
+title System Context — Report errors and observe the system
+
+Person(visitor, "Visitor or member", "Sees friendly errors with a reference")
+Person(operator, "Operator on call", "Investigates incidents")
+System(tutumuch, "Tutu Much", "Marketplace")
+System_Ext(monitor, "Monitoring and log platform", "Log store, metrics scraper, alert manager <TO SUPPLY>")
+System_Ext(oncall, "On-call channel", "Receives alerts <TO SUPPLY>")
+System_Ext(payments, "Payment provider", "Calls carry the correlation ID")
+
+Rel(visitor, tutumuch, "Uses", "HTTPS")
+Rel(tutumuch, payments, "Calls", "HTTPS")
+Rel(monitor, tutumuch, "Collects logs, scrapes metrics from")
+Rel(monitor, oncall, "Sends alerts to")
+Rel(operator, monitor, "Searches logs by correlation ID in")
+@enduml

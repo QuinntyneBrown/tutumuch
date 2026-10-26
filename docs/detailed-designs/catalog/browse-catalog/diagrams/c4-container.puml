@@ -1,0 +1,19 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Browse the catalog
+
+Person(visitor, "Visitor or member", "Browses listings, signed in or not")
+System_Boundary(tutumuch, "Tutu Much") {
+  Container(web, "Tutu Much Web", "Angular", "Catalog page, listing grid, responsive photos")
+  Container(api, "Tutu Much API", "ASP.NET Core", "GET /api/catalog/listings")
+  Container(worker, "Tutu Much Worker", ".NET worker service", "Returns expired reservations to Active")
+  ContainerDb(db, "Tutu Much database", "SQL Server", "Listings, photos and photo versions")
+  ContainerDb(photos, "Photo storage", "Object storage behind a CDN", "Processed WebP and JPEG photo versions")
+}
+Rel(visitor, web, "Uses", "HTTPS")
+Rel(web, api, "Requests catalog pages", "JSON/HTTPS")
+Rel(web, photos, "Loads 400/800/1600 px versions", "HTTPS via CDN")
+Rel(api, db, "Reads Active and Reserved listings", "EF Core")
+Rel(worker, db, "Updates expired Reserved listings", "EF Core")
+@enduml

@@ -1,0 +1,65 @@
+@startuml
+title UML sequence behaviour — Sign in and renew the session
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Member" as actor
+box "Frontend — @tutumuch/accounts and @tutumuch/api" #E0F2FE
+  participant "SignInPage" as page
+  participant "AuthState" as auth
+  participant "sessionInterceptor" as icpt
+end box
+box "Backend — Tutu Much API application" #D1FADF
+  participant "AuthController" as ctrl
+  participant "SessionCookies" as cookies
+end box
+box "Backend — TutuMuch Application and Domain" #ECFDF3
+  participant "SignInCommandHandler" as signin
+  participant "RefreshSessionCommandHandler" as refresh
+end box
+box "Backend — TutuMuch Infrastructure" #FFF4E5
+  database "Tutu Much database" as db
+end box
+actor -> page : Email and password, choose "Sign in"
+page -> auth : signIn(email, password)
+auth -> ctrl : POST /api/auth/sign-in
+ctrl -> signin : SignInCommand
+signin -> db : Find member by normalised email
+alt unknown email or wrong password (L2-006)
+  ctrl --> auth : 401 "Email or password is incorrect"
+  page --> actor : Same message for both; email kept
+else correct
+  signin -> db : Insert session (refresh token hash, new family, 14 days)
+  ctrl -> cookies : Write tm_access (JWT, 15 minutes) and tm_refresh (HttpOnly, Secure, SameSite=Strict)
+  ctrl --> auth : 200 member
+  page --> actor : Back to returnUrl; top bar shows the member
+end
+== 15 minutes later ==
+actor -> icpt : Any call to Tutu Much API
+icpt -> ctrl : Request with the expired tm_access
+ctrl --> icpt : 401
+icpt -> ctrl : POST /api/auth/refresh (tm_refresh)
+ctrl -> refresh : RefreshSessionCommand
+refresh -> db : Find the token by hash
+alt already rotated (reuse, L2-008)
+  refresh -> db : Revoke every session in the family
+  ctrl --> icpt : 401, cookies cleared
+  icpt -> auth : clear()
+else active
+  refresh -> db : Mark rotated, insert successor in the same family
+  ctrl -> cookies : Write new cookies
+  ctrl --> icpt : 200
+  icpt -> ctrl : Retry the original call once
+end
+@enduml

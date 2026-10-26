@@ -1,0 +1,19 @@
+:host {
+  display: block;
+}
+.emails__saved {
+  margin-bottom: var(--space-6);
+}
+.emails__actions {
+  justify-content: flex-start;
+}
+.emails__skeleton-title {
+  width: 30%;
+}
+.emails__skeleton-meta {
+  width: 55%;
+}
+.emails__skeleton-switch {
+  width: 6rem;
+  height: 2.5rem;
+}

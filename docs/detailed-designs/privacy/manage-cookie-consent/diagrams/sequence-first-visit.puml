@@ -1,0 +1,52 @@
+@startuml
+title UML sequence behaviour — First visit and consent choice
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Visitor" as actor
+box "Frontend — Tutu Much Web application" #E0F2FE
+  participant "CookieConsentComponent (tm-consent-banner)" as banner
+  participant "CookieConsentService" as consent
+  participant "AnalyticsService" as analytics
+  participant "ToastService" as toast
+end box
+box "Backend — Tutu Much API application" #D1FADF
+  participant "CookieAllowListMiddleware" as mw
+end box
+participant "Analytics provider" as provider
+actor -> banner : Open first page
+banner -> mw : API calls (catalog, session refresh)
+mw -> mw : Keep only Privacy:Cookies:StrictlyNecessary Set-Cookie headers (L2-056)
+mw --> banner : Responses with strictly necessary cookies only
+banner -> consent : Read tm_consent
+consent --> banner : unknown
+banner --> actor : Show "Cookies" banner; no analytics script loaded
+alt "Necessary only"
+  actor -> banner : Necessary only
+  banner -> consent : necessaryOnly()
+  consent -> consent : Write tm_consent=v1.necessary
+  consent --> analytics : consent = necessary (no start, no requests)
+  banner -> toast : "Cookie choice saved" / "Necessary only. Change it any time in the footer."
+  toast --> actor : Toast
+else "Accept analytics"
+  actor -> banner : Accept analytics
+  banner -> consent : acceptAnalytics()
+  consent -> consent : Write tm_consent=v1.analytics
+  consent --> analytics : consent = analytics
+  analytics -> provider : Load script (environment.analytics.scriptUrl)
+  provider --> analytics : Script sets analytics cookies
+  analytics -> provider : Page view
+  banner -> toast : "Cookie choice saved" ("Analytics on. Change it any time in the footer.")
+end
+@enduml

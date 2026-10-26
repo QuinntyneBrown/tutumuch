@@ -1,0 +1,105 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Manage notification preferences
+
+enum NotificationCategory {
+  AccountSecurity
+  Orders
+  Reviews
+  Marketing
+}
+
+enum MarketingChangeSource {
+  Settings
+  Unsubscribe
+}
+
+class NotificationPreferences {
+  +Guid MemberId
+  +bool ReviewEmails
+  +bool MarketingEmails
+  +DateTime? MarketingOptedInAt
+  +DateTime? MarketingOptedOutAt
+  +MarketingChangeSource? LastMarketingChangeSource
+  +DateTime UpdatedAt
+  +int Version
+  +{static} CreateDefault(memberId, now): NotificationPreferences
+  +Update(reviewEmails: bool, marketingEmails: bool, now): void
+  +UnsubscribeMarketing(now): void
+  +IsAllowed(category: NotificationCategory): bool
+}
+
+class NotificationPreferencesDto {
+  +IReadOnlyList<NotificationCategoryDto> Categories
+}
+
+class NotificationCategoryDto {
+  +string Key
+  +bool Enabled
+  +bool Locked
+}
+
+class UpdateNotificationPreferencesCommand {
+  +Guid MemberId
+  +bool? ReviewEmails
+  +bool? MarketingEmails
+  +int? ExpectedVersion
+}
+
+class UpdateNotificationPreferencesCommandHandler {
+  +Handle(command): Task<Result<NotificationPreferencesDto>>
+}
+
+class UnsubscribeCommand {
+  +string Token
+}
+
+class UnsubscribeCommandHandler {
+  +Handle(command): Task<Result<UnsubscribeResult>>
+}
+
+class GetNotificationPreferencesQueryHandler {
+  +Handle(query): Task<NotificationPreferencesDto>
+}
+
+class UnsubscribeTokens {
+  +Issue(memberId: Guid, category: NotificationCategory, now): string
+  +Read(token: string?): UnsubscribeToken?
+}
+
+class UnsubscribeToken {
+  +Guid MemberId
+  +NotificationCategory Category
+  +DateTime IssuedAt
+}
+
+class NotificationCategories {
+  +{static} Of(type: NotificationType): NotificationCategory
+}
+
+interface INotificationPreferenceReader {
+  +IsAllowedAsync(memberId: Guid, category: NotificationCategory): Task<bool>
+}
+
+NotificationPreferences ..> NotificationCategory : evaluates
+NotificationPreferences --> MarketingChangeSource : has
+NotificationPreferencesDto *-- "4" NotificationCategoryDto
+UpdateNotificationPreferencesCommandHandler ..> UpdateNotificationPreferencesCommand : handles
+UpdateNotificationPreferencesCommandHandler --> NotificationPreferences : updates
+UnsubscribeCommandHandler ..> UnsubscribeCommand : handles
+UnsubscribeCommandHandler ..> UnsubscribeTokens : reads
+UnsubscribeCommandHandler --> NotificationPreferences : unsubscribes
+GetNotificationPreferencesQueryHandler ..> NotificationPreferencesDto : builds
+UnsubscribeTokens ..> UnsubscribeToken : produces
+NotificationCategories ..> NotificationCategory : maps to
+INotificationPreferenceReader ..> NotificationPreferences : reads
+@enduml

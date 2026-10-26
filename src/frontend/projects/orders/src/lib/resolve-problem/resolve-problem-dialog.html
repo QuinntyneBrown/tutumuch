@@ -1,0 +1,50 @@
+<tm-dialog [heading]="'Resolve problem ' + data.detail.problem.reference">
+  @if (state() === 'failed') {
+    <tm-alert top tone="danger" heading="That didn’t go through">{{ failure() }}</tm-alert>
+  }
+  <tm-radio-group legend="Decision">
+    <tm-choice inputId="outcome-refund">
+      <input
+        type="radio"
+        name="outcome"
+        id="outcome-refund"
+        data-autofocus
+        [checked]="outcome() === 'FullRefund'"
+        [disabled]="state() === 'busy'"
+        (change)="outcome.set('FullRefund')"
+      /><span class="choice__text"
+        >Refund buyer in full<small>{{ total }} to {{ data.detail.buyerDisplayName }} · no payout</small></span
+      ></tm-choice
+    >
+    <tm-choice inputId="outcome-release">
+      <input
+        type="radio"
+        name="outcome"
+        id="outcome-release"
+        [checked]="outcome() === 'ReleaseToSeller'"
+        [disabled]="state() === 'busy'"
+        (change)="outcome.set('ReleaseToSeller')"
+      /><span class="choice__text"
+        >Release payout to seller<small>Order completes · {{ data.detail.sellerDisplayName }} is paid</small></span
+      ></tm-choice
+    >
+  </tm-radio-group>
+  <tm-form-field #rf fieldId="resolve-reason" label="Reason" help="Sent to both members." [error]="reasonError()">
+    <textarea
+      class="textarea"
+      id="resolve-reason"
+      rows="3"
+      [readOnly]="state() === 'busy'"
+      [value]="reason()"
+      [attr.aria-describedby]="rf.describedBy()"
+      [attr.aria-invalid]="rf.invalid()"
+      (input)="reason.set($any($event.target).value)"
+    ></textarea>
+  </tm-form-field>
+  <ng-container ngProjectAs="[footer]">
+    <button tmButton type="button" [disabled]="state() === 'busy'" (click)="ref.close()">Cancel</button>
+    <button tmButton="primary" type="submit" [busy]="state() === 'busy'" (click)="submit()">
+      {{ state() === 'busy' ? busyLabel() : state() === 'failed' ? 'Try again' : action() }}
+    </button>
+  </ng-container>
+</tm-dialog>

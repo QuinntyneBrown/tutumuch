@@ -1,0 +1,10 @@
+:host {
+  display: block;
+}
+.catalog__count-skeleton {
+  display: inline-block;
+  width: 5rem;
+}
+.catalog__more-error {
+  margin-top: var(--space-8);
+}

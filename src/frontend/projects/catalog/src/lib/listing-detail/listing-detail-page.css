@@ -1,0 +1,34 @@
+:host {
+  display: block;
+}
+.listing-detail__breadcrumb {
+  margin-top: var(--space-6);
+}
+.listing-detail__stamp {
+  position: static;
+  align-self: flex-start;
+}
+.listing-detail__size {
+  gap: var(--space-3);
+}
+.listing-detail__description {
+  white-space: pre-line;
+}
+.listing-detail__bar-skeleton {
+  height: 3rem;
+}
+.listing-detail__similar {
+  margin-top: var(--space-20);
+}
+.skeleton--w20 {
+  width: 20%;
+}
+.skeleton--w30 {
+  width: 30%;
+}
+.skeleton--w35 {
+  width: 35%;
+}
+.skeleton--w80 {
+  width: 80%;
+}

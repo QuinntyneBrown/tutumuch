@@ -1,0 +1,51 @@
+@startuml
+title UML sequence behaviour — Seller replies to a problem
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+skinparam sequenceMessageAlign left
+skinparam maxMessageSize 260
+actor "Seller" as actor
+box "Frontend — Tutu Much Web application" #E0F2FE
+  participant "SaleDetailPage" as page
+  participant "ProblemsApi (@tutumuch/api)" as client
+end box
+box "Backend — Tutu Much API application (TutuMuch.Api)" #D1FADF
+  participant "OrderProblemsController" as ctrl
+end box
+box "Backend — TutuMuch.Application and TutuMuch.Domain" #ECFDF3
+  participant "RespondToProblemCommandHandler" as h
+  participant "OrderProblem" as prob
+end box
+box "Backend — TutuMuch.Infrastructure" #FFF4E5
+  database "Tutu Much database" as db
+end box
+actor -> page : Type "Your reply", choose "Send reply"
+page -> client : respondToProblem(orderId, message)
+client -> ctrl : POST /api/orders/{id}/problem/response
+ctrl -> h : RespondToProblemCommand
+h -> db : Load problem for order where SellerId = caller
+alt not the seller
+  h --> ctrl : 404
+else problem resolved or already answered
+  h -> prob : RecordSellerResponse
+  prob --> h : Rejected
+  h --> ctrl : 409 "PROBLEM_RESPONSE_NOT_ALLOWED"
+else open, no reply yet
+  h -> prob : RecordSellerResponse(message, now)
+  h -> db : Save
+  ctrl --> client : 200
+  page --> actor : Reply shown in the thread; visible to buyer and administrators (L2-036 criterion 5)
+end
+@enduml

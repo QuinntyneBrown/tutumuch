@@ -1,0 +1,75 @@
+@startuml
+title UML sequence behaviour — Dispatch an email with retry and back-off
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+box "Backend — Tutu Much Worker application" #D1FADF
+  participant "EmailDispatchJob" as dispatcher
+end box
+box "Backend — TutuMuch Application and Domain" #ECFDF3
+  participant "DispatchEmailsHandler" as handler
+  participant "OutboxMessage" as msg
+  participant "EmailTemplates" as renderer
+  participant "EmailContentGuard" as guard
+end box
+box "Backend — TutuMuch Infrastructure" #FFF4E5
+  participant "IEmailSender" as sender
+  database "Tutu Much database" as db
+end box
+participant "Email provider" as provider
+loop every 10 seconds
+  dispatcher -> handler : DispatchEmailsCommand
+  handler -> db : Select up to 50 due IDs (Pending and due, or Processing with a lapsed claim)
+  loop each message
+    handler -> msg : Claim(now): Processing, LockedUntil now + 2 min, new ClaimToken
+    handler -> db : Save with ClaimToken check
+    alt another worker claimed it first
+      db --> handler : Concurrency conflict, skip
+    else claimed
+      handler -> db : Read recipient email and display name
+      alt member not found
+        handler -> msg : Suppress("recipient_unavailable")
+      else found
+        handler -> renderer : Render(type, payload, displayName, baseUrl) with deep link (L2-042)
+        renderer --> handler : RenderedEmail
+        handler -> guard : Check(subject and body)
+        alt card number, security code or password found (L2-042)
+          handler -> msg : Fail("content_guard:reason")
+          handler -> handler : Log error without content
+        else clean
+          handler -> sender : SendAsync(email with IdempotencyKey = message.Id)
+          sender -> provider : HTTPS send
+          alt accepted
+            handler -> msg : RecordSent(now)
+          else timeout, 429 or 5xx
+            sender --> handler : HttpRequestException or TimeoutException
+            handler -> msg : RecordFailure(error, now, jitter)
+            alt next attempt within CreatedAt + 24 hours
+              msg --> handler : Pending, NextAttemptAt = now + min(2^(n-1) min, 60 min) + up to 20%
+              handler -> handler : Log warning with ID, type and attempt
+            else retry window exhausted
+              msg --> handler : Failed
+              handler -> handler : Log error
+            end
+          else other 4xx
+            sender --> handler : EmailRejectedException
+            handler -> msg : Fail("rejected:code")
+          end
+        end
+      end
+      handler -> db : Save outcome
+    end
+  end
+end
+@enduml

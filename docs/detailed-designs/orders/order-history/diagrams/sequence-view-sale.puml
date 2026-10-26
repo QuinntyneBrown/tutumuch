@@ -1,0 +1,58 @@
+@startuml
+title UML sequence behaviour — Open a sale with the address visibility rule
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+skinparam sequenceMessageAlign left
+skinparam maxMessageSize 260
+actor "Seller" as actor
+box "Frontend — Tutu Much Web application" #E0F2FE
+  participant "SaleDetailPage" as page
+  participant "OrdersApiService" as client
+end box
+box "Backend — Tutu Much API application (TutuMuch.Api)" #D1FADF
+  participant "SalesController" as ctrl
+end box
+box "Backend — TutuMuch.Application and TutuMuch.Domain" #ECFDF3
+  participant "GetSaleDetailQueryHandler" as h
+  participant "ShippingAddressVisibility" as vis
+end box
+box "Backend — TutuMuch.Infrastructure" #FFF4E5
+  participant "AesGcmFieldEncryptor" as enc
+  database "Tutu Much database" as db
+end box
+actor -> page : Open /sales/{id}
+page -> client : getSale(id)
+client -> ctrl : GET /api/sales/{id}
+ctrl -> h : GetSaleDetailQuery(id, callerId)
+h -> db : Load order where Id = @id AND SellerId = @me, with status changes, problem, payout
+alt no row (not the seller, L2-010)
+  h --> ctrl : NotFound
+  ctrl --> client : 404
+  page --> actor : "Couldn't load this sale"
+else seller
+  h -> vis : IsVisibleToSeller(order, now)
+  alt EndedAt is null or now <= EndedAt + 30 days (L2-037 criteria 2)
+    vis --> h : true
+    h -> enc : Decrypt ShippingAddressCipher
+    enc --> h : Address
+    h --> ctrl : SaleDetailDto with ShipTo
+    page --> actor : "Ship to" block, "Visible until 30 days after the order ends."
+  else ended more than 30 days ago (L2-037 criterion 3)
+    vis --> h : false
+    h --> ctrl : SaleDetailDto, ShipTo null, ShipToRemoved true
+    page --> actor : "Removed 30 days after the order ended." (address-hidden state)
+  end
+end
+@enduml

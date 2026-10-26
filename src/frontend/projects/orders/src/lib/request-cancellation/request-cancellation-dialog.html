@@ -1,0 +1,34 @@
+<tm-dialog heading="Ask to cancel?">
+  <span description
+    >If {{ data.sellerDisplayName }} accepts, you’re refunded in full. Until then the order stays as is.</span
+  >
+  @if (state() === 'failed') {
+    <tm-alert top tone="danger" heading="That didn’t go through"
+      >Nothing changed. Check your connection and try again.</tm-alert
+    >
+  }
+  <tm-form-field
+    #mf
+    fieldId="request-message"
+    [label]="'Message to ' + data.sellerDisplayName"
+    [optional]="true"
+    [error]="messageError()"
+  >
+    <textarea
+      class="textarea"
+      id="request-message"
+      rows="3"
+      data-autofocus
+      [value]="message()"
+      [attr.aria-describedby]="mf.describedBy()"
+      [attr.aria-invalid]="mf.invalid()"
+      (input)="message.set($any($event.target).value)"
+    ></textarea>
+  </tm-form-field>
+  <ng-container ngProjectAs="[footer]">
+    <button tmButton type="button" [disabled]="state() === 'busy'" (click)="ref.close()">Keep order</button>
+    <button tmButton="primary" type="submit" [busy]="state() === 'busy'" (click)="submit()">
+      {{ state() === 'failed' ? 'Try again' : 'Send request' }}
+    </button>
+  </ng-container>
+</tm-dialog>

@@ -1,0 +1,120 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+hide empty members
+title Class structure — Seller payouts
+
+enum PayoutStatus {
+  Held
+  Releasable
+  Sent
+  Paid
+  Failed
+}
+enum PayoutHoldReason {
+  OrderNotCompleted
+  OnboardingIncomplete
+}
+enum PayoutAccountStatus {
+  NotStarted
+  Pending
+  Complete
+  Restricted
+}
+class Payout <<aggregate root>> {
+  +Guid Id
+  +Guid OrderId
+  +Guid SellerId
+  +decimal GrossAmount
+  +decimal FeeRate
+  +decimal FeeAmount
+  +decimal NetAmount
+  +PayoutStatus Status
+  +PayoutHoldReason? HoldReason
+  +string? ProviderPayoutId
+  +DateTime CreatedAt
+  +DateTime? ReleasableAt
+  +DateTime? SentAt
+  +DateTime? PaidAt
+  +DateTime? FailedAt
+  +string? FailureReason
+  +{static} CreateHeld(order, now): Payout
+  +OrderCompleted(sellerOnboarded, now): void
+  +SellerOnboarded(now): void
+  +MarkSent(providerPayoutId, now): void
+  +MarkPaid(now): void
+  +MarkFailed(reason, now): void
+}
+class SellerPayoutAccount {
+  +Guid MemberId
+  +string ProviderAccountId
+  +PayoutAccountStatus Status
+  +string? BankName
+  +string? BankLast4
+  +DateTime UpdatedAt
+  +string? BankDisplay
+  +{static} Start(memberId, accountId, now)
+  +Update(complete, bankName, bankLast4, now): bool
+}
+class PayoutFees <<static>> {
+  +Fee(rate, gross): decimal
+  +RateFromPercent(percent): decimal
+}
+class Order <<see ship-order>> {
+  +decimal ItemPrice
+  +decimal ShippingCost
+  +decimal FeeRate
+  +decimal FeeAmount
+  +OrderStatus Status
+  +{static} CreatePaid(..., feeRate, now)
+}
+interface IPayoutProvider {
+  +CreateConnectedAccountAsync(memberId, email): Task<string>
+  +CreateOnboardingLinkAsync(accountId, returnUrl, refreshUrl): Task<string>
+  +CreatePayoutAsync(accountId, amount, idempotencyKey): Task<string>
+  +ReadWebhook(body, signature): PayoutEvent?
+}
+interface ISellerPayoutAccountReader {
+  +IsOnboardedAsync(sellerId): Task<bool>
+}
+class PayoutSummaryDto {
+  +string PaidOut
+  +string Pending
+  +string Onboarding
+  +string? BankDisplay
+  +string? Banner
+  +IReadOnlyList<PayoutRowDto> History
+}
+class GetPayoutSummaryHandler
+class CreateOnboardingLinkHandler
+class PayoutWebhookHandler
+class OrderCompletedPayoutHandler
+class ReleasePayoutsHandler
+class PayoutAccountReader <<Infrastructure>>
+class UnconfiguredPayoutProvider <<Infrastructure>>
+Payout --> PayoutStatus
+Payout --> PayoutHoldReason
+Payout "1" --> "1" Order : for
+SellerPayoutAccount --> PayoutAccountStatus
+Order ..> PayoutFees : fee
+GetPayoutSummaryHandler ..> PayoutSummaryDto : returns
+CreateOnboardingLinkHandler ..> IPayoutProvider
+CreateOnboardingLinkHandler --> SellerPayoutAccount : Start
+PayoutWebhookHandler ..> IPayoutProvider : ReadWebhook
+PayoutWebhookHandler --> SellerPayoutAccount : Update
+PayoutWebhookHandler --> Payout : SellerOnboarded, MarkPaid, MarkFailed
+OrderCompletedPayoutHandler --> Payout : OrderCompleted
+OrderCompletedPayoutHandler ..> ISellerPayoutAccountReader
+ReleasePayoutsHandler --> Payout : MarkSent
+ReleasePayoutsHandler ..> IPayoutProvider : CreatePayoutAsync
+PayoutAccountReader ..|> ISellerPayoutAccountReader
+UnconfiguredPayoutProvider ..|> IPayoutProvider
+@enduml

@@ -1,0 +1,22 @@
+<fieldset [attr.aria-describedby]="describedBy()">
+  <legend>{{ legend() }}</legend>
+  <div class="segmented">
+    @for (option of options(); track option; let i = $index) {
+      <label [for]="groupId() + '-' + i"
+        ><input
+          type="radio"
+          [id]="groupId() + '-' + i"
+          [name]="groupId()"
+          [value]="option"
+          [checked]="value() === option"
+          [disabled]="disabled()"
+          [attr.aria-invalid]="error() ? 'true' : null"
+          (change)="select(option)"
+        /><span>{{ option }}</span></label
+      >
+    }
+  </div>
+  @if (error()) {
+    <span class="field__error" [id]="groupId() + '-error'">{{ error() }}</span>
+  }
+</fieldset>

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stat · Tutu Much design system</title>
+<meta name="description" content="One figure with its label, such as Paid out and Pending on the payouts page.">
+<link rel="icon" href="../assets/favicon.ico">
+<link rel="stylesheet" href="../tokens/tokens.css">
+<link rel="stylesheet" href="../assets/components.css">
+<link rel="stylesheet" href="../assets/ds.css">
+</head>
+<body id="top">
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="ds-shell">
+<nav class="ds-nav" aria-label="Design system"><div class="ds-nav__brand"><a href="../index.html">Tutu Much DS</a><button class="ds-theme-toggle" type="button" aria-pressed="false">☾ Dark</button></div><details open><summary>Foundations</summary><ul><li><a href="../foundations/color.html">Color</a></li><li><a href="../foundations/typography.html">Typography</a></li><li><a href="../foundations/spacing.html">Spacing</a></li><li><a href="../foundations/layout.html">Layout</a></li><li><a href="../foundations/elevation.html">Elevation</a></li><li><a href="../foundations/shape.html">Shape</a></li><li><a href="../foundations/motion.html">Motion</a></li><li><a href="../foundations/iconography.html">Iconography</a></li><li><a href="../foundations/theming.html">Theming</a></li><li><a href="../foundations/responsive.html">Responsive</a></li><li><a href="../foundations/accessibility.html">Accessibility</a></li><li><a href="../foundations/content.html">Content</a></li></ul></details><details open><summary>Components</summary><ul><li><a href="../components/skip-link.html">Skip link</a></li><li><a href="../components/top-bar.html">Top bar</a></li><li><a href="../components/footer.html">Footer</a></li><li><a href="../components/toast.html">Toast</a></li><li><a href="../components/consent-banner.html">Consent banner</a></li><li><a href="../components/sheet.html">Sheet</a></li><li><a href="../components/button.html">Button</a></li><li><a href="../components/link.html">Link</a></li><li><a href="../components/form-field.html">Form field</a></li><li><a href="../components/alert.html">Alert</a></li><li><a href="../components/center-state.html">Center state</a></li><li><a href="../components/chip.html">Chip</a></li><li><a href="../components/filter-chips.html">Filter chips</a></li><li><a href="../components/choice.html">Choice</a></li><li><a href="../components/dialog.html">Dialog</a></li><li><a href="../components/earnings.html">Earnings</a></li><li><a href="../components/error-summary.html">Error summary</a></li><li><a href="../components/fixed-size.html">Fixed size</a></li><li><a href="../components/icon.html">Icon</a></li><li><a href="../components/input-group.html">Input group</a></li><li><a href="../components/item-row.html">Item row</a></li><li><a href="../components/empty-state.html">Empty state</a></li><li><a href="../components/listing-card.html">Listing card</a></li><li><a href="../components/load-more.html">Load more</a></li><li><a href="../components/gallery.html">Gallery</a></li><li><a href="../components/buy-bar.html">Buy bar</a></li><li><a href="../components/seller-summary.html">Seller summary</a></li><li><a href="../components/rating-summary.html">Rating summary</a></li><li><a href="../components/order-summary.html">Order summary</a></li><li><a href="../components/reservation-timer.html">Reservation timer</a></li><li><a href="../components/order-timeline.html">Order timeline</a></li><li><a href="../components/tracking-link.html">Tracking link</a></li><li><a href="../components/photo-uploader.html">Photo uploader</a></li><li><a href="../components/segmented.html">Segmented control</a></li><li><a href="../components/size-tag.html">Size tag</a></li><li><a href="../components/spinner.html">Spinner</a></li><li><a href="../components/stat.html">Stat</a></li><li><a href="../components/switch.html">Switch</a></li><li><a href="../components/quote.html">Quote</a></li><li><a href="../components/radio-group.html">Radio group</a></li><li><a href="../components/thread.html">Thread</a></li><li><a href="../components/facts.html">Facts</a></li><li><a href="../components/status.html">Status</a></li></ul></details><details open><summary>Patterns</summary><ul><li><a href="../patterns/navigation.html">Navigation</a></li></ul></details></nav>
+<main id="main" class="ds-main">
+<header class="ds-header">
+<p class="ds-kicker">Component · Data display</p>
+<h1>Stat</h1>
+<p class="ds-lead">One figure with its label, such as “Paid out” and “Pending” on the payouts page.</p>
+<div class="ds-meta"><span class="ds-pill ds-pill--ok">WCAG 2.2 AA</span><span class="ds-pill">Status: stable</span><span class="ds-pill">Since v0.8</span></div>
+</header>
+<section class="ds-section" id="overview"><h2><a href="#overview">Overview</a></h2><p><code>tm-stat</code> shows a muted label above a large tabular figure. Group several in a <code>.stats</code> row, which wraps on narrow screens (L2-031).</p></section>
+<section class="ds-section" id="anatomy"><h2><a href="#anatomy">Anatomy</a></h2><ol><li>Label in label type, muted</li><li>Value in heading type with tabular figures</li></ol></section>
+<section class="ds-section" id="variants"><h2><a href="#variants">Variants</a></h2><div class="ds-example"><div class="ds-example__canvas ds-example__canvas--stack"><div class="stats"><div class="stat"><span class="stat__label">Paid out</span><span class="stat__value">$33.30</span></div><div class="stat"><span class="stat__label">Pending</span><span class="stat__value">$40.50</span></div></div></div><div class="ds-example__caption"><span>In a <code>.stats</code> row the value uses h3 type.</span></div></div></section>
+<section class="ds-section" id="sizes"><h2><a href="#sizes">Sizes</a></h2><p>One size; the <code>.stats</code> row scales the value down to h3.</p></section>
+<section class="ds-section" id="states"><h2><a href="#states">States</a></h2><p>Static. While loading, the page shows <code>skeleton--text</code> and <code>skeleton--title</code> in place of label and value.</p></section>
+<section class="ds-section" id="responsive"><h2><a href="#responsive">Responsive behaviour</a></h2><p>The <code>.stats</code> row wraps; each stat keeps its own width.</p></section>
+<section class="ds-section" id="theming"><h2><a href="#theming">Theming</a></h2><p><code>--color-fg-muted</code> for the label and the default foreground for the value in both themes.</p></section>
+<section class="ds-section" id="accessibility"><h2><a href="#accessibility">Accessibility</a></h2><p>Label and value are read in order as text; no role is needed.</p></section>
+<section class="ds-section" id="content"><h2><a href="#content">Content</a></h2><p>Short label in sentence case; money always with cents.</p></section>
+<section class="ds-section" id="do-dont"><h2><a href="#do-dont">Do and don’t</a></h2><ul><li>Do keep a row to two to four stats.</li><li>Don’t put actions inside a stat.</li></ul></section>
+<section class="ds-section" id="tokens"><h2><a href="#tokens">Tokens</a></h2><p><code>--space-1</code>, <code>--space-8</code>, <code>--text-label</code>, <code>--text-h2</code>, <code>--text-h3</code>, <code>--color-fg-muted</code>.</p></section>
+<section class="ds-section" id="code"><h2><a href="#code">Code</a></h2><pre><code>&lt;div class="stats"&gt;&lt;tm-stat label="Paid out" value="$33.30" /&gt;&lt;tm-stat label="Pending" value="$40.50" /&gt;&lt;/div&gt;</code></pre><p>Source: <code>src/frontend/projects/components/src/lib/stat/</code>.</p></section>
+<section class="ds-section" id="sources"><h2><a href="#sources">Sources</a></h2><p>Extracted from these mocks:</p><ul><li><a href="../../mocks/pages/payouts/default.html">pages/payouts/default</a></li><li><a href="../../mocks/pages/payouts/loading.html">pages/payouts/loading</a></li></ul><p>Added with seller-payouts on 2026-10-26; the mocks use the kit classes unchanged.</p></section>
+<footer class="ds-footer"><span>Tutu Much design system · extracted from <a href="../../mocks/index.html">docs/mocks</a> on 2026-10-25</span><a href="#top">Back to top</a></footer>
+</main>
+</div>
+<script src="../assets/ds.js"></script>
+</body>
+</html>

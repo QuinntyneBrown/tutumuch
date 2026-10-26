@@ -1,0 +1,114 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Send email notifications
+
+enum NotificationType {
+  EmailVerification
+  SaleMade
+  OrderShipped
+  OrderDelivered
+  ShipByReminder
+  OrderCancelled
+  OrderRefunded
+}
+
+enum OutboxMessageStatus {
+  Pending
+  Processing
+  Sent
+  Suppressed
+  Failed
+}
+
+class OutboxMessage {
+  +Guid Id
+  +NotificationType NotificationType
+  +Guid RecipientMemberId
+  +string Payload
+  +DateTime CreatedAt
+  +OutboxMessageStatus Status
+  +int AttemptCount
+  +DateTime NextAttemptAt
+  +DateTime? LockedUntil
+  +string? LastError
+  +DateTime? SentAt
+  +string? SuppressionReason
+  +Guid ClaimToken
+  +{static} Create(type, recipientMemberId, payload, now): OutboxMessage
+  +IsClaimable(now): bool
+  +Claim(now): void
+  +RecordSent(now): void
+  +Suppress(reason): void
+  +RecordFailure(error, now, jitter): bool
+  +Fail(error): void
+}
+
+interface IEmailOutbox {
+  +Enqueue<TModel>(type, recipientMemberId, model): void
+}
+class EmailOutbox
+
+class DispatchEmailsHandler {
+  +Handle(DispatchEmailsCommand): Task<int>
+}
+
+class EmailTemplates <<static>> {
+  +ModelType(type): Type
+  +Render(type, payload, displayName, baseUrl): RenderedEmail
+}
+class EmailContentGuard <<static>> {
+  +Check(content): string?
+}
+interface IEmailSender {
+  +SendAsync(EmailMessage): Task
+}
+class LoggingEmailSender
+class EmailRejectedException
+
+class RenderedEmail <<record>> {
+  +string Subject
+  +string Body
+}
+class EmailMessage <<record>> {
+  +string To
+  +string Subject
+  +string Body
+  +Guid IdempotencyKey
+}
+
+class SaleMadeEmail <<record>> {
+  +Guid OrderId
+  +string OrderReference
+  +string ItemTitle
+  +decimal Total
+  +DateTime ShipBy
+}
+
+class SendShipRemindersHandler {
+  +Handle(SendShipRemindersCommand): Task<int>
+}
+
+OutboxMessage --> OutboxMessageStatus : has
+OutboxMessage --> NotificationType : has
+EmailOutbox ..|> IEmailOutbox
+EmailOutbox ..> OutboxMessage : creates
+IEmailOutbox ..> SaleMadeEmail : accepts
+DispatchEmailsHandler --> OutboxMessage : claims and updates
+DispatchEmailsHandler ..> EmailTemplates
+DispatchEmailsHandler ..> EmailContentGuard
+DispatchEmailsHandler ..> IEmailSender
+EmailTemplates ..> RenderedEmail : produces
+IEmailSender ..> EmailMessage : sends
+IEmailSender ..> EmailRejectedException : throws when permanent
+LoggingEmailSender ..|> IEmailSender
+SendShipRemindersHandler ..> IEmailOutbox
+@enduml

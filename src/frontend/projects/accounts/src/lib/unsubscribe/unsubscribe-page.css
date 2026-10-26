@@ -1,0 +1,6 @@
+:host {
+  display: contents;
+}
+.unsubscribe__lead {
+  margin-top: var(--space-2);
+}

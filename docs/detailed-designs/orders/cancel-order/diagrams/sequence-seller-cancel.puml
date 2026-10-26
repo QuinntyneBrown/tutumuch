@@ -1,0 +1,72 @@
+@startuml
+title UML sequence behaviour — Seller cancels a Paid order
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+skinparam sequenceMessageAlign left
+skinparam maxMessageSize 260
+actor "Seller" as actor
+box "Frontend — Tutu Much Web application" #E0F2FE
+  participant "SaleDetailPage" as page
+  participant "CancelOrderDialog" as dlg
+  participant "OrdersApi (@tutumuch/api)" as client
+end box
+box "Backend — Tutu Much API application (TutuMuch.Api)" #D1FADF
+  participant "OrdersController" as ctrl
+end box
+box "Backend — TutuMuch.Application and TutuMuch.Domain" #ECFDF3
+  participant "CancelOrderCommandHandler" as h
+  participant "Order" as order
+  participant "OrderCancellation" as rr
+  participant "IPaymentProvider" as pay
+end box
+box "Backend — TutuMuch.Infrastructure" #FFF4E5
+  database "Tutu Much database" as db
+end box
+actor -> page : Choose "Cancel order"
+page -> dlg : Open "Cancel this sale?" with refund amount
+actor -> dlg : Pick reason, optional note, "Cancel sale"
+alt no reason chosen
+  dlg --> actor : "Choose a reason" (invalid state)
+else reason chosen
+  dlg -> client : cancelOrder(orderId, reason, note) (busy state)
+  client -> ctrl : POST /api/orders/{id}/cancellation
+  ctrl -> h : Send CancelOrderCommand(actor Seller)
+  h -> db : Load order where SellerId = caller
+  alt not the seller
+    h --> ctrl : 404
+  else seller
+    alt reason missing or not one of the four, or note over 500 characters
+      h --> ctrl : 422 CANCELLATION_INVALID
+    else valid
+      h -> rr : CancelAsync(order, reason, note, Seller)
+      rr -> order : Cancel(reason, note, Seller, now)
+      alt Status is not Paid, or changed since read (L2-035 criterion 3)
+        order --> h : InvalidOrderTransitionException or DbUpdateConcurrencyException
+        h --> ctrl : 409 ORDER_INVALID_TRANSITION
+        ctrl --> dlg : Failed state "That didn't go through"
+      else Paid
+        order -> order : Paid to Cancelled, EndedAt (L2-032)
+        rr -> db : Save order, Listing.RemoveAfterCancellation, Refund for Total, OrderCancelled email with reason and note to buyer (L2-035 criterion 1), one transaction
+        h -> rr : IssueRefundAsync
+        rr -> pay : RefundAsync(payment, Total, key = Refund.Id)
+        rr -> db : Refund Issued, OrderRefunded email
+        h --> ctrl : SaleDto (Cancelled, canRelist)
+      ctrl --> client : 200
+        page --> actor : "Cancelled · Buyer refunded in full" with "Relist item"
+      end
+    end
+  end
+end
+@enduml

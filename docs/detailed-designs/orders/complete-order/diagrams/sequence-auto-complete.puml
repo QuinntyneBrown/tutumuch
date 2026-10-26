@@ -1,0 +1,45 @@
+@startuml
+title UML sequence behaviour — Automatic completion 3 days after delivery
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+skinparam sequenceMessageAlign left
+skinparam maxMessageSize 260
+box "Backend — Tutu Much Worker application (TutuMuch.Worker)" #D1FADF
+  participant "OrderCompletionJob" as job
+end box
+box "Backend — TutuMuch.Application and TutuMuch.Domain" #ECFDF3
+  participant "CompleteDeliveredOrdersHandler" as h
+  participant "Order" as order
+end box
+box "Backend — TutuMuch.Infrastructure" #FFF4E5
+  database "Tutu Much database" as db
+end box
+job -> h : Every Orders:CompletionJobInterval send CompleteDeliveredOrdersCommand
+h -> db : Select Delivered orders with DeliveredAt <= now - 3 days (IX_Orders_Status_DeliveredAt)
+db --> h : Due order IDs
+loop each due order
+  h -> db : Load order with its status history
+  h -> order : Complete(System, now) (L2-034 criterion 2)
+  h -> db : Save where Status = 'Delivered'
+  alt status changed meanwhile (buyer confirmed)
+    db --> h : Concurrency conflict
+    h -> h : Skip the order
+  else committed
+    db --> h : Committed
+    h -> h : Publish OrderCompleted
+  end
+end
+h --> job : Number completed
+@enduml

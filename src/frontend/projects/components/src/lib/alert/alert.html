@@ -1,0 +1,15 @@
+<div [class]="'alert alert--' + tone()" [class.banner]="banner()" [attr.role]="ariaRole()">
+  <tm-icon [name]="iconName()" />
+  <div class="alert__body">
+    @if (heading()) {
+      <div class="alert__title">{{ heading() }}</div>
+    }
+    <div><ng-content /></div>
+    <div class="alert__actions"><ng-content select="[actions]" /></div>
+  </div>
+  @if (dismissible()) {
+    <button class="close" type="button" aria-label="Dismiss" (click)="dismissed.emit()">
+      <tm-icon name="close" />
+    </button>
+  }
+</div>

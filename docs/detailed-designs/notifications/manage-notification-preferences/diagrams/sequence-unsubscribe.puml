@@ -1,0 +1,62 @@
+@startuml
+title UML sequence behaviour — One-click unsubscribe
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Email recipient" as actor
+box "Frontend — Tutu Much Web application" #E0F2FE
+  participant "UnsubscribePageComponent" as page
+end box
+box "Backend — Tutu Much API application" #D1FADF
+  participant "UnsubscribeController" as controller
+end box
+box "Backend — TutuMuch Application and Domain" #ECFDF3
+  participant "UnsubscribeCommandHandler" as handler
+  participant "NotificationPreferences" as entity
+end box
+box "Backend — TutuMuch Infrastructure" #FFF4E5
+  participant "UnsubscribeTokens" as tokens
+  database "Tutu Much database" as db
+end box
+actor -> page : Click unsubscribe link in a marketing email (no sign-in)
+page -> controller : POST /api/notifications/unsubscribe {token}
+note right of actor
+  A mail client's RFC 8058 request
+  POSTs to the same endpoint with
+  List-Unsubscribe=One-Click
+end note
+controller -> controller : Anonymous; token from query or JSON body
+controller -> handler : Send UnsubscribeCommand
+handler -> tokens : Read(token)
+alt malformed, bad signature or not Marketing
+  tokens --> handler : null
+  handler --> controller : Invalid
+  controller --> page : 400 UNSUBSCRIBE_LINK_INVALID
+  page --> actor : "This link doesn’t work" with "Manage your emails"
+else valid token
+  tokens --> handler : UnsubscribeToken(memberId, Marketing)
+  handler -> db : Load NotificationPreferences
+  alt no row (defaults) or already off
+    db --> handler : nothing to change
+  else marketing on
+    db --> handler : Row
+    handler -> entity : UnsubscribeMarketing(now) (L2-043)
+    handler -> db : Save
+    db --> handler : Commit result
+  end
+  handler --> controller : Success (idempotent)
+  controller --> page : 200 {category: Marketing, unsubscribed: true}
+  page --> actor : "You’re unsubscribed" with "Manage your emails"
+end
+@enduml

@@ -1,0 +1,25 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Protect personal data
+
+Person(visitor, "Visitor", "Anonymous reader of public pages")
+Person(member, "Member", "Signed-in buyer or seller")
+System_Boundary(tutumuch, "Tutu Much") {
+  Container(web, "Tutu Much Web", "Angular", "Privacy page; public views typed without personal fields")
+  Container(api, "Tutu Much API", "ASP.NET Core", "Public DTO allow-list; field-level encryption of shipping addresses")
+  Container(worker, "Tutu Much Worker", ".NET worker service", "Re-encrypts addresses after key rotation")
+  ContainerDb(db, "Tutu Much database", "SQL Server, TDE", "Orders and saved addresses as ciphertext")
+  ContainerDb(photos, "Photo storage", "Object storage, server-side encryption", "Listing photos")
+}
+System_Ext(secrets, "Secret store", "Field-encryption key ring")
+
+Rel(visitor, web, "Uses", "HTTPS")
+Rel(member, web, "Uses", "HTTPS")
+Rel(web, api, "Calls", "JSON/HTTPS")
+Rel(api, db, "Reads and writes ciphertext", "EF Core")
+Rel(api, photos, "Checks encryption setting", "SDK")
+Rel(api, secrets, "Loads key ring", "HTTPS")
+Rel(worker, db, "Re-encrypts rows", "EF Core")
+Rel(worker, secrets, "Loads key ring", "HTTPS")
+@enduml

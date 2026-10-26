@@ -1,0 +1,26 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Protect credentials and the supply chain
+
+Person(dev, "Developer", "Opens pull requests")
+System_Ext(vault, "Secret store", "Vault <TO SUPPLY>")
+System_Boundary(ci, "GitHub Actions CI") {
+  Container(secretscan, "secret-scan job", "gitleaks", "Fails on any committed secret")
+  Container(depscan, "dependency-scan job", "Trivy fs", "Fails on HIGH/CRITICAL with a fix in lock files")
+  Container(sast, "static-analysis job", "CodeQL, .NET analyzers, ESLint", "Fails on security findings")
+}
+System_Boundary(tutumuch, "Tutu Much") {
+  Container(web, "Tutu Much Web", "Angular", "Public configuration only")
+  Container(api, "Tutu Much API", "ASP.NET Core", "Hashes passwords; loads secrets at start")
+  Container(worker, "Tutu Much Worker", ".NET worker", "Loads secrets at start")
+  ContainerDb(db, "Tutu Much database", "SQL Server", "Members.PasswordHash holds encoded hashes")
+}
+Rel(dev, secretscan, "Triggers on pull request")
+Rel(dev, depscan, "Triggers on pull request")
+Rel(dev, sast, "Triggers on pull request")
+Rel(web, api, "Calls", "JSON/HTTPS")
+Rel(api, vault, "Reads secrets", "HTTPS, workload identity")
+Rel(worker, vault, "Reads secrets", "HTTPS, workload identity")
+Rel(api, db, "Stores hashes", "EF Core")
+@enduml
