@@ -1,6 +1,14 @@
-# Tutu Much design system
+# TuTuMuch design system
 
-Extracted from [docs/mocks](../mocks/README.md) on 2026-10-25. Open [index.html](index.html) locally.
+Extracted from [docs/mocks](../mocks/README.md) on 2026-10-25. Open [index.html](index.html) locally; press `t` to toggle dark mode.
+
+TuTuMuch uses the Giddy design system: Giddy's tokens for type, space, shape, elevation and motion, its colour
+structure and its component look (pill buttons with a pressable lip, soft 20px corners, rounded display type,
+round avatars and status dots), with TuTuMuch's own palette layered on top: **Raspberry** (primary: logo and
+buttons), **Lilac** (secondary accents), **Blush** (soft surfaces and tags), **Sunny** (highlights and deals),
+**Cream** (the page) and **Plum** (text and dark surfaces). Dark mode is a plum night with a lighter raspberry
+accent. Components and pages keep TuTuMuch's marketplace layout. The logo (`assets/logo.png`, polka-dot and
+checked letters with a plum outline) is the owner's artwork; the app icon and favicon are its first T.
 
 The first extraction covers the tokens, every foundation page and the components the
 application shell needs. Components for feature screens are added as those screens are
@@ -19,15 +27,15 @@ consent banner, the visible label and hint of the switch and the footer's Cookie
 
 | Page | Covers |
 |---|---|
-| [Color](foundations/color.html) | Ramps, roles, status colours, both themes, contrast pairs |
-| [Typography](foundations/typography.html) | Families, scale, roles, measure |
+| [Color](foundations/color.html) | The six named colours, ramps, roles, status, pops, both themes, contrast pairs |
+| [Typography](foundations/typography.html) | Giddy's rounded display and body stacks, scale, roles |
 | [Spacing](foundations/spacing.html) | 4px scale, inside/between rules |
 | [Layout](foundations/layout.html) | L2-061 breakpoints, grid, container, page templates |
-| [Elevation](foundations/elevation.html) | Shadows, surfaces, z-order |
-| [Shape](foundations/shape.html) | Radii, borders, chamfer |
+| [Elevation](foundations/elevation.html) | Shadows, press lip, z-order |
+| [Shape](foundations/shape.html) | Pills and soft corners |
 | [Motion](foundations/motion.html) | Durations, easings, reduced motion |
 | [Iconography](foundations/iconography.html) | Inline SVG set and sizes |
-| [Theming](foundations/theming.html) | Token tiers, light/dark, adding a theme |
+| [Theming](foundations/theming.html) | Token tiers, brand palette layer, light/dark, adding a theme |
 | [Responsive](foundations/responsive.html) | Per-component rules and testing matrix |
 | [Accessibility](foundations/accessibility.html) | WCAG 2.2 AA commitments |
 | [Content](foundations/content.html) | Voice, formulas, microcopy |
@@ -53,7 +61,7 @@ consent banner, the visible label and hint of the switch and the footer's Cookie
 | [Dialog](components/dialog.html) | default, with top alert; info or danger icon tone | default, busy, sent, limited | dialogs/verify-email-prompt, dialogs/cancel-order |
 | [Earnings](components/earnings.html) | one | unknown, known | sell/filled |
 | [Error summary](components/error-summary.html) | one | shown and focused | sell/invalid, register/invalid |
-| [Fixed size](components/fixed-size.html) | men's US 12, men's L | absent, shown | sell/filled |
+| [Fixed size](components/fixed-size.html) | Girls' | absent, shown | sell/filled |
 | [Icon](components/icon.html) | 19 glyphs (search added by search-and-filter-catalog, flag by resolve-order-problems) | static | every page |
 | [Input group](components/input-group.html) | leading addon | default, invalid | sell price and shipping |
 | [Item row](components/item-row.html) | with or without thumbnail | default, truncated | sell/success |
@@ -70,7 +78,7 @@ consent banner, the visible label and hint of the switch and the footer's Cookie
 | [Tracking link](components/tracking-link.html) | USPS, UPS, FedEx, DHL | link states | sale-detail/shipped, order-detail/default |
 | [Photo uploader](components/photo-uploader.html) | listing (cover, reorder), evidence (`[cover]="false"`, report-problem) | empty, uploading, filled, rejected, invalid, full | sell/default, sell/filled, sell/invalid |
 | [Segmented control](components/segmented.html) | one | empty, chosen, invalid | sell condition |
-| [Size tag](components/size-tag.html) | US 12, L; default, large | static | sell, catalog |
+| [Size tag](components/size-tag.html) | Girls; default, large | static | sell, catalog |
 | [Spinner](components/spinner.html) | with message | running | verify-email/loading |
 | [Stat](components/stat.html) | in a `.stats` row | static, loading skeleton | payouts/default, payouts/loading |
 | [Switch](components/switch.html) | on, off, locked on; hidden label or label with hint | off, on, focus, disabled | notification-settings/default, notification-settings/submitting |
@@ -88,19 +96,27 @@ consent banner, the visible label and hint of the switch and the footer's Cookie
 
 ## Tokens
 
-- `tokens/tokens.css` — source of truth; `tokens/tokens.json` — DTCG export; `tokens/contrast-pairs.json` — checked pairs.
+- `tokens/tokens.css` — source of truth: Giddy's tokens verbatim, then the "TuTuMuch brand palette" block
+  (raspberry, lilac, sunny, cream and plum scales and the semantic overrides), then the "TuTuMuch layout tokens"
+  block (older layout names such as `--color-brand`, `--photo-bg-*` and the ink/paper/stone ramps, each an alias).
+- `tokens/tokens.json` — DTCG export generated by `tokens_to_json.py`; don't edit it by hand.
+- `tokens/contrast-pairs.json` — Giddy's pairs plus TuTuMuch's (toast status icons, raspberry text on Blush); all pass in both themes.
+- `assets/logo.png`, `logo-dark.png` (same image; it reads on both themes), `logo.svg` / `logo-dark.svg` (the PNG embedded),
+  `app-icon.png` / `app-icon.svg` and `favicon.ico` (the logo's first T).
 - `assets/components.css` — component stylesheet extracted from the mocks' `ui.css`.
 
 ## Drift found in the mocks
 
 | Mock | Issue | Resolution |
 |---|---|---|
-| `assets/tokens.css` | `--layout-breakpoint-sm` 40rem, `-lg` 64rem, `-xl` 80rem, plus a 2xl value, disagree with `L2-061` | Tokens set to 36rem, 48rem, 62rem, 75rem; 2xl removed; grid media queries moved to 48rem and 62rem |
-| `assets/tokens.css` | Four `--color-inverse-*` lines duplicated inside the dark media block | Duplicates removed |
-| `assets/ui.css` | Already uses the `L2-061` values in its media queries | None |
+| `assets/tokens.css` | Giddy's `--layout-breakpoint-*` tokens (40, 48, 64, 80, 96rem) and its grid switches at 48rem and 64rem differ from the `L2-061` breakpoints (36, 48, 62, 75rem) that `ui.css` uses in its media queries | Documented on the Layout page; media queries keep `L2-061`. The token values are Giddy's and are not changed here |
+| `assets/ui.css` | Size tag, photo stamps and the confirmation mark were cut with a 45° clip-path and drawn in the old dark and light primitives | Size tag is an accent pill, stamps are pills on surface or inverse, the mark is round; all through semantic tokens |
+| `assets/ui.css` | Square buttons, chips, badges, switches, avatars, status marks and photos | Giddy shapes: pills for controls, `--radius-lg` photos and tiles, round dots |
+| `assets/ui.css` | Admin tag used white text on the brand colour, which fails in dark mode | `--color-fg-on-accent` on `--color-accent` |
+| `assets/ui.css` | The logo was an inline SVG of the old wordmark | The owner's logo image (`assets/logo.png`) inside the same link |
 
 ## Verification
 
-- `python .claude/skills/extracting-design-systems/scripts/check_contrast.py docs/design-system/tokens/tokens.css` — see the latest run in the pull request.
-- `python .claude/skills/extracting-design-systems/scripts/tokens_to_json.py docs/design-system/tokens/tokens.css`
-- `python .claude/skills/extracting-design-systems/scripts/check_design_system.py docs/design-system`
+- `python3 .claude/skills/extracting-design-systems/scripts/check_contrast.py docs/design-system/tokens/tokens.css`: 138 checks (light and dark); see the latest run.
+- `python3 .claude/skills/extracting-design-systems/scripts/tokens_to_json.py docs/design-system/tokens/tokens.css` regenerates `tokens.json`.
+- `python3 .claude/skills/extracting-design-systems/scripts/check_design_system.py docs/design-system`: 57 pages, 0 errors, 0 warnings.

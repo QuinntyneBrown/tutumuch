@@ -9,12 +9,12 @@ def filters_form(p: str = "f", *, cat: str = "", brands=(), conds=(), lo: str = 
         return f'<label class="choice"><input type="checkbox" name="{name}"{" checked" if checked else ""}><span>{esc(label)}</span></label>'
     cats = "".join(
         f'<label class="choice"><input type="radio" name="{p}-cat"{" checked" if cat == c else ""}><span>{c}</span></label>'
-        for c in ["All", "Shoes", "Tops", "Outerwear", "Bottoms"])
+        for c in ["All", "Dresses", "Tops", "Outerwear", "Bottoms"])
     subs = ""
     if cat and cat != "All":
         sub = next(s for c, s, _ in CATEGORIES if c == cat)
         subs = (f'<fieldset class="filters__group"><legend>{cat}</legend>' + "".join(cb(f"{p}-sub", s, False) for s in sub) + "</fieldset>")
-    brand_list = ["Nike", "Adidas", "New Balance", "Patagonia", "Carhartt", "Red Wing"]
+    brand_list = ["Carter's", "Gap Kids", "Hanna Andersson", "Janie and Jack", "Mini Boden", "Old Navy"]
     br = "".join(cb(f"{p}-brand", b, b in brands) for b in brand_list)
     co = "".join(cb(f"{p}-cond", c, c in conds) for c in CONDITIONS)
     err = ' aria-invalid="true" aria-describedby="%s-price-error"' % p if invalid else ""
@@ -27,7 +27,7 @@ def filters_form(p: str = "f", *, cat: str = "", brands=(), conds=(), lo: str = 
                   f'<div class="input-group"><span class="addon">$</span><input class="input" id="{p}-max" inputmode="decimal" value="{hi}"{err}></div>'
                   f'</div>{perr}</fieldset>')
     return (f'<fieldset class="filters__group"><legend>Category</legend>{cats}</fieldset>{subs}'
-            f'<fieldset class="filters__group"><legend>Brand</legend>{br}<a href="{D("filters")}" class="text-sm">All 13 brands</a></fieldset>'
+            f'<fieldset class="filters__group"><legend>Brand</legend>{br}<a href="{D("filters")}" class="text-sm">All 10 brands</a></fieldset>'
             f'<fieldset class="filters__group"><legend>Condition</legend>{co}</fieldset>{price_html}')
 
 
@@ -47,8 +47,8 @@ def chip(label: str) -> str:
 
 
 def hero() -> str:
-    return ('<section class="hero" aria-labelledby="hero-title"><h1 class="display" id="hero-title">Size 12. Size L. <em>Nothing else.</em></h1>'
-            '<p class="lead">Every listing fits. Men’s US 12 shoes and men’s L clothing, new and used.</p></section>')
+    return ('<section class="hero" aria-labelledby="hero-title"><h1 class="display" id="hero-title">Girls\' clothing. <em>Nothing else.</em></h1>'
+            '<p class="lead">Every listing is for girls. Dresses, tops, outerwear and bottoms from families who\'ve outgrown them.</p></section>')
 
 
 def catalog_page(grid: str, *, head: str | None = None, count: str = "1,284 items", chips: str = "", side=None, after_grid: str = "",
@@ -82,28 +82,28 @@ def _():
     return catalog_page(listing_grid(CATALOG), after_grid=load_more(), user="guest")
 
 
-@s.state("category", "Shoes only: subcategory chips and the fixed size, reached from the Shoes nav link.")
+@s.state("category", "Dresses only: subcategory chips and the fixed size, reached from the Dresses nav link.")
 def _():
-    keys = [k for k in CATALOG if ITEMS[k]["cat"] == "Shoes"]
-    head = (f'<div class="page-header"><div class="stack stack--sm"><h1>Shoes</h1><div>{size_tag("US 12", "size-tag--lg")}</div></div></div>')
+    keys = [k for k in CATALOG if ITEMS[k]["cat"] == "Dresses"]
+    head = (f'<div class="page-header"><div class="stack stack--sm"><h1>Dresses</h1><div>{size_tag(CATEGORIES[0][2], "size-tag--lg")}</div></div></div>')
     subs = '<div class="cluster" style="margin-bottom: var(--space-8);">' + "".join(
-        f'<button class="chip" type="button" aria-pressed="{"true" if i == 0 else "false"}">{t}</button>' for i, t in enumerate(["All shoes", "Sneakers", "Boots", "Dress shoes", "Sandals"])) + "</div>"
-    return catalog_page(subs + listing_grid(keys), head=head, count="412 items", side={"cat": "Shoes"}, nav="shoes", after_grid=load_more(len(keys), "412"))
+        f'<button class="chip" type="button" aria-pressed="{"true" if i == 0 else "false"}">{t}</button>' for i, t in enumerate(["All dresses", "Dresses", "Skirts", "Tutus", "Rompers"])) + "</div>"
+    return catalog_page(subs + listing_grid(keys), head=head, count="412 items", side={"cat": "Dresses"}, nav="dresses", after_grid=load_more(len(keys), "412"))
 
 
-@s.state("search", "Keyword results for “nike”, title and brand matches first.")
+@s.state("search", "Keyword results for “carter’s”, title and brand matches first.")
 def _():
-    head = '<div class="page-header"><div><p class="eyebrow">Search</p><h1>“nike”</h1></div></div>'
-    return catalog_page(listing_grid(["air-max-90", "tech-shorts"]), head=head, count="2 items")
+    head = '<div class="page-header"><div><p class="eyebrow">Search</p><h1>“carter’s”</h1></div></div>'
+    return catalog_page(listing_grid(["sundress", "floral-shorts"]), head=head, count="2 items")
 
 
-@s.state("filtered", "Shoes, new with tags, $20–$200, sorted by price: filters live in the URL and show as removable chips.")
+@s.state("filtered", "Dresses, new with tags, $20–$200, sorted by price: filters live in the URL and show as removable chips.")
 def _():
-    chips = chip("Shoes") + chip("New with tags") + chip("$20–$200") + f'<button class="btn btn--link btn--sm" type="button">Clear all</button>'
-    pg = catalog_page(listing_grid(["samba-og", "nb-990"]), head="", count="2 items", chips=chips,
-                      side={"cat": "Shoes", "conds": ["New with tags"], "lo": "20", "hi": "200"}, sort="Price: low to high")
+    chips = chip("Dresses") + chip("New with tags") + chip("$20–$200") + f'<button class="btn btn--link btn--sm" type="button">Clear all</button>'
+    pg = catalog_page(listing_grid(["rainbow-romper", "velvet-dress"]), head="", count="2 items", chips=chips,
+                      side={"cat": "Dresses", "conds": ["New with tags"], "lo": "20", "hi": "200"}, sort="Price: low to high")
     pg.main = '<div class="page-header"><h1>Shop</h1></div>' + pg.main
-    pg.notes = note("URL: /?category=shoes&amp;condition=new-with-tags&amp;min=20&amp;max=200&amp;sort=price-asc — bookmarkable and shareable.", "top: 6rem; right: 1rem;")
+    pg.notes = note("URL: /?category=dresses&amp;condition=new-with-tags&amp;min=20&amp;max=200&amp;sort=price-asc — bookmarkable and shareable.", "top: 6rem; right: 1rem;")
     return pg
 
 
@@ -115,7 +115,7 @@ def _():
 
 @s.state("empty", "No active listings at all (launch day): one action, sell the first item.")
 def _():
-    grid = empty("tag", "Nothing listed yet", "Be the first to list a pair of 12s or something in L.", btn("Sell an item", "primary", P("sell")))
+    grid = empty("tag", "Nothing listed yet", "Be the first to list a dress, a sweater or anything your daughter has outgrown.", btn("Sell an item", "primary", P("sell")))
     return catalog_page(grid, count="0 items")
 
 
@@ -123,7 +123,7 @@ def _():
 def _():
     chips = chip("Outerwear") + chip("New with tags")
     grid = empty("search", "No items match", "Try fewer filters or a different word.", btn("Clear search and filters", "primary"), cls="empty--compact")
-    pg = catalog_page(grid, head='<div class="page-header"><div><p class="eyebrow">Search</p><h1>“air max 95”</h1></div></div>',
+    pg = catalog_page(grid, head='<div class="page-header"><div><p class="eyebrow">Search</p><h1>“sequin cape”</h1></div></div>',
                       count="0 items", chips=chips, side={"cat": "Outerwear", "conds": ["New with tags"]})
     return pg
 
@@ -145,10 +145,10 @@ def _():
 # Listing detail
 # ---------------------------------------------------------------------------
 DESC = {
-    "air-max-90": "Worn a handful of times. No creases on the toe box, soles clean. Original box included.",
-    "bedale": "Rewaxed last winter. Corduroy collar in great shape, all poppers work. Measured flat: 23.5 in pit to pit.",
-    "arizona": "Comfortable and broken in. Regular width.",
-    "samba-og": "Bought the wrong colourway. Never worn, tags and box.",
+    "pink-tutu": "Worn to one recital. Three layers of tulle, still full and bouncy. Elastic waist, no snags.",
+    "raincoat": "Fully waterproof with a soft cotton lining. Hood snaps on, all poppers work. Measured flat: 15 in pit to pit.",
+    "sundress": "Light cotton with shoulder ties. Loved for a whole summer.",
+    "rainbow-romper": "Bought the wrong colourway. Never worn, tags still on.",
 }
 
 
@@ -184,7 +184,7 @@ def detail(key: str, *, actions: str, stamp: str | None = None, user: str = "mem
             f'<span class="text-muted text-sm">{ship_text(it["ship"])} · <span class="num">{money(total)}</span> total before tax</span></div>'
             f'{extra_info}'
             f'{buy_bar(total, actions)}'
-            f'{flaws}<p>{esc(DESC.get(key, "Clean pair, light wear. Ships in the original box."))}</p>'
+            f'{flaws}<p>{esc(DESC.get(key, "Freshly washed, light wear. Smoke-free, pet-free home."))}</p>'
             f'<dl class="facts"><dt>Size</dt><dd>{size_long(it)}</dd><dt>Category</dt><dd>{it["cat"]} · {it["sub"]}</dd>'
             f'<dt>Condition</dt><dd>{esc(it["cond"])}</dd><dt>Listed</dt><dd><time datetime="2026-10-25">{it["listed"]}</time></dd></dl>'
             f'{seller_block(it["seller"])}{rep}</div>')
@@ -201,7 +201,7 @@ def buy_bar(total: float, actions: str) -> str:
 
 
 def similar(keys) -> str:
-    return f'<section class="section" style="margin-top: var(--space-20);"><div class="section-head"><h2>More in size 12</h2></div>{listing_grid(keys)}</section>'
+    return f'<section class="section" style="margin-top: var(--space-20);"><div class="section-head"><h2>More girls\' clothing</h2></div>{listing_grid(keys)}</section>'
 
 
 d = screen("listing-detail", "page", "Listing detail", route="/items/{id}", reqs=["L2-025", "L2-026", "L2-028", "L2-016", "L2-063", "L2-065"],
@@ -210,36 +210,36 @@ d = screen("listing-detail", "page", "Listing detail", route="/items/{id}", reqs
 
 @d.state("default", "An active listing seen by another member: gallery, price with shipping, seller reputation, Buy now.")
 def _():
-    pg = detail("air-max-90", actions=btn("Buy now", "primary lg", P("checkout")))
+    pg = detail("pink-tutu", actions=btn("Buy now", "primary lg", P("checkout")))
     pg.notes = note("Under 992px: one column, swipeable gallery, Buy now bar fixed to the bottom while scrolling.", "top: 8rem; right: 1rem;")
     return pg
 
 
 @d.state("guest", "Anonymous visitor: Buy now leads to sign in and returns here afterwards.")
 def _():
-    return detail("air-max-90", actions=btn("Buy now", "primary lg", P("sign-in", "return")), user="guest", report=False)
+    return detail("pink-tutu", actions=btn("Buy now", "primary lg", P("sign-in", "return")), user="guest", report=False)
 
 
 @d.state("new-seller", "A listing from a seller with no completed sales shows “New seller” instead of a rating.")
 def _():
-    return detail("samba-og", actions=btn("Buy now", "primary lg", P("checkout")))
+    return detail("rainbow-romper", actions=btn("Buy now", "primary lg", P("checkout")))
 
 
 @d.state("reserved", "Another buyer is in checkout: Reserved label, no Buy now, a hint to check back.")
 def _():
     info = alert("warning", "In someone’s checkout", "If they don’t finish within 10 minutes, it’s back on sale.", icon="clock")
-    return detail("bedale", stamp="Reserved", actions="", extra_info=info)
+    return detail("raincoat", stamp="Reserved", actions="", extra_info=info)
 
 
 @d.state("sold", "A sold listing keeps its URL with a Sold label and similar items, no Buy now.")
 def _():
-    return detail("iron-ranger", stamp="Sold", actions="", report=False, below=similar(["park-avenue", "air-max-90", "nb-990", "samba-og"]))
+    return detail("party-dress", stamp="Sold", actions="", report=False, below=similar(["pleated-skirt", "pink-tutu", "velvet-dress", "rainbow-romper"]))
 
 
 @d.state("own", "The seller viewing their own Used - Fair listing: flaws shown, Edit and Withdraw instead of Buy now.")
 def _():
     acts = btn("Edit listing", "primary lg", P("edit-listing"), icon="edit") + btn("Withdraw", "lg", D("withdraw-listing"))
-    return detail("arizona", actions=acts, report=False)
+    return detail("sundress", actions=acts, report=False)
 
 
 @d.state("loading", "Detail skeleton matching the gallery and info columns.")
@@ -278,12 +278,12 @@ def menu_sheet(guest: bool) -> str:
     cats = "".join(f'<li><a href="{nav_href(k)}">{t}{ic("chevron-right")}</a></li>' for k, t in NAV)
     if guest:
         small = f'<li><a href="{P("sell")}">Sell an item</a></li><li><a href="{P("rules")}">Marketplace rules</a></li>'
-        foot = btn("Sign in", href=P("sign-in")) + btn("Join Tutu Much", "primary", P("register"))
+        foot = btn("Sign in", href=P("sign-in")) + btn("Join TuTuMuch", "primary", P("register"))
     else:
         small = "".join(f'<li><a href="{P(pid)}">{t}</a></li>' for t, pid in [("Sell an item", "sell"), ("Your listings", "my-listings"), ("Purchases", "purchases"), ("Sales", "sales"), ("Settings", "settings")])
         foot = btn("Sign out", icon="log-out")
     return (f'<div class="menu-sheet" id="menu" role="dialog" aria-modal="true" aria-labelledby="dlg-title" data-dismiss-on-escape>'
-            f'<div class="menu-sheet__head"><span class="logo">{LOGO_SVG}</span>'
+            f'<div class="menu-sheet__head"><span class="logo">{LOGO_IMG}</span>'
             f'<h2 class="visually-hidden" id="dlg-title">Menu</h2><button class="btn btn--ghost btn--icon" type="button" aria-label="Close menu" autofocus>{ic("close")}</button></div>'
             f'<nav class="menu-sheet__body" aria-label="Menu"><ul class="menu-sheet__links" role="list">{cats}</ul>'
             f'<ul class="menu-sheet__links menu-sheet__links--small" role="list">{small}</ul></nav><div class="menu-sheet__foot">{foot}</div></div>')
@@ -312,18 +312,18 @@ def filter_sheet(form: str, apply: str, top: str = "") -> str:
             f'<form class="menu-sheet__body">{top}{form}</form><div class="menu-sheet__foot">{btn("Clear")}{apply}</div></div>')
 
 
-@f.state("default", "Filter panel with Shoes chosen; Apply shows the live result count.")
+@f.state("default", "Filter panel with Dresses chosen; Apply shows the live result count.")
 def _():
-    return Dialog(bg=("catalog", "default"), html=filter_sheet(filters_form("m", cat="Shoes", conds=["New with tags"]), btn("Show 38 items", "primary", attrs="autofocus")))
+    return Dialog(bg=("catalog", "default"), html=filter_sheet(filters_form("m", cat="Dresses", conds=["New with tags"]), btn("Show 38 items", "primary", attrs="autofocus")))
 
 
 @f.state("invalid", "Minimum price above maximum: inline error, Apply blocked until fixed.")
 def _():
-    form = filters_form("m", cat="Shoes", lo="200", hi="50", invalid=True)
+    form = filters_form("m", cat="Dresses", lo="200", hi="50", invalid=True)
     top = error_summary([("m-min", "Minimum price must be lower than maximum")], title="Check the price range")
     return Dialog(bg=("catalog", "default"), html=filter_sheet(form, btn("Show items", "primary", attrs="disabled"), top=top))
 
 
 @f.state("busy", "Counting results after a change: Apply is busy, the panel stays usable.")
 def _():
-    return Dialog(bg=("catalog", "default"), html=filter_sheet(filters_form("m", cat="Shoes", conds=["New with tags", "New without tags"]), btn("Show items", "primary", attrs='aria-busy="true"')))
+    return Dialog(bg=("catalog", "default"), html=filter_sheet(filters_form("m", cat="Dresses", conds=["New with tags", "New without tags"]), btn("Show items", "primary", attrs='aria-busy="true"')))

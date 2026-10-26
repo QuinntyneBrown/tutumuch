@@ -2066,22 +2066,6 @@ a.tab {
   color: var(--color-fg-default);
   text-decoration: none;
 }
-.logo svg {
-  height: 1.625rem;
-  width: auto;
-}
-.logo svg .logo__l {
-  fill: var(--color-brand);
-}
-.logo svg .logo__ink {
-  fill: currentColor;
-}
-.logo--lg svg {
-  height: 2.75rem;
-}
-.logo--sm svg {
-  height: 1.125rem;
-}
 
 /* ---------- Shell ---------------------------------------------------------- */
 .topbar {
@@ -3780,3 +3764,147 @@ a.tab {
   flex: 1;
 }
 /* @@system */
+
+/* ==========================================================================
+   Giddy look — TuTuMuch keeps the 12L components and draws them in the Giddy
+   design system: rounded display type, pill controls with a pressable lip,
+   soft corners and round avatars and icon wells, with the raspberry accent
+   on cream. Mirrors docs/design-system/assets/components.css. Every value is
+   a token.
+   ========================================================================== */
+h1,
+h2,
+h3,
+h4,
+.display,
+.card__title,
+.dialog__title,
+.drawer__title,
+.empty__title,
+.detail__title,
+.price--lg,
+.center-state .code {
+  font-family: var(--font-family-display);
+}
+.btn {
+  border-radius: var(--radius-full);
+  font-weight: var(--font-weight-bold);
+}
+.btn--primary {
+  box-shadow: var(--shadow-press);
+}
+.btn--primary:hover,
+.btn--primary[data-state='hover'] {
+  box-shadow: var(--shadow-press);
+  transform: translateY(-1px);
+}
+.btn--primary:active,
+.btn--primary[data-state='active'] {
+  box-shadow: none;
+  transform: translateY(0.25rem);
+}
+.btn--primary:disabled,
+.btn--primary[aria-busy='true'],
+.btn--primary[data-state='loading'],
+.btn--primary[data-state='disabled'] {
+  box-shadow: none;
+  transform: none;
+}
+.btn-group .btn {
+  border-radius: 0;
+}
+.btn-group .btn:first-child {
+  border-radius: var(--radius-full) 0 0 var(--radius-full);
+}
+.btn-group .btn:last-child {
+  border-radius: 0 var(--radius-full) var(--radius-full) 0;
+}
+.chip,
+.badge,
+.avatar,
+.empty__icon,
+.dialog__icon,
+.status::before,
+.switch input {
+  border-radius: var(--radius-full);
+}
+.switch input::before {
+  border-radius: 50%;
+}
+.tab::after {
+  border-radius: var(--radius-xs) var(--radius-xs) 0 0;
+}
+.nav-link[aria-current='page'],
+.tab[aria-selected='true'],
+.tab[aria-current='page'] {
+  color: var(--color-fg-accent);
+}
+.category-tile {
+  border-radius: var(--radius-lg);
+}
+.category-tile:hover {
+  border-color: var(--color-accent);
+}
+.topbar__admin {
+  background: var(--color-accent);
+  color: var(--color-fg-on-accent);
+  border-radius: var(--radius-full);
+}
+
+/* Size tag: the "Girls" pill on photos and category headers. */
+.size-tag {
+  padding: var(--space-0-5) var(--space-3);
+  background: var(--color-accent);
+  color: var(--color-fg-on-accent);
+  border-radius: var(--radius-full);
+  clip-path: none;
+}
+.size-tag b {
+  font-weight: var(--font-weight-heavy);
+}
+.size-tag--lg {
+  padding: var(--space-1) var(--space-4);
+}
+
+.photo,
+.skeleton--photo {
+  border-radius: var(--radius-lg);
+}
+.thumb .photo,
+.gallery__thumbs button,
+.gallery__thumbs .photo {
+  border-radius: var(--radius-md);
+}
+.photo .size-tag {
+  left: var(--space-2);
+  bottom: var(--space-2);
+}
+.photo__stamp {
+  background: var(--color-bg-surface);
+  color: var(--color-fg-default);
+  border-radius: var(--radius-full);
+  clip-path: none;
+}
+.photo__stamp--sold {
+  background: var(--color-bg-inverse);
+  color: var(--color-fg-inverse);
+}
+.gallery__thumbs button[aria-current='true'] {
+  box-shadow: 0 0 0 2px var(--color-accent);
+}
+.gallery__dots span {
+  border-radius: var(--radius-full);
+}
+.gallery__dots span[aria-current='true'] {
+  background: var(--color-accent);
+}
+.flaws {
+  border-radius: var(--radius-md);
+}
+.toast {
+  border-radius: var(--radius-lg);
+}
+.confirm__mark {
+  border-radius: var(--radius-full);
+  clip-path: none;
+}

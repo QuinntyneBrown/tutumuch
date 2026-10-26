@@ -69,7 +69,7 @@ def sign_in(*, email: str = "", err: str | None = None, busy: bool = False, top:
     p = pw("password", "Password", value=email)
     forgot = f'<a class="text-sm" href="{P("forgot-password")}" style="align-self: flex-start;">Forgot password?</a>'
     body = form(e + f'<div class="stack stack--sm">{p}{forgot}</div>', submit("Sign in", busy))
-    return auth(title, body, lead, f'New to Tutu Much? <a href="{P("register")}">Join</a>', top)
+    return auth(title, body, lead, f'New to TuTuMuch? <a href="{P("register")}">Join</a>', top)
 
 
 @s.state("default", "Sign in with email and password, focus on email.")
@@ -79,7 +79,7 @@ def _():
 
 @s.state("return", "Reached from Buy now as a visitor: after signing in the member returns to the listing.")
 def _():
-    pg = sign_in(title="Sign in to buy", lead="You’ll go straight back to the Air Max 90.")
+    pg = sign_in(title="Sign in to buy", lead="You’ll go straight back to the pink tulle tutu skirt.")
     pg.notes = note("Return URL /items/L-20931 is kept through sign in (L2-026).", "top: 6rem; right: 1rem;")
     return pg
 
@@ -118,7 +118,7 @@ r = screen("register", "page", "Join", route="/join", reqs=["L2-001", "L2-002", 
 def register(*, filled: bool = False, errs: dict | None = None, busy: bool = False, top: str = "") -> Page:
     errs = errs or {}
     v = (lambda x: x) if filled else (lambda x: "")
-    name = field("display-name", "Display name", value=v("marcus_12"), error=errs.get("display-name"),
+    name = field("display-name", "Display name", value=v("TutuTessa"), error=errs.get("display-name"),
                  help="3–30 letters, numbers, _ or -. Shown publicly.", attrs=f'autocomplete="username" autofocus{ro(busy)}')
     email = field("email", "Email", value=v(ME_P["email"]), type="email", error=errs.get("email"), attrs=f'autocomplete="email"{ro(busy)}')
     pwd = pw("password", "Password", error=errs.get("password"), help="At least 12 characters.", value="x" if filled else "", auto="new-password")
@@ -130,8 +130,8 @@ def register(*, filled: bool = False, errs: dict | None = None, busy: bool = Fal
         msg = f'<span class="field__error" id="{fid}-error">{e}</span>' if e else ""
         return f'<div class="field"><label class="choice"><input type="checkbox" id="{fid}"{chk}{inv}><span>{label}</span></label>{msg}</div>'
     ticks = tick("age", "I’m 18 or older") + tick("terms", f'I accept the <a href="{P("terms")}">terms</a> and <a href="{P("rules")}">marketplace rules</a>')
-    body = form(name + email + pwd + f'<div class="stack stack--sm">{ticks}</div>', submit("Join Tutu Much", busy))
-    return auth("Join Tutu Much", body, "Buy and sell with one account.", f'Already a member? <a href="{P("sign-in")}">Sign in</a>', top)
+    body = form(name + email + pwd + f'<div class="stack stack--sm">{ticks}</div>', submit("Join TuTuMuch", busy))
+    return auth("Join TuTuMuch", body, "Buy and sell with one account.", f'Already a member? <a href="{P("sign-in")}">Sign in</a>', top)
 
 
 @r.state("default", "Join with display name, email and password; 18+ and terms ticks.")
@@ -223,7 +223,7 @@ def _():
 
 @fp.state("invalid", "Malformed email: inline error.")
 def _():
-    return forgot(email="marcus.bell@", err="Enter an email like name@example.com")
+    return forgot(email="tessa.bell@", err="Enter an email like name@example.com")
 
 
 @fp.state("submitting", "Sending: button busy.")
@@ -325,7 +325,7 @@ def _():
 
 @ac.state("empty", "New member, nothing yet: one nudge to list or shop.")
 def _():
-    e = empty("tag", "Nothing here yet", "List something you no longer wear, or find something that fits.",
+    e = empty("tag", "Nothing here yet", "List something she’s outgrown, or find her next size up.",
               btn("Sell an item", "primary", P("sell")) + btn("Browse", href=P("catalog")))
     pg = overview("", extra=e)
     pg.main = pg.main.replace(btn("Sell an item", "primary", P("sell"), icon="plus"), "")
@@ -349,11 +349,11 @@ def _():
 pr = screen("profile", "page", "Member profile", route="/members/{displayName}", reqs=["L2-041", "L2-040", "L2-054"])
 
 REVIEWS = {
-    "kicks_12": [("marcus_12", 5, "Fri 9 Oct", "Shipped next day, exactly as pictured.", "Thanks Marcus, enjoy them."),
-                 ("tall_tom", 5, "Mon 28 Sep", "Boxed well. Would buy again.", None),
-                 ("vintage_lou", 4, "Tue 15 Sep", "Great pair, took a week to arrive.", None)],
-    "marcus_12": [("tall_tom", 5, "Mon 5 Oct", "Shorts were spotless. Fast shipping.", None),
-                  ("jaybird", 4, "Thu 17 Sep", "Good seller, a little slow to reply.", None)],
+    "TwirlyTara": [("TutuTessa", 5, "Fri 9 Oct", "Shipped next day, exactly as pictured.", "Thanks Tessa, hope she loves it."),
+                 ("PuddleJumperPia", 5, "Mon 28 Sep", "Packed with tissue paper. Would buy again.", None),
+                 ("HandMeDownHana", 4, "Tue 15 Sep", "Lovely dress, took a week to arrive.", None)],
+    "TutuTessa": [("PuddleJumperPia", 5, "Mon 5 Oct", "Shorts were spotless. Fast shipping.", None),
+                  ("RainbowRosa", 4, "Thu 17 Sep", "Good seller, a little slow to reply.", None)],
 }
 
 
@@ -393,25 +393,25 @@ def profile(handle: str, keys, *, own: bool = False, reviews=None, listings_coun
     return Page(main=main)
 
 
-KICKS = ["air-max-90", "nb-990", "park-avenue", "gamma-pants"]
+TARA = ["pink-tutu", "velvet-dress", "pleated-skirt", "denim-leggings"]
 
 
-@pr.state("default", "kicks_12’s public profile: rating, sales, items for sale and reviews; no contact details.")
+@pr.state("default", "TwirlyTara’s public profile: rating, sales, items for sale and reviews; no contact details.")
 def _():
-    pg = profile("kicks_12", KICKS)
+    pg = profile("TwirlyTara", TARA)
     pg.notes = note("No email, phone or street address appears on the page or in its API response (L2-054).", "top: 6rem; right: 1rem;")
     return pg
 
 
-@pr.state("own", "Marcus viewing his own profile: Edit profile.")
+@pr.state("own", "Tessa viewing her own profile: Edit profile.")
 def _():
-    return profile("marcus_12", ["arizona", "reverse-weave"], own=True)
+    return profile("TutuTessa", ["sundress", "heart-hoodie"], own=True)
 
 
-@pr.state("empty", "Member with nothing for sale and only buyer reviews (tall_tom).")
+@pr.state("empty", "Member with nothing for sale and only buyer reviews (PuddleJumperPia).")
 def _():
-    return profile("tall_tom", [], reviews=[("marcus_12", 5, "Wed 7 Oct", "Paid fast, easy to deal with.", None),
-                                            ("marcus_12", 5, "Sat 3 Oct", "Smooth sale.", None)])
+    return profile("PuddleJumperPia", [], reviews=[("TutuTessa", 5, "Wed 7 Oct", "Paid fast, easy to deal with.", None),
+                                            ("TutuTessa", 5, "Sat 3 Oct", "Smooth sale.", None)])
 
 
 @pr.state("loading", "Profile skeleton.")
@@ -437,10 +437,10 @@ def _():
 
 @pr.state("long", "Busy seller: listings paged 24 at a time.")
 def _():
-    keys = KICKS + ["samba-og", "iron-ranger", "organic-tee", "better-sweater"]
+    keys = TARA + ["rainbow-romper", "party-dress", "unicorn-tee", "rainbow-sweater"]
     more = ('<div class="load-more"><span class="text-sm text-muted">Showing 24 of 141</span>'
             + btn("Load more") + '</div>')
-    pg = profile("kicks_12", keys, listings_count=141, more=more)
+    pg = profile("TwirlyTara", keys, listings_count=141, more=more)
     pg.notes = note("The mock shows 8 cards; pages hold 24.", "top: 30rem; right: 1rem;")
     return pg
 
@@ -477,8 +477,8 @@ def _():
 
 @ep.state("invalid", "Name taken and bio over 500 characters: summary plus inline errors.")
 def _():
-    long_bio = ("Size 12 since high school. Mostly sneakers, the odd jacket. " * 9)[:501]
-    errs = {"_name": "KICKS_12", "display-name": "That display name is taken", "bio": "Bio must be 500 characters or fewer"}
+    long_bio = ("Two girls, one size apart. Mostly dresses, the odd raincoat. " * 9)[:501]
+    errs = {"_name": "TWIRLYTARA", "display-name": "That display name is taken", "bio": "Bio must be 500 characters or fewer"}
     return edit_profile(errs=errs, bio=long_bio, top=error_summary([("display-name", errs["display-name"]), ("bio", errs["bio"])]))
 
 
@@ -558,7 +558,7 @@ def emails(*, reviews: bool = True, marketing: bool = False, busy: bool = False,
         row("Account security", "Sign-in alerts, password resets", sw("sec", True, True, "Account security emails, always on")),
         row("Orders", "Sales, shipping, delivery, refunds", sw("ord", True, True, "Order emails, always on")),
         row("Reviews", "When someone reviews you", sw("rev", reviews, busy, "Review emails")),
-        row("News from Tutu Much", "New arrivals in your size, now and then", sw("mkt", marketing, busy, "Marketing emails")),
+        row("News from TuTuMuch", "New arrivals for girls, now and then", sw("mkt", marketing, busy, "Marketing emails")),
     ]
     save = btn("Save", "primary", attrs='type="submit"' + (' aria-busy="true"' if busy else ""))
     main = head("Emails", "Security and order emails are always on.") + top + f'<form class="page--form"><ul class="settings-list">{"".join(rows)}</ul><div class="form-actions" style="justify-content: flex-start;">{save}</div></form>'

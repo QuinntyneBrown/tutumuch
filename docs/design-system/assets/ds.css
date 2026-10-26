@@ -168,3 +168,17 @@ pre code { background: none; padding: 0; }
 .ds-card span { color: var(--color-fg-muted); font: var(--text-body-sm); }
 .ds-card__preview { height: 4.5rem; display: grid; place-items: center; background: var(--color-bg-canvas); border-radius: var(--radius-md); margin-bottom: var(--space-3); overflow: hidden; }
 @media print { .ds-nav, .ds-theme-toggle, .ds-copy { display: none !important; } .ds-shell { display: block; } }
+
+/* Giddy additions: component group labels in the nav, the tutu mark in the brand,
+   and the motion demo running when the demo itself carries data-run. */
+.ds-nav__group { font: var(--text-caption); font-weight: var(--font-weight-semibold); color: var(--color-fg-subtle); padding: var(--space-2) var(--space-3) 0; }
+.ds-nav__brand a { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--color-fg-accent); }
+.ds-motion-demo[data-run="true"] .dot { translate: 6rem 0; }
+/* Keep specimens and code inside the page at 360px. */
+.ds-example__canvas > *, .ds-anatomy__figure > *, .ds-themes .ds-example__canvas > * { max-width: 100%; }
+.ds-main code { overflow-wrap: anywhere; }
+.ds-main pre { max-width: 100%; overflow-x: auto; }
+.ds-matrix { max-width: 100%; overflow-x: auto; }
+.ds-main .ds-table:not(.ds-table-wrap .ds-table) { display: block; overflow-x: auto; }
+.ds-example__canvas .topbar, .ds-anatomy__figure .topbar, .ds-themes .topbar { flex-wrap: wrap; padding-block: var(--space-2); }
+.ds-brand-mark { width: 1.75rem; height: 1.75rem; flex: none; object-fit: contain; }

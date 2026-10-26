@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render every Tutu Much mock from the screen modules.
+"""Render every TuTuMuch mock from the screen modules.
 
     python docs/mocks/_build/build.py                 # everything + manifest.json
     python docs/mocks/_build/build.py --only commerce # one module (screens_commerce.py); no manifest
@@ -77,7 +77,7 @@ def main() -> int:
             errors.append(f"link to {kind} '{sid}' state '{st}' which does not exist")
     if not args.only:
         manifest = {
-            "project": "Tutu Much",
+            "project": "TuTuMuch",
             "required_states": REQUIRED,
             "screens": [
                 {k: v for k, v in {

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   components.css — the Tutu Much component stylesheet, extracted from
+   components.css — the TuTuMuch component stylesheet, extracted from
    docs/mocks/assets/ui.css on 2026-10-25.
 
    Every colour, size and duration comes from ../tokens/tokens.css. Each
@@ -397,17 +397,16 @@ a.tab { text-decoration: none; }
 @media print { .topbar, .sidebar, .toast-region, .mock-bar, .skip-link { display: none !important; } }
 
 /* ==========================================================================
-   Tutu Much brand layer — components specific to the marketplace. Geometry follows
-   the logo: square corners, solid ink blocks, one 45° chamfer, a red accent.
+   TuTuMuch layer — components specific to the marketplace, drawn in the Giddy
+   look: rounded type, pill controls, soft corners, a raspberry accent on cream.
    ========================================================================== */
 
 /* ---------- Logo ---------------------------------------------------------- */
 .logo { display: inline-flex; align-items: center; color: var(--color-fg-default); text-decoration: none; }
-.logo svg { height: 1.625rem; width: auto; }
-.logo svg .logo__l { fill: var(--color-brand); }
-.logo svg .logo__ink { fill: currentColor; }
-.logo--lg svg { height: 2.75rem; }
-.logo--sm svg { height: 1.125rem; }
+/* The supplied TuTuMuch logo image (plum outline, bubblegum dots, lavender checks) reads on both themes. */
+.logo img { display: block; height: 1.75rem; width: auto; max-width: 100%; }
+.logo--lg img { height: 3rem; }
+.logo--sm img { height: 1.25rem; }
 
 /* ---------- Shell ---------------------------------------------------------- */
 .topbar { gap: var(--space-3); }
@@ -418,7 +417,7 @@ a.tab { text-decoration: none; }
 @media (min-width: 62rem) { .topbar .search { display: block; max-width: 22rem; } .topbar__search-btn { display: none; } }
 .topbar__sell { display: none; }
 @media (min-width: 48rem) { .topbar__sell { display: inline-flex; } }
-.topbar__admin { font: var(--text-overline); letter-spacing: var(--letter-spacing-wide); text-transform: uppercase; padding: var(--space-1) var(--space-2); background: var(--color-brand); color: var(--palette-white); }
+.topbar__admin { font: var(--text-overline); letter-spacing: var(--letter-spacing-wide); text-transform: uppercase; padding: var(--space-1) var(--space-2); background: var(--color-accent); color: var(--color-fg-on-accent); border-radius: var(--radius-full); }
 .page { padding-bottom: var(--space-16); }
 .page--narrow { max-width: 40rem; }
 .page--form { max-width: 44rem; }
@@ -436,23 +435,23 @@ a.tab { text-decoration: none; }
 .rule { border: 0; border-top: 1px solid var(--color-border-default); margin: var(--space-12) 0; }
 .num { font-variant-numeric: tabular-nums; }
 
-/* ---------- Size tag: the 12 / L block, cut like the logo's L ------------ */
-.size-tag { display: inline-flex; align-items: center; gap: var(--space-1); padding: var(--space-0-5) calc(var(--space-2) + var(--chamfer) * 0.4) var(--space-0-5) var(--space-2); background: var(--palette-ink-950); color: var(--palette-paper-100); font: var(--text-overline); letter-spacing: var(--letter-spacing-wide); text-transform: uppercase; clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--chamfer) * 0.7), calc(100% - var(--chamfer) * 0.7) 100%, 0 100%); white-space: nowrap; }
-.size-tag b { font-weight: var(--font-weight-black); font-size: var(--font-size-sm); letter-spacing: 0; }
-.size-tag--lg { font-size: var(--font-size-sm); padding: var(--space-1) calc(var(--space-3) + var(--chamfer) * 0.5) var(--space-1) var(--space-3); }
+/* ---------- Size tag: the "Girls" pill on photos and category tiles ------ */
+.size-tag { display: inline-flex; align-items: center; gap: var(--space-1); padding: var(--space-0-5) var(--space-3); background: var(--color-accent); color: var(--color-fg-on-accent); border-radius: var(--radius-full); font: var(--text-overline); letter-spacing: var(--letter-spacing-wide); text-transform: uppercase; white-space: nowrap; }
+.size-tag b { font-weight: var(--font-weight-heavy); font-size: var(--font-size-sm); letter-spacing: 0; }
+.size-tag--lg { font-size: var(--font-size-sm); padding: var(--space-1) var(--space-4); }
 .size-tag--lg b { font-size: var(--font-size-lg); }
 
 /* ---------- Photos ------------------------------------------------------------ */
-.photo { position: relative; aspect-ratio: 4 / 5; background: var(--photo-bg-1); overflow: hidden; display: grid; place-items: center; }
+.photo { position: relative; aspect-ratio: 4 / 5; background: var(--photo-bg-1); border-radius: var(--radius-lg); overflow: hidden; display: grid; place-items: center; }
 .photo img { width: 78%; height: auto; }
 .photo--1 { background: var(--photo-bg-1); } .photo--2 { background: var(--photo-bg-2); } .photo--3 { background: var(--photo-bg-3); }
 .photo--4 { background: var(--photo-bg-4); } .photo--5 { background: var(--photo-bg-5); } .photo--6 { background: var(--photo-bg-6); }
 .photo--square { aspect-ratio: 1; }
-.photo .size-tag { position: absolute; left: 0; bottom: 0; }
-.photo__stamp { position: absolute; top: var(--space-3); left: var(--space-3); padding: var(--space-1) var(--space-2); font: var(--text-overline); letter-spacing: var(--letter-spacing-wide); text-transform: uppercase; background: var(--palette-paper-100); color: var(--palette-ink-950); box-shadow: var(--shadow-1); }
-.photo__stamp--sold { background: var(--palette-ink-950); color: var(--palette-paper-100); }
+.photo .size-tag { position: absolute; left: var(--space-2); bottom: var(--space-2); }
+.photo__stamp { position: absolute; top: var(--space-3); left: var(--space-3); padding: var(--space-1) var(--space-2); font: var(--text-overline); letter-spacing: var(--letter-spacing-wide); text-transform: uppercase; background: var(--color-bg-surface); color: var(--color-fg-default); border-radius: var(--radius-full); box-shadow: var(--shadow-1); }
+.photo__stamp--sold { background: var(--color-bg-inverse); color: var(--color-fg-inverse); }
 .thumb { width: 3.5rem; flex: none; }
-.thumb .photo { aspect-ratio: 1; }
+.thumb .photo { aspect-ratio: 1; border-radius: var(--radius-md); }
 .thumb--lg { width: 5rem; }
 
 /* ---------- Listing grid and card ------------------------------------------ */
@@ -474,7 +473,7 @@ a.tab { text-decoration: none; }
 .price { font-weight: var(--font-weight-bold); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .price--lg { font: var(--text-h2); letter-spacing: var(--letter-spacing-tight); }
 .price--muted { color: var(--color-fg-muted); font-weight: var(--font-weight-regular); }
-.skeleton--photo { aspect-ratio: 4 / 5; border-radius: 0; }
+.skeleton--photo { aspect-ratio: 4 / 5; border-radius: var(--radius-lg); }
 
 /* ---------- Catalog layout: filters sidebar at lg ---------------------------- */
 .catalog-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-10); }
@@ -511,11 +510,12 @@ a.tab { text-decoration: none; }
 .gallery__thumbs { display: flex; gap: var(--space-2); list-style: none; padding: 0 var(--layout-margin); margin: 0; overflow-x: auto; }
 @media (min-width: 36rem) { .gallery__thumbs { padding: 0; } }
 .gallery__thumbs button { all: unset; cursor: pointer; width: 4rem; flex: none; outline-offset: 2px; }
-.gallery__thumbs button[aria-current="true"] { box-shadow: 0 0 0 2px var(--color-fg-default); }
-.gallery__thumbs .photo { aspect-ratio: 1; }
+.gallery__thumbs button { border-radius: var(--radius-md); }
+.gallery__thumbs button[aria-current="true"] { box-shadow: 0 0 0 2px var(--color-accent); }
+.gallery__thumbs .photo { aspect-ratio: 1; border-radius: var(--radius-md); }
 .gallery__dots { display: flex; justify-content: center; gap: var(--space-2); }
-.gallery__dots span { width: 0.375rem; height: 0.375rem; background: var(--color-border-strong); }
-.gallery__dots span[aria-current="true"] { background: var(--color-fg-default); width: 1.25rem; }
+.gallery__dots span { width: 0.375rem; height: 0.375rem; border-radius: var(--radius-full); background: var(--color-border-strong); }
+.gallery__dots span[aria-current="true"] { background: var(--color-accent); width: 1.25rem; }
 @media (min-width: 62rem) { .gallery__dots { display: none; } }
 .detail__info { display: flex; flex-direction: column; gap: var(--space-8); }
 @media (min-width: 62rem) { .detail__info { position: sticky; top: calc(var(--layout-topbar-height) + var(--space-8)); align-self: start; } }
@@ -533,7 +533,7 @@ a.tab { text-decoration: none; }
 .buy-bar:has(.btn + .btn) .buy-bar__price { display: none; }
 .buy-bar__price { display: flex; flex-direction: column; }
 @media (min-width: 62rem) { .buy-bar { position: static; padding: 0; margin: 0; border: 0; background: none; } .buy-bar__price { display: none; } }
-.flaws { padding: var(--space-4); background: var(--color-warning-bg); color: var(--color-warning-fg); border-left: 3px solid var(--color-warning-solid); font: var(--text-body-sm); }
+.flaws { padding: var(--space-4); background: var(--color-warning-bg); color: var(--color-warning-fg); border-left: 3px solid var(--color-warning-solid); border-radius: var(--radius-md); font: var(--text-body-sm); }
 
 /* ---------- Ratings ----------------------------------------------------------- */
 .rating { display: inline-flex; align-items: center; gap: var(--space-1); font: var(--text-body-sm); white-space: nowrap; }
@@ -675,7 +675,7 @@ a.tab { text-decoration: none; }
 .consent .btn--primary { --btn-bg: var(--color-fg-inverse); --btn-fg: var(--color-bg-inverse); --btn-border: var(--color-fg-inverse); --btn-bg-hover: var(--color-fg-inverse); }
 .consent :focus-visible { outline-color: var(--color-fg-inverse); }
 .toast :focus-visible { outline-color: var(--color-fg-inverse); }
-.toast { border-left: 3px solid var(--color-brand); border-radius: var(--radius-sm); }
+.toast { border-left: 3px solid var(--color-brand); border-radius: var(--radius-lg); }
 .toast--success { border-left-color: var(--color-inverse-success); } .toast--warning { border-left-color: var(--color-inverse-warning); } .toast--danger { border-left-color: var(--color-inverse-danger); } .toast--info { border-left-color: var(--color-inverse-info); }
 .toast--info .icon { color: var(--color-inverse-info); } .toast--success .icon { color: var(--color-inverse-success); } .toast--warning .icon { color: var(--color-inverse-warning); } .toast--danger .icon { color: var(--color-inverse-danger); }
 .banner { border-left-width: 0; border-top: 0; border-bottom-width: 1px; }
@@ -707,7 +707,7 @@ a.tab { text-decoration: none; }
 .timer--warning { color: var(--color-warning-fg); }
 .timer--danger { color: var(--color-danger-fg); }
 .confirm { display: flex; flex-direction: column; gap: var(--space-6); max-width: 34rem; padding-block: var(--space-16) var(--space-8); }
-.confirm__mark { display: grid; place-items: center; width: 3.5rem; height: 3.5rem; background: var(--color-accent); color: var(--color-fg-on-accent); clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--chamfer)), calc(100% - var(--chamfer)) 100%, 0 100%); }
+.confirm__mark { display: grid; place-items: center; width: 3.5rem; height: 3.5rem; background: var(--color-accent); color: var(--color-fg-on-accent); border-radius: var(--radius-full); }
 .confirm__mark .icon { width: 1.75rem; height: 1.75rem; stroke-width: 2.5; }
 .confirm__item { padding-block: var(--space-6); border-block: 1px solid var(--color-border-default); }
 .next-steps { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-5); counter-reset: next; }
@@ -739,3 +739,34 @@ a.tab { text-decoration: none; }
 .switch--labelled { justify-content: space-between; width: 100%; }
 .footer__link { appearance: none; border: 0; padding: 0; background: none; font: inherit; color: inherit; cursor: pointer; text-decoration: none; }
 .footer__link:hover { text-decoration: underline; }
+
+/* ==========================================================================
+   Giddy look — refinements to the base kit so TuTuMuch reads as the Giddy
+   design system: rounded display type, pill controls with a pressable lip,
+   round avatars and icon wells. Every value is a token.
+   ========================================================================== */
+h1, h2, h3, h4, .display, .card__title, .dialog__title, .drawer__title, .empty__title, .detail__title, .price--lg, .center-state .code { font-family: var(--font-family-display); }
+.btn { border-radius: var(--radius-full); font-weight: var(--font-weight-bold); }
+.btn--primary { box-shadow: var(--shadow-press); }
+.btn--primary:hover, .btn--primary[data-state="hover"] { box-shadow: var(--shadow-press); transform: translateY(-1px); }
+.btn--primary:active, .btn--primary[data-state="active"] { box-shadow: none; transform: translateY(0.25rem); }
+.btn--primary:disabled, .btn--primary[aria-busy="true"], .btn--primary[data-state="loading"], .btn--primary[data-state="disabled"] { box-shadow: none; transform: none; }
+.btn-group .btn { border-radius: 0; }
+.btn-group .btn:first-child { border-radius: var(--radius-full) 0 0 var(--radius-full); }
+.btn-group .btn:last-child { border-radius: 0 var(--radius-full) var(--radius-full) 0; }
+.chip, .badge, .avatar, .empty__icon, .dialog__icon { border-radius: var(--radius-full); }
+.switch input { border-radius: var(--radius-full); }
+.switch input::before { border-radius: 50%; }
+.tab::after { border-radius: var(--radius-xs) var(--radius-xs) 0 0; }
+.nav-link[aria-current="page"], .tab[aria-selected="true"], .tab[aria-current="page"] { color: var(--color-fg-accent); }
+.category-tile { border-radius: var(--radius-lg); }
+.category-tile:hover { border-color: var(--color-accent); }
+.status::before { border-radius: var(--radius-full); }
+/* Giddy party pops: colour families for decorative badges (documentation and future tiles). */
+.pop--sun    { --pop-bg: var(--color-pop-sun-bg);    --pop-fg: var(--color-pop-sun-fg); }
+.pop--pink   { --pop-bg: var(--color-pop-pink-bg);   --pop-fg: var(--color-pop-pink-fg); }
+.pop--mint   { --pop-bg: var(--color-pop-mint-bg);   --pop-fg: var(--color-pop-mint-fg); }
+.pop--sky    { --pop-bg: var(--color-pop-sky-bg);    --pop-fg: var(--color-pop-sky-fg); }
+.pop--orange { --pop-bg: var(--color-pop-orange-bg); --pop-fg: var(--color-pop-orange-fg); }
+.pop--grape  { --pop-bg: var(--color-pop-grape-bg);  --pop-fg: var(--color-pop-grape-fg); }
+.badge[class*="pop--"] { background: var(--pop-bg); color: var(--pop-fg); }

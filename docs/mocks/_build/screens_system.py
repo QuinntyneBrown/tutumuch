@@ -51,10 +51,10 @@ def load_error(what: str, ref: str) -> str:
 def problem_main(resolved: bool) -> str:
     o = ORDERS["TM-48140"]
     photos = '<ul class="uploader" role="list">' + "".join(
-        f'<li>{photo("better-sweater", tag=False, alt=f"Buyer photo {i} of the fleece", tone=t)}</li>' for i, t in [(1, 1), (2, 3)]) + "</ul>"
-    claim = ('<div class="thread__item"><span class="text-caption">marcus_12 · buyer · Sun 25 Oct</span>'
+        f'<li>{photo("rainbow-sweater", tag=False, alt=f"Buyer photo {i} of the sweater", tone=t)}</li>' for i, t in [(1, 1), (2, 3)]) + "</ul>"
+    claim = ('<div class="thread__item"><span class="text-caption">TutuTessa · buyer · Sun 25 Oct</span>'
              '<p>Pilling all over the front and a small hole by the left cuff. Listing said excellent.</p>' + photos + "</div>")
-    reply = ('<div class="thread__item"><span class="text-caption">vintage_lou · seller · Sun 25 Oct</span>'
+    reply = ('<div class="thread__item"><span class="text-caption">HandMeDownHana · seller · Sun 25 Oct</span>'
              '<p>It left here without the hole. Happy to take it back.</p></div>')
     if resolved:
         top = alert("success", "Refunded in full", f"{money(o['total'])} back to the buyer. No payout. Today 11:05 ET.")
@@ -62,7 +62,7 @@ def problem_main(resolved: bool) -> str:
     else:
         top = ""
         action = btn("Resolve", "primary", D("resolve-problem"))
-    side = (f'<aside class="panel panel--sunken stack"><span class="eyebrow">Order TM-48140</span>{item_row("better-sweater")}'
+    side = (f'<aside class="panel panel--sunken stack"><span class="eyebrow">Order TM-48140</span>{item_row("rainbow-sweater")}'
             f'<dl class="facts"><dt>Status</dt><dd>{status("Refunded" if resolved else "Delivered")}</dd><dt>Total</dt><dd class="num">{money(o["total"])}</dd>'
             f'<dt>Delivered</dt><dd>{o["delivered"]}</dd><dt>Payout</dt><dd>{"Not paid" if resolved else "Held"}</dd></dl>{action}</aside>')
     body = f'<div class="stack stack--lg">{top}<div class="thread">{claim}{reply}</div></div>'
@@ -120,7 +120,7 @@ simple("offline", "Offline", "(any)", ["L2-068"], "The device lost its connectio
        na={"loading": "Shown from the cached shell without a request.", "empty": "Not a collection.", "error": "This page is itself the error state."})
 
 simple("maintenance", "Maintenance", "(any)", ["L2-066"], "Announced maintenance window with the time we’re back.",
-       lambda: Page(main=center("", "Back at 3:00 AM ET", "Tutu Much is down for planned maintenance. Orders and payments are safe.",
+       lambda: Page(main=center("", "Back at 3:00 AM ET", "TuTuMuch is down for planned maintenance. Orders and payments are safe.",
                                 btn("Check status", "primary", icon="refresh"), icon="wrench"), user="guest"),
        na={"loading": "Served as a static page during maintenance.", "empty": "Not a collection.", "error": "This page is itself the outage notice."})
 
@@ -136,7 +136,7 @@ def rules_body() -> str:
     rows = "".join(f'<tr><th scope="row">{c}</th><td>{", ".join(s)}</td><td>{size_tag(z)}</td></tr>' for c, s, z in CATEGORIES)
     sizes = ('<div class="table-wrap"><table class="table"><caption class="visually-hidden">Accepted categories and sizes</caption>'
              f'<thead><tr><th scope="col">Category</th><th scope="col">Includes</th><th scope="col">Size</th></tr></thead><tbody>{rows}</tbody></table></div>')
-    rules = [("Only two sizes", "Men’s US 12 shoes and men’s L clothing. The label must say so."),
+    rules = [("Girls’ clothing only", "Dresses, tops, outerwear and bottoms in girls’ sizes. The label must say so."),
              ("18 and over", "One account to buy and sell. No approval step."),
              ("Honest condition", ", ".join(CONDITIONS) + ". Used - Fair needs its flaws described."),
              ("Ship in 5 business days", "Add tracking or the order is cancelled and refunded."),
@@ -150,12 +150,12 @@ def rules_body() -> str:
 
 simple("rules", "Marketplace rules", "/rules", ["L2-011", "L2-014", "L2-016", "L2-031", "L2-033"],
        "The rules on one short page: sizes, age, condition, shipping, fee, US only, counterfeits.",
-       lambda: doc_page("Marketplace rules", "Short, because it only has to cover two sizes.", rules_body()))
+       lambda: doc_page("Marketplace rules", "Short, because it only has to cover girls’ clothing.", rules_body()))
 
 
 def privacy_body() -> str:
     items = [("What we collect", "Email, password hash, display name, shipping addresses, and orders."),
-             ("Never public", "Your email, phone and street address never appear on Tutu Much pages."),
+             ("Never public", "Your email, phone and street address never appear on TuTuMuch pages."),
              ("Encrypted", "Shipping addresses are encrypted at rest. Card numbers never reach us."),
              ("Erasure", "Close your account and we erase your data within 30 days."),
              ("Cookies", "Only necessary cookies until you accept analytics.")]
@@ -164,18 +164,18 @@ def privacy_body() -> str:
     return f'<ul class="rules-list" role="list">{lst}</ul><p class="text-sm" style="margin-top: var(--space-8);"><a href="{D("cookie-settings")}">Cookie settings</a></p>'
 
 
-simple("privacy", "Privacy", "/privacy", ["L2-054", "L2-056", "L2-005"], "What Tutu Much keeps, what stays private, and erasure.",
+simple("privacy", "Privacy", "/privacy", ["L2-054", "L2-056", "L2-005"], "What TuTuMuch keeps, what stays private, and erasure.",
        lambda: doc_page("Privacy", "Updated 1 Oct 2026", privacy_body()))
 
 
 def terms_body() -> str:
     terms = ["You must be 18 or older to hold an account.",
-             "List only items you own, in men’s US 12 or men’s L.",
+             "List only girls’ clothing you own.",
              "Describe condition and flaws honestly; photos must be of the actual item.",
              "Payment goes through our payment provider. Sellers are paid when the order completes.",
              "Buyers can report a problem until 3 days after delivery.",
              "We may remove listings that break the marketplace rules.",
-             "Tutu Much operates in the United States only."]
+             "TuTuMuch operates in the United States only."]
     lst = "".join(f"<li>{t}</li>" for t in terms)
     return (f'<ol class="terms-list">{lst}</ol><p class="text-sm text-muted" style="margin-top: var(--space-8);">See also the '
             f'<a href="{P("rules")}">marketplace rules</a> and <a href="{P("privacy")}">privacy</a>.</p>')
@@ -197,8 +197,8 @@ def reason_field(error: str | None = None, value: str = "", busy: bool = False) 
 def rp_dialog(error=None, value="", busy=False) -> str:
     o = ORDERS["TM-48140"]
     ch = ('<fieldset><legend>Decision</legend>'
-          f'<label class="choice"><input type="radio" name="outcome" checked><span class="choice__text">Refund buyer in full<small>{money(o["total"])} to marcus_12 · no payout</small></span></label>'
-          f'<label class="choice"><input type="radio" name="outcome"><span class="choice__text">Release payout to seller<small>Order completes · vintage_lou is paid</small></span></label></fieldset>')
+          f'<label class="choice"><input type="radio" name="outcome" checked><span class="choice__text">Refund buyer in full<small>{money(o["total"])} to TutuTessa · no payout</small></span></label>'
+          f'<label class="choice"><input type="radio" name="outcome"><span class="choice__text">Release payout to seller<small>Order completes · HandMeDownHana is paid</small></span></label></fieldset>')
     prim = btn("Refunding", "primary", attrs='aria-busy="true"') if busy else btn("Refund buyer", "primary")
     return dialog("Resolve problem P-0912", ch + reason_field(error, value, busy), btn("Cancel", attrs="disabled" if busy else "") + prim)
 
@@ -253,7 +253,7 @@ cc = screen("cookie-consent", "notification", "Cookie consent", opens_from="cata
 @cc.state("info", "First visit: only necessary cookies are set until the visitor chooses.")
 def _():
     html = (f'<section class="consent" aria-labelledby="consent-title"><h2 id="consent-title" style="font: var(--text-h4);">Cookies</h2>'
-            f'<p class="text-sm">We use necessary cookies to run Tutu Much. Analytics only if you say yes.</p>'
+            f'<p class="text-sm">We use necessary cookies to run TuTuMuch. Analytics only if you say yes.</p>'
             f'<div class="consent__actions">{btn("Accept analytics", "primary")}{btn("Necessary only")}</div>'
             f'<a class="text-sm" href="{D("cookie-settings")}">Cookie settings</a></section>')
     return Note(bg=("catalog", "guest"), after=html)

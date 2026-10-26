@@ -1,4 +1,4 @@
-"""Mock generator core for Tutu Much.
+"""Mock generator core for TuTuMuch.
 
 Screen modules (screens_*.py) declare screens and their states; build.py
 renders every state to docs/mocks/<kind>s/<id>/<state>.html, writes
@@ -148,15 +148,14 @@ def ic(name: str, cls: str = "icon", label: str | None = None) -> str:
     return f'<svg class="{cls}" {aria} viewBox="0 0 24 24">{ICONS[name]}</svg>'
 
 
-LOGO_SVG = ('<svg viewBox="-4 -4 192 108" aria-hidden="true" focusable="false">'
-            '<polygon class="logo__ink" points="0,14 20,0 40,0 40,100 20,100 20,24 0,38"/>'
-            '<polygon class="logo__ink" points="52,0 112,0 112,50 78,80 112,80 112,100 52,100 52,76 92,41 92,20 52,20"/>'
-            '<polygon class="logo__l" points="124,0 144,0 144,80 170,80 184,66 184,88 172,100 124,100"/></svg>')
+# The TuTuMuch logo supplied by the owner (docs/design-system/assets/logo.png, copied to
+# docs/mocks/assets/logo.png). Decorative: the surrounding link carries aria-label "TuTuMuch home".
+LOGO_IMG = '<img src="../../assets/logo.png" alt="" width="1200" height="274">'
 
 
 def logo(href: str | None = None, cls: str = "") -> str:
     href = href or P("catalog")
-    return f'<a class="logo {cls}" href="{href}" aria-label="Tutu Much home">{LOGO_SVG}</a>'
+    return f'<a class="logo {cls}" href="{href}" aria-label="TuTuMuch home">{LOGO_IMG}</a>'
 
 
 # ---------------------------------------------------------------------------
@@ -178,19 +177,17 @@ def ship_text(v: float) -> str:
 
 
 def size_of(item: dict) -> str:
-    return "US 12" if item["cat"] == "Shoes" else "L"
+    return "Girls'"
 
 
 def size_long(item: dict) -> str:
-    return "Men's US 12" if item["cat"] == "Shoes" else "Men's L"
+    return "Girls'"
 
 
 def size_tag(item: dict | str, cls: str = "") -> str:
     s = item if isinstance(item, str) else size_of(item)
-    num = s.split()[-1]
-    pre = s[: -len(num)].strip()
-    pre_html = f"{pre} " if pre else ""
-    return f'<span class="size-tag {cls}" aria-label="Size {s}">{pre_html}<b>{num}</b></span>'
+    label = s.rstrip("'")          # stored as "Girls'", tagged as "Girls"
+    return f'<span class="size-tag {cls}" aria-label="Size: {esc(s)}"><b>{esc(label)}</b></span>'
 
 
 def photo(key: str, cls: str = "", tag: bool = True, stamp: str | None = None, alt: str | None = None, n: int = 1, tone: int | None = None) -> str:
@@ -366,7 +363,7 @@ def note(text: str, pos: str = "top: 6rem; right: 1rem;") -> str:
 @dataclass
 class Page:
     main: str
-    nav: str = ""            # shop | shoes | tops | outerwear | bottoms | sell
+    nav: str = ""            # shop | dresses | tops | outerwear | bottoms | sell
     user: str = "member"     # member | guest | unverified | admin
     shell: str = "app"       # app | auth | admin | bare
     account: str = ""        # active account subnav tab: overview | listings | purchases | sales | payouts | profile | notifications | settings
@@ -393,18 +390,18 @@ class Note:
     notes: str = ""
 
 
-NAV = [("shoes", "Shoes"), ("tops", "Tops"), ("outerwear", "Outerwear"), ("bottoms", "Bottoms")]
+NAV = [("dresses", "Dresses"), ("tops", "Tops"), ("outerwear", "Outerwear"), ("bottoms", "Bottoms")]
 
 
 def nav_href(key: str) -> str:
-    """Shoes has its own filtered state; the other categories reuse the catalog."""
-    return P("catalog", "category") if key == "shoes" else P("catalog")
+    """Dresses has its own filtered state; the other categories reuse the catalog."""
+    return P("catalog", "category") if key == "dresses" else P("catalog")
 
 
 def topbar(pg: Page) -> str:
     nav = "".join(
         f'<a class="nav-link" href="{nav_href(k)}"{" aria-current=\"page\"" if pg.nav == k else ""}>{label}</a>' for k, label in NAV)
-    search = (f'<form class="search" role="search" action="{P("catalog", "search")}"><label class="visually-hidden" for="q">Search Tutu Much</label>'
+    search = (f'<form class="search" role="search" action="{P("catalog", "search")}"><label class="visually-hidden" for="q">Search TuTuMuch</label>'
               f'{ic("search")}<input class="input" id="q" name="q" type="search" placeholder="Search brands and items"></form>')
     if pg.user == "guest":
         right = (f'<a class="btn btn--ghost btn--icon topbar__search-btn" href="{P("catalog", "search")}" aria-label="Search">{ic("search")}</a>'
@@ -439,7 +436,7 @@ def account_nav(active: str) -> str:
 def footer() -> str:
     return (f'<footer class="footer">{logo(cls="logo--sm")}<nav aria-label="Footer"><a href="{P("rules")}">Marketplace rules</a>'
             f'<a href="{P("privacy")}">Privacy</a><a href="{P("terms")}">Terms</a><a href="{D("cookie-settings")}">Cookie settings</a></nav>'
-            f'<span>© 2026 Tutu Much</span></footer>')
+            f'<span>© 2026 TuTuMuch</span></footer>')
 
 
 def page_body(pg: Page) -> str:
@@ -491,7 +488,7 @@ def render(s: Screen, state: str) -> str:
     if 'class="toast-region"' not in body and s.kind != "dialog":
         body += toast_region()
     reqs = " ".join(s.reqs)
-    title = f"{s.title} · {state} — Tutu Much mocks"
+    title = f"{s.title} · {state} — TuTuMuch mocks"
     return f"""<!doctype html>
 <html lang="en">
 <head>

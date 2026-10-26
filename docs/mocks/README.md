@@ -1,6 +1,6 @@
-# Tutu Much HTML mocks
+# TuTuMuch HTML mocks
 
-Static HTML mocks of every Tutu Much page, dialog and notification, in every state,
+Static HTML mocks of every TuTuMuch page, dialog and notification, in every state,
 light and dark, from 320 px phones to desktop. They are the product on disk
 before the Angular app exists: open them, click through them, tab through them.
 
@@ -12,42 +12,49 @@ before the Angular app exists: open them, click through them, tab through them.
 
 ## Design direction
 
-Taken from the logo in [`docs/design-system/assets/`](../design-system/assets/logo.svg):
+TuTuMuch uses the [Giddy design system](../design-system/README.md) with its own palette, taken
+with the owner's logo ([`docs/design-system/assets/logo.png`](../design-system/assets/logo.png)):
 
-| From the logo | In the mocks |
+| Colour | In the mocks |
 | --- | --- |
-| Ink `#0B0B0B` | Text, primary buttons, size tags. Dark theme flips to an ink canvas. |
-| Paper `#F4F1EA` | Warm canvas and sunken surfaces; the text colour in dark theme. |
-| Signal red `#E1251B` (the L) | Used sparingly: the logo, the current-page bar, the hero's last words. Never body text and never an error colour. |
-| Sharp corners, one 45° cut on the L | Square controls and photos; the `.size-tag` (US **12** / **L**) carries the same chamfer. |
-| Heavy, tight numerals | Black-weight, tightly tracked headings. |
+| Raspberry | Primary: primary buttons (with Giddy's pressable lip), the current-page bar, the "Girls" size tag, links (raspberry 700). |
+| Lilac | Secondary accents and fills. |
+| Blush | Soft surfaces and tags: selected fills, subtle accents. |
+| Sunny | Highlights and deals. |
+| Cream | The page canvas and wells. |
+| Plum | Text and the inverse toast; the dark theme is a plum night with a lighter raspberry accent. |
+
+From Giddy: rounded display and body type (system rounded stacks, no web fonts), pill buttons,
+chips, badges, tags and switches, 20px corners on cards and listing photos, soft shadows and
+quick motion that stops under reduced motion. Photo wells use Giddy's party-pop tints.
 
 Principles: lots of white space, one primary action per screen, short real copy
-and nothing that fills space. Product photos keep a light studio backdrop in both
+and nothing that fills space. Product photos keep a light pastel backdrop in both
 themes, the way real photos would.
 
 ## Cast and catalog
 
 "Today" is **Sun 25 Oct 2026**. Every mock uses this data (source: [`_build/data.py`](_build/data.py)).
+Members are parents and families selling what their daughters have outgrown.
 
 | Member | Real name | City | Role in the story |
 | --- | --- | --- | --- |
-| `marcus_12` | Marcus Bell | Brooklyn, NY | The signed-in member. Buys and sells. 4.8 (23 reviews), 19 sales. |
-| `kicks_12` | Dre Okafor | Atlanta, GA | Top sneaker seller. 4.9 (128 reviews), 141 sales. |
-| `vintage_lou` | Lou Ferreira | Portland, OR | Workwear and outerwear seller. 4.7 (41 reviews). |
-| `tall_tom` | Tom Reyes | Denver, CO | Buyer of Marcus's hoodie. No listings. |
-| `jaybird` | Jay Park | Chicago, IL | New seller, no completed sales ("New seller"). |
+| `TutuTessa` | Tessa Bell | Brooklyn, NY | The signed-in member. Buys and sells. 4.8 (23 reviews), 19 sales. |
+| `TwirlyTara` | Tara Okafor | Atlanta, GA | Top seller of party dresses and tutus. 4.9 (128 reviews), 141 sales. |
+| `HandMeDownHana` | Hana Ferreira | Portland, OR | Coats and knits seller. 4.7 (41 reviews). |
+| `PuddleJumperPia` | Pia Reyes | Denver, CO | Buyer of Tessa's hoodie. No listings. |
+| `RainbowRosa` | Rosa Kim | Chicago, IL | New seller, no completed sales ("New seller"). |
 | Ana Ruiz | — | — | Administrator (resolves order problems). |
 
-Fourteen listings, all men's US 12 or men's L: Nike Air Max 90, New Balance 990v6,
-Adidas Samba OG, Red Wing Iron Ranger, Allen Edmonds Park Avenue, Birkenstock Arizona
-(Used - Fair, with flaws), Patagonia Better Sweater, Champion Reverse Weave hoodie,
-Uniqlo Oxford shirt, Everlane tee, Carhartt Detroit jacket, Barbour Bedale (Reserved),
-Arc'teryx Gamma LT pants, Nike Tech Fleece shorts.
+Fourteen listings, all girls' clothing (size Girls'): Pink tulle tutu skirt, Floral party dress,
+Rainbow stripe romper, Velvet holiday dress, Pleated plaid skirt, Yellow gingham sundress
+(Used - Fair, with flaws), Rainbow knit sweater, Pink heart hoodie, Peter Pan collar blouse,
+Unicorn graphic T-shirt, Purple puffer jacket, Yellow raincoat (Reserved), Denim leggings,
+Floral cotton shorts.
 
-Orders: `TM-48213` (Marcus buys the Red Wings, Shipped), `TM-48140` (Patagonia, Delivered),
-`TM-47790` (Samba, Completed), `TM-48302` (Marcus sells the hoodie to Tom, Paid, ship by Fri 30 Oct),
-`TM-47511` (Tech Fleece shorts, Completed, payout $33.30 after the 10% fee of $3.70).
+Orders: `TM-48213` (Tessa buys the party dress, Shipped), `TM-48140` (rainbow sweater, Delivered),
+`TM-47790` (romper, Completed), `TM-48302` (Tessa sells the hoodie to Pia, Paid, ship by Fri 30 Oct),
+`TM-47511` (floral shorts, Completed, payout $33.30 after the 10% fee of $3.70).
 
 ## How the mocks are built
 
@@ -56,9 +63,10 @@ and one component kit:
 
 ```
 docs/mocks/
-  assets/tokens.css    design tokens (Tutu Much palette, type, space, shape, motion); the only place colours live
-  assets/ui.css        component kit, including the Tutu Much brand layer (size tag, listing card, gallery…)
+  assets/tokens.css    design tokens (Giddy plus the TuTuMuch palette); the only place colours live
+  assets/ui.css        component kit in the Giddy look, including the TuTuMuch layer (size tag, listing card, gallery…)
   assets/items/*.svg   product illustrations used as listing photos
+  assets/logo.png      the TuTuMuch logo
   _build/mk.py         shell, components and helpers
   _build/data.py       cast and catalog
   _build/screens_*.py  one module per area: catalog, accounts, selling, orders, system
@@ -79,10 +87,10 @@ python3 .claude/skills/writing-html-mocks/scripts/screenshot_mocks.py docs/mocks
 - **Home is the catalog.** `/` shows a one-line hero above the catalog rather than a separate landing page.
 - **Payment provider UI** is shown as hosted card fields inside checkout; the provider's own pages (payout onboarding, 3-D Secure) are out of scope.
 - **Sales tax** is shown as a single line computed at checkout; rates come from the provider.
-- **Category pages** share the catalog template; only Shoes is mocked as its own state.
+- **Category pages** share the catalog template; only Dresses is mocked as its own state.
 - **Moderation, member suspension, the audit log, reviews and data export are deferred** (see [ADR 0001](../adr/general/0001-defer-moderation-reviews-and-data-export.md)); nothing is mocked for them.
 - **Legal copy** on Terms and Privacy summarises the rules in the specs; final wording comes from counsel.
-- **Fonts**: headings ask for Archivo then Inter, falling back to the system sans. Mocks load no web fonts so they open offline.
+- **Fonts**: Giddy's rounded system stacks (SF Pro Rounded, Nunito when installed, then the system sans). Mocks load no web fonts so they open offline.
 
 ## Coverage
 

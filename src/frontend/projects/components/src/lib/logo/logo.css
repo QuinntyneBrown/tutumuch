@@ -2,18 +2,88 @@
   display: contents;
 }
 
-/* The supplied TuTuMuch logo image (public/logo.png); it reads on both themes. */
-.logo__img {
+.logo {
+  display: inline-flex;
+  text-decoration: none;
+  font-size: 1.625rem;
+}
+
+.logo--sm {
+  font-size: 1.125rem;
+}
+
+.logo--lg {
+  font-size: 2.75rem;
+}
+
+/* Below the first breakpoint (36rem) the top bar is tight: a smaller md wordmark keeps
+   the bar within 320px. */
+@media (max-width: 35.99rem) {
+  .logo:not(.logo--sm, .logo--lg) {
+    font-size: 1.125rem;
+  }
+}
+
+/* Brand kit wordmark: two stacked rows of the same letters, the raspberry shadow row offset
+   below the face row. The logo keeps its colours in both themes. */
+.wordmark {
+  position: relative;
+  display: inline-block;
+  padding: 0.12em 0.14em 0.18em 0.08em;
+  font-family: var(--font-family-logo);
+  font-weight: 400;
+  line-height: 1;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.wordmark__row {
   display: block;
-  height: 1.75rem;
-  width: auto;
-  max-width: 100%;
 }
 
-.logo--lg .logo__img {
-  height: 3rem;
+.wordmark__row--shadow {
+  transform: translate(0.07em, 0.09em);
 }
 
-.logo--sm .logo__img {
-  height: 1.25rem;
+.wordmark__row--face {
+  position: absolute;
+  top: 0.12em;
+  left: 0.08em;
+}
+
+.wordmark__letter {
+  display: inline-block;
+  margin: 0 -0.012em;
+  color: var(--color-logo-shadow);
+  -webkit-text-stroke: 0.05em var(--color-logo-outline);
+}
+
+.wordmark__letter--dots,
+.wordmark__letter--gingham {
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.wordmark__letter--dots {
+  background-color: var(--color-logo-dots-base);
+  background-image: radial-gradient(var(--color-logo-dot) 22%, transparent 24%);
+  background-size: 0.17em 0.17em;
+}
+
+.wordmark__letter--gingham {
+  background-color: var(--color-logo-gingham-light);
+  background-image: conic-gradient(
+    var(--color-logo-gingham-dark) 25%,
+    transparent 0 50%,
+    var(--color-logo-gingham-dark) 0 75%,
+    transparent 0
+  );
+  background-size: 0.2em 0.2em;
+}
+
+.logo:focus-visible {
+  outline: var(--focus-ring-width, 2px) solid var(--color-focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
 }

@@ -5,5 +5,18 @@
   routerLink="/"
   aria-label="TuTuMuch home"
 >
-  <img class="logo__img" src="/logo.png" alt="" width="1200" height="274" />
+  <span class="wordmark" aria-hidden="true">
+    <span class="wordmark__row wordmark__row--shadow">
+      @for (letter of letters; track $index) {
+        <span class="wordmark__letter" [style.transform]="transform(letter)">{{ letter.ch }}</span>
+      }
+    </span>
+    <span class="wordmark__row wordmark__row--face">
+      @for (letter of letters; track $index) {
+        <span class="wordmark__letter wordmark__letter--{{ letter.fill }}" [style.transform]="transform(letter)">{{
+          letter.ch
+        }}</span>
+      }
+    </span>
+  </span>
 </a>

@@ -3,9 +3,9 @@ from mk import *
 
 FEE = FEE_PERCENT / 100
 
-# A new listing Marcus is creating in the sell form (not yet in the catalog).
-NEW = {"cat": "Shoes", "sub": "Sneakers", "title": "Air Force 1 '07, white", "brand": "Nike", "cond": "Used - Good",
-       "desc": "Light creasing, soles have plenty left. Cleaned and ready to wear.", "price": "60.00", "ship": "8.00"}
+# A new listing Tessa is creating in the sell form (not yet in the catalog).
+NEW = {"cat": "Dresses", "sub": "Tutus", "title": "Lilac sparkle tutu", "brand": "Janie and Jack", "cond": "Used - Good",
+       "desc": "Worn to two birthday parties. Tulle is still full and the waistband is soft. Washed and ready to twirl.", "price": "24.00", "ship": "5.00"}
 
 
 def earn(price: float, ship: float) -> str:
@@ -60,7 +60,7 @@ def sell_form(v: dict, *, photos=(), errors: dict | None = None, rejected: bool 
     subs = next((s for c, s, _ in CATEGORIES if c == cat), [])
     size_html = ""
     if cat:
-        long = "Men's US 12" if cat == "Shoes" else "Men's L"
+        long = sizes[cat]
         size_html = (f'<div class="fixed-size" id="size">{size_tag(sizes[cat], "size-tag--lg")}<span>Size: {long}</span>'
                      f'<span class="fixed-size__label">Set by category</span></div>')
     cond = v.get("cond", "")
@@ -71,7 +71,7 @@ def sell_form(v: dict, *, photos=(), errors: dict | None = None, rejected: bool 
     p = float(v["price"]) if v.get("price") and not e.get("price") else None
     s = float(v["ship"]) if v.get("ship") else 0.0
     earnings = earn(p, s) if p is not None else "—"
-    label_text = {"Shoes": "This item is labelled men's US 12"}.get(cat, "This item is labelled men's L" if cat else "The label shows men's US 12 (shoes) or men's L (clothing)")
+    label_text = "This item is labelled in girls' sizing"
     conf_err = ' aria-invalid="true" aria-describedby="confirm-error"' if e.get("confirm") else ""
     confirm = (f'<label class="choice"><input type="checkbox" id="confirm" name="confirm"{" checked" if v.get("confirm") else ""}{conf_err}>'
                f'<span>{label_text}</span></label>'
@@ -118,7 +118,7 @@ def blocked(icon: str, title: str, text: str, actions: str, code: str | None = N
     return Page(main=main, nav="sell")
 
 
-FILLED_PHOTOS = [("air-max-90", 6), ("air-max-90", 1), ("air-max-90", 4)]
+FILLED_PHOTOS = [("pink-tutu", 6), ("pink-tutu", 1), ("pink-tutu", 4)]
 
 # ---------------------------------------------------------------------------
 # Sell
@@ -136,7 +136,7 @@ def _():
     return pg
 
 
-@s.state("filled", "Shoes chosen: size fixed at men's US 12, three photos with a cover, earnings after the fee.")
+@s.state("filled", "Dresses chosen: size fixed at Girls', three photos with a cover, earnings after the fee.")
 def _():
     return sell_page(sell_form({**NEW, "confirm": True}, photos=FILLED_PHOTOS))
 
@@ -145,11 +145,11 @@ def _():
 def _():
     errs = {"photos": "Add at least one photo. Photos must be 10 MB or smaller.",
             "title": "Title must be 5 to 80 characters", "price": "Enter a price from $1.00 to $5,000.00",
-            "flaws": "Describe the item's flaws", "confirm": "Confirm the label shows men's US 12"}
+            "flaws": "Describe the item's flaws", "confirm": "Confirm the label shows girls' sizing"}
     top = error_summary([("photos", "Add at least one photo"), ("title", "Title must be 5 to 80 characters"),
                          ("flaws", "Describe the item's flaws"), ("price", "Enter a price from $1.00 to $5,000.00"),
-                         ("confirm", "Confirm the label shows men's US 12")])
-    v = {**NEW, "title": "AF1", "cond": "Used - Fair", "price": "0.99", "confirm": False}
+                         ("confirm", "Confirm the label shows girls' sizing")])
+    v = {**NEW, "title": "Tutu", "cond": "Used - Fair", "price": "0.99", "confirm": False}
     pg = sell_page(sell_form(v, rejected=True, errors=errs, top=top))
     pg.notes = note("Errors are announced in a live region; focus moves to the summary (L2-065).", "top: 9rem; right: 1rem;")
     return pg
@@ -169,7 +169,7 @@ def _():
 @s.state("success", "Published: the item is live, with a nudge to set up payouts.")
 def _():
     main = (f'<div class="center-state"><div class="empty__icon">{ic("check", "icon icon--lg")}</div><h1>It’s live</h1>'
-            f'<div class="panel" style="width: 100%;">{item_row("air-max-90", "Nike · Men’s US 12 · $60.00").replace("Air Max 90, white", NEW["title"])}</div>'
+            f'<div class="panel" style="width: 100%;">{item_row("pink-tutu", "Janie and Jack · Girls’ · $24.00").replace(ITEMS["pink-tutu"]["title"], NEW["title"])}</div>'
             f'<p class="text-muted"><a href="{P("payouts", "not-onboarded")}">Set up payouts</a> so you’re paid when it sells.</p>'
             f'<div class="actions">{btn("View listing", "primary", P("listing-detail", "own"))}{btn("Sell another", href=P("sell"))}</div></div>')
     return Page(main=main, nav="sell")
@@ -177,7 +177,7 @@ def _():
 
 @s.state("unverified", "Unverified member: listing is blocked until the email is verified (HTTP 403).")
 def _():
-    return blocked("mail", "Verify your email to sell", "We sent a link to marcus.bell@example.com.",
+    return blocked("mail", "Verify your email to sell", "We sent a link to tessa.bell@example.com.",
                    btn("Resend link", "primary", D("verify-email-prompt")) + btn("Back to shop", href=P("catalog")))
 
 
@@ -196,23 +196,23 @@ def _():
 # ---------------------------------------------------------------------------
 # Edit listing
 # ---------------------------------------------------------------------------
-ARIZONA = {"cat": "Shoes", "sub": "Sandals", "title": "Arizona sandals", "brand": "Birkenstock", "cond": "Used - Fair",
-           "flaws": ITEMS["arizona"]["flaws"], "desc": "Comfortable and broken in. Regular width.", "price": "45.00", "ship": "8.00", "confirm": True}
-ARIZONA_PHOTOS = [("arizona", 5), ("arizona", 1), ("arizona", 3)]
+SUNDRESS = {"cat": "Dresses", "sub": "Dresses", "title": "Yellow gingham sundress", "brand": "Carter's", "cond": "Used - Fair",
+            "flaws": ITEMS["sundress"]["flaws"], "desc": "Light cotton with shoulder ties. Loved for a whole summer.", "price": "12.00", "ship": "5.00", "confirm": True}
+SUNDRESS_PHOTOS = [("sundress", 5), ("sundress", 1), ("sundress", 3)]
 
 e = screen("edit-listing", "page", "Edit listing", route="/items/{id}/edit", reqs=["L2-015", "L2-016", "L2-017", "L2-018", "L2-020", "L2-013"],
            na={"empty": "Only existing listings can be edited; a missing one is the listing's 'unavailable' page."})
 
 
 def edit_page(form: str) -> Page:
-    head = (f'<div class="page-header"><div class="stack stack--sm"><a class="text-sm text-muted" href="{P("listing-detail", "own")}">Arizona sandals</a>'
+    head = (f'<div class="page-header"><div class="stack stack--sm"><a class="text-sm text-muted" href="{P("listing-detail", "own")}">Yellow gingham sundress</a>'
             f'<h1>Edit listing</h1></div>{status("Active")}</div>')
     return Page(main=head + form, main_class="container page page--form", footer=False)
 
 
 @e.state("default", "Editing an active Used - Fair listing: every field prefilled, flaws visible.")
 def _():
-    return edit_page(sell_form(ARIZONA, photos=ARIZONA_PHOTOS, mode="edit"))
+    return edit_page(sell_form(SUNDRESS, photos=SUNDRESS_PHOTOS, mode="edit"))
 
 
 @e.state("loading", "Loading the listing into the form: skeleton fields, no layout shift.")
@@ -235,18 +235,18 @@ def _():
 def _():
     errs = {"flaws": "Describe the item's flaws", "price": "Enter a price from $1.00 to $5,000.00"}
     top = error_summary([("flaws", "Describe the item's flaws"), ("price", "Enter a price from $1.00 to $5,000.00")])
-    return edit_page(sell_form({**ARIZONA, "flaws": "", "price": "5200"}, photos=ARIZONA_PHOTOS, errors=errs, mode="edit", top=top))
+    return edit_page(sell_form({**SUNDRESS, "flaws": "", "price": "5200"}, photos=SUNDRESS_PHOTOS, errors=errs, mode="edit", top=top))
 
 
 @e.state("submitting", "Saving changes: button busy.")
 def _():
-    return edit_page(sell_form(ARIZONA, photos=ARIZONA_PHOTOS, mode="edit", busy=True))
+    return edit_page(sell_form(SUNDRESS, photos=SUNDRESS_PHOTOS, mode="edit", busy=True))
 
 
 @e.state("success", "Saved: the new price shows in the catalog and on the listing.")
 def _():
     top = alert("success", "Changes saved", f'<a href="{P("listing-detail", "own")}">View listing</a>', role="status")
-    return edit_page(sell_form({**ARIZONA, "price": "40.00"}, photos=ARIZONA_PHOTOS, mode="edit", top=top))
+    return edit_page(sell_form({**SUNDRESS, "price": "10.00"}, photos=SUNDRESS_PHOTOS, mode="edit", top=top))
 
 
 @e.state("locked", "Reserved listing: editing is blocked while a buyer is in checkout.")
@@ -261,7 +261,7 @@ def _():
 def _():
     top = alert("warning", "This listing changed since you opened it", "Reload to see the latest version, then make your changes again.",
                 actions=btn("Reload", "sm", icon="refresh"))
-    return edit_page(sell_form({**ARIZONA, "price": "40.00"}, photos=ARIZONA_PHOTOS, mode="edit", top=top))
+    return edit_page(sell_form({**SUNDRESS, "price": "10.00"}, photos=SUNDRESS_PHOTOS, mode="edit", top=top))
 
 
 @e.state("sold", "Sold listing: it can no longer be edited; the seller goes to their sales.")
@@ -284,11 +284,11 @@ def _():
 # My listings
 # ---------------------------------------------------------------------------
 ROWS = [  # newest first: (title, photo key or None, price, status, date)
-    ("Air Force 1 '07, white", "air-max-90", "$60", "Draft", "Today"),
+    ("Lilac sparkle tutu", "pink-tutu", "$24", "Draft", "Today"),
     ("Untitled draft · Tops", None, "—", "Draft", "Yesterday"),
-    ("Reverse Weave hoodie, grey", "reverse-weave", "$38", "Sold", "Sat 24 Oct"),
-    ("Arizona sandals", "arizona", "$45", "Active", "Wed 21 Oct"),
-    ("Tech Fleece shorts", "tech-shorts", "$30", "Sold", "Fri 2 Oct"),
+    ("Pink heart hoodie", "heart-hoodie", "$38", "Sold", "Sat 24 Oct"),
+    ("Yellow gingham sundress", "sundress", "$12", "Active", "Wed 21 Oct"),
+    ("Floral cotton shorts", "floral-shorts", "$30", "Sold", "Fri 2 Oct"),
 ]
 
 
@@ -316,7 +316,7 @@ def listings_page(body: str, sub: str = "5 listings · 1 active") -> Page:
 ml = screen("my-listings", "page", "Your listings", route="/account/listings", reqs=["L2-019", "L2-021"])
 
 
-@ml.state("default", "All of Marcus's listings, newest first, filterable by status.")
+@ml.state("default", "All of Tessa's listings, newest first, filterable by status.")
 def _():
     rows = "".join(listing_row(*r) for r in ROWS)
     return listings_page(filter_chips() + f'<ul class="order-list" role="list">{rows}</ul>')
@@ -337,7 +337,7 @@ def _():
 
 @ml.state("empty", "No listings yet: one action, sell an item.")
 def _():
-    return listings_page(empty("tag", "Nothing listed yet", "List a pair of 12s or something in L.", btn("Sell an item", "primary", P("sell"))), sub="")
+    return listings_page(empty("tag", "Nothing listed yet", "List a dress, a sweater or anything she’s outgrown.", btn("Sell an item", "primary", P("sell"))), sub="")
 
 
 @ml.state("error", "Listings failed to load: retry with a reference.")
@@ -352,8 +352,8 @@ def _():
 pay = screen("payouts", "page", "Payouts", route="/account/payouts", reqs=["L2-031"])
 
 PAYOUT_ROWS = [
-    ("TM-48302", "reverse-weave", "Held until the order completes", earn(38, 7), "Pending"),
-    ("TM-47511", "tech-shorts", f"Fee {money(3.70)} · Mon 5 Oct", money(33.30), "Paid"),
+    ("TM-48302", "heart-hoodie", "Held until the order completes", earn(38, 7), "Pending"),
+    ("TM-47511", "floral-shorts", f"Fee {money(3.70)} · Mon 5 Oct", money(33.30), "Paid"),
 ]
 
 
@@ -411,7 +411,7 @@ w = screen("withdraw-listing", "dialog", "Withdraw listing", opens_from="listing
 
 
 def withdraw(footer_primary: str, top: str = "") -> Dialog:
-    html = dialog("Withdraw “Arizona sandals”?", "", btn("Keep listing", attrs="autofocus") + footer_primary,
+    html = dialog("Withdraw “Yellow gingham sundress”?", "", btn("Keep listing", attrs="autofocus") + footer_primary,
                   desc="It leaves the shop right away. This can’t be undone.", icon="trash", icon_kind="danger", size="sm", top=top)
     return Dialog(bg=("listing-detail", "own"), html=html)
 
@@ -450,13 +450,13 @@ def _():
 
 @t.state("success", "Listing published, with a link to view it.")
 def _():
-    return on_listings(toast("success", "Listing published", "Air Force 1 '07 is live.", "View listing"),
+    return on_listings(toast("success", "Listing published", "Lilac sparkle tutu is live.", "View listing"),
                        notes=note("Auto-dismisses after 8 s; pauses on hover and focus.", "bottom: 10rem; right: 1rem;"))
 
 
 @t.state("warning", "Something needs attention: the ship-by deadline is close.")
 def _():
-    return on_listings(toast("warning", "Ship by Fri 30 Oct", "Reverse Weave hoodie for tall_tom.", "Add tracking"))
+    return on_listings(toast("warning", "Ship by Fri 30 Oct", "Pink heart hoodie for PuddleJumperPia.", "Add tracking"))
 
 
 @t.state("danger", "A save failed: stays until dismissed, offers retry.")
@@ -467,13 +467,13 @@ def _():
 
 @t.state("with-action", "Reversible change with Undo.")
 def _():
-    return on_listings(toast("success", "Price updated to $40", "Arizona sandals", "Undo"))
+    return on_listings(toast("success", "Price updated to $10", "Yellow gingham sundress", "Undo"))
 
 
 @t.state("stacked", "Three toasts at once: newest at the bottom, each dismissible.")
 def _():
-    return on_listings(toast("info", "Draft saved", ""), toast("success", "Listing published", "Air Force 1 '07 is live.", "View listing"),
-                       toast("warning", "Ship by Fri 30 Oct", "Reverse Weave hoodie", "Add tracking"))
+    return on_listings(toast("info", "Draft saved", ""), toast("success", "Listing published", "Lilac sparkle tutu is live.", "View listing"),
+                       toast("warning", "Ship by Fri 30 Oct", "Pink heart hoodie", "Add tracking"))
 
 
 # ---------------------------------------------------------------------------

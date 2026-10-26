@@ -572,15 +572,16 @@
 /* ==========================================================================
    TuTuMuch brand palette.
 
-   TuTuMuch uses the Giddy design system (everything above) with its own
-   colours: Raspberry #D6336C (primary: logo, buttons), Lilac #9B7FD4
-   (secondary: accents), Blush #FDE2EA (soft surfaces, tags), Sunny #F6C64B
-   (highlights, deals), Cream #FDF8F5 (page) and Plum #372332 (text, dark
-   surfaces). This block adds those scales and points Giddy's semantic colour
-   tokens at them; type, space, shape, elevation and motion stay Giddy's.
-   Raspberry 600 carries white button text (4.6:1); raspberry text and links
-   use raspberry 700 so they meet WCAG 2.2 AA on cream. Lilac 500 is too light
-   for text and is used for fills; lilac text uses 700-800.
+   TuTuMuch uses the Giddy design system (everything above) with the
+   colours of the TuTuMuch brand kit: Raspberry #D6336C (primary: logo,
+   buttons), Lilac #9B7FD4 (secondary: accents), Blush #FDE2EA (soft
+   surfaces, tags), Sunny #F6C64B (highlights, deals), Cream #FFF8F5 (page),
+   Ink #3A2233 (text, dark surfaces) and Muted #7A6370 (secondary text).
+   This block adds those scales and points Giddy's semantic colour tokens at
+   them; type, space, shape, elevation and motion stay Giddy's. Raspberry 600
+   carries white button text (4.6:1); raspberry text and links use raspberry
+   700 so they meet WCAG 2.2 AA on cream. Lilac 500 is too light for text and
+   is used for fills; lilac text uses 700-800.
    ========================================================================== */
 
 :root,
@@ -588,7 +589,7 @@
   --palette-raspberry-50: #fff0f5;
   --palette-raspberry-100: #fde2ea; /* Blush: soft surfaces, tags */
   --palette-raspberry-200: #f9c2d4;
-  --palette-raspberry-300: #f394b5;
+  --palette-raspberry-300: #f29bbc; /* logo dots */
   --palette-raspberry-400: #e8689a;
   --palette-raspberry-500: #de4b81;
   --palette-raspberry-600: #d6336c; /* Raspberry: primary, logo, buttons */
@@ -599,8 +600,8 @@
 
   --palette-lilac-50: #f6f2fd;
   --palette-lilac-100: #ece5fa;
-  --palette-lilac-200: #dacdf4;
-  --palette-lilac-300: #c3b0ec;
+  --palette-lilac-200: #e3d8fa; /* logo gingham, light */
+  --palette-lilac-300: #b9a3e8; /* logo gingham, dark */
   --palette-lilac-400: #ad95e0;
   --palette-lilac-500: #9b7fd4; /* Lilac: secondary, accents */
   --palette-lilac-600: #8467c8;
@@ -616,7 +617,7 @@
   --palette-sunny-800: #6e4f00;
   --palette-sunny-950: #332503;
 
-  --palette-cream-50: #fdf8f5; /* page background */
+  --palette-cream-50: #fff8f5; /* Cream: page background */
   --palette-cream-100: #f8efea;
   --palette-cream-200: #efe2db;
 
@@ -625,10 +626,10 @@
   --palette-plum-200: #dccbd5;
   --palette-plum-300: #c0a9b7;
   --palette-plum-400: #9a8692;
-  --palette-plum-500: #735d6b;
-  --palette-plum-600: #6b5563;
+  --palette-plum-500: #78616e; /* Muted: secondary text (brand #7A6370, a hair darker to read on Blush) */
+  --palette-plum-600: #634e5b;
   --palette-plum-700: #523d4b;
-  --palette-plum-800: #372332; /* text, dark surfaces */
+  --palette-plum-800: #3a2233; /* Ink: text, dark surfaces */
   --palette-plum-850: #2d1c29;
   --palette-plum-900: #241620;
   --palette-plum-950: #1c1119;
@@ -641,6 +642,16 @@
   --palette-sun-800: var(--palette-sunny-800);
   --palette-sun-950: var(--palette-sunny-950);
 
+  /* Wordmark (brand kit): Titan One, plum outline, raspberry shadow, polka-dot "TuTu" and
+     gingham "Much". The logo keeps these colours in both themes. */
+  --font-family-logo: 'Titan One', 'Arial Rounded MT Bold', ui-rounded, sans-serif;
+  --color-logo-outline: var(--palette-plum-800);
+  --color-logo-shadow: var(--palette-raspberry-600);
+  --color-logo-dots-base: var(--palette-white);
+  --color-logo-dot: var(--palette-raspberry-300);
+  --color-logo-gingham-light: var(--palette-lilac-200);
+  --color-logo-gingham-dark: var(--palette-lilac-300);
+
   /* Semantic colour (light) */
   --color-bg-canvas: var(--palette-cream-50);
   --color-bg-surface-sunken: var(--palette-cream-100);
@@ -649,8 +660,8 @@
   --color-bg-inverse: var(--palette-plum-800);
 
   --color-fg-default: var(--palette-plum-800);
-  --color-fg-muted: var(--palette-plum-600);
-  --color-fg-subtle: var(--palette-plum-500);
+  --color-fg-muted: var(--palette-plum-500);
+  --color-fg-subtle: var(--palette-plum-600);
   --color-fg-disabled: var(--palette-plum-300);
   --color-fg-link: var(--palette-raspberry-700);
   --color-fg-link-hover: var(--palette-raspberry-800);
