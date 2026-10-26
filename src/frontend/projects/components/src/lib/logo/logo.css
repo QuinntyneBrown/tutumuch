@@ -1,3 +1,19 @@
 :host {
   display: contents;
 }
+
+/* The supplied TuTuMuch logo image (public/logo.png); it reads on both themes. */
+.logo__img {
+  display: block;
+  height: 1.75rem;
+  width: auto;
+  max-width: 100%;
+}
+
+.logo--lg .logo__img {
+  height: 3rem;
+}
+
+.logo--sm .logo__img {
+  height: 1.25rem;
+}

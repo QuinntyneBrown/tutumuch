@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-/** Tutu Much logo as a link home. Sizes sm, md, lg (design system: Top bar, Footer). */
+/** TuTuMuch logo as a link home. Sizes sm, md, lg (design system: Top bar, Footer). */
 @Component({
-  selector: 'tm-logo',
+  selector: 'tl-logo',
   imports: [RouterLink],
   templateUrl: './logo.html',
   styleUrl: './logo.css',
