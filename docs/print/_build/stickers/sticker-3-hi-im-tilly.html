@@ -12,7 +12,6 @@
         left: 95px; top: 150px; width: 360px; text-align: center; font-size: 66px; line-height: 1.02;
         color: var(--raspberry);
       }
-      .url { left: 85px; top: 655px; transform: rotate(-4deg); background: var(--blush); }
     </style>
   </head>
   <body>
@@ -24,8 +23,10 @@
       </svg>
       <div class="bubble-text display">Hi, I’m Tilly!</div>
       <img class="char tilly" src="../../characters/tilly-hello.png" alt="" />
-      <div class="chip url">www.tutumuch.kids</div>
+      <!-- Edge URL: set in the white keyline by _rim.js, as on the TwinkleTune stickers. -->
+      <svg class="rim"><text data-ellipse="275 227 191 123" data-side="top">TUTUMUCH.KIDS</text></svg>
     </div>
     <script src="../wordmark.js"></script>
+    <script src="_rim.js"></script>
   </body>
 </html>

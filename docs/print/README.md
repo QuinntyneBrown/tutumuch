@@ -35,8 +35,10 @@ Order "3.5 × 2 in, with bleed" and upload the PDF. If the printer wants images,
 
 ![All six stickers](stickers/contact-sheet.png)
 
-Every sticker carries the website, **www.tutumuch.kids**, in the same white chip
-(`.url` in `_build/stickers/_stage.css`).
+Every sticker carries **TUTUMUCH.KIDS** the TwinkleTune way: ink Nunito 800 tracked caps
+(28px, 7px tracking), set in the white keyline and following the edge of the artwork. It runs
+below the banner or chip on 1, 2 and 5, over the speech bubble on 3, over the disc on 4 and
+under the badge on 6. The bare domain redirects to www.tutumuch.kids.
 
 1. **Never too much tutu!** Tilly's catchphrase under her twirl.
 2. **The wordmark.** Tilly's face mark over the Gingham wordmark and "Twirl it forward."
@@ -73,6 +75,12 @@ instead:
 3. Fill any enclosed transparent holes, so the sticker is solid white behind the art.
 4. Paint that shape white, put the artwork on top, and check that it is one piece and clears the
    canvas edge.
+5. Draw the edge URL on the white. It is captured on its own (`.rim`), so it never grows the cut,
+   and the renderer fails if any of it comes within 10px of the cut line or 6px of the artwork.
+
+`_build/stickers/_rim.js` lays the URL out: `data-under` / `data-over` follow a chip's bottom or
+top edge (rotation included), and `data-ellipse` with `data-side` runs it around a circle or
+the speech bubble.
 
 ## Flyers
 
@@ -109,7 +117,7 @@ The renderer uses Playwright from the environment, or `@playwright/test` from
 touches the network: the fonts and images are all local.
 
 It fails loudly if a font or image did not load, if a sticker is not 900 × 900 RGBA, if its cut is
-more than one piece or touches the canvas edge, or if any flyer words leave the safe area.
+more than one piece or touches the canvas edge, if its edge URL leaves the white rim, or if any flyer words leave the safe area.
 
 Edit the HTML sources, never the PNGs or PDFs.
 

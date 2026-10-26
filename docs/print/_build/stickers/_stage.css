@@ -8,9 +8,12 @@ body.guides .stage::after {
   content: ""; position: absolute; inset: 70px; outline: 2px dashed #00b3ff; pointer-events: none;
 }
 
-/* The website address every sticker carries: a white chip in Nunito 900.
-   Each sticker positions its own .url. */
-.url {
-  padding: 9px 28px 11px; font: 900 34px/1 var(--font-body); letter-spacing: 0.01em;
-  background: var(--white); color: var(--ink);
-}
+/* The edge URL, as on the TwinkleTune stickers: TUTUMUCH.KIDS in Nunito 800
+   tracked caps, ink, set in the white keyline itself rather than on the
+   artwork. .rim is a full-stage SVG whose path _rim.js lays along one edge of
+   the artwork. render.mjs leaves .rim out when it builds the keyline, draws it
+   on top afterwards, and fails if any of it leaves the white rim. */
+.rim { left: 0; top: 0; width: 900px; height: 900px; overflow: visible; }
+.rim text { font: 800 28px var(--font-body); letter-spacing: 7px; fill: var(--ink); }
+body.art-only .rim { visibility: hidden; }
+body.rim-only .stage > :not(.rim) { visibility: hidden; }

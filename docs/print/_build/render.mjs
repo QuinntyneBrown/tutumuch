@@ -13,7 +13,9 @@
  * 300 DPI). The white die-cut keyline is then built from the pixels: the
  * artwork's alpha is dilated by a 60px disc, holes are filled, and the result
  * is checked to be one connected piece that clears the canvas edge. Tilly is
- * raster art, so unlike a vector sticker the keyline cannot be a stroke.
+ * raster art, so unlike a vector sticker the keyline cannot be a stroke. The
+ * edge URL (.rim) is captured separately, drawn on the white keyline, and
+ * checked to stay inside it, as on the TwinkleTune stickers.
  *
  * Business cards and flyers: captured as 300 DPI PNGs and printed to PDF with
  * live text and fonts embedded.
@@ -115,12 +117,19 @@ async function openPage(browser, file, { width, height, scale = 1, query = '' })
 /**
  * Runs in the browser. Dilates the artwork's alpha by a disc of radius
  * `keyline` (unions of the artwork shifted around concentric rings), fills
- * enclosed holes, and composites white keyline + artwork.
+ * enclosed holes, and composites white keyline + artwork + the edge URL. The
+ * edge URL (`rim`) is drawn after the keyline, so it never grows the cut; it
+ * is checked to sit inside the white, clear of the cut line and the artwork.
  */
-async function composeSticker({ art, keyline, preview }) {
-  const img = new Image()
-  img.src = art
-  await img.decode()
+async function composeSticker({ art, rim, keyline, preview }) {
+  const load = async (src) => {
+    const im = new Image()
+    im.src = src
+    await im.decode()
+    return im
+  }
+  const img = await load(art)
+  const rimImg = await load(rim)
   const W = img.width
   const H = img.height
 
@@ -208,6 +217,33 @@ async function composeSticker({ art, keyline, preview }) {
   }
   m.putImageData(data, 0, 0)
 
+  // The edge URL must sit in the white rim: at least 10px inside the cut line
+  // and at least 6px clear of the artwork.
+  const probe = document.createElement('canvas')
+  probe.width = W
+  probe.height = H
+  const p = probe.getContext('2d', { willReadFrequently: true })
+  p.drawImage(img, 0, 0)
+  const artA = p.getImageData(0, 0, W, H).data
+  p.clearRect(0, 0, W, H)
+  p.drawImage(rimImg, 0, 0)
+  const rimA = p.getImageData(0, 0, W, H).data
+  const cutA = px
+  const at = (arr, x, y) => (x < 0 || y < 0 || x >= W || y >= H ? 0 : arr[(y * W + x) * 4 + 3])
+  let rimPixels = 0
+  const rimFaults = { cut: 0, art: 0, first: null }
+  for (let y = 0; y < H; y += 1) {
+    for (let x = 0; x < W; x += 1) {
+      if (at(rimA, x, y) <= 16) continue
+      rimPixels += 1
+      const nearCut = [[10, 0], [-10, 0], [0, 10], [0, -10], [7, 7], [-7, 7], [7, -7], [-7, -7]].some(([dx, dy]) => at(cutA, x + dx, y + dy) < 255)
+      const onArt = [[0, 0], [6, 0], [-6, 0], [0, 6], [0, -6]].some(([dx, dy]) => at(artA, x + dx, y + dy) > 16)
+      if (nearCut) rimFaults.cut += 1
+      if (onArt) rimFaults.art += 1
+      if ((nearCut || onArt) && !rimFaults.first) rimFaults.first = { x, y }
+    }
+  }
+
   const out = document.createElement('canvas')
   const pad = preview ? 60 : 0
   out.width = W + pad * 2
@@ -221,7 +257,8 @@ async function composeSticker({ art, keyline, preview }) {
   o.drawImage(mask, pad, pad)
   o.filter = 'none'
   o.drawImage(img, pad, pad)
-  return { png: out.toDataURL('image/png'), pieces, box: { minX, minY, maxX, maxY } }
+  o.drawImage(rimImg, pad, pad)
+  return { png: out.toDataURL('image/png'), pieces, box: { minX, minY, maxX, maxY }, rimPixels, rimFaults }
 }
 
 async function renderStickers(browser) {
@@ -232,12 +269,20 @@ async function renderStickers(browser) {
   for (const { slug, title } of STICKERS.filter((st) => !pick || st.slug === pick)) {
     const file = path.join(here, 'stickers', `${slug}.html`)
     const { context, page } = await openPage(browser, file, { width: 900, height: 900 })
-    const art = await page.locator('.stage').screenshot({ omitBackground: true, animations: 'disabled' })
+    const shot = async (mode) => {
+      await page.evaluate((m) => {
+        document.body.classList.remove('art-only', 'rim-only')
+        document.body.classList.add(m)
+      }, mode)
+      const png = await page.locator('.stage').screenshot({ omitBackground: true, animations: 'disabled' })
+      return `data:image/png;base64,${png.toString('base64')}`
+    }
+    const art = await shot('art-only')
+    const rim = await shot('rim-only')
     await context.close()
 
-    const artUrl = `data:image/png;base64,${art.toString('base64')}`
-    const print = await blank.evaluate(composeSticker, { art: artUrl, keyline: KEYLINE, preview: false })
-    const preview = await blank.evaluate(composeSticker, { art: artUrl, keyline: KEYLINE, preview: true })
+    const print = await blank.evaluate(composeSticker, { art, rim, keyline: KEYLINE, preview: false })
+    const preview = await blank.evaluate(composeSticker, { art, rim, keyline: KEYLINE, preview: true })
 
     const png = withDpi(fromDataUrl(print.png))
     const { width, height, colourType } = pngHeader(png)
@@ -245,6 +290,13 @@ async function renderStickers(browser) {
     if (width !== 900 || height !== 900) throw new Error(`${slug}: expected 900x900, got ${width}x${height}`)
     if (colourType !== 6) throw new Error(`${slug}: expected RGBA, got colour type ${colourType}`)
     if (print.pieces !== 1) throw new Error(`${slug}: the die cut is ${print.pieces} pieces, not one`)
+    if (print.rimPixels < 500) throw new Error(`${slug}: no edge URL (.rim) was drawn`)
+    const { cut, art: onArt, first } = print.rimFaults
+    if (cut || onArt) {
+      throw new Error(
+        `${slug}: the edge URL leaves the white rim (${cut} px near the cut line, ${onArt} px on the artwork; first at ${first.x},${first.y})`
+      )
+    }
     if (minX < 4 || minY < 4 || maxX > width - 5 || maxY > height - 5) {
       throw new Error(`${slug}: the keyline touches the canvas edge (x ${minX}-${maxX}, y ${minY}-${maxY})`)
     }
