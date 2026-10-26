@@ -23,6 +23,7 @@ implemented. Each builds on the ones before it. Run them one at a time, top to b
 | 16 | View member profile | 3 days | [16-view-member-profile.md](16-view-member-profile.md) |
 | 17 | Manage notification preferences | 3 days | [17-manage-notification-preferences.md](17-manage-notification-preferences.md) |
 | 18 | Manage cookie consent | 3 days | [18-manage-cookie-consent.md](18-manage-cookie-consent.md) |
+| 19 | Finish TuTuMuch: all things young girls, video music, diagrams, green verify | 5 days | [19-finish-tutumuch.md](19-finish-tutumuch.md) |
 
 Order rationale: data before display (listings before the catalog), the buy-and-sell loop
 before supporting flows, and each prompt's dependencies before it. The first prompt also builds
