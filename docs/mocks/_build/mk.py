@@ -140,6 +140,9 @@ ICONS = {
     "cookie": '<path d="M21 12a9 9 0 1 1-9-9 3 3 0 0 0 3 3 3 3 0 0 0 3 3 3 3 0 0 0 3 3z"/><path d="M8.5 9.5h.01M15.5 14.5h.01M9.5 15h.01"/>',
     "wrench": '<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/>',
     "dollar": '<path d="M12 3v18M17 7H9.5a3 3 0 0 0 0 6h5a3 3 0 0 1 0 6H6"/>',
+    "play": '<path d="M7 5v14l12-7z"/>',
+    "pause": '<path d="M8 5v14M16 5v14"/>',
+    "captions": '<rect x="3" y="5" width="18" height="14"/><path d="M10.5 10a2.5 2.5 0 1 0 0 4M17.5 10a2.5 2.5 0 1 0 0 4"/>',
 }
 
 
@@ -435,7 +438,7 @@ def account_nav(active: str) -> str:
 
 def footer() -> str:
     return (f'<footer class="footer">{logo(cls="logo--sm")}<nav aria-label="Footer"><a href="{P("rules")}">Marketplace rules</a>'
-            f'<a href="{P("privacy")}">Privacy</a><a href="{P("terms")}">Terms</a><a href="{D("cookie-settings")}">Cookie settings</a></nav>'
+            f'<a href="{P("privacy")}">Privacy</a><a href="{P("terms")}">Terms</a><a href="{P("welcome")}">About TuTuMuch</a><a href="{D("cookie-settings")}">Cookie settings</a></nav>'
             f'<span>© 2026 TuTuMuch</span></footer>')
 
 

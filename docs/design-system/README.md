@@ -21,7 +21,9 @@ cancel-order added the quote, the radio group and the danger tone of the dialog;
 resolve-order-problems added the thread, facts and status, the flag icon, the admin variant of
 the top bar and the no-cover mode of the photo uploader; manage-notification-preferences added
 the switch and implemented the toast with `ToastService`; manage-cookie-consent added the
-consent banner, the visible label and hint of the switch and the footer's Cookie settings button.
+consent banner, the visible label and hint of the switch and the footer's Cookie settings button;
+the marketing page added the marketing hero, shapes (party-pop blobs and a polka-dot band),
+feature band, steps, video poster and video player, and the showcase tokens they use.
 
 ## Foundations
 
@@ -87,6 +89,12 @@ consent banner, the visible label and hint of the switch and the footer's Cookie
 | [Thread](components/thread.html) | one | static, with photos | order-detail/problem, sale-detail/problem, problem-detail/default |
 | [Facts](components/facts.html) | one | static | problem-detail/default, problem-detail/resolved |
 | [Status](components/status.html) | draft, active, reserved, sold, removed, info | static | problem-detail/default, problem-detail/resolved |
+| [Marketing hero](components/marketing-hero.html) | hero, closing | static | welcome, pitch-video |
+| [Shapes](components/shapes.html) | full, quiet | drifting, reduced motion | welcome, pitch-video |
+| [Feature band](components/feature-band.html) | default, surface, stacked | static | welcome, pitch-video |
+| [Steps](components/steps.html) | one | static | welcome, pitch-video |
+| [Video poster](components/video-poster.html) | one | default, hover, focus | welcome, pitch-video |
+| [Video player](components/video-player.html) | one | loading, playing, paused, captions, error | welcome, pitch-video |
 
 ## Patterns
 

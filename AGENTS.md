@@ -98,7 +98,8 @@ tutumuch/
 │       ├── e2e/                 Playwright: pages/, tests/, fixtures.ts, serve.mjs (static build server)
 │       └── projects/
 │           ├── tutumuch/         the application (projectType "application")
-│           │   └── src/app/     app.config.ts, app.routes.ts, shells only
+│           │   ├── src/app/     app.config.ts, app.routes.ts, shells only
+│           │   └── public/media/ pitch video, captions, transcript and poster (ADR platform/0011)
 │           ├── api/             library: typed HTTP services, DTOs, auth state, interceptors
 │           ├── components/      library: design-system components and styles
 │           ├── accounts/        library: feature area
@@ -106,6 +107,7 @@ tutumuch/
 │           ├── listings/        library: feature area
 │           ├── orders/          library: feature area (checkout, payouts, admin problems)
 │           ├── reviews/         library: feature area (public profile only)
+│           ├── marketing/       library: feature area (the /welcome page and pitch video dialog)
 │           └── privacy/         library: feature area
 └── tests/
     └── TuTuMuch.*.Tests/         unit, integration and architecture tests per backend project
@@ -127,7 +129,7 @@ library per area, all registered in `angular.json`. Follow these rules:
   `app.config.ts`, `app.routes.ts`, the shell components and `main.ts`/`index.html`/
   `styles.css`. It owns no feature screens.
 - **One library per feature area** (`accounts`, `catalog`, `listings`, `orders`,
-  `reviews`, `privacy`), each with `ng-package.json`, `package.json`, `README.md`,
+  `reviews`, `privacy`, `marketing`), each with `ng-package.json`, `package.json`, `README.md`,
   `tsconfig.lib.json` and `src/public-api.ts`. Code lives under `src/lib/` grouped by
   screen (`src/lib/sign-in/`, `src/lib/checkout/`...). The library exports its lazy
   route table (`export { routes } from './lib/<area>.routes';`) and nothing the app does

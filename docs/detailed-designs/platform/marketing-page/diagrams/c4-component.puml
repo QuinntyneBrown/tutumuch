@@ -1,0 +1,41 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Marketing page (/welcome)
+
+Person(visitor, "Visitor or member", "Shopper or seller deciding whether TuTuMuch is for them")
+System_Boundary(app, "tutumuch application (projects/tutumuch)") {
+  Component(routes, "app.routes.ts", "Angular router", "Lazy-loads @tutumuch/marketing at welcome")
+  Component(shell, "AppShellComponent", "Shell", "data.shell 'marketing': top bar, main.marketing without container, footer")
+  Component(media, "public/media/", "Static files", "tutumuch-pitch.mp4/.webm/.vtt/.txt, poster PNG, ATTRIBUTION.md")
+}
+System_Boundary(mkt, "@tutumuch/marketing") {
+  Component(page, "WelcomePage", "Standalone component", "Copy, CTA targets from AuthState, title and meta description")
+  Component(dialog, "PitchVideoDialog", "Dialog content", "tl-dialog + tl-video-player")
+}
+System_Boundary(cmp, "@tutumuch/components") {
+  Component(hero, "tl-marketing-hero + tl-shapes", "Components", "Plum showcase band, party-pop blobs and polka dots, reduced motion")
+  Component(band, "tl-feature-band + tl-steps", "Components", "Shopper, seller and how-it-works bands")
+  Component(poster, "tl-video-poster", "Component", "Poster as a play button; nothing autoplays")
+  Component(player, "tl-video-player", "Component", "Sources, captions toggle, transcript link, loading and error")
+  Component(dlg, "DialogService", "Service", "Modal, Escape, focus return")
+  Component(footer, "tl-footer", "Component", "About TuTuMuch link to /welcome")
+}
+System_Boundary(api, "@tutumuch/api") {
+  Component(auth, "AuthState", "Signal store", "member(): null for a visitor")
+}
+System_Ext(build, "docs/mocks/_build/video/build_video.py", "Kokoro-82M voice, Pixabay ukulele music, Playwright slides, ffmpeg")
+
+Rel(visitor, routes, "Opens /welcome or follows About TuTuMuch")
+Rel(routes, page, "loadChildren")
+Rel(shell, footer, "Renders")
+Rel(page, hero, "Composes")
+Rel(page, band, "Composes")
+Rel(page, poster, "Media slot")
+Rel(page, auth, "Reads member()")
+Rel(poster, dlg, "watch → open(PitchVideoDialog)")
+Rel(dlg, dialog, "Creates")
+Rel(dialog, player, "Composes")
+Rel(player, media, "GET /media/tutumuch-pitch.*")
+Rel(build, media, "Writes")
+@enduml

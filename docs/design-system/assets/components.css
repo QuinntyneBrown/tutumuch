@@ -770,3 +770,90 @@ h1, h2, h3, h4, .display, .card__title, .dialog__title, .drawer__title, .empty__
 .pop--orange { --pop-bg: var(--color-pop-orange-bg); --pop-fg: var(--color-pop-orange-fg); }
 .pop--grape  { --pop-bg: var(--color-pop-grape-bg);  --pop-fg: var(--color-pop-grape-fg); }
 .badge[class*="pop--"] { background: var(--pop-bg); color: var(--pop-fg); }
+
+/* ---------- Marketing: page, hero, shapes, feature band, steps, video ---------- */
+/* main for routes with data.shell 'marketing': full-bleed bands instead of .container.page */
+.marketing { display: block; }
+/* Showcase surface: the hero, the closing band and the video frame stay ink in both themes. Semantic tokens are re-pointed here so buttons, links and focus rings read on ink. */
+.marketing-hero, .video-player__frame { --color-fg-default: var(--color-fg-showcase); --color-fg-muted: var(--color-fg-showcase-muted); --color-accent: var(--color-fg-showcase); --color-accent-hover: var(--color-fg-showcase-muted); --color-accent-active: var(--color-fg-showcase-muted); --color-fg-on-accent: var(--color-showcase-start); --color-bg-surface: transparent; --color-bg-subtle: var(--color-showcase-subtle); --color-bg-subtle-hover: var(--color-shape-tone); --color-border-strong: var(--color-fg-showcase); --color-fg-link: var(--color-fg-showcase); --color-focus-ring: var(--color-fg-showcase); --color-focus-ring-offset: var(--color-showcase-start); color: var(--color-fg-showcase); }
+.marketing-hero { position: relative; isolation: isolate; overflow: hidden; background: var(--gradient-showcase); }
+.marketing-hero__inner { position: relative; z-index: 1; display: grid; gap: var(--space-10); max-width: var(--layout-container-max); margin-inline: auto; padding-inline: var(--layout-margin); padding-block: var(--space-16) var(--space-20); }
+@media (min-width: 62rem) {
+  .marketing-hero__inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: var(--space-16); padding-block: var(--space-24); }
+  .marketing-hero--closing .marketing-hero__inner { grid-template-columns: minmax(0, 1fr); padding-block: var(--space-20); }
+}
+.marketing-hero__eyebrow { font: var(--text-overline); letter-spacing: var(--letter-spacing-wide); text-transform: uppercase; color: var(--color-fg-showcase-muted); margin: 0 0 var(--space-4); }
+.marketing-hero__title { font: var(--text-display); font-size: clamp(var(--font-size-4xl), 6vw, 4.5rem); line-height: 1.02; letter-spacing: var(--letter-spacing-display); text-wrap: balance; max-width: 13ch; margin: 0; color: inherit; }
+.marketing-hero--closing .marketing-hero__title { font-size: clamp(var(--font-size-3xl), 4.5vw, var(--font-size-5xl)); max-width: 18ch; }
+.marketing-hero__title em { font-style: normal; color: var(--color-fg-showcase-accent); }
+.marketing-hero__lede { font: var(--text-body-lg); font-size: clamp(var(--font-size-lg), 1.6vw, var(--font-size-xl)); color: var(--color-fg-showcase-muted); max-width: 32rem; margin: var(--space-6) 0 0; }
+.marketing-hero__actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-8); }
+.marketing-hero__media { position: relative; min-width: 0; }
+
+/* ---------- Shapes: decorative party-pop blobs and a polka-dot band ------------ */
+.shapes { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.shapes__shape { position: absolute; animation: shape-drift var(--duration-drift) var(--ease-standard) infinite alternate; }
+.shapes__shape--brand { top: calc(var(--space-16) * -1); right: calc(var(--space-12) * -1); width: min(40vw, 28rem); aspect-ratio: 6 / 5; background: var(--color-shape-brand); border-radius: 58% 42% 46% 54% / 52% 44% 56% 48%; opacity: 0.45; }
+.shapes__shape--tone { bottom: calc(var(--space-20) * -1); right: 22%; width: min(26vw, 16rem); aspect-ratio: 1; background: var(--color-shape-tone); border-radius: 50%; animation-delay: -8s; }
+.shapes__shape--light { display: none; bottom: 14%; right: 4%; width: min(10vw, 7rem); aspect-ratio: 1; background: var(--color-shape-light); border-radius: 50%; animation-delay: -16s; }
+.shapes__stripes { position: absolute; inset: auto 0 0; height: var(--space-3); background: radial-gradient(circle, var(--color-shape-brand) 30%, transparent 32%) 0 50% / var(--space-6) var(--space-3) repeat-x; }
+.shapes--quiet .shapes__shape--brand, .shapes--quiet .shapes__shape--light { display: none; }
+@media (min-width: 62rem) {
+  .shapes__shape--brand { opacity: 1; }
+  .shapes__shape--light { display: block; }
+}
+@keyframes shape-drift {
+  from { translate: 0 0; }
+  to { translate: calc(var(--space-6) * -1) var(--space-4); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shapes__shape { animation: none; }
+}
+
+/* ---------- Feature band: eyebrow, short headline, points or a projected body -- */
+.feature-band { padding-block: var(--space-16); }
+@media (min-width: 48rem) {
+  .feature-band { padding-block: var(--space-24); }
+}
+.feature-band--surface { background: var(--color-bg-surface); }
+.feature-band__inner { display: grid; gap: var(--space-8); max-width: var(--layout-container-max); margin-inline: auto; padding-inline: var(--layout-margin); }
+@media (min-width: 62rem) {
+  .feature-band__inner { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--space-16); align-items: start; }
+  .feature-band--stacked .feature-band__inner { grid-template-columns: minmax(0, 1fr); gap: var(--space-12); }
+}
+.feature-band__eyebrow { display: flex; align-items: center; gap: var(--space-2); font: var(--text-overline); letter-spacing: var(--letter-spacing-wide); text-transform: uppercase; color: var(--color-fg-muted); margin: 0; }
+.feature-band__eyebrow::before { content: ''; width: var(--space-3); height: var(--space-3); background: var(--color-brand); border-radius: 50%; }
+.feature-band__title { font: var(--text-h1); font-size: clamp(var(--font-size-3xl), 4vw, var(--font-size-5xl)); letter-spacing: var(--letter-spacing-display); text-wrap: balance; max-width: 16ch; margin: var(--space-3) 0 0; }
+.feature-band__actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-8); }
+.feature-band__points { list-style: none; display: grid; gap: var(--space-6); margin: 0; padding: 0; }
+.feature-band__point { border-top: 2px solid var(--color-border-default); padding-top: var(--space-4); }
+.feature-band__point strong { display: block; font: var(--text-h4); }
+.feature-band__point span { display: block; color: var(--color-fg-muted); margin-top: var(--space-1); }
+
+/* ---------- Steps: three numbered steps --------------------------------------- */
+.steps { list-style: none; display: grid; gap: var(--space-8); margin: 0; padding: 0; counter-reset: step; }
+@media (min-width: 48rem) {
+  .steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+.steps__item { counter-increment: step; border-top: var(--space-1) solid var(--color-brand); padding-top: var(--space-5); }
+.steps__item::before { content: counter(step, decimal-leading-zero); display: block; font: var(--text-overline); letter-spacing: var(--letter-spacing-wide); color: var(--color-fg-muted); margin-bottom: var(--space-3); }
+.steps__title { font: var(--text-h3); margin: 0; }
+.steps__text { color: var(--color-fg-muted); margin: var(--space-2) 0 0; }
+
+/* ---------- Video poster: the poster frame as one play button ----------------- */
+.video-poster { position: relative; display: block; width: 100%; aspect-ratio: 16 / 9; padding: 0; border: 1px solid var(--color-shape-tone); border-radius: var(--radius-lg); background: var(--color-showcase-start); color: var(--color-fg-showcase); overflow: hidden; cursor: pointer; box-shadow: var(--shadow-4); }
+.video-poster img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.video-poster__play { position: absolute; left: var(--space-4); bottom: var(--space-4); display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--control-height-lg); padding: 0 var(--space-5); font: var(--text-label); font-size: var(--font-size-md); font-weight: var(--font-weight-bold); background: var(--color-fg-showcase); color: var(--color-showcase-start); border-radius: var(--radius-md); transition: background-color var(--duration-fast) var(--ease-standard); }
+.video-poster__meta { position: absolute; right: var(--space-4); bottom: var(--space-4); padding: var(--space-1) var(--space-2); font: var(--text-caption); font-weight: var(--font-weight-bold); background: var(--color-showcase-start); color: var(--color-fg-showcase); }
+.video-poster:hover .video-poster__play, .video-poster[data-state='hover'] .video-poster__play { background: var(--color-fg-showcase-muted); }
+.video-poster:focus-visible, .video-poster[data-state='focus'] { outline: var(--focus-ring-width) solid var(--color-focus-ring); outline-offset: var(--focus-ring-offset); }
+
+/* ---------- Video player: frame, loading and error states, controls ----------- */
+.video-player { display: grid; gap: var(--space-3); }
+.video-player__frame { position: relative; aspect-ratio: 16 / 9; background: var(--color-showcase-start); overflow: hidden; }
+.video-player__frame video { display: block; width: 100%; height: 100%; }
+.video-player__state { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: var(--space-3); padding: var(--space-6); text-align: center; background: var(--color-showcase-start); }
+.video-player__state strong { font: var(--text-h4); }
+.video-player__state p { max-width: 28rem; margin: 0; color: var(--color-fg-showcase-muted); }
+.video-player__controls { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.video-player__transcript { margin-left: auto; }

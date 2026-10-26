@@ -450,6 +450,48 @@
       "bg": "--color-bg-subtle",
       "min": 4.5,
       "note": "TuTuMuch: raspberry link on a cream well"
+    },
+    {
+      "fg": "--color-fg-showcase",
+      "bg": "--color-showcase-start",
+      "min": 4.5,
+      "note": "marketing: cream showcase text on the gradient's dark end"
+    },
+    {
+      "fg": "--color-fg-showcase",
+      "bg": "--color-showcase-end",
+      "min": 4.5,
+      "note": "marketing: cream showcase text on the gradient's light end"
+    },
+    {
+      "fg": "--color-fg-showcase-muted",
+      "bg": "--color-showcase-start",
+      "min": 4.5,
+      "note": "marketing: showcase lede and eyebrow (dark end)"
+    },
+    {
+      "fg": "--color-fg-showcase-muted",
+      "bg": "--color-showcase-end",
+      "min": 4.5,
+      "note": "marketing: showcase lede and eyebrow (light end)"
+    },
+    {
+      "fg": "--color-fg-showcase-accent",
+      "bg": "--color-showcase-start",
+      "min": 4.5,
+      "note": "marketing: pink headline emphasis on the showcase"
+    },
+    {
+      "fg": "--color-fg-showcase-accent",
+      "bg": "--color-showcase-end",
+      "min": 3,
+      "note": "marketing: headline emphasis, display size only (large text)"
+    },
+    {
+      "fg": "--color-showcase-start",
+      "bg": "--color-fg-showcase",
+      "min": 4.5,
+      "note": "marketing: primary button label on the showcase"
     }
   ]
 }
