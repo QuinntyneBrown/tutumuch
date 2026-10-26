@@ -9,7 +9,8 @@
       "@tutumuch/listings": ["./projects/listings/src/public-api.ts"],
       "@tutumuch/orders": ["./projects/orders/src/public-api.ts"],
       "@tutumuch/reviews": ["./projects/reviews/src/public-api.ts"],
-      "@tutumuch/privacy": ["./projects/privacy/src/public-api.ts"]
+      "@tutumuch/privacy": ["./projects/privacy/src/public-api.ts"],
+      "@tutumuch/marketing": ["./projects/marketing/src/public-api.ts"]
     },
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
@@ -56,6 +57,9 @@
     },
     {
       "path": "./projects/privacy/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/marketing/tsconfig.lib.json"
     }
   ]
 }

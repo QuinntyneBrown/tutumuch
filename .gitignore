@@ -16,3 +16,4 @@ obj/
 *.user
 *.suo
 __pycache__/
+.deploy-secrets/

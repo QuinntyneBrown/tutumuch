@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve tutumuch",
-    "build:libs": "ng build api && ng build components && ng build accounts && ng build catalog && ng build listings && ng build orders && ng build reviews && ng build privacy",
+    "build:libs": "ng build api && ng build components && ng build accounts && ng build catalog && ng build listings && ng build orders && ng build reviews && ng build privacy && ng build marketing",
     "build:app": "ng build tutumuch",
     "build:all": "npm run build:libs && npm run build:app",
     "format": "prettier --write .",
@@ -15,7 +15,8 @@
     "backend:test": "dotnet test ../backend/TuTuMuch.sln --no-build",
     "backend:verify": "npm run backend:restore && npm run backend:format && npm run backend:build && npm run backend:test",
     "test:e2e": "playwright test",
-    "verify": "npm run backend:verify && npm run lint && npm run build:all && npm run test:e2e"
+    "verify": "npm run backend:verify && npm run lint && npm run build:all && npm run test:e2e",
+    "build:marketing": "npm run build:libs && ng build tutumuch --configuration marketing"
   },
   "private": true,
   "packageManager": "npm@11.19.1",

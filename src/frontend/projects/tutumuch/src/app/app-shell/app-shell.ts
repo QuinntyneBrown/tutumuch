@@ -8,19 +8,20 @@ import { PayoutBannerComponent } from '@tutumuch/orders';
 import { CookieSettingsDialogService } from '@tutumuch/privacy';
 
 /** Shell named by the deepest route's data.shell: 'app' (default), 'auth' or 'admin'. */
-type Shell = 'app' | 'auth' | 'admin';
+type Shell = 'app' | 'auth' | 'admin' | 'marketing';
 
 function shellOf(route: ActivatedRouteSnapshot): Shell {
   let deepest = route;
   while (deepest.firstChild) deepest = deepest.firstChild;
   const shell = deepest.data['shell'];
-  return shell === 'auth' || shell === 'admin' ? shell : 'app';
+  return shell === 'auth' || shell === 'admin' || shell === 'marketing' ? shell : 'app';
 }
 
 /**
  * App shell: the payout banner, top bar with the member from AuthState, main#main with the router
  * outlet and the footer, whose "Cookie settings" opens the dialog; a top-bar search navigates to the catalog. Routes with data.shell 'auth' render in the auth shell: large logo above a centred card.
  * Routes with data.shell 'admin' render in the admin shell: the admin top bar and no footer.
+ * Routes with data.shell 'marketing' get the app shell with a full-width main.marketing (ADR platform/0011).
  */
 @Component({
   selector: 'tl-app-shell',

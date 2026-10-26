@@ -13,7 +13,7 @@
 } @else {
   <tl-payout-banner />
   <tl-top-bar [member]="auth.member()" [query]="query()" (searched)="search($event)" />
-  <main id="main" class="container page" tabindex="-1">
+  <main id="main" [class]="shell() === 'marketing' ? 'marketing' : 'container page'" tabindex="-1">
     <router-outlet />
   </main>
   <tl-footer (cookieSettings)="cookieSettings.open()" />

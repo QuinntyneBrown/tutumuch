@@ -52,3 +52,9 @@ export {
 } from './lib/toast-region/toast-service';
 export { TrackingLinkComponent } from './lib/tracking-link/tracking-link';
 export { TopBarComponent, type TopBarMember } from './lib/top-bar/top-bar';
+export { FeatureBandComponent, type FeaturePoint } from './lib/feature-band/feature-band';
+export { MarketingHeroComponent } from './lib/marketing-hero/marketing-hero';
+export { ShapesComponent } from './lib/shapes/shapes';
+export { StepsComponent, type Step } from './lib/steps/steps';
+export { VideoPlayerComponent, type VideoSource } from './lib/video-player/video-player';
+export { VideoPosterComponent } from './lib/video-poster/video-poster';

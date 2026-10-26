@@ -1,0 +1,46 @@
+<div class="video-player">
+  <div class="video-player__frame">
+    @for (n of [attempt()]; track n) {
+      <video
+        #video
+        controls
+        playsinline
+        preload="metadata"
+        [attr.poster]="poster() || null"
+        [attr.aria-label]="label()"
+        (loadeddata)="ready()"
+        (canplay)="ready()"
+        (play)="playing.set(true)"
+        (pause)="playing.set(false)"
+      >
+        @for (source of sources(); track source.src; let last = $last) {
+          <source [src]="source.src" [type]="source.type" (error)="last && failed()" />
+        }
+        <track kind="captions" [src]="captions()" srclang="en" label="English" />
+      </video>
+    }
+    @if (state() === 'loading') {
+      <div class="video-player__state"><tl-spinner label="Loading video…" /></div>
+    } @else if (state() === 'error') {
+      <div class="video-player__state" role="alert">
+        <tl-icon name="alert" size="lg" />
+        <strong>The video didn’t load</strong>
+        <p>Check your connection and try again, or read the transcript.</p>
+        <button tlButton="primary" type="button" (click)="retry()"><tl-icon name="refresh" />Try again</button>
+      </div>
+    }
+  </div>
+  <div class="video-player__controls">
+    @if (state() !== 'error') {
+      <button tlButton="primary" type="button" (click)="toggle()">
+        <tl-icon [name]="playing() ? 'pause' : 'play'" />{{ playing() ? 'Pause' : 'Play' }}
+      </button>
+      <button tlButton type="button" [attr.aria-pressed]="captionsOn()" (click)="toggleCaptions()">
+        <tl-icon name="captions" />Captions
+      </button>
+    }
+    <a tlButton="link" class="video-player__transcript" [href]="transcript()" target="_blank" rel="noopener"
+      >Read the transcript</a
+    >
+  </div>
+</div>

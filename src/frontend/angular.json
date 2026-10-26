@@ -82,6 +82,27 @@
                   "with": "projects/tutumuch/src/environments/environment.development.ts"
                 }
               ]
+            },
+            "marketing": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "projects/tutumuch/src/app/app.routes.ts",
+                  "with": "projects/tutumuch/src/app/app.routes.marketing.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -257,6 +278,26 @@
             },
             "development": {
               "tsConfig": "projects/privacy/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        }
+      }
+    },
+    "marketing": {
+      "projectType": "library",
+      "root": "projects/marketing",
+      "sourceRoot": "projects/marketing/src",
+      "prefix": "tl",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/marketing/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/marketing/tsconfig.lib.json"
             }
           },
           "defaultConfiguration": "production"

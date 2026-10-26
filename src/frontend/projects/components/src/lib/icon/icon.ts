@@ -27,7 +27,10 @@ export type IconName =
   | 'bag'
   | 'image'
   | 'trash'
-  | 'map-pin';
+  | 'map-pin'
+  | 'play'
+  | 'pause'
+  | 'captions';
 
 /** One decorative inline SVG icon from the TuTuMuch set, hidden from assistive technology (design system: Icon). */
 @Component({

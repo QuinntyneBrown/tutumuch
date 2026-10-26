@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
+  { path: 'welcome', loadChildren: () => import('@tutumuch/marketing').then((m) => m.routes) },
   { path: '', loadChildren: () => import('@tutumuch/catalog').then((m) => m.routes) },
   { path: '', loadChildren: () => import('@tutumuch/listings').then((m) => m.routes) },
   { path: '', loadChildren: () => import('@tutumuch/orders').then((m) => m.routes) },

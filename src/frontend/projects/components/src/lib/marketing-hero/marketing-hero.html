@@ -1,0 +1,27 @@
+<ng-template #title><ng-content select="[title]" /></ng-template>
+<section
+  class="marketing-hero"
+  [class.marketing-hero--closing]="variant() === 'closing'"
+  [attr.aria-labelledby]="headingId()"
+>
+  <tl-shapes [density]="variant() === 'closing' ? 'quiet' : 'full'" />
+  <div class="marketing-hero__inner">
+    <div>
+      @if (eyebrow()) {
+        <p class="marketing-hero__eyebrow">{{ eyebrow() }}</p>
+      }
+      @if (variant() === 'hero') {
+        <h1 class="marketing-hero__title" [id]="headingId()"><ng-container [ngTemplateOutlet]="title" /></h1>
+      } @else {
+        <h2 class="marketing-hero__title" [id]="headingId()"><ng-container [ngTemplateOutlet]="title" /></h2>
+      }
+      @if (lede()) {
+        <p class="marketing-hero__lede">{{ lede() }}</p>
+      }
+      <div class="marketing-hero__actions"><ng-content select="[actions]" /></div>
+    </div>
+    @if (variant() === 'hero') {
+      <div class="marketing-hero__media"><ng-content select="[media]" /></div>
+    }
+  </div>
+</section>

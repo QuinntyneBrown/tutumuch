@@ -827,6 +827,25 @@
   /* Brand mark, current-page bar and size tag flag. */
   --color-brand: var(--color-accent);
 
+  /* Showcase: the marketing hero, closing band and video frame. Ink (plum) in both themes,
+     with cream text, pink headline emphasis and raspberry, lilac and sunny shapes. */
+  --color-showcase-start: var(--palette-plum-850);
+  --color-showcase-end: var(--palette-plum-700);
+  --color-showcase-subtle: var(--palette-plum-700);
+  --color-fg-showcase: var(--palette-cream-50); /* 15.3:1 on start, 9.4:1 on end */
+  --color-fg-showcase-muted: var(--palette-plum-200); /* 10.3:1 on start, 6.4:1 on end */
+  --color-fg-showcase-accent: var(--palette-raspberry-300); /* 7.8:1 on start, 4.8:1 on end; headline emphasis */
+  --color-shape-brand: var(--palette-raspberry-600); /* decorative shapes only, never behind text */
+  --color-shape-tone: var(--palette-lilac-500);
+  --color-shape-light: var(--palette-sunny-400);
+  --gradient-showcase: linear-gradient(
+    135deg,
+    var(--color-showcase-start) 0%,
+    var(--palette-plum-800) 55%,
+    var(--color-showcase-end) 100%
+  );
+  --duration-drift: 24s; /* decorative shape drift; stopped under prefers-reduced-motion */
+
   /* Status icons on inverse surfaces (toasts). */
   --color-inverse-info: var(--palette-blue-300);
   --color-inverse-success: var(--palette-green-300);
