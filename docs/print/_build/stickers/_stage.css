@@ -7,3 +7,10 @@
 body.guides .stage::after {
   content: ""; position: absolute; inset: 70px; outline: 2px dashed #00b3ff; pointer-events: none;
 }
+
+/* The website address every sticker carries: a white chip in Nunito 900.
+   Each sticker positions its own .url. */
+.url {
+  padding: 9px 28px 11px; font: 900 34px/1 var(--font-body); letter-spacing: 0.01em;
+  background: var(--white); color: var(--ink);
+}

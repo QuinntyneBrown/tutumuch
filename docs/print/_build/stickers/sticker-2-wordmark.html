@@ -7,14 +7,15 @@
     <link rel="stylesheet" href="_stage.css" />
     <style>
       .face {
-        left: 50%; top: 150px; width: 280px; transform: translateX(-50%) rotate(-4deg);
+        left: 50%; top: 110px; width: 280px; transform: translateX(-50%) rotate(-4deg);
         border-radius: 22%; border: 9px solid var(--ink); box-shadow: 8px 10px 0 var(--raspberry);
       }
-      .wordmark { left: 70px; top: 405px; width: 760px; }
+      .wordmark { left: 70px; top: 365px; width: 760px; }
       .tag {
-        left: 50%; top: 640px; transform: translateX(-50%) rotate(2deg); padding: 14px 40px;
+        left: 50%; top: 598px; transform: translateX(-50%) rotate(2deg); padding: 14px 40px;
         font-size: 50px; background: var(--sunny); color: var(--ink);
       }
+      .url { left: 50%; top: 712px; transform: translateX(-50%) rotate(-1deg); }
     </style>
   </head>
   <body>
@@ -23,6 +24,7 @@
       <img class="char face" src="../../characters/tilly-face-mark.png" alt="" />
       <span class="wordmark" data-wordmark></span>
       <div class="chip tag display">Twirl it forward.</div>
+      <div class="chip url">www.tutumuch.kids</div>
     </div>
     <script src="../wordmark.js"></script>
   </body>

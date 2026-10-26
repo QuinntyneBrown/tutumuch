@@ -35,7 +35,10 @@ Order "3.5 × 2 in, with bleed" and upload the PDF. If the printer wants images,
 
 ![All six stickers](stickers/contact-sheet.png)
 
-1. **Never too much tutu!** Tilly's catchphrase under her twirl, with TUTUMUCH.KIDS.
+Every sticker carries the website, **www.tutumuch.kids**, in the same white chip
+(`.url` in `_build/stickers/_stage.css`).
+
+1. **Never too much tutu!** Tilly's catchphrase under her twirl.
 2. **The wordmark.** Tilly's face mark over the Gingham wordmark and "Twirl it forward."
 3. **Hi, I'm Tilly!** Waving from the clothes stack, in a speech bubble.
 4. **Twirl it forward.** The dance pose on a polka-dot disc.
