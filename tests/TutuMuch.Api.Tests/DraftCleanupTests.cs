@@ -40,7 +40,7 @@ public sealed class DraftCleanupTests : IDisposable
         var reminder = Assert.Single(sent);
         Assert.Equal(Seller, reminder.To);
         Assert.Contains("draft", reminder.Subject, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("Samba OG, black", reminder.Body);
+        Assert.Contains("Smocked romper, yellow", reminder.Body);
         Assert.Contains($"https://tutumuch.test/sell/{draft}", reminder.Body);
         _factory.InDatabase(db => Assert.NotNull(db.Listings.Single(l => l.Reference == draft).DraftReminderSentAt));
         seller.Dispose();
@@ -100,7 +100,7 @@ public sealed class DraftCleanupTests : IDisposable
         {
             // The save the edit endpoint makes; the seller's session has long expired by day 84.
             var listing = db.Listings.Single(l => l.Reference == draft);
-            listing.UpdateDetails(ListingDetails.Empty with { Category = "Shoes", Title = "Samba OG, black and gum" }, _factory.Clock.GetUtcNow().UtcDateTime);
+            listing.UpdateDetails(ListingDetails.Empty with { Category = "Dresses", Title = "Smocked romper, yellow and white" }, _factory.Clock.GetUtcNow().UtcDateTime);
             db.SaveChanges();
             Assert.Null(listing.DraftReminderSentAt);
         });
@@ -134,7 +134,7 @@ public sealed class DraftCleanupTests : IDisposable
     {
         await _buyer.SignInVerifiedMemberAsync(_factory);
         var (_, seller) = await _factory.SeedPaidOrderAsync(_buyer);
-        var draft = await seller.CreateDraftWithPhotoAsync(new Dictionary<string, object?> { ["category"] = "Shoes", ["title"] = "Samba OG, black" });
+        var draft = await seller.CreateDraftWithPhotoAsync(new Dictionary<string, object?> { ["category"] = "Dresses", ["title"] = "Smocked romper, yellow" });
         await _factory.DispatchEmailsAsync();
         return (seller, draft);
     }

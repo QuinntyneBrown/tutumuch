@@ -72,10 +72,10 @@ function inRange(text: string, min: number, max: number): boolean {
   return value !== null && value >= min && value <= max;
 }
 
-/** "This item is labelled men's US 12" and friends, following the category (L2-014). */
+/** "This item is labelled in girls' sizing" (L2-014); every category takes girls' sizes. */
 export function confirmLabel(category: string): string {
-  if (!category) return "The label shows men's US 12 (shoes) or men's L (clothing)";
-  return category === 'Shoes' ? "This item is labelled men's US 12" : "This item is labelled men's L";
+  if (!category) return "The label shows girls' sizing";
+  return "This item is labelled in girls' sizing";
 }
 
 /**
@@ -111,7 +111,7 @@ export function checkListing(value: ListingFormValue, mode: 'draft' | 'publish',
     errors.ship = 'Enter shipping from $0.00 to $100.00';
   }
   if (publish && !value.confirm) {
-    errors.confirm = `Confirm the label shows ${value.category === 'Shoes' ? "men's US 12" : "men's L"}`;
+    errors.confirm = "Confirm the label shows girls' sizing";
   }
   return errors;
 }

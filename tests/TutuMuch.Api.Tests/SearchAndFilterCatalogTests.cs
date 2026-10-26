@@ -35,38 +35,38 @@ public sealed class SearchAndFilterCatalogTests : IDisposable
     [Fact]
     public async Task A_keyword_matches_title_words_in_any_case()
     {
-        var airMax = Seed("Air Max 90 white");
-        Seed("Samba OG", brand: "Adidas");
+        var airMax = Seed("Floral party dress pink");
+        Seed("Smocked romper", brand: "Crewcuts");
 
-        Assert.Equal([airMax], await References("q=AIR%20max"));
+        Assert.Equal([airMax], await References("q=PARTY%20dress"));
     }
 
     [Fact]
     public async Task A_keyword_matches_the_brand_ignoring_case()
     {
-        var fleece = Seed("Retro fleece", brand: "Patagonia");
-        Seed("Air Max 90 white");
+        var fleece = Seed("Retro fleece", brand: "Primary");
+        Seed("Floral party dress pink");
 
-        Assert.Equal([fleece], await References("q=PATAGONIA"));
+        Assert.Equal([fleece], await References("q=PRIMARY"));
     }
 
     [Fact]
     public async Task Title_and_brand_matches_rank_above_description_matches()
     {
-        var inTitle = Seed("Blundstone boots", description: "Worn twice, still like new.");
-        var inDescription = Seed("Chelsea leather", description: "Comfortable boots, worn twice.");
-        Seed("Samba OG", brand: "Adidas");
+        var inTitle = Seed("Ballet tutu", description: "Worn twice, still like new.");
+        var inDescription = Seed("Velvet skirt", description: "Twirly tutu, worn twice.");
+        Seed("Smocked romper", brand: "Crewcuts");
 
         // inDescription is newer, so only the match tier puts inTitle first.
-        Assert.Equal([inTitle, inDescription], await References("q=boots"));
+        Assert.Equal([inTitle, inDescription], await References("q=tutu"));
     }
 
     [Fact]
     public async Task A_keyword_longer_than_100_characters_is_truncated_before_searching()
     {
         var long96 = new string('z', 96);
-        var airMax = Seed("Air Max 90 white", description: $"Code {long96} on the tongue.");
-        var term = $"air {long96}q";
+        var airMax = Seed("Tie dye tee", description: $"Code {long96} on the label.");
+        var term = $"tee {long96}q";
 
         Assert.Equal([airMax], await References($"q={Uri.EscapeDataString(term)}"));
     }
@@ -74,24 +74,24 @@ public sealed class SearchAndFilterCatalogTests : IDisposable
     [Fact]
     public async Task Category_and_condition_combine_with_and()
     {
-        var match = Seed("Samba OG", condition: "New with tags");
-        Seed("Air Max 90 white", condition: "Used - Good");
+        var match = Seed("Smocked romper", condition: "New with tags");
+        Seed("Floral party dress pink", condition: "Used - Good");
         Seed("Oxford shirt", category: "Tops", subcategory: "Shirts", condition: "New with tags");
 
-        Assert.Equal([match], await References("category=shoes&condition=new-with-tags"));
+        Assert.Equal([match], await References("category=dresses&condition=new-with-tags"));
     }
 
     [Fact]
     public async Task Subcategories_and_brands_each_combine_with_or()
     {
-        var nike = Seed("Air Max 90 white", brand: "Nike");
-        var adidas = Seed("Samba OG", brand: "Adidas");
-        Seed("Retro fleece", brand: "Patagonia");
-        var boots = Seed("Iron Ranger", brand: "Red Wing", subcategory: "Boots");
-        Seed("Dress Oxford", brand: "Allen Edmonds", subcategory: "Dress shoes");
+        var gymboree = Seed("Floral party dress pink", brand: "Gymboree");
+        var crewcuts = Seed("Smocked romper", brand: "Crewcuts");
+        Seed("Retro fleece", brand: "Primary");
+        var tutu = Seed("Ballerina tutu", brand: "Mini Boden", subcategory: "Tutus");
+        Seed("Velvet skirt", brand: "Janie and Jack", subcategory: "Skirts");
 
-        Assert.Equal([adidas, nike], await References("brand=Nike&brand=adidas"));
-        Assert.Equal([boots], await References("category=shoes&subcategory=boots"));
+        Assert.Equal([crewcuts, gymboree], await References("brand=Gymboree&brand=crewcuts"));
+        Assert.Equal([tutu], await References("category=dresses&subcategory=tutus"));
     }
 
     [Fact]
@@ -120,8 +120,8 @@ public sealed class SearchAndFilterCatalogTests : IDisposable
 
     [Theory]
     [InlineData("category=hats")]
-    [InlineData("category=tops&subcategory=boots")]
-    [InlineData("subcategory=boots")]
+    [InlineData("category=tops&subcategory=tutus")]
+    [InlineData("subcategory=tutus")]
     [InlineData("condition=mint")]
     [InlineData("sort=cheapest")]
     [InlineData("min=-1")]
@@ -138,8 +138,8 @@ public sealed class SearchAndFilterCatalogTests : IDisposable
     [Fact]
     public async Task The_count_applies_the_same_filters()
     {
-        Seed("Samba OG", condition: "New with tags");
-        Seed("Air Max 90 white", condition: "New with tags");
+        Seed("Smocked romper", condition: "New with tags");
+        Seed("Floral party dress pink", condition: "New with tags");
         Seed("Old pair", condition: "Used - Fair");
         Seed("Unpublished draft", condition: "New with tags", publish: false);
 
@@ -153,15 +153,15 @@ public sealed class SearchAndFilterCatalogTests : IDisposable
     [Fact]
     public async Task Brands_of_visible_listings_are_listed_by_count_then_name()
     {
-        Seed("Air Max 90 white", brand: "Nike");
-        Seed("Air Force 1", brand: "Nike");
-        Seed("Samba OG", brand: "Adidas");
-        Seed("Retro fleece", brand: "Patagonia");
+        Seed("Floral party dress pink", brand: "Gymboree");
+        Seed("Rainbow tulle tutu", brand: "Gymboree");
+        Seed("Smocked romper", brand: "Crewcuts");
+        Seed("Retro fleece", brand: "Primary");
         Seed("Unpublished", brand: "Zara", publish: false);
 
         var brands = await _client.GetFromJsonAsync<List<BrandDto>>("/api/catalog/brands");
 
-        Assert.Equal([new BrandDto("Nike", 2), new BrandDto("Adidas", 1), new BrandDto("Patagonia", 1)], brands);
+        Assert.Equal([new BrandDto("Gymboree", 2), new BrandDto("Crewcuts", 1), new BrandDto("Primary", 1)], brands);
     }
 
     public void Dispose()
@@ -180,17 +180,17 @@ public sealed class SearchAndFilterCatalogTests : IDisposable
 
     private string Seed(
         string title,
-        string brand = "Nike",
-        string description = "Light creasing, soles have plenty left.",
-        string category = "Shoes",
-        string subcategory = "Sneakers",
+        string brand = "Gymboree",
+        string description = "Light wear, colours still bright.",
+        string category = "Dresses",
+        string subcategory = "Dresses",
         string condition = "Used - Good",
         decimal price = 85m,
         bool publish = true)
     {
         var now = _start.AddMinutes(++_minutes);
         var number = ++_number;
-        var details = new ListingDetails(category, subcategory, null, title, description, brand, condition, condition == "Used - Fair" ? "Scuffed toe box." : null, price, 8m);
+        var details = new ListingDetails(category, subcategory, null, title, description, brand, condition, condition == "Used - Fair" ? "Small mark on the hem." : null, price, 8m);
         var listing = Listing.CreateDraft(_sellerId, number, details, now);
         var hash = new string('a', 64);
         var versions = new[] { 400, 800, 1600 }.SelectMany(size => new[] { PhotoFormat.WebP, PhotoFormat.Jpeg }.Select(format =>

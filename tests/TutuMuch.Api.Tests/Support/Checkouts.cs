@@ -58,14 +58,14 @@ public static class Checkouts
         return client.SendAsync(request);
     }
 
-    /// <summary>An Active $85.00 sneaker listing with $9.00 shipping by a new seller; returns its reference.</summary>
+    /// <summary>An Active $85.00 party dress listing with $9.00 shipping by a new seller; returns its reference.</summary>
     public static string SeedActiveListing(this TutuMuchApiFactory factory, Guid? sellerId = null, long number = 30001)
     {
         var reference = Listing.ReferenceFor(number);
         factory.InDatabase(db =>
         {
             var seller = sellerId ?? SeedMember(db, $"kicks_{number}", $"kicks{number}@example.com").Id;
-            var details = new ListingDetails("Shoes", "Sneakers", null, "Air Max 90, white", "Worn a handful of times. Soles clean.", "Nike", "Used - Excellent", null, 85m, 9m);
+            var details = new ListingDetails("Dresses", "Dresses", null, "Floral party dress, pink", "Worn a handful of times. No stains.", "Gymboree", "Used - Excellent", null, 85m, 9m);
             var listing = Listing.CreateDraft(seller, number, details, DateTime.UtcNow);
             Assert.Empty(listing.Publish(sizeConfirmed: true, DateTime.UtcNow, photoCount: 1));
             db.Listings.Add(listing);

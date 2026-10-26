@@ -7,7 +7,7 @@
 
 ## Context
 
-Tutu Much is a marketplace for men's US size 12 shoes and men's size L clothing. Before any
+Tutu Much is a marketplace for new and used girls' clothing. Before any
 code exists, the repository carries the full product definition: user journeys
 (`docs/journeys.md`), L1 and L2 requirements (`docs/specs/`), HTML mocks
 (`docs/mocks/`), detailed designs (`docs/detailed-designs/`) and estimates

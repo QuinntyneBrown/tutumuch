@@ -76,10 +76,7 @@ export class ListingDetailPage {
     const listing = this.store.listing();
     return listing ? listedAgo(listing.publishedAt) : '';
   });
-  readonly fullSize = computed(() => {
-    const label = this.store.listing()?.sizeLabel ?? '';
-    return `Men's ${label}`;
-  });
+  readonly fullSize = computed(() => `${this.store.listing()?.sizeLabel ?? ''}'`);
 
   /** Confirms, then takes the listing off the catalog and goes to the seller's listings (L2-020). */
   async withdraw(): Promise<void> {

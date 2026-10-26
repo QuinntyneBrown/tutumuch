@@ -61,7 +61,7 @@ public sealed partial record CatalogCriteria(
         ["price-desc"] = CatalogSort.PriceDescending,
     };
 
-    /// <summary>"Dress shoes" becomes "dress-shoes"; the URL carries subcategories this way.</summary>
+    /// <summary>"T-shirts" becomes "t-shirts"; the URL carries subcategories this way.</summary>
     public static string Slug(string name) => name.ToLowerInvariant().Replace(' ', '-');
 
     /// <summary>Checks every value; an unknown or malformed one is 400 CATALOG_FILTER_INVALID, min above max 400 CATALOG_PRICE_RANGE_INVALID.</summary>

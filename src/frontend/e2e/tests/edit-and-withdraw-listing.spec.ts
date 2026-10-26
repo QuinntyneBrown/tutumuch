@@ -28,8 +28,8 @@ import { SaleDetailPage } from '../pages/sale-detail.page';
 
 const arizona = myListing({
   status: 'Active',
-  category: 'Shoes',
-  subcategory: 'Sandals',
+  category: 'Dresses',
+  subcategory: 'Rompers',
   title: 'Arizona sandals',
   brand: 'Birkenstock',
   condition: 'Used - Fair',
@@ -87,8 +87,8 @@ test.describe('edit listing', () => {
     await expect(edit.listingLink).toHaveText('Arizona sandals');
     await expect(edit.listingLink).toHaveAttribute('href', '/items/L-10001');
     await expect(edit.status).toHaveText('Active');
-    await expect(edit.form.category).toHaveValue('Shoes');
-    await expect(edit.form.type).toHaveValue('Sandals');
+    await expect(edit.form.category).toHaveValue('Dresses');
+    await expect(edit.form.type).toHaveValue('Rompers');
     await expect(edit.form.title).toHaveValue('Arizona sandals');
     await expect(edit.form.flaws).toHaveValue('Footbed shows wear at the heel.');
     await expect(edit.form.price).toHaveValue('45.00');
@@ -227,7 +227,7 @@ test.describe('withdraw listing', () => {
     await detail.goto();
 
     await detail.withdraw.click();
-    const dialog = new WithdrawListingDialog(page, 'Air Max 90, white');
+    const dialog = new WithdrawListingDialog(page, 'Floral party dress, pink');
     await expect(dialog.root).toContainText('It leaves the shop right away. This can’t be undone.');
     await expect(dialog.keep).toBeFocused();
     await dialog.withdraw.click();
@@ -247,7 +247,7 @@ test.describe('withdraw listing', () => {
     await detail.goto();
 
     await detail.withdraw.click();
-    const dialog = new WithdrawListingDialog(page, 'Air Max 90, white');
+    const dialog = new WithdrawListingDialog(page, 'Floral party dress, pink');
     await dialog.keep.click();
 
     await expect(dialog.root).toBeHidden();
@@ -265,7 +265,7 @@ test.describe('withdraw listing', () => {
     await detail.goto();
 
     await detail.withdraw.click();
-    const dialog = new WithdrawListingDialog(page, 'Air Max 90, white');
+    const dialog = new WithdrawListingDialog(page, 'Floral party dress, pink');
     await dialog.withdraw.click();
 
     await expect(dialog.withdraw).toHaveAttribute('aria-busy', 'true');

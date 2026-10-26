@@ -27,10 +27,10 @@ public sealed class CatalogueTests : IDisposable
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.Equal("public, max-age=3600", response.Headers.CacheControl?.ToString());
         var categories = (await response.Content.ReadFromJsonAsync<List<CategoryResponse>>())!;
-        Assert.Equal(["Shoes", "Tops", "Outerwear", "Bottoms"], categories.Select(c => c.Name));
-        Assert.Equal(12, categories.Sum(c => c.Subcategories.Count));
-        Assert.Equal(["Men's US 12", "Men's L", "Men's L", "Men's L"], categories.Select(c => c.AcceptedSize));
-        Assert.Equal(["US 12", "L", "L", "L"], categories.Select(c => c.SizeLabel));
+        Assert.Equal(["Dresses", "Tops", "Outerwear", "Bottoms"], categories.Select(c => c.Name));
+        Assert.Equal(13, categories.Sum(c => c.Subcategories.Count));
+        Assert.Equal(["Girls'", "Girls'", "Girls'", "Girls'"], categories.Select(c => c.AcceptedSize));
+        Assert.Equal(["Girls", "Girls", "Girls", "Girls"], categories.Select(c => c.SizeLabel));
     }
 
     [Fact]
@@ -40,7 +40,7 @@ public sealed class CatalogueTests : IDisposable
 
         Assert.Equal(10m, options!.FeePercent);
         Assert.Equal(["New with tags", "New without tags", "Used - Excellent", "Used - Good", "Used - Fair"], options.Conditions);
-        Assert.Contains("Nike", options.SuggestedBrands);
+        Assert.Contains("Gymboree", options.SuggestedBrands);
         Assert.Equal(8, options.MaxPhotos);
     }
 

@@ -49,7 +49,7 @@ public sealed class PublishListingTests : IDisposable
         Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
         var problem = await Problem.ReadAsync(response);
         Assert.Equal("SIZE_CONFIRMATION_REQUIRED", problem.Code);
-        Assert.Equal("Confirm the label shows men's US 12", problem.Errors!["sizeConfirmed"].Message);
+        Assert.Equal("Confirm the label shows girls' sizing", problem.Errors!["sizeConfirmed"].Message);
     }
 
     [Fact]
@@ -69,7 +69,7 @@ public sealed class PublishListingTests : IDisposable
         Assert.Equal("Add at least one photo", problem.Errors["photos"].Message);
         Assert.Equal("Title must be 5 to 80 characters", problem.Errors["title"].Message);
         Assert.Equal("Enter a price from $1.00 to $5,000.00", problem.Errors["price"].Message);
-        Assert.Equal("Confirm the label shows men's L", problem.Errors["sizeConfirmed"].Message);
+        Assert.Equal("Confirm the label shows girls' sizing", problem.Errors["sizeConfirmed"].Message);
     }
 
     [Fact]
@@ -118,7 +118,7 @@ public sealed class PublishListingTests : IDisposable
         await _client.SignInVerifiedMemberAsync(_factory);
         var reference = await _client.CreateDraftWithPhotoAsync(Listings.Complete());
         using var other = _factory.CreateMemberClient();
-        await other.SignInVerifiedMemberAsync(_factory, "kicks_12", "kicks@example.com");
+        await other.SignInVerifiedMemberAsync(_factory, "tutu_tessa", "tessa@example.com");
 
         using var response = await other.PublishAsync(reference);
 

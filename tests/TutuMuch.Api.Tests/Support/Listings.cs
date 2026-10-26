@@ -5,13 +5,13 @@ namespace TutuMuch.Api.Tests.Support;
 /// <summary>Request bodies and calls for the listings endpoints.</summary>
 public static class Listings
 {
-    public static Dictionary<string, object?> Complete(string category = "Shoes", string subcategory = "Sneakers") => new()
+    public static Dictionary<string, object?> Complete(string category = "Dresses", string subcategory = "Dresses") => new()
     {
         ["category"] = category,
         ["subcategory"] = subcategory,
-        ["title"] = "Air Force 1 '07, white",
-        ["description"] = "Light creasing, soles have plenty left. Cleaned and ready to wear.",
-        ["brand"] = "Nike",
+        ["title"] = "Rainbow tulle tutu, pink",
+        ["description"] = "Light wear, colours still bright. Cleaned and ready to wear.",
+        ["brand"] = "Gymboree",
         ["condition"] = "Used - Good",
         ["price"] = 60.00m,
         ["shippingCost"] = 8.00m,

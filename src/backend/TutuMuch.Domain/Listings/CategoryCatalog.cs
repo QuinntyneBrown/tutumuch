@@ -5,19 +5,18 @@ public sealed record CategoryDefinition(string Name, IReadOnlyList<string> Subca
 
 /// <summary>
 /// The L2-011 table. It is code, not configuration, because the size rule is the product's
-/// premise: Shoes are men's US 12 and every other category is men's L.
+/// premise: every category is girls' clothing.
 /// </summary>
 public static class CategoryCatalog
 {
-    public const string MensUs12 = "Men's US 12";
-    public const string MensL = "Men's L";
+    public const string Girls = "Girls'";
 
     public static readonly IReadOnlyList<CategoryDefinition> All =
     [
-        new("Shoes", ["Sneakers", "Boots", "Dress shoes", "Sandals"], MensUs12, "US 12"),
-        new("Tops", ["Shirts", "T-shirts", "Sweaters", "Hoodies"], MensL, "L"),
-        new("Outerwear", ["Jackets", "Coats"], MensL, "L"),
-        new("Bottoms", ["Pants", "Shorts"], MensL, "L"),
+        new("Dresses", ["Dresses", "Skirts", "Tutus", "Rompers"], Girls, "Girls"),
+        new("Tops", ["Shirts", "T-shirts", "Sweaters", "Hoodies"], Girls, "Girls"),
+        new("Outerwear", ["Jackets", "Coats"], Girls, "Girls"),
+        new("Bottoms", ["Pants", "Leggings", "Shorts"], Girls, "Girls"),
     ];
 
     public static CategoryDefinition? Find(string? category) =>

@@ -40,7 +40,7 @@ export class TopBarComponent {
   readonly initials = computed(() => this.member()?.displayName.slice(0, 2).toUpperCase() ?? '');
 
   readonly categories = [
-    { label: 'Shoes', path: '/shoes' },
+    { label: 'Dresses', path: '/dresses' },
     { label: 'Tops', path: '/tops' },
     { label: 'Outerwear', path: '/outerwear' },
     { label: 'Bottoms', path: '/bottoms' },

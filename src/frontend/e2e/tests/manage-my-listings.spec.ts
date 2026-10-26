@@ -15,7 +15,7 @@ const all = myListings(
     myListingRow({
       reference: 'L-10030',
       status: 'Draft',
-      title: "Air Force 1 '07, white",
+      title: 'Rainbow tulle tutu, pink',
       price: 60,
       createdAt: '2026-10-26T09:00:00Z',
     }),
@@ -31,7 +31,7 @@ const all = myListings(
     myListingRow({
       reference: 'L-10025',
       status: 'Sold',
-      title: 'Reverse Weave hoodie, grey',
+      title: 'Unicorn hoodie, lilac',
       price: 38,
       createdAt: '2026-10-24T09:00:00Z',
       saleOrderId: 'o-9',
@@ -81,7 +81,7 @@ test.describe('manage my listings', () => {
     await expect(listings.subtitle).toHaveText('5 listings · 1 active');
     await expect(listings.sellAnItem).toHaveAttribute('href', '/sell');
     await expect(listings.rows).toHaveCount(5);
-    await expect(listings.rows.nth(0)).toContainText("Air Force 1 '07, white");
+    await expect(listings.rows.nth(0)).toContainText('Rainbow tulle tutu, pink');
     await expect(listings.rows.nth(0)).toContainText('Draft');
     await expect(listings.rows.nth(0)).toContainText('$60');
     await expect(listings.rows.nth(0)).toContainText('Today');
@@ -104,7 +104,7 @@ test.describe('manage my listings', () => {
     await listings.goto();
 
     await expect(listings.row('Untitled draft').getByRole('link')).toHaveAttribute('href', '/sell/L-10029');
-    await expect(listings.row('Reverse Weave hoodie').getByRole('link')).toHaveAttribute('href', '/sales/o-9');
+    await expect(listings.row('Unicorn hoodie').getByRole('link')).toHaveAttribute('href', '/sales/o-9');
     await expect(listings.row('Arizona sandals').getByRole('link')).toHaveAttribute('href', '/items/L-10021');
   });
 

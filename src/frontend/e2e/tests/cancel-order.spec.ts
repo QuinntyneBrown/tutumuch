@@ -73,7 +73,7 @@ test.describe('cancel order: seller', () => {
 
     await expect(dialog.root).toBeVisible();
     await expect(dialog.root).toContainText(
-      'tall_tom is refunded $48.15 in full. The listing stays off the catalog until you relist.',
+      'twirly_tara is refunded $48.15 in full. The listing stays off the catalog until you relist.',
     );
     await expect(dialog.reasons).toHaveCount(4);
     await expect(dialog.root.locator('fieldset label')).toHaveText([
@@ -154,11 +154,11 @@ test.describe('cancel order: seller', () => {
 
     await expect(salePage.heading).toHaveText('Buyer asked to cancel');
     await expect(salePage.quote).toContainText('“Ordered the wrong colour, sorry. Can we cancel?”');
-    await expect(salePage.quote).toContainText('tall_tom');
+    await expect(salePage.quote).toContainText('twirly_tara');
     await expect(salePage.shipTo).toBeVisible();
     await expect(salePage.addTracking).toHaveCount(0);
     await salePage.respond.click();
-    const dialog = new RespondCancellationDialog(page, 'tall_tom');
+    const dialog = new RespondCancellationDialog(page, 'twirly_tara');
     await expect(dialog.root).toContainText(
       'Accepting refunds $48.15 in full. Declining keeps the order — you still ship by Fri 30 Oct.',
     );
@@ -180,7 +180,7 @@ test.describe('cancel order: seller', () => {
     });
     const salePage = await openSale(page, sale({ cancellationRequest: cancellationRequest() }));
     await salePage.respond.click();
-    const dialog = new RespondCancellationDialog(page, 'tall_tom');
+    const dialog = new RespondCancellationDialog(page, 'twirly_tara');
 
     await dialog.decline.click();
 
@@ -195,7 +195,7 @@ test.describe('cancel order: seller', () => {
     const release = await holdThenFail(page, '**/api/orders/o-1/cancellation-request/response');
     const salePage = await openSale(page, sale({ cancellationRequest: cancellationRequest() }));
     await salePage.respond.click();
-    const dialog = new RespondCancellationDialog(page, 'tall_tom');
+    const dialog = new RespondCancellationDialog(page, 'twirly_tara');
 
     await dialog.accept.click();
 
@@ -220,7 +220,7 @@ test.describe('cancel order: seller', () => {
     await expect(dialog.root).toContainText(
       'It goes back in the catalog with its original photos, price and description.',
     );
-    await expect(dialog.item).toContainText('Reverse Weave hoodie, grey');
+    await expect(dialog.item).toContainText('Unicorn hoodie, lilac');
     await expect(dialog.item).toContainText('$38.00 · $7.00 shipping');
     await expect(dialog.relist).toBeFocused();
     await dialog.relist.click();
@@ -279,12 +279,12 @@ test.describe('cancel order: buyer', () => {
       return route.fulfill({ json: buyerOrder({ cancellationRequest: cancellationRequest() }) });
     });
     const orderPage = await openOrder(page);
-    const dialog = new RequestCancellationDialog(page, 'kicks_12');
+    const dialog = new RequestCancellationDialog(page, 'tutu_tessa');
 
     await orderPage.askToCancel.click();
 
     await expect(dialog.root).toContainText(
-      'If kicks_12 accepts, you’re refunded in full. Until then the order stays as is.',
+      'If tutu_tessa accepts, you’re refunded in full. Until then the order stays as is.',
     );
     await expect(dialog.message).toBeFocused();
     await dialog.message.fill('Ordered the wrong colour, sorry. Can we cancel?');
@@ -293,7 +293,7 @@ test.describe('cancel order: buyer', () => {
     await expect(dialog.root).toBeHidden();
     expect(sent).toEqual([{ message: 'Ordered the wrong colour, sorry. Can we cancel?' }]);
     await expect(orderPage.heading).toHaveText('Waiting to ship');
-    await expect(orderPage.requestNote).toHaveText('You asked kicks_12 to cancel. They haven’t answered yet.');
+    await expect(orderPage.requestNote).toHaveText('You asked tutu_tessa to cancel. They haven’t answered yet.');
     await expect(orderPage.askToCancel).toHaveCount(0);
     expect(unfixturedApiCalls).toEqual([]);
   });
@@ -302,7 +302,7 @@ test.describe('cancel order: buyer', () => {
     const release = await holdThenFail(page, '**/api/orders/o-1/cancellation-request');
     const orderPage = await openOrder(page);
     await orderPage.askToCancel.click();
-    const dialog = new RequestCancellationDialog(page, 'kicks_12');
+    const dialog = new RequestCancellationDialog(page, 'tutu_tessa');
     await dialog.message.fill('Wrong colour');
 
     await dialog.send.click();
@@ -318,7 +318,7 @@ test.describe('cancel order: buyer', () => {
   test('a declined request says the seller still ships, and cannot be sent again', async ({ page }) => {
     const orderPage = await openOrder(page, buyerOrder({ cancellationRequest: cancellationRequest('Declined') }));
 
-    await expect(orderPage.requestNote).toHaveText('kicks_12 declined to cancel. They still ship by Fri 30 Oct.');
+    await expect(orderPage.requestNote).toHaveText('tutu_tessa declined to cancel. They still ship by Fri 30 Oct.');
     await expect(orderPage.askToCancel).toHaveCount(0);
   });
 
@@ -335,7 +335,7 @@ test.describe('cancel order: buyer', () => {
     await expect(orderPage.alert).toContainText('Refunded in full');
     await expect(orderPage.alert).toContainText('$102.34 back to Visa ending 4242. Allow 5–10 days.');
     await expect(orderPage.quote).toContainText('“Found a crack while packing.”');
-    await expect(orderPage.quote).toContainText('kicks_12');
+    await expect(orderPage.quote).toContainText('tutu_tessa');
     await expect(orderPage.shopSimilar).toHaveAttribute('href', '/');
   });
 

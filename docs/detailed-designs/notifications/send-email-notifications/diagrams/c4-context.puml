@@ -4,7 +4,7 @@ LAYOUT_WITH_LEGEND()
 title System Context — Send email notifications
 
 Person(member, "Member", "Buyer or seller who receives email about account, listing and order events")
-System(tutumuch, "Tutu Much", "Marketplace for men's US size 12 shoes and size L clothing")
+System(tutumuch, "Tutu Much", "Marketplace for girls' clothing")
 System_Ext(email, "Email provider", "Transactional and marketing email delivery")
 
 Rel(member, tutumuch, "Triggers events and follows deep links into", "HTTPS")

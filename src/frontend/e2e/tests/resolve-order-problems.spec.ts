@@ -209,7 +209,7 @@ test.describe('resolve order problems: seller', () => {
     await expect(section.alert).toContainText('Problem reported · Wrong size');
     await expect(section.alert).toContainText('Your payout is on hold while our team reviews this.');
     await expect(section.entries).toHaveCount(1);
-    await expect(section.entries.first()).toContainText('tall_tom · Sat 24 Oct');
+    await expect(section.entries.first()).toContainText('twirly_tara · Sat 24 Oct');
     await expect(page.locator('main')).toContainText('Visible to the buyer and to Tutu Much.');
 
     await section.sendReply.click();

@@ -97,7 +97,7 @@ public sealed class CheckoutTests
     public void A_seller_cannot_buy_their_own_listing()
     {
         var sellerId = Guid.NewGuid();
-        var listing = Listing.CreateDraft(sellerId, 10001, new ListingDetails("Shoes", null, null, null, null, null, null, null, null, null), Now);
+        var listing = Listing.CreateDraft(sellerId, 10001, new ListingDetails("Dresses", null, null, null, null, null, null, null, null, null), Now);
 
         Assert.False(listing.CanBePurchasedBy(sellerId));
         Assert.True(listing.CanBePurchasedBy(Guid.NewGuid()));
@@ -106,7 +106,7 @@ public sealed class CheckoutTests
     [Fact]
     public void Only_a_reserved_or_active_listing_can_be_sold()
     {
-        var listing = Listing.CreateDraft(Guid.NewGuid(), 10001, new ListingDetails("Shoes", null, null, null, null, null, null, null, null, null), Now);
+        var listing = Listing.CreateDraft(Guid.NewGuid(), 10001, new ListingDetails("Dresses", null, null, null, null, null, null, null, null, null), Now);
 
         Assert.Throws<InvalidOperationException>(() => listing.MarkSold(Now));
     }

@@ -15,7 +15,7 @@ internal sealed class ListingConfiguration : IEntityTypeConfiguration<Listing>
     {
         builder.ToTable("Listings", t =>
         {
-            t.HasCheckConstraint("CK_Listings_Size", "(Category = 'Shoes' AND Size = 'Men''s US 12') OR (Category <> 'Shoes' AND Size = 'Men''s L')");
+            t.HasCheckConstraint("CK_Listings_Size", "Size = 'Girls'''");
             t.HasCheckConstraint("CK_Listings_Price", "Price IS NULL OR CAST(Price AS REAL) BETWEEN 1 AND 5000");
             t.HasCheckConstraint("CK_Listings_ShippingCost", "ShippingCost IS NULL OR CAST(ShippingCost AS REAL) BETWEEN 0 AND 100");
         });

@@ -1,6 +1,6 @@
 import { Locator, Page } from '@playwright/test';
 
-/** The catalog at / and the category pages /shoes, /tops... (mocks pages/catalog). */
+/** The catalog at / and the category pages /dresses, /tops... (mocks pages/catalog). */
 export class CatalogPage {
   readonly heading: Locator;
   readonly listings: Locator;

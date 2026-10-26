@@ -37,7 +37,7 @@ public sealed class OrderHistoryTests : IDisposable
         var shipped = list.Items[1];
         Assert.Equal("Shipped", shipped.Status);
         Assert.Equal("kicks_30002", shipped.OtherParty);
-        Assert.Equal("Air Max 90, white", shipped.Item.Title);
+        Assert.Equal("Floral party dress, pink", shipped.Item.Title);
         Assert.Equal("102.34", shipped.Total);
         Assert.StartsWith("TM-", shipped.Reference);
         Assert.Equal(new OrderCountsView(1, 0, 2), list.Counts);

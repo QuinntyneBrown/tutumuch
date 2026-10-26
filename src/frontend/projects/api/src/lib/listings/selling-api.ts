@@ -8,9 +8,9 @@ import { ApiResult, toResult } from '../api-result';
 export interface Category {
   name: string;
   subcategories: string[];
-  /** For example "Men's US 12". */
+  /** For example "Girls'". */
   acceptedSize: string;
-  /** Short label for the size tag, for example "US 12". */
+  /** Short label for the size tag, for example "Girls". */
   sizeLabel: string;
 }
 

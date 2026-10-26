@@ -4,7 +4,7 @@ LAYOUT_WITH_LEGEND()
 title System Context — Sign up and sign in
 
 Person(visitor, "Visitor or member", "Joins, verifies their email and signs in")
-System(tutumuch, "Tutu Much", "Marketplace for men's US 12 shoes and men's L clothing")
+System(tutumuch, "Tutu Much", "Marketplace for girls' clothing")
 System_Ext(email, "Email provider", "Delivers the verification link (logged until send-email-notifications)")
 
 Rel(visitor, tutumuch, "Joins and signs in using", "HTTPS")

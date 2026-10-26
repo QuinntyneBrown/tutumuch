@@ -11,8 +11,8 @@ public sealed class EditAndWithdrawListingTests
 {
     private static readonly DateTime Now = new(2026, 10, 25, 12, 0, 0, DateTimeKind.Utc);
 
-    private static ListingDetails Complete(string category = "Shoes", string subcategory = "Sneakers") => new(
-        category, subcategory, null, "Air Force 1 '07, white", "Light creasing, soles have plenty left.", "Nike", "Used - Good", null, 60.00m, 8.00m);
+    private static ListingDetails Complete(string category = "Dresses", string subcategory = "Dresses") => new(
+        category, subcategory, null, "Rainbow tulle tutu, pink", "Light wear, colours still bright.", "Gymboree", "Used - Good", null, 60.00m, 8.00m);
 
     private static Listing Active()
     {
@@ -54,7 +54,7 @@ public sealed class EditAndWithdrawListingTests
 
         Assert.Empty(listing.Edit(Complete("Tops", "Hoodies"), sizeConfirmed: true, photoCount: 1, later));
 
-        Assert.Equal("Men's L", listing.Size);
+        Assert.Equal("Girls'", listing.Size);
         Assert.Equal(later, listing.SizeConfirmedAt);
     }
 

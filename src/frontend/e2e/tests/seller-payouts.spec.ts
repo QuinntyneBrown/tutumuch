@@ -46,7 +46,7 @@ test.describe('seller payouts', () => {
     await expect(payouts.sectionHeading).toHaveText('History');
     await expect(payouts.rows).toHaveCount(2);
     const held = payouts.row('TM-48302');
-    await expect(held).toContainText('Reverse Weave hoodie, grey');
+    await expect(held).toContainText('Unicorn hoodie, lilac');
     await expect(held).toContainText('TM-48302 · Held until the order completes');
     await expect(held).toContainText('$40.50');
     await expect(held).toContainText('Pending');

@@ -75,7 +75,7 @@ test.describe('join', () => {
     const join = new JoinPage(page);
     await join.goto();
 
-    await join.fill({ displayName: 'kicks_12', email: 'sam@example.com', password: 'correct horse battery' });
+    await join.fill({ displayName: 'tutu_tessa', email: 'sam@example.com', password: 'correct horse battery' });
     await join.submit.click();
 
     await expect(

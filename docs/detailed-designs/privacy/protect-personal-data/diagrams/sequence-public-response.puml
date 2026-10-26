@@ -29,9 +29,9 @@ end box
 box "Backend — TutuMuch.Infrastructure" #FFF4E5
   database "Tutu Much database" as db
 end box
-actor -> page : Open /members/kicks_12
-page -> client : getProfile("kicks_12")
-client -> controller : GET /api/members/kicks_12
+actor -> page : Open /members/tutu_tessa
+page -> client : getProfile("tutu_tessa")
+client -> controller : GET /api/members/tutu_tessa
 controller -> handler : Send GetPublicProfileQuery
 handler -> db : Select public columns only (no email, phone, address)
 db --> handler : Member row

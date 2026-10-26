@@ -98,7 +98,7 @@ public sealed class ListingPhotoAttachTests : IDisposable
     {
         await _client.SignInVerifiedMemberAsync(_factory);
         using var other = _factory.CreateMemberClient();
-        await other.SignInVerifiedMemberAsync(_factory, "kicks_12", "kicks@example.com");
+        await other.SignInVerifiedMemberAsync(_factory, "tutu_tessa", "tessa@example.com");
         var theirs = await other.UploadValidPhotoAsync();
 
         using var response = await _client.PostAsJsonAsync("/api/listings", Listings.Complete().With("photoIds", new[] { theirs }));

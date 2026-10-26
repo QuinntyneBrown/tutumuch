@@ -55,7 +55,7 @@ test.describe('manage notification preferences', () => {
     await expect(emails.row('Account security')).toContainText('Sign-in alerts, password resets');
     await expect(emails.row('Orders')).toContainText('Sales, shipping, delivery, refunds');
     await expect(emails.row('Reviews')).toContainText('When someone reviews you');
-    await expect(emails.row('News from Tutu Much')).toContainText('New arrivals in your size, now and then');
+    await expect(emails.row('News from Tutu Much')).toContainText('New arrivals for girls, now and then');
     await expect(emails.security).toBeChecked();
     await expect(emails.security).toBeDisabled();
     await expect(emails.orders).toBeChecked();

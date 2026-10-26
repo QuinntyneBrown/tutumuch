@@ -13,15 +13,15 @@ test.describe('browse catalog', () => {
     const catalog = new CatalogPage(page);
     await catalog.goto();
 
-    await expect(catalog.heading).toHaveText('Size 12. Size L. Nothing else.');
+    await expect(catalog.heading).toHaveText('Girls’ clothing. Nothing else.');
     await expect(catalog.count).toHaveText('30 items');
     await expect(catalog.cards).toHaveCount(24);
-    const card = catalog.card('Air Max 90 no. 1');
+    const card = catalog.card('Floral party dress no. 1');
     await expect(card.getByRole('link')).toHaveAttribute('href', '/items/L-10001');
-    await expect(card).toContainText('Nike');
+    await expect(card).toContainText('Gymboree');
     await expect(card).toContainText('Used - Excellent');
     await expect(card).toContainText('$85');
-    await expect(card.getByLabel('Size US 12')).toBeVisible();
+    await expect(card.getByLabel('Size Girls')).toBeVisible();
     await expect(catalog.shown).toHaveText('Showing 24 of 30');
 
     await catalog.loadMore.click();
@@ -38,7 +38,7 @@ test.describe('browse catalog', () => {
         json: {
           items: [
             catalogCard(1, { status: 'Reserved' }),
-            catalogCard(2, { price: '18.50', sizeLabel: 'L' }),
+            catalogCard(2, { price: '18.50', sizeLabel: 'Girls' }),
             catalogCard(3, { price: '1200.00' }),
           ],
           page: 1,
@@ -50,10 +50,10 @@ test.describe('browse catalog', () => {
     const catalog = new CatalogPage(page);
     await catalog.goto();
 
-    await expect(catalog.card('Air Max 90 no. 1')).toContainText('Reserved');
-    await expect(catalog.card('Air Max 90 no. 2')).toContainText('$18.50');
-    await expect(catalog.card('Air Max 90 no. 2').getByLabel('Size L')).toBeVisible();
-    await expect(catalog.card('Air Max 90 no. 3')).toContainText('$1,200');
+    await expect(catalog.card('Floral party dress no. 1')).toContainText('Reserved');
+    await expect(catalog.card('Floral party dress no. 2')).toContainText('$18.50');
+    await expect(catalog.card('Floral party dress no. 2').getByLabel('Size Girls')).toBeVisible();
+    await expect(catalog.card('Floral party dress no. 3')).toContainText('$1,200');
     await expect(catalog.loadMore).toBeHidden();
   });
 
@@ -69,7 +69,7 @@ test.describe('browse catalog', () => {
     await expect(img).toHaveAttribute('width', '1200');
     await expect(img).toHaveAttribute('height', '1600');
     await expect(img).toHaveAttribute('loading', 'eager');
-    await expect(img).toHaveAttribute('alt', 'Photo 1 of Nike Air Max 90 no. 1');
+    await expect(img).toHaveAttribute('alt', 'Photo 1 of Gymboree Floral party dress no. 1');
     await expect(catalog.cards.nth(4).locator('img')).toHaveAttribute('loading', 'lazy');
   });
 
@@ -109,7 +109,7 @@ test.describe('browse catalog', () => {
 
     await expect(page).toHaveURL(/\/tops$/);
     await expect(catalog.heading).toHaveText('Tops');
-    await expect(page.locator('main .page-header').getByLabel('Size L')).toBeVisible();
+    await expect(page.locator('main .page-header').getByLabel('Size Girls')).toBeVisible();
     await expect.poll(() => requests.at(-1)?.get('category')).toBe('tops');
   });
 

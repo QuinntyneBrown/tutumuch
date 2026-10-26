@@ -24,12 +24,12 @@ box "Backend — TutuMuch Infrastructure" #FFF4E5
   participant "ITutuMuchDbContext" as ctx
   database "Tutu Much database" as db
 end box
-actor -> form : Submit "air max"
+actor -> form : Submit "party dress"
 form -> form : Trim, cut to 100 characters (L2-023)
-form -> shell : (searched) "air max"
-shell -> page : navigate("/", q = "air max", keep filters on the catalog)
+form -> shell : (searched) "party dress"
+shell -> page : navigate("/", q = "party dress", keep filters on the catalog)
 page -> page : parseQuery(queryParamMap), canonical check
-page -> store : load({ q: "air max", ... })
+page -> store : load({ q: "party dress", ... })
 store -> client : listings(1, params)
 client -> controller : GET /api/catalog/listings?q=air%20max
 controller -> handler : Send BrowseCatalogQuery
@@ -46,7 +46,7 @@ controller --> client : 200 OK
 client --> store : CatalogPageDto
 alt totalCount > 0
   store --> page : loaded
-  page --> actor : Eyebrow "Search", heading “air max”, ranked cards
+  page --> actor : Eyebrow "Search", heading “party dress”, ranked cards
 else totalCount = 0
   store --> page : empty
   page --> actor : "No items match", "Clear search and filters"

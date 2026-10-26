@@ -9,18 +9,18 @@ namespace TutuMuch.Domain.Tests;
 public sealed class CategoryCatalogTests
 {
     [Fact]
-    public void Catalog_holds_exactly_4_categories_and_12_subcategories()
+    public void Catalog_holds_exactly_4_categories_and_13_subcategories()
     {
-        Assert.Equal(["Shoes", "Tops", "Outerwear", "Bottoms"], CategoryCatalog.All.Select(c => c.Name));
-        Assert.Equal(12, CategoryCatalog.All.Sum(c => c.Subcategories.Count));
-        Assert.Equal(["Sneakers", "Boots", "Dress shoes", "Sandals"], CategoryCatalog.Find("Shoes")!.Subcategories);
+        Assert.Equal(["Dresses", "Tops", "Outerwear", "Bottoms"], CategoryCatalog.All.Select(c => c.Name));
+        Assert.Equal(13, CategoryCatalog.All.Sum(c => c.Subcategories.Count));
+        Assert.Equal(["Dresses", "Skirts", "Tutus", "Rompers"], CategoryCatalog.Find("Dresses")!.Subcategories);
     }
 
     [Theory]
-    [InlineData("Shoes", "Men's US 12")]
-    [InlineData("Tops", "Men's L")]
-    [InlineData("Outerwear", "Men's L")]
-    [InlineData("Bottoms", "Men's L")]
+    [InlineData("Dresses", "Girls'")]
+    [InlineData("Tops", "Girls'")]
+    [InlineData("Outerwear", "Girls'")]
+    [InlineData("Bottoms", "Girls'")]
     public void Accepted_size_follows_the_category(string category, string size)
     {
         Assert.Equal(size, CategoryCatalog.AcceptedSizeFor(category));
@@ -28,7 +28,7 @@ public sealed class CategoryCatalogTests
 
     [Theory]
     [InlineData("Accessories", null)]
-    [InlineData("Shoes", "Hoodies")]
+    [InlineData("Dresses", "Hoodies")]
     [InlineData("Tops", "Hats")]
     public void Unknown_category_or_subcategory_is_not_accepted(string category, string? subcategory)
     {

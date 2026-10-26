@@ -2,7 +2,7 @@
 
 ## Overview
 
-Tutu Much is a marketplace for men's US size 12 shoes and men's size L clothing. An
+Tutu Much is a marketplace for new and used girls' clothing. An
 *order* is the record Tutu Much creates when a buyer's payment for a listing is confirmed;
 it ties together one listing, one buyer, one seller, the amounts paid and the
 shipping address. This feature covers the stretch of an order's life between payment

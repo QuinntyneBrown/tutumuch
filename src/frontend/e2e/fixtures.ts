@@ -18,26 +18,26 @@ export const unverifiedMarcus: MemberFixture = { ...marcus, emailVerified: false
 /** GET /api/categories: the L2-011 table. */
 export const categories = [
   {
-    name: 'Shoes',
-    subcategories: ['Sneakers', 'Boots', 'Dress shoes', 'Sandals'],
-    acceptedSize: "Men's US 12",
-    sizeLabel: 'US 12',
+    name: 'Dresses',
+    subcategories: ['Dresses', 'Skirts', 'Tutus', 'Rompers'],
+    acceptedSize: "Girls'",
+    sizeLabel: 'Girls',
   },
   {
     name: 'Tops',
     subcategories: ['Shirts', 'T-shirts', 'Sweaters', 'Hoodies'],
-    acceptedSize: "Men's L",
-    sizeLabel: 'L',
+    acceptedSize: "Girls'",
+    sizeLabel: 'Girls',
   },
-  { name: 'Outerwear', subcategories: ['Jackets', 'Coats'], acceptedSize: "Men's L", sizeLabel: 'L' },
-  { name: 'Bottoms', subcategories: ['Pants', 'Shorts'], acceptedSize: "Men's L", sizeLabel: 'L' },
+  { name: 'Outerwear', subcategories: ['Jackets', 'Coats'], acceptedSize: "Girls'", sizeLabel: 'Girls' },
+  { name: 'Bottoms', subcategories: ['Pants', 'Leggings', 'Shorts'], acceptedSize: "Girls'", sizeLabel: 'Girls' },
 ];
 
 /** GET /api/selling/options. */
 export const sellingOptions = {
   feePercent: 10,
   conditions: ['New with tags', 'New without tags', 'Used - Excellent', 'Used - Good', 'Used - Fair'],
-  suggestedBrands: ['Nike', 'Adidas', 'New Balance'],
+  suggestedBrands: ['Gymboree', 'Crewcuts', 'Hanna Andersson'],
   maxPhotos: 8,
 };
 
@@ -49,13 +49,13 @@ export async function serveCatalogue(page: Page): Promise<void> {
 
 /** A listing as the listings endpoints return it to its seller. */
 export function myListing(fields: Record<string, unknown>): Record<string, unknown> {
-  const category = (fields['category'] as string) ?? 'Shoes';
+  const category = (fields['category'] as string) ?? 'Dresses';
   return {
     reference: 'L-10001',
     status: 'Draft',
     category,
     subcategory: null,
-    size: category === 'Shoes' ? "Men's US 12" : "Men's L",
+    size: "Girls'",
     title: null,
     description: null,
     brand: null,
@@ -200,11 +200,11 @@ export function catalogCard(n: number, fields: Record<string, unknown> = {}): Re
   return {
     id: `00000000-0000-0000-0000-${String(n).padStart(12, '0')}`,
     reference: `L-${10000 + n}`,
-    title: `Air Max 90 no. ${n}`,
-    brand: 'Nike',
-    category: 'Shoes',
-    subcategory: 'Sneakers',
-    sizeLabel: 'US 12',
+    title: `Floral party dress no. ${n}`,
+    brand: 'Gymboree',
+    category: 'Dresses',
+    subcategory: 'Dresses',
+    sizeLabel: 'Girls',
     condition: 'Used - Excellent',
     price: '85.00',
     status: 'Active',
@@ -212,7 +212,7 @@ export function catalogCard(n: number, fields: Record<string, unknown> = {}): Re
     coverPhoto: {
       width: 1200,
       height: 1600,
-      alt: `Photo 1 of Nike Air Max 90 no. ${n}`,
+      alt: `Photo 1 of Gymboree Floral party dress no. ${n}`,
       src: `/photos/${hash}/400.jpg`,
       webp: srcset('webp'),
       jpeg: srcset('jpg'),
@@ -246,13 +246,13 @@ export async function serveCatalog(page: Page, total: number): Promise<URLSearch
 
 /** GET /api/catalog/brands: 8 brands, most listed first. */
 export const catalogBrands = [
-  { name: 'Nike', listingCount: 212 },
-  { name: 'Adidas', listingCount: 180 },
-  { name: 'New Balance', listingCount: 96 },
-  { name: 'Patagonia', listingCount: 54 },
-  { name: 'Carhartt', listingCount: 41 },
-  { name: 'Red Wing', listingCount: 30 },
-  { name: 'Allen Edmonds', listingCount: 12 },
+  { name: 'Gymboree', listingCount: 212 },
+  { name: 'Crewcuts', listingCount: 180 },
+  { name: 'Hanna Andersson', listingCount: 96 },
+  { name: 'Primary', listingCount: 54 },
+  { name: 'Mini Boden', listingCount: 41 },
+  { name: 'Mini Boden', listingCount: 30 },
+  { name: 'Janie and Jack', listingCount: 12 },
   { name: 'Birkenstock', listingCount: 9 },
 ];
 
@@ -284,7 +284,7 @@ export function listingDetail(fields: Record<string, unknown> = {}, photos = 3):
     return {
       width: 1200,
       height: 1600,
-      alt: `Photo ${i} of Nike Air Max 90, white`,
+      alt: `Photo ${i} of Gymboree Floral party dress, pink`,
       src: `/photos/${hash}/400.jpg`,
       webp: srcset('webp'),
       jpeg: srcset('jpg'),
@@ -293,21 +293,21 @@ export function listingDetail(fields: Record<string, unknown> = {}, photos = 3):
   return {
     id: '00000000-0000-0000-0000-000000010001',
     reference: 'L-10001',
-    title: 'Air Max 90, white',
-    brand: 'Nike',
-    category: 'Shoes',
-    subcategory: 'Sneakers',
-    sizeLabel: 'US 12',
+    title: 'Floral party dress, pink',
+    brand: 'Gymboree',
+    category: 'Dresses',
+    subcategory: 'Dresses',
+    sizeLabel: 'Girls',
     condition: 'Used - Excellent',
     flaws: null,
-    description: 'Worn a handful of times. No creases on the toe box, soles clean. Original box included.',
+    description: 'Worn a handful of times to parties. No stains, tulle still full. Original gift box included.',
     price: '85.00',
     shippingCost: '9.00',
     total: '94.00',
     status: 'Active',
     publishedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
     photos: Array.from({ length: photos }, (_, i) => photo(i + 1)),
-    seller: { displayName: 'kicks_12', completedSalesCount: 0, ratingAverage: null, publishedReviewCount: 0 },
+    seller: { displayName: 'tutu_tessa', completedSalesCount: 0, ratingAverage: null, publishedReviewCount: 0 },
     viewer: { relation: 'OtherMember' },
     ...fields,
   };
@@ -342,9 +342,9 @@ export function checkout(fields: Record<string, unknown> = {}): Record<string, u
     expiresAt: new Date(checkoutStart.getTime() + (9 * 60 + 41) * 1000).toISOString(),
     item: {
       reference: 'L-10001',
-      title: 'Air Max 90, white',
-      brand: 'Nike',
-      size: "Men's US 12",
+      title: 'Floral party dress, pink',
+      brand: 'Gymboree',
+      size: "Girls'",
       condition: 'Used - Excellent',
       photo: {
         width: 1200,
@@ -381,7 +381,7 @@ export const purchase = {
   total: '102.34',
   cardBrand: 'Visa',
   cardLast4: '4242',
-  sellerDisplayName: 'kicks_12',
+  sellerDisplayName: 'tutu_tessa',
   paidAt: '2026-10-25T12:01:00Z',
 };
 
@@ -457,7 +457,7 @@ export const uspsTracking = {
   url: 'https://tools.usps.com/go/TrackConfirmAction?tLabels=9400111899223456120477',
 };
 
-/** GET /api/sales/o-1: a Paid sale of the hoodie to tall_tom, ship by Fri 30 Oct (mocks pages/sale-detail). */
+/** GET /api/sales/o-1: a Paid sale of the unicorn hoodie to twirly_tara, ship by Fri 30 Oct (mocks pages/sale-detail). */
 export function sale(fields: Record<string, unknown> = {}): Record<string, unknown> {
   return {
     id: 'o-1',
@@ -467,15 +467,15 @@ export function sale(fields: Record<string, unknown> = {}): Record<string, unkno
     shipBy: '2026-10-30T15:00:00Z',
     item: {
       ...(checkout()['item'] as object),
-      title: 'Reverse Weave hoodie, grey',
+      title: 'Unicorn hoodie, lilac',
       brand: 'Champion',
-      size: "Men's L",
+      size: "Girls'",
     },
     itemPrice: '38.00',
     shippingCost: '7.00',
     salesTax: '3.15',
     total: '48.15',
-    buyerDisplayName: 'tall_tom',
+    buyerDisplayName: 'twirly_tara',
     shipTo: {
       fullName: 'Tom Reyes',
       line1: '1450 Larimer St',
@@ -496,7 +496,7 @@ export function sale(fields: Record<string, unknown> = {}): Record<string, unkno
   };
 }
 
-/** GET /api/purchases/o-1 as the buyer's order page reads it: the Paid order from kicks_12. */
+/** GET /api/purchases/o-1 as the buyer's order page reads it: the Paid order from tutu_tessa. */
 export function buyerOrder(fields: Record<string, unknown> = {}): Record<string, unknown> {
   return {
     ...purchase,
@@ -554,7 +554,7 @@ export function problemDetail(fields: Record<string, unknown> = {}): Record<stri
       status: 'Delivered',
       total: '59.88',
       deliveredAt: '2026-10-24T15:00:00Z',
-      item: { ...(sale()['item'] as object), title: 'Better Sweater fleece', brand: 'Patagonia' },
+      item: { ...(sale()['item'] as object), title: 'Better Sweater fleece', brand: 'Primary' },
     },
     payout: 'Held',
     ...fields,
@@ -566,7 +566,7 @@ export function cancellationRequest(status = 'Pending'): Record<string, unknown>
   return { message: 'Ordered the wrong colour, sorry. Can we cancel?', status, requestedAt: '2026-10-24T18:00:00Z' };
 }
 
-/** One row of the payouts history: the hoodie sold as TM-48302, held until the order completes. */
+/** One row of the payouts history: the unicorn hoodie sold as TM-48302, held until the order completes. */
 export function payoutRow(fields: Record<string, unknown> = {}): Record<string, unknown> {
   return {
     orderId: 'o-1',
@@ -585,7 +585,7 @@ export function payoutRow(fields: Record<string, unknown> = {}): Record<string, 
 export const paidPayoutRow = payoutRow({
   orderId: 'o-2',
   orderReference: 'TM-47511',
-  item: { ...(sale()['item'] as object), title: 'Tech Fleece shorts', brand: 'Nike' },
+  item: { ...(sale()['item'] as object), title: 'Tech Fleece shorts', brand: 'Gymboree' },
   amount: '33.30',
   fee: '3.70',
   status: 'Paid',
@@ -606,7 +606,7 @@ export function payoutSummary(fields: Record<string, unknown> = {}): Record<stri
   };
 }
 
-/** One row of GET /api/purchases or /api/sales: the hoodie paid on Sat 24 Oct, from or to tall_tom. */
+/** One row of GET /api/purchases or /api/sales: the unicorn hoodie paid on Sat 24 Oct, from or to twirly_tara. */
 export function orderRow(fields: Record<string, unknown> = {}): Record<string, unknown> {
   return {
     id: 'o-1',
@@ -614,7 +614,7 @@ export function orderRow(fields: Record<string, unknown> = {}): Record<string, u
     status: 'Paid',
     item: (sale()['item'] as object) ?? {},
     total: '48.15',
-    otherParty: 'tall_tom',
+    otherParty: 'twirly_tara',
     paidAt: '2026-10-24T15:00:00Z',
     shipBy: null,
     ...fields,
@@ -636,7 +636,7 @@ export function myListingRow(fields: Record<string, unknown> = {}): Record<strin
     reference: 'L-10021',
     status: 'Active',
     title: 'Arizona sandals',
-    category: 'Shoes',
+    category: 'Dresses',
     price: 45,
     photo: {
       width: 1200,
@@ -664,7 +664,7 @@ export function myListings(
 export function memberProfile(fields: Record<string, unknown> = {}): Record<string, unknown> {
   return {
     memberId: '7d0c1a52-3b9e-4f61-9a3d-2c8e5f4b1a07',
-    displayName: 'kicks_12',
+    displayName: 'tutu_tessa',
     avatarUrl: null,
     bio: null,
     publicLocation: null,

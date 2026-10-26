@@ -68,9 +68,9 @@ test.describe('complete order', () => {
 
     await expect(orderPage.dialog).toBeVisible();
     await expect(orderPage.dialog).toContainText(
-      'This completes the order and pays kicks_12. You can’t report a problem afterwards.',
+      'This completes the order and pays tutu_tessa. You can’t report a problem afterwards.',
     );
-    await expect(orderPage.dialog.locator('.item-row')).toContainText('Air Max 90, white');
+    await expect(orderPage.dialog.locator('.item-row')).toContainText('Floral party dress, pink');
     await expect(orderPage.completeOrder).toHaveText('Yes, complete order');
     await orderPage.completeOrder.click();
 

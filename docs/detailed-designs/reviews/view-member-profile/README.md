@@ -2,7 +2,7 @@
 
 ## Overview
 
-Tutu Much is a marketplace of men's US size 12 shoes and men's size L clothing in which every
+Tutu Much is a marketplace of new and used girls' clothing in which every
 member can both buy and sell. Before buying, a member wants to know whom they are dealing
 with. The *public profile* answers that question. Anyone, signed in or not, can open it at
 `/members/{displayName}`.

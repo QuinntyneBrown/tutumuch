@@ -23,7 +23,7 @@ const purchases = orderList(
       otherParty: 'vintage_lou',
       total: '244.97',
       paidAt: '2026-10-22T15:00:00Z',
-      item: item('Iron Ranger 8111 boots'),
+      item: item('Ballerina tutu 8111'),
     }),
     orderRow({
       id: 'o-2',
@@ -39,7 +39,7 @@ const purchases = orderList(
       otherParty: 'jaybird',
       total: '84.92',
       paidAt: '2026-10-13T15:00:00Z',
-      item: item('Samba OG'),
+      item: item('Smocked romper'),
     }),
   ],
   { onTheWay: 1, toConfirm: 1 },
@@ -77,13 +77,13 @@ test.describe('order history', () => {
     await expect(history.heading).toHaveText('Purchases');
     await expect(history.subtitle).toHaveText('1 on the way · 1 to confirm');
     await expect(history.rows).toHaveCount(3);
-    await expect(history.rows.nth(0)).toContainText('Iron Ranger 8111 boots');
+    await expect(history.rows.nth(0)).toContainText('Ballerina tutu 8111');
     await expect(history.rows.nth(0)).toContainText('from vintage_lou · Thu 22 Oct');
     await expect(history.rows.nth(0)).toContainText('$244.97');
     await expect(history.rows.nth(0)).toContainText('Shipped');
     await expect(history.rows.nth(2)).toContainText('from jaybird · Tue 13 Oct');
     await expect(history.rows.nth(2)).toContainText('Completed');
-    await expect(history.row('Samba OG').getByRole('link')).toHaveAttribute('href', '/orders/o-1');
+    await expect(history.row('Smocked romper').getByRole('link')).toHaveAttribute('href', '/orders/o-1');
     expect(unfixturedApiCalls).toEqual([]);
   });
 
@@ -94,10 +94,10 @@ test.describe('order history', () => {
 
     await expect(history.heading).toHaveText('Sales');
     await expect(history.subtitle).toHaveText('1 to ship');
-    await expect(history.rows.nth(0)).toContainText('to tall_tom · ship by Fri 30 Oct · Sat 24 Oct');
+    await expect(history.rows.nth(0)).toContainText('to twirly_tara · ship by Fri 30 Oct · Sat 24 Oct');
     await expect(history.rows.nth(0)).toContainText('$48.15');
     await expect(history.rows.nth(0)).toContainText('Paid');
-    await expect(history.rows.nth(1)).toContainText('to tall_tom · Fri 2 Oct');
+    await expect(history.rows.nth(1)).toContainText('to twirly_tara · Fri 2 Oct');
     await expect(history.row('Tech Fleece shorts').getByRole('link')).toHaveAttribute('href', '/sales/o-0');
     expect(unfixturedApiCalls).toEqual([]);
   });

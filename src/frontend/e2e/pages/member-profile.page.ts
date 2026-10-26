@@ -20,7 +20,7 @@ export class MemberProfilePage {
     this.loadMore = page.getByRole('button', { name: /Load more/ });
   }
 
-  async goto(displayName = 'kicks_12'): Promise<void> {
+  async goto(displayName = 'tutu_tessa'): Promise<void> {
     await this.page.goto(`/members/${displayName}`);
   }
 

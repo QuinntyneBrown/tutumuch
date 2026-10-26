@@ -16,21 +16,24 @@ test.describe('view listing detail', () => {
     const detail = new ListingDetailPage(page);
     await detail.goto();
 
-    await expect(detail.heading).toHaveText('Air Max 90, white');
-    await expect(page).toHaveTitle('Air Max 90, white · Nike · Tutu Much');
-    await expect(detail.breadcrumb.getByRole('link', { name: 'Shoes' })).toHaveAttribute('href', '/shoes');
-    await expect(detail.breadcrumb).toContainText('Sneakers');
-    await expect(detail.info).toContainText('Nike');
-    await expect(detail.info.getByLabel('Size US 12')).toBeVisible();
+    await expect(detail.heading).toHaveText('Floral party dress, pink');
+    await expect(page).toHaveTitle('Floral party dress, pink · Gymboree · Tutu Much');
+    await expect(detail.breadcrumb.getByRole('link', { name: 'Dresses' })).toHaveAttribute('href', '/dresses');
+    await expect(detail.breadcrumb).toContainText('Dresses');
+    await expect(detail.info).toContainText('Gymboree');
+    await expect(detail.info.getByLabel('Size Girls')).toBeVisible();
     await expect(detail.price).toContainText('$85.00');
     await expect(detail.price).toContainText('$9.00 shipping · $94.00 total before tax');
-    await expect(detail.info).toContainText('Worn a handful of times.');
-    await expect(detail.facts).toContainText("Men's US 12");
-    await expect(detail.facts).toContainText('Shoes · Sneakers');
+    await expect(detail.info).toContainText('Worn a handful of times to parties.');
+    await expect(detail.facts).toContainText("Girls'");
+    await expect(detail.facts).toContainText('Dresses · Dresses');
     await expect(detail.facts).toContainText('Used - Excellent');
     await expect(detail.facts.locator('time')).toHaveText('2 hours ago');
     await expect(detail.flaws).toHaveCount(0);
-    await expect(detail.seller.getByRole('link', { name: 'kicks_12' })).toHaveAttribute('href', '/members/kicks_12');
+    await expect(detail.seller.getByRole('link', { name: 'tutu_tessa' })).toHaveAttribute(
+      'href',
+      '/members/tutu_tessa',
+    );
     await expect(detail.seller).toContainText('New seller');
     await expect(detail.buyBar).toContainText('$94.00');
     await expect(detail.buyNow).toHaveAttribute('href', '/checkout/L-10001');
@@ -44,14 +47,17 @@ test.describe('view listing detail', () => {
 
     await expect(detail.thumbs).toHaveCount(3);
     await expect(detail.thumbs.first()).toHaveAttribute('aria-current', 'true');
-    await expect(detail.gallery.locator('img').first()).toHaveAttribute('alt', 'Photo 1 of Nike Air Max 90, white');
+    await expect(detail.gallery.locator('img').first()).toHaveAttribute(
+      'alt',
+      'Photo 1 of Gymboree Floral party dress, pink',
+    );
     await expect(detail.gallery.locator('img').first()).toHaveAttribute('loading', 'eager');
 
     await detail.thumbs.nth(1).click();
 
     await expect(detail.thumbs.nth(1)).toHaveAttribute('aria-current', 'true');
     await expect(detail.thumbs.first()).not.toHaveAttribute('aria-current', 'true');
-    await expect.poll(() => detail.shownPhotoAlt()).toBe('Photo 2 of Nike Air Max 90, white');
+    await expect.poll(() => detail.shownPhotoAlt()).toBe('Photo 2 of Gymboree Floral party dress, pink');
 
     await detail.thumbs.nth(1).press('ArrowRight');
 
@@ -65,14 +71,14 @@ test.describe('view listing detail', () => {
       listingDetail({
         condition: 'Used - Fair',
         flaws: 'Small scuff on the left toe box.',
-        description: '<b>Bold</b> claims about the soles',
+        description: '<b>Bold</b> claims about the tulle',
       }),
     );
     const detail = new ListingDetailPage(page);
     await detail.goto();
 
     await expect(detail.flaws).toHaveText('Flaws: Small scuff on the left toe box.');
-    await expect(detail.info).toContainText('<b>Bold</b> claims about the soles');
+    await expect(detail.info).toContainText('<b>Bold</b> claims about the tulle');
   });
 
   test('a visitor is sent to sign in by Buy now and comes back to the listing', async ({ page }) => {
@@ -92,7 +98,7 @@ test.describe('view listing detail', () => {
     await signIn.signIn('marcus.bell@example.com', 'correct horse battery');
 
     await expect(page).toHaveURL('/items/L-10001');
-    await expect(detail.heading).toHaveText('Air Max 90, white');
+    await expect(detail.heading).toHaveText('Floral party dress, pink');
   });
 
   test('the seller sees Edit listing and no Buy now', async ({ page }) => {
@@ -138,7 +144,7 @@ test.describe('view listing detail', () => {
     await expect(detail.buyNow).toHaveCount(0);
     await expect(detail.similar.getByRole('listitem')).toHaveCount(4);
     await expect(detail.similar.getByRole('link').first()).toHaveAttribute('href', '/items/L-10002');
-    expect(requests[0].get('category')).toBe('shoes');
+    expect(requests[0].get('category')).toBe('dresses');
   });
 
   test('a hidden or missing listing shows This item isn’t available', async ({ page }) => {
@@ -171,7 +177,7 @@ test.describe('view listing detail', () => {
 
     await page.getByRole('button', { name: 'Try again' }).click();
 
-    await expect(detail.heading).toHaveText('Air Max 90, white');
+    await expect(detail.heading).toHaveText('Floral party dress, pink');
   });
 
   test('a skeleton shows while the listing loads', async ({ page }) => {
@@ -190,7 +196,7 @@ test.describe('view listing detail', () => {
     release();
 
     await expect(detail.loading).toHaveCount(0);
-    await expect(detail.heading).toHaveText('Air Max 90, white');
+    await expect(detail.heading).toHaveText('Floral party dress, pink');
   });
 
   test.describe('on a phone', () => {

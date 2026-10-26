@@ -43,21 +43,21 @@ test.describe('sell an item', () => {
       await expect(sell.type).toBeDisabled();
       await expect(sell.fixedSize).toHaveCount(0);
       await expect(sell.condition.getByRole('radio')).toHaveCount(5);
-      await expect(page.getByText("The label shows men's US 12 (shoes) or men's L (clothing)")).toBeVisible();
+      await expect(page.getByText("The label shows girls' sizing")).toBeVisible();
     });
 
     test('the size shown follows the category as read-only text', async ({ page }) => {
       const sell = new SellPage(page);
       await sell.goto();
 
-      await sell.category.selectOption('Shoes');
-      await expect(sell.fixedSize).toContainText("Size: Men's US 12");
+      await sell.category.selectOption('Dresses');
+      await expect(sell.fixedSize).toContainText("Size: Girls'");
       await expect(sell.fixedSize).toContainText('Set by category');
-      await expect(page.getByText("This item is labelled men's US 12")).toBeVisible();
+      await expect(page.getByText("This item is labelled in girls' sizing")).toBeVisible();
 
       await sell.category.selectOption('Tops');
-      await expect(sell.fixedSize).toContainText("Size: Men's L");
-      await expect(page.getByText("This item is labelled men's L")).toBeVisible();
+      await expect(sell.fixedSize).toContainText("Size: Girls'");
+      await expect(page.getByText("This item is labelled in girls' sizing")).toBeVisible();
       await expect(sell.type.getByRole('option')).toHaveText([
         'Choose a type',
         'Shirts',
@@ -135,8 +135,8 @@ test.describe('sell an item', () => {
       const sell = new SellPage(page);
       await sell.goto();
 
-      await sell.category.selectOption('Shoes');
-      await sell.type.selectOption('Sneakers');
+      await sell.category.selectOption('Dresses');
+      await sell.type.selectOption('Dresses');
       await sell.title.fill('AF1');
       await sell.condition.getByLabel('Used - Fair').check();
       await sell.price.fill('0.99');
@@ -151,12 +151,12 @@ test.describe('sell an item', () => {
         'Description must be 20 to 2,000 characters',
         'Enter a price from $1.00 to $5,000.00',
         'Enter shipping from $0.00 to $100.00',
-        "Confirm the label shows men's US 12",
+        "Confirm the label shows girls' sizing",
       ]) {
         await expect(sell.errorSummary.getByRole('link', { name: message })).toBeVisible();
       }
       await expect(sell.title).toHaveAttribute('aria-invalid', 'true');
-      await expect(sell.fieldError('confirm')).toHaveText("Confirm the label shows men's US 12");
+      await expect(sell.fieldError('confirm')).toHaveText("Confirm the label shows girls' sizing");
       expect(unfixturedApiCalls).toEqual([]);
     });
 
@@ -178,17 +178,17 @@ test.describe('sell an item', () => {
       await sell.publish.click();
 
       await expect(sell.heading).toHaveText('It’s live');
-      await expect(page.getByText("Air Force 1 '07, white")).toBeVisible();
-      await expect(page.getByText('Nike · Men’s US 12 · $60.00')).toBeVisible();
+      await expect(page.getByText('Rainbow tulle tutu, pink')).toBeVisible();
+      await expect(page.getByText('Gymboree · Girls’ · $60.00')).toBeVisible();
       await expect(page.getByRole('link', { name: 'Set up payouts' })).toBeVisible();
       await expect(page.getByRole('link', { name: 'View listing' })).toHaveAttribute('href', '/items/L-10001');
       expect(created).toEqual({
-        category: 'Shoes',
-        subcategory: 'Sneakers',
-        title: "Air Force 1 '07, white",
-        brand: 'Nike',
+        category: 'Dresses',
+        subcategory: 'Dresses',
+        title: 'Rainbow tulle tutu, pink',
+        brand: 'Gymboree',
         condition: 'Used - Good',
-        description: 'Light creasing, soles have plenty left. Cleaned and ready to wear.',
+        description: 'Light wear, colours still bright. Cleaned and ready to wear.',
         price: 60,
         shippingCost: 8,
         photoIds: ['p-1'],

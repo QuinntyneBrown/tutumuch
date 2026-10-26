@@ -11,7 +11,7 @@ tool, and CI never runs it against a database
 | Command | What it does |
 |---------|--------------|
 | `reset [--force]` | Drops the database, applies every EF Core migration (the same code as `TutuMuch.Migrator`) and empties the photo store. |
-| `seed [--reset] [--force]` | Loads 8 demo members and 48 Active listings, 12 in each of Shoes, Tops, Outerwear and Bottoms, each with 1 to 4 photos. `--reset` runs `reset` first. |
+| `seed [--reset] [--force]` | Loads 8 demo members and 48 Active listings, 12 in each of Dresses, Tops, Outerwear and Bottoms, each with 1 to 4 photos. `--reset` runs `reset` first. |
 | `help` | Prints usage. |
 
 `reset` (and `seed --reset`) only runs when `DOTNET_ENVIRONMENT` is `Development`, unless
@@ -60,25 +60,25 @@ built DLL with the x64 host, `& "C:\Program Files\dotnet\x64\dotnet.exe" TutuMuc
 
 ## Demo accounts
 
-Every demo member uses the password **`Tutu Much-demo-only-2026`**. It is for local use only:
+Every demo member uses the password **`TutuMuch-demo-only-2026`**. It is for local use only:
 never seed a shared or production database.
 
 | Display name | Email |
 |--------------|-------|
-| BigFootBen | `ben@demo.tutumuch.test` |
-| TallTomas | `tomas@demo.tutumuch.test` |
-| SizeTwelveSam | `sam@demo.tutumuch.test` |
-| LargeLayers | `layers@demo.tutumuch.test` |
-| TrailRay | `ray@demo.tutumuch.test` |
-| DenimDev | `dev@demo.tutumuch.test` |
-| OxfordOwen | `owen@demo.tutumuch.test` |
-| CoatRackCal | `cal@demo.tutumuch.test` |
+| TutuTessa | `tessa@demo.tutumuch.test` |
+| TwirlyTara | `tara@demo.tutumuch.test` |
+| HandMeDownHana | `hana@demo.tutumuch.test` |
+| PuddleJumperPia | `pia@demo.tutumuch.test` |
+| RainbowRosa | `rosa@demo.tutumuch.test` |
+| LeggingsLily | `lily@demo.tutumuch.test` |
+| PartyDressPenny | `penny@demo.tutumuch.test` |
+| CozyCoatCleo | `cleo@demo.tutumuch.test` |
 
 Seller ratings show "No reviews yet": no orders, reviews, reports or data exports are seeded.
 
 ## Photos
 
-The 24 photos in [`SeedPhotos/`](SeedPhotos/) are real product photographs under the
-Creative Commons Attribution 2.0 licence, not the repository's MIT licence. Their authors,
-sources and the changes made are listed in [`SeedPhotos/ATTRIBUTION.md`](SeedPhotos/ATTRIBUTION.md);
-keep that file with the photos.
+The 24 images in [`SeedPhotos/`](SeedPhotos/), six per category, are original illustrations of
+girls' clothing generated for Tutu Much and covered by the repository's licence. Each file and
+what it shows is listed in [`SeedPhotos/ATTRIBUTION.md`](SeedPhotos/ATTRIBUTION.md); keep that
+file with the images.

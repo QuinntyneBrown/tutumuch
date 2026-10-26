@@ -2,7 +2,7 @@
 
 ## Overview
 
-Tutu Much is a marketplace for men's US size 12 shoes and men's size L clothing. Before any
+Tutu Much is a marketplace for new and used girls' clothing. Before any
 feature can be built, a developer needs a repository that builds, lints and tests on the
 first day. This feature, part of the `platform` subsystem, creates that starting point:
 the backend solution, the frontend workspace, the empty application shell, the test

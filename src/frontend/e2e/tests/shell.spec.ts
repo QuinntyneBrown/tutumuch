@@ -43,6 +43,6 @@ test.describe('empty guest shell', () => {
     const shell = new ShellPage(page);
     await shell.goto();
 
-    await expect(shell.main.getByRole('heading', { level: 1 })).toHaveText('Size 12. Size L. Nothing else.');
+    await expect(shell.main.getByRole('heading', { level: 1 })).toHaveText('Girls’ clothing. Nothing else.');
   });
 });

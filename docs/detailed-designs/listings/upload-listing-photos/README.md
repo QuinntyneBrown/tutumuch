@@ -2,7 +2,7 @@
 
 ## Overview
 
-Every Tutu Much listing shows between 1 and 8 photos of the actual item (`L2-015`, `L2-017`). Buyers judge used shoes and clothing almost entirely from photos, and phone cameras embed location and device data in every file. This feature lets a seller add, remove and reorder photos on the listing form. It also makes every stored photo safe to publish and fast to deliver.
+Every Tutu Much listing shows between 1 and 8 photos of the actual item (`L2-015`, `L2-017`). Buyers judge used girls' clothing almost entirely from photos, and phone cameras embed location and device data in every file. This feature lets a seller add, remove and reorder photos on the listing form. It also makes every stored photo safe to publish and fast to deliver.
 
 The feature sits in the listings subsystem (`L1-004`). The listing form that hosts the uploader belongs to [create-listing](../create-listing/README.md) and [edit-and-withdraw-listing](../edit-and-withdraw-listing/README.md). Catalog pages consume the processed versions through `srcset`; that delivery markup belongs to the catalog subsystem, and this feature produces the versions it needs (`L2-059`).
 

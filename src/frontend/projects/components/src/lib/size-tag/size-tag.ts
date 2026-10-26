@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
-/** The Tutu Much size mark, "US 12" or "L", with the number emphasised (design system: Size tag). */
+/** The Tutu Much size mark, "Girls", with the last word emphasised (design system: Size tag). */
 @Component({
   selector: 'tm-size-tag',
   templateUrl: './size-tag.html',
@@ -8,7 +8,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SizeTagComponent {
-  /** Short size label, for example "US 12" or "L". */
+  /** Short size label, for example "Girls". */
   readonly label = input.required<string>();
   readonly large = input(false);
 

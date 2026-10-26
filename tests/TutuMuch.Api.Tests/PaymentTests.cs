@@ -68,7 +68,7 @@ public sealed class PaymentTests : IDisposable
         Assert.Equal("Visa", purchase.CardBrand);
         Assert.Equal("4242", purchase.CardLast4);
         Assert.Equal("kicks_30001", purchase.SellerDisplayName);
-        Assert.Equal("Air Max 90, white", purchase.Item.Title);
+        Assert.Equal("Floral party dress, pink", purchase.Item.Title);
     }
 
     [Fact]

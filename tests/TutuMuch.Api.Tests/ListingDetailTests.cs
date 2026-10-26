@@ -43,20 +43,20 @@ public sealed class ListingDetailTests : IDisposable
         Assert.Contains("no-store", response.Headers.CacheControl!.ToString());
         var detail = (await response.Content.ReadFromJsonAsync<Detail>())!;
         Assert.Equal(reference, detail.Reference);
-        Assert.Equal("Air Max 90, white", detail.Title);
-        Assert.Equal("Nike", detail.Brand);
-        Assert.Equal("Shoes", detail.Category);
-        Assert.Equal("Sneakers", detail.Subcategory);
-        Assert.Equal("US 12", detail.SizeLabel);
+        Assert.Equal("Floral party dress, pink", detail.Title);
+        Assert.Equal("Gymboree", detail.Brand);
+        Assert.Equal("Dresses", detail.Category);
+        Assert.Equal("Dresses", detail.Subcategory);
+        Assert.Equal("Girls", detail.SizeLabel);
         Assert.Equal("Used - Good", detail.Condition);
         Assert.Null(detail.Flaws);
-        Assert.Equal("Light creasing, soles have plenty left.", detail.Description);
+        Assert.Equal("Light wear, colours still bright.", detail.Description);
         Assert.Equal("85.00", detail.Price);
         Assert.Equal("9.00", detail.ShippingCost);
         Assert.Equal("94.00", detail.Total);
         Assert.Equal("Active", detail.Status);
         Assert.Equal(3, detail.Photos.Count);
-        Assert.Equal(["Photo 1 of Nike Air Max 90, white", "Photo 2 of Nike Air Max 90, white", "Photo 3 of Nike Air Max 90, white"], detail.Photos.Select(p => p.Alt));
+        Assert.Equal(["Photo 1 of Gymboree Floral party dress, pink", "Photo 2 of Gymboree Floral party dress, pink", "Photo 3 of Gymboree Floral party dress, pink"], detail.Photos.Select(p => p.Alt));
         Assert.Equal("marcus_12", detail.Seller.DisplayName);
         Assert.Equal(0, detail.Seller.CompletedSalesCount);
         Assert.Equal("Anonymous", detail.Viewer.Relation);
@@ -143,7 +143,7 @@ public sealed class ListingDetailTests : IDisposable
         string condition = "Used - Good", string? flaws = null)
     {
         var seller = sellerId ?? _sellerId;
-        var details = new ListingDetails("Shoes", "Sneakers", null, "Air Max 90, white", "Light creasing, soles have plenty left.", "Nike", condition, flaws, 85m, shipping);
+        var details = new ListingDetails("Dresses", "Dresses", null, "Floral party dress, pink", "Light wear, colours still bright.", "Gymboree", condition, flaws, 85m, shipping);
         var listing = Listing.CreateDraft(seller, ++_number, details, _start);
         var created = Enumerable.Range(0, photos).Select(i =>
         {

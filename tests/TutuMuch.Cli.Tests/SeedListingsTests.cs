@@ -11,7 +11,7 @@ namespace TutuMuch.Cli.Tests;
 
 public sealed class SeedListingsTests(SeededDemo demo) : IClassFixture<SeededDemo>
 {
-    private static readonly string[] Categories = ["Shoes", "Tops", "Outerwear", "Bottoms"];
+    private static readonly string[] Categories = ["Dresses", "Tops", "Outerwear", "Bottoms"];
 
     [Fact]
     public void Forty_to_eighty_listings_are_active_with_at_least_eight_per_category()
@@ -25,11 +25,11 @@ public sealed class SeedListingsTests(SeededDemo demo) : IClassFixture<SeededDem
     }
 
     [Fact]
-    public void Shoes_are_mens_us_12_and_everything_else_is_mens_l()
+    public void Every_listing_is_in_girls_sizes()
     {
         var listings = demo.Harness.InDatabase(db => db.Listings.ToList());
 
-        Assert.All(listings, l => Assert.Equal(l.Category == "Shoes" ? CategoryCatalog.MensUs12 : CategoryCatalog.MensL, l.Size));
+        Assert.All(listings, l => Assert.Equal(CategoryCatalog.Girls, l.Size));
     }
 
     [Fact]
@@ -95,7 +95,7 @@ public sealed class SeedListingsTests(SeededDemo demo) : IClassFixture<SeededDem
     }
 
     [Theory]
-    [InlineData("Shoes")]
+    [InlineData("Dresses")]
     [InlineData("Tops")]
     [InlineData("Outerwear")]
     [InlineData("Bottoms")]

@@ -25,9 +25,9 @@ test.describe('view member profile', () => {
     const profile = new MemberProfilePage(page);
     await profile.goto();
 
-    await expect(profile.heading).toHaveText('kicks_12');
-    await expect(page).toHaveTitle('kicks_12 · Tutu Much');
-    await expect(profile.header.locator('.avatar')).toHaveText('KI');
+    await expect(profile.heading).toHaveText('tutu_tessa');
+    await expect(page).toHaveTitle('tutu_tessa · Tutu Much');
+    await expect(profile.header.locator('.avatar')).toHaveText('TU');
     await expect(profile.header).toContainText('No reviews yet');
     await expect(profile.stat('Sales')).toHaveText('141');
     await expect(profile.stat('Member since')).toHaveText('Jan 2025');
@@ -50,12 +50,16 @@ test.describe('view member profile', () => {
   });
 
   test('a member with nothing for sale shows the empty section', async ({ page }) => {
-    await serveProfile(page, memberProfile({ displayName: 'tall_tom', activeListingCount: 0, completedSales: 0 }), 0);
+    await serveProfile(
+      page,
+      memberProfile({ displayName: 'twirly_tara', activeListingCount: 0, completedSales: 0 }),
+      0,
+    );
     const profile = new MemberProfilePage(page);
-    await profile.goto('tall_tom');
+    await profile.goto('twirly_tara');
 
     await expect(profile.forSale).toContainText('No items for sale');
-    await expect(profile.forSale).toContainText('tall_tom hasn’t listed anything yet.');
+    await expect(profile.forSale).toContainText('twirly_tara hasn’t listed anything yet.');
     await expect(profile.cards).toHaveCount(0);
   });
 
@@ -89,7 +93,7 @@ test.describe('view member profile', () => {
   test('a failure shows the reference and Try again loads the profile', async ({ page }) => {
     let fail = true;
     await serveProfile(page, memberProfile());
-    await page.route('**/api/members/kicks_12', (route) =>
+    await page.route('**/api/members/tutu_tessa', (route) =>
       fail ? route.fulfill(problem(500, 'INTERNAL_ERROR', 'Something went wrong')) : route.fallback(),
     );
     const profile = new MemberProfilePage(page);
@@ -100,7 +104,7 @@ test.describe('view member profile', () => {
     fail = false;
     await page.getByRole('button', { name: 'Try again' }).click();
 
-    await expect(profile.heading).toHaveText('kicks_12');
+    await expect(profile.heading).toHaveText('tutu_tessa');
   });
 
   test('the seller link on a listing opens the seller profile', async ({ page }) => {
@@ -110,9 +114,9 @@ test.describe('view member profile', () => {
     const detail = new ListingDetailPage(page);
     await detail.goto();
 
-    await detail.seller.getByRole('link', { name: 'kicks_12' }).click();
+    await detail.seller.getByRole('link', { name: 'tutu_tessa' }).click();
 
-    await expect(page).toHaveURL('/members/kicks_12');
-    await expect(new MemberProfilePage(page).heading).toHaveText('kicks_12');
+    await expect(page).toHaveURL('/members/tutu_tessa');
+    await expect(new MemberProfilePage(page).heading).toHaveText('tutu_tessa');
   });
 });

@@ -53,7 +53,7 @@ Per `AGENTS.md`, the application project holds `AppComponent`, the four shell co
   - Menu button: `aria-label="Open menu"`, `aria-expanded`,
     `aria-controls="menu"`; shown below 768 px.
   - Logo linking to `/`.
-  - Primary navigation `<nav aria-label="Primary">`: Shoes, Tops, Outerwear,
+  - Primary navigation `<nav aria-label="Primary">`: Dresses, Tops, Outerwear,
     Bottoms, with `aria-current="page"` on the active category; shown from
     768 px.
   - Search form `role="search"` with visually hidden label "Search Tutu Much" and

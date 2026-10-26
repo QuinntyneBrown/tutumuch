@@ -2,8 +2,8 @@
 
 ## Overview
 
-Tutu Much is a marketplace for men's US size 12 shoes and men's size L clothing. Size is the
-whole point of Tutu Much, so an item that arrives in the wrong size, differs from its
+Tutu Much is a marketplace for new and used girls' clothing. Parents buy for a
+child who needs it now, so an item that arrives in the wrong size, differs from its
 description, never arrives or is counterfeit needs a clear remedy. This feature lets a
 buyer report a problem on a `Shipped` or `Delivered` order, lets the seller reply, and
 lets an administrator decide the outcome: a full refund or release of the payment to the

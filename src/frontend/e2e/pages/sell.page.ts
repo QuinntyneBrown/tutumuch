@@ -72,12 +72,12 @@ export class SellPage {
   /** Needs servePhotoUploads; uploads one photo first. */
   async fillComplete(): Promise<void> {
     await this.addPhotos('front.jpg');
-    await this.category.selectOption('Shoes');
-    await this.type.selectOption('Sneakers');
-    await this.title.fill("Air Force 1 '07, white");
-    await this.brand.fill('Nike');
+    await this.category.selectOption('Dresses');
+    await this.type.selectOption('Dresses');
+    await this.title.fill('Rainbow tulle tutu, pink');
+    await this.brand.fill('Gymboree');
     await this.condition.getByLabel('Used - Good').check();
-    await this.description.fill('Light creasing, soles have plenty left. Cleaned and ready to wear.');
+    await this.description.fill('Light wear, colours still bright. Cleaned and ready to wear.');
     await this.price.fill('60.00');
     await this.shipping.fill('8.00');
     await this.confirm.check();

@@ -111,7 +111,7 @@ test.describe('upload listing photos', () => {
     await sell.photo(3).dragTo(sell.photo(1));
 
     await expect(sell.photo(1).locator('img')).toHaveAttribute('src', photo('p-3')['url'] as string);
-    await sell.category.selectOption('Shoes');
+    await sell.category.selectOption('Dresses');
     await sell.saveDraft.click();
     await expect.poll(lastSave).toMatchObject({ photoIds: ['p-3', 'p-1', 'p-2'] });
     await expect(sell.photo(1)).toContainText('Cover');

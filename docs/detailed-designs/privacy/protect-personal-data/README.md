@@ -2,7 +2,7 @@
 
 ## Overview
 
-Tutu Much is a marketplace where men who wear a US size 12 shoe or a size L top buy and sell
+Tutu Much is a marketplace where parents and families buy and sell girls'
 clothing. To trade, members give Tutu Much personal data: an email address to sign in, a
 shipping address at checkout and, where a later feature collects one, a phone number.
 This feature keeps that data out of public view and unreadable to anyone who obtains a

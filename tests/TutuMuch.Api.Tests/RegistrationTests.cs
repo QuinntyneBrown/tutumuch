@@ -53,9 +53,9 @@ public sealed class RegistrationTests : IDisposable
     [Fact]
     public async Task Register_rejects_a_display_name_that_is_taken_ignoring_case()
     {
-        await _client.RegisterAsync("kicks_12", "kicks@example.com");
+        await _client.RegisterAsync("tutu_tessa", "tessa@example.com");
 
-        using var response = await _client.PostAsJsonAsync("/api/auth/register", Members.Registration("KICKS_12", "other@example.com"));
+        using var response = await _client.PostAsJsonAsync("/api/auth/register", Members.Registration("TUTU_TESSA", "other@example.com"));
 
         Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
         Assert.Equal("That display name is taken", (await Problem.ReadAsync(response)).Errors!["displayName"].Message);

@@ -32,7 +32,9 @@ test.describe('manage cookie consent', () => {
 
       await expect(cookies.banner).toBeVisible();
       await expect(cookies.banner.getByRole('heading', { name: 'Cookies' })).toBeVisible();
-      await expect(cookies.banner).toContainText('We use necessary cookies to run Tutu Much. Analytics only if you say yes.');
+      await expect(cookies.banner).toContainText(
+        'We use necessary cookies to run Tutu Much. Analytics only if you say yes.',
+      );
       await expect(cookies.accept).toBeVisible();
       await expect(cookies.necessaryOnly).toBeVisible();
       await expect(cookies.bannerSettings).toBeVisible();
@@ -53,7 +55,7 @@ test.describe('manage cookie consent', () => {
       await expect(cookies.banner).toBeHidden();
       await expect(cookies.toast).toContainText('Necessary only. Change it any time in the footer.');
       expect(await cookies.consentCookie()).toBe('v1.necessary');
-      for (const path of ['/?category=Shoes', '/?q=boots', '/sign-in']) {
+      for (const path of ['/?category=Dresses', '/?q=tutu', '/sign-in']) {
         await page.goto(path);
         await expect(page.locator('main#main')).toBeVisible();
         await expect(cookies.banner).toBeHidden();

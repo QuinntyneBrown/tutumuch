@@ -34,7 +34,7 @@ public sealed class BrowseCatalogTests : IDisposable
     [Fact]
     public async Task A_visitor_sees_active_listings_newest_first_as_cards()
     {
-        var older = Seed("Air Max 90, white", minutes: 1);
+        var older = Seed("Floral party dress, pink", minutes: 1);
         var newer = Seed("Oxford shirt, blue", minutes: 2, category: "Tops", subcategory: "Shirts", price: 18.50m);
         Seed("Unpublished draft", minutes: 3, publish: false);
 
@@ -48,20 +48,20 @@ public sealed class BrowseCatalogTests : IDisposable
         Assert.Equal([newer, older], page.Items.Select(i => i.Reference));
         var card = page.Items[0];
         Assert.Equal("Oxford shirt, blue", card.Title);
-        Assert.Equal("Nike", card.Brand);
+        Assert.Equal("Gymboree", card.Brand);
         Assert.Equal("Tops", card.Category);
-        Assert.Equal("L", card.SizeLabel);
+        Assert.Equal("Girls", card.SizeLabel);
         Assert.Equal("Used - Good", card.Condition);
         Assert.Equal("18.50", card.Price);
         Assert.Equal("Active", card.Status);
-        Assert.Equal("Photo 1 of Nike Oxford shirt, blue", card.CoverPhoto.Alt);
+        Assert.Equal("Photo 1 of Gymboree Oxford shirt, blue", card.CoverPhoto.Alt);
         Assert.Equal(1200, card.CoverPhoto.Width);
         Assert.Equal(1600, card.CoverPhoto.Height);
         var hash = new string('a', 64);
         Assert.Equal($"/photos/{hash}/400.webp 400w, /photos/{hash}/800.webp 800w, /photos/{hash}/1600.webp 1200w", card.CoverPhoto.Webp);
         Assert.Equal($"/photos/{hash}/400.jpg 400w, /photos/{hash}/800.jpg 800w, /photos/{hash}/1600.jpg 1200w", card.CoverPhoto.Jpeg);
         Assert.Equal($"/photos/{hash}/400.jpg", card.CoverPhoto.Src);
-        Assert.Equal("US 12", page.Items[1].SizeLabel);
+        Assert.Equal("Girls", page.Items[1].SizeLabel);
     }
 
     [Fact]
@@ -111,7 +111,7 @@ public sealed class BrowseCatalogTests : IDisposable
     [Fact]
     public async Task A_category_narrows_the_catalog()
     {
-        Seed("Air Max 90, white", minutes: 1);
+        Seed("Floral party dress, pink", minutes: 1);
         var shirt = Seed("Oxford shirt, blue", minutes: 2, category: "Tops", subcategory: "Shirts");
 
         var page = (await _client.GetFromJsonAsync<CatalogPage>("/api/catalog/listings?category=Tops"))!;
@@ -129,11 +129,11 @@ public sealed class BrowseCatalogTests : IDisposable
         Assert.Equal("CATALOG_FILTER_INVALID", (await Problem.ReadAsync(response)).Code);
     }
 
-    private string Seed(string title, int minutes, string category = "Shoes", string subcategory = "Sneakers", decimal price = 85m, bool publish = true)
+    private string Seed(string title, int minutes, string category = "Dresses", string subcategory = "Dresses", decimal price = 85m, bool publish = true)
     {
         var now = _start.AddMinutes(minutes);
         var number = ++_number;
-        var details = new ListingDetails(category, subcategory, null, title, "Light creasing, soles have plenty left.", "Nike", "Used - Good", null, price, 8m);
+        var details = new ListingDetails(category, subcategory, null, title, "Light wear, colours still bright.", "Gymboree", "Used - Good", null, price, 8m);
         var listing = Listing.CreateDraft(_sellerId, number, details, now);
         var hash = new string('a', 64);
         var versions = new[] { 400, 800, 1600 }.SelectMany(size => new[] { PhotoFormat.WebP, PhotoFormat.Jpeg }.Select(format =>

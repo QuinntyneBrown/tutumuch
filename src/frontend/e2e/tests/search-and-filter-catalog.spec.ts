@@ -16,14 +16,14 @@ test.describe('search and filter catalog', () => {
     const filters = new CatalogFilters(page);
     await catalog.goto();
 
-    await filters.search('  Air Max  ');
+    await filters.search('  Party dress  ');
 
-    await expect(page).toHaveURL('/?q=Air%20Max');
+    await expect(page).toHaveURL('/?q=Party%20dress');
     await expect(filters.eyebrow).toHaveText('Search');
-    await expect(catalog.heading).toHaveText('“Air Max”');
+    await expect(catalog.heading).toHaveText('“Party dress”');
     await expect(catalog.count).toHaveText('2 items');
-    expect(listings.at(-1)?.get('q')).toBe('Air Max');
-    await expect(filters.searchBox).toHaveValue('Air Max');
+    expect(listings.at(-1)?.get('q')).toBe('Party dress');
+    await expect(filters.searchBox).toHaveValue('Party dress');
     expect(unfixturedApiCalls).toEqual([]);
   });
 
@@ -48,31 +48,31 @@ test.describe('search and filter catalog', () => {
 
     await expect(filters.sidebarRoot).toBeVisible();
     await expect(filters.toggle).toBeHidden();
-    await filters.sidebar.option('Category', 'Shoes').check();
-    await expect(page).toHaveURL('/?category=shoes');
-    await filters.sidebar.option('Shoes', 'Boots').check();
-    await filters.sidebar.option('Brand', 'Nike').check();
-    await filters.sidebar.option('Brand', 'Adidas').check();
+    await filters.sidebar.option('Category', 'Dresses').check();
+    await expect(page).toHaveURL('/?category=dresses');
+    await filters.sidebar.option('Dresses', 'Tutus').check();
+    await filters.sidebar.option('Brand', 'Gymboree').check();
+    await filters.sidebar.option('Brand', 'Crewcuts').check();
     await filters.sidebar.option('Condition', 'New with tags').check();
     await filters.sidebar.minPrice.fill('20');
     await filters.sidebar.maxPrice.fill('200');
     await filters.sort.selectOption({ label: 'Price: low to high' });
 
     const url =
-      '/?category=shoes&subcategory=boots&brand=Nike&brand=Adidas&condition=new-with-tags&min=20&max=200&sort=price-asc';
+      '/?category=dresses&subcategory=tutus&brand=Gymboree&brand=Crewcuts&condition=new-with-tags&min=20&max=200&sort=price-asc';
     await expect(page).toHaveURL(url);
     await expect(catalog.heading).toHaveText('Shop');
-    await expect(filters.chips).toHaveText(['Shoes', 'Boots', 'Nike', 'Adidas', 'New with tags', '$20–$200']);
+    await expect(filters.chips).toHaveText(['Dresses', 'Tutus', 'Gymboree', 'Crewcuts', 'New with tags', '$20–$200']);
     const sent = listings.at(-1)!;
-    expect(sent.get('category')).toBe('shoes');
-    expect(sent.getAll('brand')).toEqual(['Nike', 'Adidas']);
+    expect(sent.get('category')).toBe('dresses');
+    expect(sent.getAll('brand')).toEqual(['Gymboree', 'Crewcuts']);
     expect(sent.get('sort')).toBe('price-asc');
 
     await page.reload();
 
-    await expect(filters.sidebar.option('Category', 'Shoes')).toBeChecked();
-    await expect(filters.sidebar.option('Shoes', 'Boots')).toBeChecked();
-    await expect(filters.sidebar.option('Brand', 'Adidas')).toBeChecked();
+    await expect(filters.sidebar.option('Category', 'Dresses')).toBeChecked();
+    await expect(filters.sidebar.option('Dresses', 'Tutus')).toBeChecked();
+    await expect(filters.sidebar.option('Brand', 'Crewcuts')).toBeChecked();
     await expect(filters.sidebar.option('Condition', 'New with tags')).toBeChecked();
     await expect(filters.sidebar.minPrice).toHaveValue('20');
     await expect(filters.sort).toHaveValue('price-asc');
@@ -82,11 +82,11 @@ test.describe('search and filter catalog', () => {
   test('chips remove one filter and Clear all removes every filter and the keyword', async ({ page }) => {
     await serveSearch(page, 2);
     const filters = new CatalogFilters(page);
-    await page.goto('/?q=nike&category=shoes&condition=new-with-tags&min=20&max=200');
+    await page.goto('/?q=gymboree&category=dresses&condition=new-with-tags&min=20&max=200');
 
-    await expect(filters.chips).toHaveText(['Shoes', 'New with tags', '$20–$200']);
+    await expect(filters.chips).toHaveText(['Dresses', 'New with tags', '$20–$200']);
     await filters.removeChip('New with tags').click();
-    await expect(page).toHaveURL('/?q=nike&category=shoes&min=20&max=200');
+    await expect(page).toHaveURL('/?q=gymboree&category=dresses&min=20&max=200');
 
     await filters.clearAll.click();
     await expect(page).toHaveURL('/');
@@ -123,7 +123,7 @@ test.describe('search and filter catalog', () => {
     const { counts } = await serveSearch(page, 2, 38);
     const filters = new CatalogFilters(page);
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/?category=shoes');
+    await page.goto('/?category=dresses');
 
     await expect(filters.sidebarRoot).toBeHidden();
     await filters.toggle.click();
@@ -132,11 +132,11 @@ test.describe('search and filter catalog', () => {
     const box = (await filters.sheetRoot.boundingBox())!;
     expect(box.width).toBe(390);
     expect(box.height).toBe(844);
-    await expect(filters.sheet.option('Category', 'Shoes')).toBeChecked();
+    await expect(filters.sheet.option('Category', 'Dresses')).toBeChecked();
     await filters.sheet.option('Condition', 'New with tags').check();
     await expect(filters.sheetApply).toHaveText('Show 38 items');
     expect(counts.at(-1)?.getAll('condition')).toEqual(['new-with-tags']);
-    await expect(page).toHaveURL('/?category=shoes');
+    await expect(page).toHaveURL('/?category=dresses');
 
     await filters.sheetClear.click();
     await expect(filters.sheet.option('Category', 'All')).toBeChecked();
@@ -202,7 +202,7 @@ test.describe('search and filter catalog', () => {
 
   test('a URL with an unknown value is replaced by its canonical form', async ({ page }) => {
     const { listings } = await serveSearch(page, 2);
-    await page.goto('/?sort=cheapest&condition=mint&category=tops&subcategory=boots&min=abc');
+    await page.goto('/?sort=cheapest&condition=mint&category=tops&subcategory=tutus&min=abc');
 
     await expect(page).toHaveURL('/?category=tops');
     await expect.poll(() => listings.at(-1)?.toString()).toBe('category=tops');

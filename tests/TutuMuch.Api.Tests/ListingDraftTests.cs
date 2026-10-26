@@ -50,24 +50,24 @@ public sealed class ListingDraftTests : IDisposable
         Assert.Matches("^L-[0-9]+$", draft.Reference);
         Assert.Equal($"/api/me/listings/{draft.Reference}", response.Headers.Location?.ToString());
         Assert.Equal("Draft", draft.Status);
-        Assert.Equal("Men's L", draft.Size);
+        Assert.Equal("Girls'", draft.Size);
         Assert.Null(draft.PublishedAt);
     }
 
     [Fact]
-    public async Task A_shoes_listing_without_a_size_is_stored_as_mens_us_12()
+    public async Task A_dresses_listing_without_a_size_is_stored_as_girls()
     {
         await _client.SignInVerifiedMemberAsync(_factory);
 
         var reference = await _client.CreateDraftAsync(Listings.Complete());
 
         var stored = await _client.GetFromJsonAsync<MyListing>($"/api/me/listings/{reference}");
-        Assert.Equal("Men's US 12", stored!.Size);
+        Assert.Equal("Girls'", stored!.Size);
         Assert.Equal(60.00m, stored.Price);
     }
 
     [Theory]
-    [InlineData("Shoes", "Sneakers", "11")]
+    [InlineData("Dresses", "Dresses", "11")]
     [InlineData("Tops", "Hoodies", "M")]
     [InlineData("Tops", "Hoodies", "XL")]
     public async Task Any_size_other_than_the_accepted_size_is_refused(string category, string subcategory, string size)
@@ -82,7 +82,7 @@ public sealed class ListingDraftTests : IDisposable
     }
 
     [Theory]
-    [InlineData("Shoes", "Hoodies")]
+    [InlineData("Dresses", "Hoodies")]
     [InlineData("Accessories", null)]
     [InlineData("Tops", "Hats")]
     [InlineData(null, null)]
@@ -124,17 +124,17 @@ public sealed class ListingDraftTests : IDisposable
     }
 
     [Fact]
-    public async Task Updating_a_draft_to_shoes_sets_the_size_to_mens_us_12()
+    public async Task Updating_a_draft_to_dresses_sets_the_size_to_girls()
     {
         await _client.SignInVerifiedMemberAsync(_factory);
         var reference = await _client.CreateDraftAsync(Listings.Complete("Tops", "Hoodies"));
 
-        using var response = await _client.PutAsJsonAsync($"/api/listings/{reference}", Listings.Complete("Shoes", "Boots"));
+        using var response = await _client.PutAsJsonAsync($"/api/listings/{reference}", Listings.Complete("Dresses", "Tutus"));
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var stored = await _client.GetFromJsonAsync<MyListing>($"/api/me/listings/{reference}");
-        Assert.Equal("Men's US 12", stored!.Size);
-        Assert.Equal("Boots", stored.Subcategory);
+        Assert.Equal("Girls'", stored!.Size);
+        Assert.Equal("Tutus", stored.Subcategory);
     }
 
     [Fact]
@@ -143,7 +143,7 @@ public sealed class ListingDraftTests : IDisposable
         await _client.SignInVerifiedMemberAsync(_factory);
         var reference = await _client.CreateDraftAsync(Listings.Complete());
         using var other = _factory.CreateMemberClient();
-        await other.SignInVerifiedMemberAsync(_factory, "kicks_12", "kicks@example.com");
+        await other.SignInVerifiedMemberAsync(_factory, "tutu_tessa", "tessa@example.com");
 
         using var read = await other.GetAsync($"/api/me/listings/{reference}");
         using var update = await other.PutAsJsonAsync($"/api/listings/{reference}", Listings.Complete().With("title", "Taken over"));
@@ -151,7 +151,7 @@ public sealed class ListingDraftTests : IDisposable
         Assert.Equal(HttpStatusCode.NotFound, read.StatusCode);
         Assert.Equal(HttpStatusCode.NotFound, update.StatusCode);
         var stored = await _client.GetFromJsonAsync<MyListing>($"/api/me/listings/{reference}");
-        Assert.Equal("Air Force 1 '07, white", stored!.Title);
+        Assert.Equal("Rainbow tulle tutu, pink", stored!.Title);
     }
 
     public void Dispose()

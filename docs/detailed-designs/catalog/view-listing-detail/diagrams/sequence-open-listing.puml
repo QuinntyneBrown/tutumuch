@@ -55,7 +55,7 @@ else visible
     page --> actor : "Reserved" stamp, "In someone's checkout", no "Buy now" (L2-028)
   else Sold
     store -> client : listings(1, category), 4 other cards
-    page --> actor : "Sold" stamp, no "Buy now", "More in size 12"
+    page --> actor : "Sold" stamp, no "Buy now", "More girls' clothing"
   end
 else server failure
   controller --> client : 500 problem details with correlation ID

@@ -2,7 +2,7 @@
 
 ## Overview
 
-Tutu Much is a marketplace for men's US 12 shoes and men's L clothing. The *catalog* is the public grid of items that are currently for sale, and it is the home page of Tutu Much (`/`). This feature covers browsing that grid: loading the first page of listing cards, loading further pages, and showing the right state when there is nothing to show, when the request fails, or when the device is offline.
+Tutu Much is a marketplace for new and used girls' clothing. The *catalog* is the public grid of items that are currently for sale, and it is the home page of Tutu Much (`/`). This feature covers browsing that grid: loading the first page of listing cards, loading further pages, and showing the right state when there is nothing to show, when the request fails, or when the device is offline.
 
 A *listing* is one item a seller offers for sale. A listing has a status, and only two statuses are visible in the catalog:
 
@@ -24,8 +24,8 @@ The slice runs from the catalog page in `Tutu Much Web` through `Tutu Much API` 
 
 Feature library `@tutumuch/catalog` (`src/frontend/projects/catalog/src/lib/`), API client in `@tutumuch/api`, shared UI in `@tutumuch/components`.
 
-- **`routes`** (`catalog.routes.ts`) — mounted by the application at `''`. `''` (full match) and the category paths `shoes`, `tops`, `outerwear` and `bottoms` lazy-load `CatalogPage`; each category route carries `data.category` (`Shoes`, `Tops`, `Outerwear`, `Bottoms`), bound to the page's `category` input. No guard, so anonymous visitors reach every route. These are the links of the top bar.
-- **`CatalogPage`** (`catalog/catalog-page`) — renders the hero ("Size 12. Size L. *Nothing else.*" and the lead "Every listing fits. Men’s US 12 shoes and men’s L clothing, new and used.") at `/`, or a page header with the category name and a large `tm-size-tag` on a category page; then the toolbar with the polite item count and the grid. It reads all state from `CatalogStore` and renders exactly one view:
+- **`routes`** (`catalog.routes.ts`) — mounted by the application at `''`. `''` (full match) and the category paths `dresses`, `tops`, `outerwear` and `bottoms` lazy-load `CatalogPage`; each category route carries `data.category` (`Dresses`, `Tops`, `Outerwear`, `Bottoms`), bound to the page's `category` input. No guard, so anonymous visitors reach every route. These are the links of the top bar.
+- **`CatalogPage`** (`catalog/catalog-page`) — renders the hero ("Girls' clothing. *Nothing else.*" and the lead "Every listing is for girls. Dresses, tops, outerwear and bottoms from families who've outgrown them.") at `/`, or a page header with the category name and a large `tm-size-tag` on a category page; then the toolbar with the polite item count and the grid. It reads all state from `CatalogStore` and renders exactly one view:
   - `loading` — `tm-listing-grid` with 8 skeleton cards (`aria-busy="true"`, label "Loading listings"); the count shows a text skeleton.
   - `loaded` — the grid, the count "1,284 items" and `tm-load-more`.
   - `empty` — `tm-empty-state` "Nothing listed yet", "Be the first to list a pair of 12s or something in L.", primary link "Sell an item" to `/sell`; the count reads "0 items".
@@ -53,7 +53,7 @@ Feature library `@tutumuch/catalog` (`src/frontend/projects/catalog/src/lib/`), 
 - **`BrowseCatalogQueryHandler`** — validates the page, page size and category, caps the page size with `CatalogOptions.MaxPageSize`, counts and reads one page through `ITutuMuchDbContext` with `AsNoTracking()`, ordered by `PublishedAt DESC, Id DESC`, then reads the cover photos (`ListingPhotos` at `Position = 0` with their versions) in one query and maps each listing to `ListingCardDto`. It reads through the existing unit-of-work port rather than a separate read-store port ([ADR catalog/0001](../../../adr/catalog/0001-catalog-reads-through-the-db-context-port.md)).
 - **`CatalogVisibility`** (`TutuMuch.Domain.Listings`) — the single rule for what the catalog shows: `Status` is `Active` or `Reserved`, as a LINQ expression the query uses.
 - **`CatalogPageDto`** — `{ items, page, pageSize, totalCount }`.
-- **`ListingCardDto`** — `{ id, reference, title, brand, category, subcategory, sizeLabel ("US 12" or "L"), condition, price, status ("Active" | "Reserved"), publishedAt, coverPhoto }`. `price` is a decimal string with two places (`"85.00"`) so no floating-point value crosses the wire (`L2-018`).
+- **`ListingCardDto`** — `{ id, reference, title, brand, category, subcategory, sizeLabel ("Girls"), condition, price, status ("Active" | "Reserved"), publishedAt, coverPhoto }`. `price` is a decimal string with two places (`"85.00"`) so no floating-point value crosses the wire (`L2-018`).
 - **`CardPhotoDto`** — `{ width, height, alt, src, webp, jpeg }`: the original dimensions, "Photo 1 of {brand} {title}", the 400 px JPEG, and the WebP and JPEG `srcset` strings (`{base}/{hash}/{size}.{ext} {width}w`). URLs are built from `Photos:PublicBaseUrl` and the content-addressed keys produced by `listings/upload-listing-photos`, which also serves them with `Cache-Control: public, max-age=31536000, immutable` (`L2-059`).
 - **`CatalogOptions`** — configuration section `Catalog`: `DefaultPageSize = 24`, `MaxPageSize = 48`.
 

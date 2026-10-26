@@ -11,16 +11,16 @@ public sealed class ListingTests
 {
     private static readonly DateTime Now = new(2026, 10, 25, 12, 0, 0, DateTimeKind.Utc);
 
-    private static ListingDetails Complete(string category = "Shoes", string subcategory = "Sneakers") => new(
-        category, subcategory, null, "Air Force 1 '07, white", "Light creasing, soles have plenty left.", "Nike", "Used - Good", null, 60.00m, 8.00m);
+    private static ListingDetails Complete(string category = "Dresses", string subcategory = "Dresses") => new(
+        category, subcategory, null, "Rainbow tulle tutu, pink", "Light wear, colours still bright.", "Gymboree", "Used - Good", null, 60.00m, 8.00m);
 
     [Fact]
     public void A_draft_needs_only_a_category_and_takes_its_size_from_it()
     {
-        var listing = Listing.CreateDraft(Guid.NewGuid(), 10001, ListingDetails.Empty with { Category = "Shoes" }, Now);
+        var listing = Listing.CreateDraft(Guid.NewGuid(), 10001, ListingDetails.Empty with { Category = "Dresses" }, Now);
 
         Assert.Equal(ListingStatus.Draft, listing.Status);
-        Assert.Equal("Men's US 12", listing.Size);
+        Assert.Equal("Girls'", listing.Size);
         Assert.Equal("L-10001", listing.Reference);
     }
 
@@ -31,16 +31,16 @@ public sealed class ListingTests
 
         listing.UpdateDetails(Complete(), Now);
 
-        Assert.Equal("Men's US 12", listing.Size);
+        Assert.Equal("Girls'", listing.Size);
     }
 
     [Fact]
     public void Text_is_trimmed()
     {
-        var listing = Listing.CreateDraft(Guid.NewGuid(), 10001, Complete() with { Title = "  Air Max 90  ", Brand = " Nike " }, Now);
+        var listing = Listing.CreateDraft(Guid.NewGuid(), 10001, Complete() with { Title = "  Floral party dress  ", Brand = " Gymboree " }, Now);
 
-        Assert.Equal("Air Max 90", listing.Title);
-        Assert.Equal("Nike", listing.Brand);
+        Assert.Equal("Floral party dress", listing.Title);
+        Assert.Equal("Gymboree", listing.Brand);
     }
 
     [Fact]
@@ -52,8 +52,8 @@ public sealed class ListingTests
     }
 
     [Theory]
-    [InlineData("Men's US 12")]
-    [InlineData("men's us 12")]
+    [InlineData("Girls'")]
+    [InlineData("girls'")]
     public void Draft_rules_accept_the_accepted_size_sent_by_a_client(string size)
     {
         Assert.Empty(Listing.CheckDraft(Complete() with { Size = size }));
@@ -108,7 +108,7 @@ public sealed class ListingTests
     }
 
     [Theory]
-    [InlineData("Shoe", "TITLE_LENGTH")]
+    [InlineData("Tutu", "TITLE_LENGTH")]
     [InlineData("This title is far too long for a listing on Tutu Much because it goes on and on and on.", "TITLE_LENGTH")]
     public void Title_must_be_5_to_80_characters(string title, string code)
     {

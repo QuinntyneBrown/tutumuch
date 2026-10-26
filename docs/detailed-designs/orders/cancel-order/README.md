@@ -2,7 +2,7 @@
 
 ## Overview
 
-Tutu Much is a marketplace for men's US size 12 shoes and men's size L clothing. Sometimes a
+Tutu Much is a marketplace for new and used girls' clothing. Sometimes a
 sale should not go ahead: the seller finds damage while packing, or the buyer ordered
 the wrong item. This feature lets the seller cancel a `Paid` order before it ships, and
 lets the buyer ask the seller to cancel. A cancelled order is refunded to the buyer in

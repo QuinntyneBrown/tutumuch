@@ -110,7 +110,7 @@ public sealed class NotificationPreferencesTests : IDisposable
         var memberId = MemberId();
 
         QueueMarketing(memberId);
-        Queue(NotificationType.OrderDelivered, memberId, new OrderDeliveredEmail(Guid.NewGuid(), "TM-10001", "Air Max 90, white"));
+        Queue(NotificationType.OrderDelivered, memberId, new OrderDeliveredEmail(Guid.NewGuid(), "TM-10001", "Floral party dress, pink"));
         var sent = await _factory.DispatchEmailsAsync();
 
         var email = Assert.Single(sent);
@@ -215,7 +215,7 @@ public sealed class NotificationPreferencesTests : IDisposable
     }
 
     private void QueueMarketing(Guid memberId) =>
-        Queue(NotificationType.Marketing, memberId, new MarketingEmail("New in your size", "Fresh boots in US 12 this week."));
+        Queue(NotificationType.Marketing, memberId, new MarketingEmail("New in your size", "Fresh party dresses this week."));
 
     private void Queue<TModel>(NotificationType type, Guid memberId, TModel model)
         where TModel : class

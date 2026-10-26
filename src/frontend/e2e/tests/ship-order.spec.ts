@@ -38,9 +38,9 @@ test.describe('ship order: seller', () => {
     await expect(salePage.shipBy).toHaveText('Ship by Fri 30 Oct.');
     await expect(salePage.shipTo).toHaveText('Tom Reyes1450 Larimer St, Apt 6BDenver, CO 80202');
     await expect(page.getByText('Visible until 30 days after the order ends.')).toBeVisible();
-    await expect(salePage.summary).toContainText('Reverse Weave hoodie, grey');
+    await expect(salePage.summary).toContainText('Unicorn hoodie, lilac');
     await expect(salePage.summary.locator('dl')).toContainText('Total$48.15');
-    await expect(salePage.summary).toContainText('Buyertall_tom');
+    await expect(salePage.summary).toContainText('Buyertwirly_tara');
     await expect(salePage.timeline).toHaveCount(0);
     expect(unfixturedApiCalls).toEqual([]);
   });
@@ -58,7 +58,7 @@ test.describe('ship order: seller', () => {
     await salePage.addTracking.click();
 
     await expect(salePage.dialog).toBeVisible();
-    await expect(salePage.dialog).toContainText('We’ll email tall_tom the tracking link.');
+    await expect(salePage.dialog).toContainText('We’ll email twirly_tara the tracking link.');
     await expect(salePage.carrier).toBeFocused();
     await expect(salePage.carrier.locator('option')).toHaveText(['USPS', 'UPS', 'FedEx', 'DHL']);
     await salePage.trackingNumber.fill('9400 1118 9922 3456 1204 77');
@@ -235,9 +235,11 @@ test.describe('ship order: buyer', () => {
     await expect(page).toHaveTitle('Order · Tutu Much');
     await expect(orderPage.eyebrow).toHaveText('Order TM-48377 · Sat 24 Oct');
     await expect(orderPage.currentStep).toHaveText('PaidSat 24 Oct');
-    await expect(orderPage.shipNote).toHaveText('kicks_12 ships by Fri 30 Oct. If not, you’re refunded automatically.');
+    await expect(orderPage.shipNote).toHaveText(
+      'tutu_tessa ships by Fri 30 Oct. If not, you’re refunded automatically.',
+    );
     await expect(orderPage.summary.locator('dl')).toContainText('Total$102.34');
-    await expect(orderPage.summary).toContainText('Sellerkicks_12');
+    await expect(orderPage.summary).toContainText('Sellertutu_tessa');
     await expect(orderPage.tracking).toHaveCount(0);
     expect(unfixturedApiCalls).toEqual([]);
   });

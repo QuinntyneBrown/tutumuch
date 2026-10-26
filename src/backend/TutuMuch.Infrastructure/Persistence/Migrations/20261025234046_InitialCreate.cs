@@ -81,7 +81,7 @@ public partial class InitialCreate : Migration
                 table.PrimaryKey("PK_Listings", x => x.Id);
                 table.CheckConstraint("CK_Listings_Price", "Price IS NULL OR CAST(Price AS REAL) BETWEEN 1 AND 5000");
                 table.CheckConstraint("CK_Listings_ShippingCost", "ShippingCost IS NULL OR CAST(ShippingCost AS REAL) BETWEEN 0 AND 100");
-                table.CheckConstraint("CK_Listings_Size", "(Category = 'Shoes' AND Size = 'Men''s US 12') OR (Category <> 'Shoes' AND Size = 'Men''s L')");
+                table.CheckConstraint("CK_Listings_Size", "Size = 'Girls'''");
                 table.ForeignKey(
                     name: "FK_Listings_Members_SellerId",
                     column: x => x.SellerId,

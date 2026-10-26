@@ -159,7 +159,7 @@ public sealed class EditListingTests : IDisposable
         using var response = await PutAsync(reference, Edited().With("category", "Tops").With("subcategory", "Hoodies"), etag);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Equal("Men's L", (await MineAsync(reference)).Size);
+        Assert.Equal("Girls'", (await MineAsync(reference)).Size);
     }
 
     [Fact]
@@ -189,7 +189,7 @@ public sealed class EditListingTests : IDisposable
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
-    /// <summary>The seller signs in and publishes the Complete sneakers ($60.00) with one photo.</summary>
+    /// <summary>The seller signs in and publishes the Complete party dress ($60.00) with one photo.</summary>
     private async Task<string> ActiveListingAsync()
     {
         await _seller.SignInVerifiedMemberAsync(_factory);

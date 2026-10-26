@@ -34,12 +34,12 @@ public sealed class MyListingsTests : IDisposable
         Assert.Null(untitled.Price);
         Assert.Null(untitled.Photo);
         var active = page.Items[1];
-        Assert.Equal("Air Force 1 '07, white", active.Title);
+        Assert.Equal("Rainbow tulle tutu, pink", active.Title);
         Assert.Equal(60.00m, active.Price);
         Assert.NotNull(active.Photo);
         Assert.Null(active.SaleOrderId);
         var sold = page.Items[3];
-        Assert.Equal("Air Max 90, white", sold.Title);
+        Assert.Equal("Floral party dress, pink", sold.Title);
         Assert.Equal(orderId, sold.SaleOrderId);
         Assert.Equal(new MyListingCountsView(4, 2, 1, 0, 1, 0), page.Counts);
     }
@@ -88,14 +88,14 @@ public sealed class MyListingsTests : IDisposable
     }
 
     /// <summary>
-    /// A seller whose sneakers were bought, who then saved a titled draft, published a listing and
+    /// A seller whose party dress was bought, who then saved a titled draft, published a listing and
     /// saved an untitled draft, in that order. Returns the seller and the order of the sold listing.
     /// </summary>
     private async Task<(HttpClient Seller, Guid OrderId)> SellerWithSoldDraftsAndActiveAsync()
     {
         await _buyer.SignInVerifiedMemberAsync(_factory);
         var (orderId, seller) = await _factory.SeedPaidOrderAsync(_buyer);
-        var draft = await seller.CreateDraftAsync(new { category = "Shoes", title = "Samba OG, black" });
+        var draft = await seller.CreateDraftAsync(new { category = "Dresses", title = "Smocked romper, yellow" });
         var active = await seller.CreateDraftWithPhotoAsync(Listings.Complete());
         (await seller.PublishAsync(active)).EnsureSuccessStatusCode();
         var untitled = await seller.CreateDraftAsync(new { category = "Tops" });

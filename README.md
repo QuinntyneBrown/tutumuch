@@ -13,7 +13,7 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
 
-Tutu Much is an open marketplace for new and used men's clothing in two sizes only: **US size 12 shoes** and **size large (L) clothing**. Members list what they no longer wear and buy from people who wear the same size.
+Tutu Much is an open marketplace for new and used **girls' (children's) clothing**: dresses, tops, outerwear and bottoms. Parents and families join, set up a profile, list what their daughters have outgrown and buy what they will wear next.
 
 Tutu Much is a responsive web application built with [Angular](https://angular.dev) and [ASP.NET Core](https://dotnet.microsoft.com).
 
@@ -39,14 +39,14 @@ Tutu Much is a responsive web application built with [Angular](https://angular.d
 
 ## Overview
 
-General marketplaces make buyers filter thousands of listings that will never fit. On Tutu Much every listing is a men's US 12 shoe or a men's L garment, so every item a buyer sees is one they can wear. The API enforces the size rules whatever the client sends.
+General marketplaces bury girls' clothes among everything else. On Tutu Much every listing is girls' clothing, so parents only browse what their daughter can wear. The API enforces the size rules whatever the client sends. Tutu Much's owner also sells on the marketplace as a regular member, with the same rules as everyone else.
 
-| Category                                      | Accepted size | Condition   |
-| --------------------------------------------- | ------------- | ----------- |
-| Shoes (sneakers, boots, dress shoes, sandals) | Men's US 12   | New or used |
-| Tops (shirts, t-shirts, sweaters, hoodies)    | Men's L       | New or used |
-| Outerwear (jackets, coats)                    | Men's L       | New or used |
-| Bottoms (pants, shorts)                       | Men's L       | New or used |
+| Category                                  | Accepted size | Condition   |
+| ----------------------------------------- | ------------- | ----------- |
+| Dresses (dresses, skirts, tutus, rompers) | Girls'        | New or used |
+| Tops (shirts, t-shirts, sweaters, hoodies) | Girls'        | New or used |
+| Outerwear (jackets, coats)                | Girls'        | New or used |
+| Bottoms (pants, leggings, shorts)         | Girls'        | New or used |
 
 ## Project status
 
@@ -54,7 +54,7 @@ General marketplaces make buyers filter thousands of listings that will never fi
 | ------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
 | Accounts      | Available | Join, email verification, sign in and sign out with session cookies and rotating refresh tokens                                                |
 | Listings      | Available | Sell page with drafts, publishing, photo upload and processing, and a daily publish limit                                                      |
-| Catalog       | Available | Home and category pages (`/shoes`, `/tops`, `/outerwear`, `/bottoms`), paged newest first, and the listing detail page at `/items/{reference}` |
+| Catalog       | Available | Home and category pages (`/dresses`, `/tops`, `/outerwear`, `/bottoms`), paged newest first, and the listing detail page at `/items/{reference}` |
 | Orders        | Available | Checkout, shipping, receipt confirmation, payouts and order problems                                                                           |
 | Privacy       | Partial   | Cookie consent; account closure and erasure are planned                                                                                        |
 | Reviews       | Available | Public seller profile; ratings show "No reviews yet"                                                                                           |
@@ -130,7 +130,7 @@ To check that the API is up, send `GET http://localhost:5045/api/health`. It ret
 ### Load demo data
 
 `TutuMuch.Cli` resets a local database and fills it with 8 demo members and 48 listings with
-real product photos in every category, so `/`, `/shoes`, `/tops`, `/outerwear`, `/bottoms`
+real product photos in every category, so `/`, `/dresses`, `/tops`, `/outerwear`, `/bottoms`
 and the listing pages look real. It is for your own machine only; see
 [its README](src/backend/TutuMuch.Cli/README.md) for the demo accounts and password.
 

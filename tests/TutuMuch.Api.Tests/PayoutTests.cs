@@ -107,7 +107,7 @@ public sealed class PayoutTests : IDisposable
         Assert.Equal("OrderNotCompleted", row.HoldReason);
         Assert.Equal("84.60", row.Amount);
         Assert.Equal("9.40", row.Fee);
-        Assert.Equal("Air Max 90, white", row.Item.Title);
+        Assert.Equal("Floral party dress, pink", row.Item.Title);
     }
 
     [Fact]

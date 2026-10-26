@@ -21,7 +21,7 @@ end box
 box "Backend — TutuMuch Infrastructure" #FFF4E5
   database "Tutu Much database" as db
 end box
-actor -> page : Open /?category=shoes&condition=new-with-tags&min=20&max=200&sort=price-asc
+actor -> page : Open /?category=dresses&condition=new-with-tags&min=20&max=200&sort=price-asc
 page -> client : brands()
 client --> page : Brand list for the filter form
 page -> codec : parseQuery(queryParamMap)
@@ -36,7 +36,7 @@ end
 page -> page : Sidebar, chips and sort select read the query
 page -> store : load(toParams(query))
 store -> client : listings(1, params)
-client -> controller : GET /api/catalog/listings?category=shoes&condition=new-with-tags&min=20&max=200&sort=price-asc
+client -> controller : GET /api/catalog/listings?category=dresses&condition=new-with-tags&min=20&max=200&sort=price-asc
 controller -> handler : Send BrowseCatalogQuery
 handler -> db : Same filters, ORDER BY Price ASC, Id DESC
 db --> handler : Same rows as the sharer saw

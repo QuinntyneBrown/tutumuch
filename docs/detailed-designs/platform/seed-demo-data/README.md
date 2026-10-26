@@ -2,7 +2,7 @@
 
 ## Overview
 
-Tutu Much is a marketplace for men's US size 12 shoes and men's size L clothing. A fresh local
+Tutu Much is a marketplace for new and used girls' clothing. A fresh local
 install has no members and no listings, so every catalog page is empty until someone
 registers, verifies, uploads photos and publishes by hand. This feature, part of the
 `platform` subsystem, adds `TutuMuch.Cli`, a developer tool with two commands: `reset`
@@ -16,7 +16,7 @@ Terms used below:
 - **photo store** — the folder `FileSystemPhotoStorage` writes to, `PhotoStorage:RootPath`
   (`public/` versions, `private/` originals)
 - **seed photos** — the 24 committed photographs under
-  `src/backend/TutuMuch.Cli/SeedPhotos/{Shoes,Tops,Outerwear,Bottoms}/`
+  `src/backend/TutuMuch.Cli/SeedPhotos/{Dresses,Tops,Outerwear,Bottoms}/`
 - **reset guard** — the check that `reset` runs only in Development or with `--force`
   (`L2-073`)
 - **seed clock** — the `TimeProvider` the seeder moves back in time per step
@@ -118,21 +118,21 @@ served by `/photos/{hash}/{file}` like any upload.
 
 ### Demo catalogue (`DemoCatalogue`)
 
-All demo members share the password `Tutu Much-demo-only-2026`, documented in
+All demo members share the password `TutuMuch-demo-only-2026`, documented in
 `src/backend/TutuMuch.Cli/README.md` as for local use only. Emails use the reserved `.test`
 domain. No member is an administrator, onboarded for payouts or the author of any review,
 report or order.
 
 | Display name | Email |
 |--------------|-------|
-| `BigFootBen` | `ben@demo.tutumuch.test` |
-| `TallTomas` | `tomas@demo.tutumuch.test` |
-| `SizeTwelveSam` | `sam@demo.tutumuch.test` |
-| `LargeLayers` | `layers@demo.tutumuch.test` |
-| `TrailRay` | `ray@demo.tutumuch.test` |
-| `DenimDev` | `dev@demo.tutumuch.test` |
-| `OxfordOwen` | `owen@demo.tutumuch.test` |
-| `CoatRackCal` | `cal@demo.tutumuch.test` |
+| `TutuTessa` | `tessa@demo.tutumuch.test` |
+| `TwirlyTara` | `tara@demo.tutumuch.test` |
+| `HandMeDownHana` | `hana@demo.tutumuch.test` |
+| `PuddleJumperPia` | `pia@demo.tutumuch.test` |
+| `RainbowRosa` | `rosa@demo.tutumuch.test` |
+| `LeggingsLily` | `lily@demo.tutumuch.test` |
+| `PartyDressPenny` | `penny@demo.tutumuch.test` |
+| `CozyCoatCleo` | `cleo@demo.tutumuch.test` |
 
 48 listings, 12 per category. They are published with the categories alternating, and each
 category's two listings that share a cover photo are published six apart, so a catalog page
@@ -143,10 +143,10 @@ flaws), a price from $18 to $420 and shipping from $0 to $15.
 
 | Category | Subcategories used | Seed photos (each the cover of 2 listings; 1 to 4 photos per listing) |
 |----------|--------------------|------------------------------------------------------------|
-| Shoes | Dress shoes, Boots, Sneakers | `black-oxford`, `tan-penny-loafer`, `black-pac-boot`, `brown-hiking-boot`, `navy-suede-chukka-sneaker`, `grey-trail-sneaker` |
-| Tops | Shirts, Hoodies, T-shirts | `floral-short-sleeve-shirt`, `navy-print-short-sleeve-shirt`, `plaid-button-down-shirt`, `white-dress-shirt`, `purple-hoodie`, `grey-print-t-shirt` |
-| Outerwear | Jackets, Coats | `blue-rain-jacket`, `grey-work-jacket`, `tan-pullover-anorak`, `olive-wool-overcoat`, `navy-peacoat`, `black-leather-moto-jacket` |
-| Bottoms | Pants, Shorts | `khaki-five-pocket-pants`, `stone-chinos`, `washed-grey-jeans`, `grey-drawstring-shorts`, `navy-board-shorts`, `orange-chino-shorts` |
+| Dresses | Dresses, Skirts, Tutus | `floral-party-dress`, `yellow-sundress`, `navy-smocked-dress`, `denim-skirt`, `pink-tulle-tutu-skirt`, `lavender-tutu` |
+| Tops | Shirts, T-shirts, Sweaters, Hoodies | `white-peter-pan-collar-shirt`, `unicorn-graphic-t-shirt`, `pink-striped-t-shirt`, `rainbow-knit-sweater`, `mint-cardigan-sweater`, `purple-hoodie` |
+| Outerwear | Jackets, Coats | `purple-puffer-jacket`, `pink-denim-jacket`, `mint-fleece-jacket`, `yellow-raincoat`, `red-wool-coat`, `navy-peacoat` |
+| Bottoms | Pants, Leggings, Shorts | `pink-corduroy-pants`, `khaki-pull-on-pants`, `denim-leggings`, `floral-leggings`, `denim-shorts`, `rainbow-shorts` |
 
 A listing's first photo is its cover and matches its title; extra photos are other items
 of the same category, so a buyer sees a gallery. Photo sources and licences are in
@@ -182,7 +182,7 @@ The real SkiaSharp pipeline runs on the committed photos. Each test file starts 
 | `PhotoStorage:RootPath` | Same as the API (default `{temp}/tutumuch-photos`) | `PhotoStorageOptions` |
 | `Selling:PublishesPerDay` | 20, unchanged | `SellingOptions` |
 | `Seed:PhotosPath` | `{AppContext.BaseDirectory}/SeedPhotos` | `DemoSeeder` |
-| Demo password | `Tutu Much-demo-only-2026` | `DemoCatalogue`, CLI README |
+| Demo password | `TutuMuch-demo-only-2026` | `DemoCatalogue`, CLI README |
 
 ## Requirements
 

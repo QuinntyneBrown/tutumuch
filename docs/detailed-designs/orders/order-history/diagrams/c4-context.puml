@@ -4,6 +4,6 @@ LAYOUT_WITH_LEGEND()
 title System Context — Order history
 
 Person(member, "Member", "Buyer and seller with one account")
-System(tutumuch, "Tutu Much", "Men's US 12 / L marketplace")
+System(tutumuch, "Tutu Much", "Girls' clothing marketplace")
 Rel(member, tutumuch, "Lists purchases and sales and opens each order using")
 @enduml

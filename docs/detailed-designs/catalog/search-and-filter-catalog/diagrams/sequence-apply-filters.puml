@@ -25,7 +25,7 @@ end box
 actor -> page : Tap "Filters" (viewport under 992 px)
 page -> panel : SheetService.open(FiltersSheet, query and brands)
 panel --> actor : Full screen under 768 px, side panel 768-991 px (L2-062)
-actor -> form : Choose Shoes, New with tags, price 200 to 50
+actor -> form : Choose Dresses, New with tags, price 200 to 50
 form -> panel : (changed) draft
 panel -> panel : priceError(draft)
 alt minimum greater than maximum
@@ -33,7 +33,7 @@ alt minimum greater than maximum
 else valid range (after correction to 20 to 200)
   panel --> actor : busy, "Show items" aria-busy
   panel -> client : count(draft) 300 ms after the last edit, stale answers ignored
-  client -> controller : GET /api/catalog/listings/count?category=shoes&condition=new-with-tags&min=20&max=200
+  client -> controller : GET /api/catalog/listings/count?category=dresses&condition=new-with-tags&min=20&max=200
   controller -> count : Send CountCatalogListingsQuery
   count -> criteria : From(filters)
   alt filters invalid (direct request)
@@ -50,7 +50,7 @@ else valid range (after correction to 20 to 200)
     actor -> panel : Choose "Show 38 items"
     panel --> page : close(draft), focus returns to "Filters"
     page -> page : navigate("/", toParams(draft)); parse URL and load results
-    page --> actor : Results with chips "Shoes", "New with tags", "$20–$200"
+    page --> actor : Results with chips "Dresses", "New with tags", "$20–$200"
   end
 end
 @enduml

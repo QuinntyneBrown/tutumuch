@@ -42,7 +42,7 @@ public sealed class CheckoutTests : IDisposable
         var checkout = (await response.Content.ReadFromJsonAsync<CheckoutView>())!;
         Assert.Equal("Open", checkout.Status);
         Assert.Equal(now.AddMinutes(10), checkout.ExpiresAt, TimeSpan.FromSeconds(1));
-        Assert.Equal(new CheckoutItemView(reference, "Air Max 90, white", "Nike", "Men's US 12", "Used - Excellent"), checkout.Item);
+        Assert.Equal(new CheckoutItemView(reference, "Floral party dress, pink", "Gymboree", "Girls'", "Used - Excellent"), checkout.Item);
         Assert.Equal("85.00", checkout.ItemPrice);
         Assert.Equal("9.00", checkout.ShippingCost);
         Assert.Null(checkout.SalesTax);

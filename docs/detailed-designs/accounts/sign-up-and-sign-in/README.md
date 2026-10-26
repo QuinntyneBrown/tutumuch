@@ -2,7 +2,7 @@
 
 ## Overview
 
-Tutu Much is a marketplace for men's US size 12 shoes and men's size L clothing. Anyone may browse; buying and selling need a member whose email is verified, with one account for both (`L2-002`, `L2-003`). This feature is the minimum member authentication the selling journey needs: a visitor joins, opens the verification link, signs in and stays signed in, and `Tutu Much API` refuses anonymous and unverified callers on the endpoints that need a verified member.
+Tutu Much is a marketplace for new and used girls' clothing. Anyone may browse; buying and selling need a member whose email is verified, with one account for both (`L2-002`, `L2-003`). This feature is the minimum member authentication the selling journey needs: a visitor joins, opens the verification link, signs in and stays signed in, and `Tutu Much API` refuses anonymous and unverified callers on the endpoints that need a verified member.
 
 The feature sits in the accounts subsystem (`L1-001`, `L1-002`). It was built inside the [create-listing](../../listings/create-listing/README.md) run, which is the first journey that needs a signed-in seller.
 

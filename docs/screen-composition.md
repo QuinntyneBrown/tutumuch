@@ -139,7 +139,7 @@ Auth shell. `@tutumuch/accounts` `VerifyEmailPage` reads `token` from the query 
 ### Catalog — `/` (`pages/catalog`: default, guest, category, search, filtered, loading, empty, no-results, error, offline)
 
 Built in `@tutumuch/catalog` (`src/lib/catalog/`, `src/lib/filters/`) by browse-catalog (default,
-guest, category at `/shoes`, `/tops`, `/outerwear`, `/bottoms`, loading, empty, error, offline)
+guest, category at `/dresses`, `/tops`, `/outerwear`, `/bottoms`, loading, empty, error, offline)
 and search-and-filter-catalog (search, filtered, no-results, the filter sidebar, the filters
 toggle, the chips and the sort select). The URL holds the result set (`q`, `category`,
 `subcategory`, `brand`, `condition`, `min`, `max`, `sort`).
@@ -152,7 +152,7 @@ toggle, the chips and the sort select). The URL holds the result set (`q`, `cate
   `tmButton="link"` Try again when a next page fails), `tm-chip` (one per active filter value),
   `tmButton` (Filters toggle, "Clear all" link button), `tm-choice` and `tm-input-group` (inside
   the filter form), `SheetService` (opens the Filters sheet below 992px), `tm-icon`
-- Local: the hero (`.hero`, h1 "Size 12. Size L. *Nothing else.*" and lead), the page header
+- Local: the hero (`.hero`, h1 "Every listing is *for girls.*" and lead), the page header
   (category name with size tag; eyebrow "Search" with “{q}”; "Shop" for other filters), the
   `.catalog-layout` grid, the `.toolbar` with the polite item count and its text skeleton, the
   `.sort` select, `FilterForm` (`tm-filter-form`, fieldsets Category, subcategories, Brand with
@@ -174,7 +174,7 @@ their profile.
   (default and guest: "Buy now" as `tmButton="primary"` lg; own: "Edit listing" with icon
   `edit` and secondary lg "Withdraw" through `DialogService`; absent for Reserved and Sold), `tm-alert` (reserved: warning, icon `clock`, "In
   someone’s checkout"), `tm-seller-summary` (rating or "New seller"), `tm-listing-grid` (sold:
-  "More in size 12" or "More in size L"), `tm-center-state` (unavailable: code "404" and "Shop
+  "More in girls' sizes"), `tm-center-state` (unavailable: code "404" and "Shop
   similar items"; error: reference, "Try again" with icon `refresh` and "Back to shop"),
   `tmButton`, `tm-icon`
 - Local: the breadcrumb, the info column (`.photo__stamp` Reserved or Sold, `.eyebrow` brand,

@@ -5,7 +5,7 @@ title System Context — View a member profile
 
 Person(visitor, "Visitor or member", "Anyone checking a buyer or seller before a deal")
 Person(owner, "Profile owner", "Member viewing their own profile")
-System(tutumuch, "Tutu Much", "Marketplace for men's US size 12 shoes and size L clothing")
+System(tutumuch, "Tutu Much", "Marketplace for girls' clothing")
 
 Rel(visitor, tutumuch, "Reads public profiles in", "HTTPS")
 Rel(owner, tutumuch, "Reads own profile and replies to reviews in", "HTTPS")

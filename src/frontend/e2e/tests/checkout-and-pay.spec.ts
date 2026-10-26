@@ -51,8 +51,8 @@ test.describe('checkout and pay', () => {
     await expect(checkoutPage.heading).toHaveText('Checkout');
     await expect(page).toHaveTitle('Checkout · Tutu Much');
     await expect(checkoutPage.savedAddress).toBeChecked();
-    await expect(checkoutPage.summary).toContainText('Air Max 90, white');
-    await expect(checkoutPage.summary).toContainText("Nike · Men's US 12 · Used - Excellent");
+    await expect(checkoutPage.summary).toContainText('Floral party dress, pink');
+    await expect(checkoutPage.summary).toContainText("Gymboree · Girls' · Used - Excellent");
     await expect(checkoutPage.summary.locator('dl')).toContainText('Item$85.00');
     await expect(checkoutPage.summary.locator('dl')).toContainText('Shipping$9.00');
     await expect(checkoutPage.summary.locator('dl')).toContainText('Sales tax$8.34');
@@ -69,7 +69,7 @@ test.describe('checkout and pay', () => {
     await expect(confirmation.heading).toHaveText('It’s yours.');
     await expect(confirmation.reference).toHaveText('Order TM-48377');
     await expect(confirmation.item).toContainText('Paid $102.34 · Visa ending 4242');
-    await expect(confirmation.nextSteps.first()).toContainText('kicks_12 ships it');
+    await expect(confirmation.nextSteps.first()).toContainText('tutu_tessa ships it');
     await expect(confirmation.viewOrder).toHaveAttribute('href', '/orders/o-1');
     await expect(confirmation.keepShopping).toHaveAttribute('href', '/');
 

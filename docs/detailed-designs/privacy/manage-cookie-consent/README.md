@@ -2,7 +2,7 @@
 
 ## Overview
 
-Tutu Much is a marketplace for men who wear a US size 12 shoe or a size L top. Like most web
+Tutu Much is a marketplace for new and used girls' clothing. Like most web
 applications it uses cookies: some keep a member signed in and protect forms, and others
 could measure which pages are slow. This feature makes sure that only the cookies Tutu Much
 cannot run without are set until the visitor decides about the rest, and that the

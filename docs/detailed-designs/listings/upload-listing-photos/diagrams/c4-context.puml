@@ -5,7 +5,7 @@ title System Context — Upload listing photos
 
 Person(seller, "Seller", "Adds, removes and reorders photos of an item")
 Person(buyer, "Visitor or buyer", "Views listing photos in the catalog")
-System(tutumuch, "Tutu Much", "Marketplace for men's US 12 shoes and men's L clothing; serves content-addressed photo versions")
+System(tutumuch, "Tutu Much", "Marketplace for girls' clothing; serves content-addressed photo versions")
 
 Rel(seller, tutumuch, "Uploads and orders photos using", "HTTPS multipart")
 Rel(buyer, tutumuch, "Loads photo versions cached for one year from", "HTTPS (a CDN later)")

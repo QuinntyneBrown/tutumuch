@@ -12,8 +12,8 @@ publish listings by hand before any catalog page shows anything. There is no way
 local install either: the only console tool, `TutuMuch.Migrator`, applies pending migrations
 and is the one thing a deployment runs, so it must not learn to drop databases.
 
-Demo listings need photos. They must be real product photographs (shoes, shirts, jackets,
-pants), free to redistribute in this MIT repository, committed so seeding works offline,
+Demo listings need photos. They must be real product photographs (dresses, shirts, jackets,
+leggings), free to redistribute in this MIT repository, committed so seeding works offline,
 and processed by the same pipeline as uploads (`L2-017`, `L2-059`,
 [ADR listings/0001](../listings/0001-process-photos-in-the-upload-request.md),
 [ADR-0009](0009-skiasharp-for-photo-processing.md)). The pipeline refuses photos under
@@ -65,7 +65,7 @@ that built this feature. The photos come instead from the
 images are Flickr photographs under the Creative Commons Attribution 2.0 licence, with the
 author and original page listed for every image.
 
-- 24 photos, 6 per category, committed under `src/backend/TutuMuch.Cli/SeedPhotos/{Shoes,
+- 24 photos, 6 per category, committed under `src/backend/TutuMuch.Cli/SeedPhotos/{Dresses,
   Tops, Outerwear, Bottoms}/`, each under 200 KB (about 2.4 MB in total). Listings reuse
   them; stored versions are content-addressed, so a reused photo is stored once.
 - Chosen by hand: one item on a plain or simple background, no person, no logo or

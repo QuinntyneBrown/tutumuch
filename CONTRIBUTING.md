@@ -16,7 +16,7 @@ Thank you for your interest in contributing. This document explains how to propo
 
 ## Before you start
 
-Tutu Much is a marketplace for men's **size 12 shoes** and **size large clothing**, new or used. Changes should serve that focus. Features that widen the marketplace to other sizes or categories are out of scope unless an issue agrees otherwise.
+Tutu Much is a marketplace for new and used **girls' (children's) clothing**: dresses, tops, outerwear and bottoms. Changes should serve that focus. Features that widen the marketplace to other sizes (boys' or adult) or categories are out of scope unless an issue agrees otherwise.
 
 For anything beyond a small fix, open an issue first so the scope can be agreed before work begins.
 

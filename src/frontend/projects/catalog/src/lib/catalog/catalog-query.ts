@@ -29,14 +29,10 @@ const option = (label: string): Option => ({ slug: label.toLowerCase().replace(/
 
 /** The L2-011 categories with their subcategories; the URL carries the slugs. */
 export const CATEGORIES: readonly CategoryOption[] = [
-  {
-    ...option('Shoes'),
-    sizeLabel: 'US 12',
-    subcategories: ['Sneakers', 'Boots', 'Dress shoes', 'Sandals'].map(option),
-  },
-  { ...option('Tops'), sizeLabel: 'L', subcategories: ['Shirts', 'T-shirts', 'Sweaters', 'Hoodies'].map(option) },
-  { ...option('Outerwear'), sizeLabel: 'L', subcategories: ['Jackets', 'Coats'].map(option) },
-  { ...option('Bottoms'), sizeLabel: 'L', subcategories: ['Pants', 'Shorts'].map(option) },
+  { ...option('Dresses'), sizeLabel: 'Girls', subcategories: ['Dresses', 'Skirts', 'Tutus', 'Rompers'].map(option) },
+  { ...option('Tops'), sizeLabel: 'Girls', subcategories: ['Shirts', 'T-shirts', 'Sweaters', 'Hoodies'].map(option) },
+  { ...option('Outerwear'), sizeLabel: 'Girls', subcategories: ['Jackets', 'Coats'].map(option) },
+  { ...option('Bottoms'), sizeLabel: 'Girls', subcategories: ['Pants', 'Leggings', 'Shorts'].map(option) },
 ];
 
 /** The L2-016 conditions. */

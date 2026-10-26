@@ -35,7 +35,7 @@ import { FiltersSheet, FiltersSheetData } from '../filters/filters-sheet';
 import { FiltersSidebar } from '../filters/filters-sidebar';
 
 /**
- * The catalog at / and a category page at /shoes, /tops... (mocks pages/catalog). The URL is the
+ * The catalog at / and a category page at /dresses, /tops... (mocks pages/catalog). The URL is the
  * one source of a result set (L2-024): every change of its query parameters is parsed into a
  * CatalogQuery and loaded, and every filter, chip, sort or search change navigates. The header is
  * the hero, a category header, "Shop" or the search term. Filters are a sidebar from 992px and a

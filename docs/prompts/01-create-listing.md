@@ -2,7 +2,7 @@
 
 ## Goal
 
-A verified member opens `/sell`, describes an item in one of the accepted categories, and publishes it. The server sets the size (men's US 12 or men's L) whatever the client sends; drafts save; publishing is limited to 20 a day. This is the first journey that produces real data, so every later journey reads what it writes.
+A verified member opens `/sell`, describes an item in one of the accepted categories, and publishes it. The server sets the size (Girls') whatever the client sends; drafts save; publishing is limited to 20 a day. This is the first journey that produces real data, so every later journey reads what it writes.
 
 Order: prompt 01 of 18 (see `docs/prompts/README.md`). Effort in `docs/journeys.md`: 4 days.
 Detailed design: `docs/detailed-designs/listings/create-listing/README.md`. Requirements: L2-003, L2-011, L2-012, L2-013, L2-014, L2-015, L2-016, L2-018, L2-019, L2-031, L2-051.

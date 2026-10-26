@@ -315,7 +315,7 @@ public sealed class Listing
 
         if (category is not null && Clean(details.Size) is { } size && !string.Equals(size, category.AcceptedSize, StringComparison.OrdinalIgnoreCase))
         {
-            violations.Add(new("size", "SIZE_NOT_ACCEPTED", $"Tutu Much accepts only {category.AcceptedSize.ToLowerInvariant()} in {category.Name}"));
+            violations.Add(new("size", "SIZE_NOT_ACCEPTED", $"Tutu Much accepts only {category.AcceptedSize.ToLowerInvariant()} sizes in {category.Name}"));
         }
 
         if (Clean(details.Title)?.Length > MaxTitle)
@@ -418,8 +418,7 @@ public sealed class Listing
         Check("shippingCost", details.ShippingCost is null, ShippingOutOfRange);
         if (!sizeConfirmed)
         {
-            var label = CategoryCatalog.Find(details.Category)?.AcceptedSize == CategoryCatalog.MensUs12 ? "men's US 12" : "men's L";
-            violations.Add(new("sizeConfirmed", "SIZE_CONFIRMATION_REQUIRED", $"Confirm the label shows {label}"));
+            violations.Add(new("sizeConfirmed", "SIZE_CONFIRMATION_REQUIRED", "Confirm the label shows girls' sizing"));
         }
 
         return violations;

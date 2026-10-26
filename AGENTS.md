@@ -1,6 +1,11 @@
 # Agent instructions for Tutu Much
 
-Tutu Much is a marketplace for men's US size 12 shoes and men's size L clothing. The product
+Tutu Much is an open marketplace for new and used girls' (children's) clothing: dresses, tops,
+outerwear and bottoms, every one accepted only in girls' sizes. Anyone can join, set up a profile
+and sell what their daughter has outgrown; Tutu Much's owner sells on it as an ordinary member
+too. The look is a soft, playful children's theme (pink, lavender, rounded shapes) defined in
+`docs/design-system/`. Tutu Much began as a clone of 12L, so every journey, screen, component and
+rule mirrors 12L; only the domain words, the size rule and the theme differ. The product
 is defined, before code, by `docs/journeys.md`, `docs/specs/` (L1 and L2 requirements),
 `docs/mocks/` (generated HTML mocks), `docs/detailed-designs/` and `docs/estimates/`.
 Architecture decisions live in `docs/adr/`.
