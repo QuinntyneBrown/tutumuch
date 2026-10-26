@@ -10,14 +10,14 @@ System_Boundary(app, "tutumuch application (projects/tutumuch)") {
   Component(media, "public/media/", "Static files", "tutumuch-pitch.mp4/.webm/.vtt/.txt, poster PNG, ATTRIBUTION.md")
 }
 System_Boundary(mkt, "@tutumuch/marketing") {
-  Component(page, "WelcomePage", "Standalone component", "Copy, CTA targets from AuthState, title and meta description")
+  Component(page, "WelcomePage", "Standalone component", "Copy, CTA targets from AuthState and the route title")
   Component(dialog, "PitchVideoDialog", "Dialog content", "tl-dialog + tl-video-player")
 }
 System_Boundary(cmp, "@tutumuch/components") {
   Component(hero, "tl-marketing-hero + tl-shapes", "Components", "Plum showcase band, party-pop blobs and polka dots, reduced motion")
   Component(band, "tl-feature-band + tl-steps", "Components", "Shopper, seller and how-it-works bands")
   Component(poster, "tl-video-poster", "Component", "Poster as a play button; nothing autoplays")
-  Component(player, "tl-video-player", "Component", "Sources, captions toggle, transcript link, loading and error")
+  Component(player, "tl-video-player", "Component", "Sources, captions toggle (off by default), loading and error")
   Component(dlg, "DialogService", "Service", "Modal, Escape, focus return")
   Component(footer, "tl-footer", "Component", "About TuTuMuch link to /welcome")
 }

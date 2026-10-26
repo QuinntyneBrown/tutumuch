@@ -4294,6 +4294,3 @@ h4,
   align-items: center;
   gap: var(--space-2);
 }
-.video-player__transcript {
-  margin-left: auto;
-}

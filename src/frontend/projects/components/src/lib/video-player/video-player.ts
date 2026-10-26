@@ -21,8 +21,8 @@ export interface VideoSource {
 type PlayerState = 'loading' | 'ready' | 'error';
 
 /**
- * Captioned video with native controls plus Play/Pause, a Captions toggle and a transcript link
- * (design system: Video player). Shows a spinner until it can play and a plain error with Try
+ * Captioned video with native controls plus Play/Pause and a Captions toggle, captions off until
+ * the viewer turns them on (design system: Video player). Shows a spinner until it can play and a plain error with Try
  * again when every source fails. `autoplay` starts playback on render; use it only after the
  * visitor asked to watch.
  */
@@ -37,7 +37,6 @@ export class VideoPlayerComponent {
   readonly label = input.required<string>();
   readonly sources = input.required<VideoSource[]>();
   readonly captions = input.required<string>();
-  readonly transcript = input.required<string>();
   readonly poster = input('');
   readonly autoplay = input(false);
 

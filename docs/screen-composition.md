@@ -379,20 +379,20 @@ uploads at once and a save sends the photo IDs in order. The footer stays visibl
 
 Built in `@tutumuch/marketing` (`src/lib/welcome/`) by the marketing page. Calls no TuTuMuch API
 endpoint; the shell's `AuthState` decides the seller target. Title "Twirl it forward · TuTuMuch"
-(route `title`) and a meta description set by `WelcomePage`. The copy says everything is for
+(route `title`); the meta description and link-preview tags are static in `index.html`. The copy says everything is for
 girls and never promises boys' or adult sizes ([ADR general/0005](adr/general/0005-marketing-wording.md)).
 
 - Library: `tl-marketing-hero` (hero: eyebrow "Clothes · Dance · Sports · Gear, all for
   girls", h1 "Twirl it *forward.*", lede, actions; closing: h2 "Her next favourite thing is
   *waiting.*", lede "New listings every day, every one for girls.", `variant="closing"`),
   `tl-shapes` (party-pop blobs and polka dots inside the hero; `quiet` in the closing band),
-  `tl-video-poster` (media slot, "Watch the 30-second pitch", 0:30), `tl-feature-band` (For
+  `tl-video-poster` (media slot, "Play", 0:30), `tl-feature-band` (For
   shoppers "Everything here is for girls." with three points and "Browse the catalog"; For
-  sellers "Pass it on to the next girl.", `surface`, with three points and "Start selling";
+  sellers "Pass it on to the next girl.", `surface`, with two points and "Start selling";
   How it works "Three steps. That’s it.", `stacked`), `tl-steps` (List it, Sell it, Get
   paid), `tlButton` (primary "Shop the catalog" to `/`; "Start selling" to `/join`, or `/sell`
   for a member), `DialogService` (opens the pitch video dialog)
-- Local: `WelcomePage` (copy, CTA targets from `AuthState.member()`, meta description) and
+- Local: `WelcomePage` (copy, CTA targets from `AuthState.member()`) and
   `PitchVideoDialog`.
 
 ### Privacy — `/privacy` (`pages/privacy`: default)
@@ -448,7 +448,7 @@ Built by resolve-order-problems in `@tutumuch/orders` (`src/lib/problem-detail/`
 | Ask to cancel (`dialogs/request-cancellation`: default, busy, failed) | `DialogService` | `tl-dialog` (description "If {seller} accepts, you’re refunded in full. Until then the order stays as is."), `tl-form-field` (textarea "Message to {seller}", optional, focused on open), `tl-alert` (danger "That didn’t go through" in the top slot; the message is kept), `tl-button` ("Keep order", disabled while busy; primary "Send request" with busy, "Try again" after a failure) | `RequestCancellationDialog` in `@tutumuch/orders` |
 | Respond to cancellation (`dialogs/respond-cancellation`: default, busy, failed) | `DialogService` | `tl-dialog` (heading "{buyer} asked to cancel", description "Accepting refunds {total} in full. Declining keeps the order — you still ship by {date}."), `tl-quote` (the buyer's message), `tl-alert` (danger "That didn’t go through" in the top slot), `tl-button` ("Decline"; primary "Accept and refund", focused; the chosen one shows busy and the other is disabled) | `RespondCancellationDialog` in `@tutumuch/orders` |
 | Withdraw listing (`dialogs/withdraw-listing`: default, busy, failed) | `DialogService` | `tl-dialog` (`size="sm"`, icon `trash`, tone danger, title "Withdraw “{title}”?", description "It leaves the shop right away. This can’t be undone."), `tl-alert` (danger "Couldn’t withdraw" / "Your listing is still live." in the top slot after a failure), `tl-button` ("Keep listing", focused, disabled while busy; danger "Withdraw" with busy, "Try again" after a failure) | `WithdrawListingDialog` in `@tutumuch/catalog` (ADR listings/0003); on success the page goes to `/account/listings` |
-| Pitch video (`dialogs/pitch-video`: default, loading, error, captions) | `DialogService` | `tl-dialog` (`size="lg"`, heading "TuTuMuch in 30 seconds"), `tl-video-player` (MP4 and WebM sources, English captions, poster, transcript link "Read the transcript"; Play/Pause, Captions toggle; loading spinner; error "The video didn’t load" with Try again) | `PitchVideoDialog` in `@tutumuch/marketing` |
+| Pitch video (`dialogs/pitch-video`: default, loading, error, captions) | `DialogService` | `tl-dialog` (`size="lg"`, heading "TuTuMuch video" with `headingHidden`), `tl-video-player` (MP4 and WebM sources, English captions off by default, poster; Play/Pause, Captions toggle; loading spinner; error "The video didn’t load" with Try again) | `PitchVideoDialog` in `@tutumuch/marketing` |
 | Cookie settings (`dialogs/cookie-settings`: default, analytics-on) | `DialogService` through `CookieSettingsDialogService` | `tl-dialog` (size `sm`, heading "Cookie settings"), `tl-switch` with `hint` "Strictly necessary" ("Sign-in and checkout. Always on.", checked and disabled) and "Analytics" ("Helps us see which pages are slow.", `autofocus`), `tl-button` (Cancel; primary Save) | `CookieSettingsDialog` in `@tutumuch/privacy` |
 | Resolve problem (`dialogs/resolve-problem`: default, invalid, busy) | `DialogService` | `tl-dialog` (heading "Resolve problem {reference}"), `tl-radio-group` (legend "Decision") with `tl-choice` "Refund buyer in full" ("{total} to {buyer} · no payout") and "Release payout to seller" ("Order completes · {seller} is paid"), `tl-form-field` (textarea "Reason", help "Sent to both members.", error "Add a reason. Both members see it."), `tl-alert` (danger after a failure), `tl-button` (Cancel, disabled while busy; primary "Refund buyer" or "Release payout", busy "Refunding" or "Releasing") | `ResolveProblemDialog` in `@tutumuch/orders` |
 

@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, computed, inject } from '@angular/core';
-import { Meta } from '@angular/platform-browser';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthState } from '@tutumuch/api';
 import {
@@ -15,11 +14,10 @@ import {
 
 import { PitchVideoDialog } from './pitch-video-dialog';
 
-const DESCRIPTION =
-  'New and gently loved clothes and gear for girls: clothes, shoes, dance and sports gear, cameras, toys and more. Shop her next favourite thing, or pass on what she has outgrown.';
-
 /**
- * Public marketing page at /welcome (L2-078 to L2-083). Static copy, no TuTuMuch API call of its own;
+ * Public marketing page at /welcome (L2-078 to L2-083). The meta description and link-preview tags
+ * are static in index.html (index.marketing.html for the marketing build) because crawlers do not run
+ * scripts. Static copy, no TuTuMuch API call of its own;
  * Start selling goes to /join for a visitor and /sell for a member. Copy follows ADR general/0005:
  * every listing is for girls; never promise boys' or adult sizes.
  */
@@ -37,10 +35,9 @@ const DESCRIPTION =
   styleUrl: './welcome-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WelcomePage implements OnDestroy {
+export class WelcomePage {
   private readonly auth = inject(AuthState);
   private readonly dialogs = inject(DialogService);
-  private readonly meta = inject(Meta);
 
   readonly sellHref = computed(() => (this.auth.member() ? '/sell' : '/join'));
 
@@ -55,7 +52,6 @@ export class WelcomePage implements OnDestroy {
   readonly sellerPoints: FeaturePoint[] = [
     { title: 'List in minutes', text: 'Photos, a price and the condition. That’s it.' },
     { title: 'Families are already looking', text: 'Sell to parents who need exactly what she has outgrown.' },
-    { title: '10% fee, only when it sells', text: 'Taken when the order completes. Listing is free.' },
   ];
   readonly steps: Step[] = [
     { title: 'List it', text: 'Add photos, a price and the condition.' },
@@ -63,15 +59,7 @@ export class WelcomePage implements OnDestroy {
     { title: 'Get paid', text: 'The order completes and your payout is on its way.' },
   ];
 
-  constructor() {
-    this.meta.updateTag({ name: 'description', content: DESCRIPTION });
-  }
-
   openVideo(): void {
     this.dialogs.open(PitchVideoDialog);
-  }
-
-  ngOnDestroy(): void {
-    this.meta.removeTag('name="description"');
   }
 }

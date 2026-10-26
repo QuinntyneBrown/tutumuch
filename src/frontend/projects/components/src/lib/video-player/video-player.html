@@ -25,7 +25,7 @@
       <div class="video-player__state" role="alert">
         <tl-icon name="alert" size="lg" />
         <strong>The video didn’t load</strong>
-        <p>Check your connection and try again, or read the transcript.</p>
+        <p>Check your connection and try again.</p>
         <button tlButton="primary" type="button" (click)="retry()"><tl-icon name="refresh" />Try again</button>
       </div>
     }
@@ -39,8 +39,5 @@
         <tl-icon name="captions" />Captions
       </button>
     }
-    <a tlButton="link" class="video-player__transcript" [href]="transcript()" target="_blank" rel="noopener"
-      >Read the transcript</a
-    >
   </div>
 </div>

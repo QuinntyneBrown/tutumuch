@@ -62,7 +62,7 @@ General marketplaces bury girls' things among everything else. On TuTuMuch every
 | Privacy       | Partial   | Cookie consent; account closure and erasure are planned                                                                                        |
 | Reviews       | Available | Public seller profile; ratings show "No reviews yet"                                                                                           |
 | Notifications | Available | Transactional email through an outbox, email preferences and one-click unsubscribe                                                             |
-| Marketing     | Available | Public page at `/welcome` for shoppers and sellers with a captioned 30-second pitch video; linked as "About TuTuMuch" in the footer            |
+| Marketing     | Available | Public page at `/welcome` for shoppers and sellers with a 30-second pitch video (captions on request) and link-preview tags; linked as "About TuTuMuch" in the footer            |
 
 Overall progress and effort are tracked in [docs/estimates](docs/estimates/README.md). Moderation, writing reviews and personal data export are deferred by [ADR-0001](docs/adr/general/0001-defer-moderation-reviews-and-data-export.md).
 

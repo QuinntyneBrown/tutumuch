@@ -8,13 +8,7 @@
     <a tlButton="primary" size="lg" routerLink="/">Shop the catalog</a>
     <a tlButton size="lg" [routerLink]="sellHref()">Start selling</a>
   </ng-container>
-  <tl-video-poster
-    media
-    poster="/media/tutumuch-pitch-poster.png"
-    label="Watch the 30-second pitch"
-    duration="0:30"
-    (watch)="openVideo()"
-  />
+  <tl-video-poster media poster="/media/tutumuch-pitch-poster.png" label="Play" duration="0:30" (watch)="openVideo()" />
 </tl-marketing-hero>
 
 <tl-feature-band

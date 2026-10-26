@@ -102,7 +102,7 @@ tutumuch/
 │       └── projects/
 │           ├── tutumuch/         the application (projectType "application")
 │           │   ├── src/app/     app.config.ts, app.routes.ts, shells only
-│           │   └── public/media/ pitch video, captions, transcript and poster (ADR platform/0011)
+│           │   └── public/media/ pitch video, captions, poster and share image (ADR platform/0011)
 │           ├── api/             library: typed HTTP services, DTOs, auth state, interceptors
 │           ├── components/      library: design-system components and styles
 │           ├── accounts/        library: feature area
