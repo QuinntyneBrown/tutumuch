@@ -2,6 +2,7 @@
 
 | Design | Effort | Complete |
 |---|---|---|
+| deploy-to-production | 2 days | 100% |
 | harden-http-and-api | 5 days | 0% |
 | keep-available-and-recoverable | 4 days | 0% |
 | marketing-page | 5 days | 100% |
