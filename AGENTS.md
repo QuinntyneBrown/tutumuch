@@ -71,9 +71,11 @@ first and record the change as an ADR.
 tutumuch/
 ├── AGENTS.md
 ├── README.md
-├── .github/workflows/          ci.yml runs `npm run verify` on ubuntu-latest
+├── .github/workflows/          ci.yml runs `npm run verify` on ubuntu-latest; deploy.yml deploys green pushes to main
+├── deploy/                      production stack: compose, Dockerfiles, Caddyfile, cloud-init (ADR platform/0012)
 ├── docs/
 │   ├── journeys.md              user journeys with effort
+│   ├── deployment.md            production host, deploy workflow, rollback
 │   ├── specs/                   L1.md and L2.md requirements
 │   ├── mocks/                   generated HTML mocks (_build/ holds the Python sources)
 │   ├── design-system/           tokens and components extracted from the mocks

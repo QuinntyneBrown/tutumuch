@@ -11,6 +11,9 @@ handle /photos/* {
 }
 
 handle {
+	# index.html and SPA routes must revalidate so a deploy shows up at once; hashed assets can be cached.
+	@entry not path *.js *.css *.png *.jpg *.svg *.ico *.webp *.mp4 *.webm *.vtt *.woff2
+	header @entry Cache-Control "no-cache"
 	root * /srv
 	try_files {path} /index.html
 	file_server

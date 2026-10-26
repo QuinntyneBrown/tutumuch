@@ -39,6 +39,8 @@ not gate a deploy on a green `verify`, and set no memory or log limits for a sma
 - **Small-VM limits.** Every service has a `mem_limit`, Docker `json-file` log rotation,
   and one replica. Caddy sends `Cache-Control: no-cache` for `index.html` and SPA routes
   so a deploy shows on the next page load; hashed assets stay cacheable.
+- **Folders.** `deploy/` (compose file, Dockerfiles, Caddyfile, cloud-init, `.env.example`)
+  and `docs/deployment.md` are added to the mandatory layout in `AGENTS.md`.
 - **Rollback.** Run the Deploy workflow by hand with `ref` set to an older SHA, or set
   `IMAGE_TAG` in `/opt/tutumuch/.env` on the VM and run `docker compose up -d`.
   Migrations are forward-only, so a rollback past a schema change needs a compatible
