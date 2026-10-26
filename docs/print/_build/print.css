@@ -1,0 +1,94 @@
+/* TuTuMuch print collateral: shared fonts, brand tokens and idioms.
+
+   Colours are the TuTuMuch brand palette from
+   docs/design-system/tokens/tokens.css (Raspberry, Lilac, Blush, Sunny, Cream,
+   Ink, Muted). Type is Titan One (the wordmark face, already shipped by the
+   app in projects/tutumuch/public/fonts) for display, and Nunito, Giddy's
+   rounded sans, for everything else. Both travel with these files under
+   fonts/ with their SIL Open Font Licence texts, so rendering never touches
+   the network. */
+
+@font-face {
+  font-family: "Titan One";
+  src: url("fonts/titan-one-latin.woff2") format("woff2");
+  font-weight: 400;
+  font-display: block;
+}
+
+@font-face {
+  font-family: "Nunito";
+  src: url("fonts/Nunito-Variable.ttf") format("truetype");
+  font-weight: 200 1000;
+  font-display: block;
+}
+
+:root {
+  --raspberry: #d6336c;
+  --raspberry-700: #c2255c;
+  --raspberry-800: #a61e4d;
+  --blush: #fde2ea;
+  --dot: #f29bbc;
+  --lilac: #9b7fd4;
+  --lilac-300: #b9a3e8;
+  --lilac-200: #e3d8fa;
+  --lilac-700: #6a4fb0;
+  --sunny: #f6c64b;
+  --cream: #fff8f5;
+  --ink: #3a2233;
+  --muted: #78616e;
+  --white: #ffffff;
+
+  --font-display: "Titan One", "Arial Rounded MT Bold", sans-serif;
+  --font-body: "Nunito", ui-rounded, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  font-family: var(--font-body);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+[data-wordmark] { display: inline-block; line-height: 0; }
+[data-wordmark] svg { width: 100%; height: auto; display: block; }
+
+/* Chunky display type with the wordmark's plum outline. paint-order puts the
+   stroke behind the fill, so the letters keep their full weight. */
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.005em;
+}
+.outlined {
+  -webkit-text-stroke: 0.1em var(--ink);
+  paint-order: stroke fill;
+}
+
+/* Polka dots and gingham, the wordmark's two fills, as surfaces. */
+.dots {
+  background-color: var(--white);
+  background-image: radial-gradient(var(--dot) 22%, transparent 24%);
+}
+.gingham {
+  background-color: var(--lilac-200);
+  background-image: conic-gradient(var(--lilac-300) 25%, transparent 0 50%, var(--lilac-300) 0 75%, transparent 0);
+}
+
+/* A sticker-style raised chip: thick plum outline and a hard offset shadow,
+   the same idiom as the wordmark's drop shadow. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.09em solid var(--ink);
+  border-radius: 999px;
+  box-shadow: 0.08em 0.1em 0 var(--ink);
+  white-space: nowrap;
+}
+
+.char { display: block; height: auto; }

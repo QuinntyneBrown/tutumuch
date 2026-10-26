@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>TuTuMuch sticker 3: Hi, I'm Tilly!</title>
+    <link rel="stylesheet" href="../print.css" />
+    <link rel="stylesheet" href="_stage.css" />
+    <style>
+      .tilly { left: 395px; top: 150px; height: 610px; }
+      .bubble { left: 75px; top: 95px; width: 400px; height: 300px; }
+      .bubble-text {
+        left: 95px; top: 150px; width: 360px; text-align: center; font-size: 66px; line-height: 1.02;
+        color: var(--raspberry);
+      }
+      .url {
+        left: 95px; top: 655px; padding: 10px 28px; transform: rotate(-4deg);
+        font: 900 32px/1 var(--font-body); letter-spacing: 0.04em; background: var(--blush); color: var(--ink);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Tilly's "Hello, friend" pose on a stack of folded clothes, with a speech bubble. -->
+    <div class="stage">
+      <svg class="bubble" viewBox="0 0 400 300">
+        <path d="M200 14 C310 14 386 62 386 132 C386 200 316 248 220 250 L300 292 L170 248 C78 240 14 192 14 132 C14 62 90 14 200 14Z"
+          fill="#FFFFFF" stroke="#3A2233" stroke-width="10" stroke-linejoin="round"/>
+      </svg>
+      <div class="bubble-text display">Hi, I’m Tilly!</div>
+      <img class="char tilly" src="../../characters/tilly-hello.png" alt="" />
+      <div class="chip url">TUTUMUCH.KIDS</div>
+    </div>
+    <script src="../wordmark.js"></script>
+  </body>
+</html>

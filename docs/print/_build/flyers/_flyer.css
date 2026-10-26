@@ -1,0 +1,50 @@
+/* Flyer sheet: US Letter 8.5 x 11 in plus 0.125 in bleed on every side
+   (8.75 x 11.25 in = 840 x 1080 CSS px at 96/in). The trim is 12px in; keep
+   words and the QR code inside the safe area, 48px in (0.375 in inside trim).
+   ?trim=1 crops the bleed off for the Letter PDF you can print at home.
+   ?guides=1 draws the trim (solid) and safe (dashed) lines. */
+@page { size: 8.75in 11.25in; margin: 0; }
+html, body { background: #ffffff; }
+.sheet { position: relative; width: 840px; height: 1080px; overflow: hidden; background: var(--cream); }
+.sheet > * { position: absolute; }
+
+body.trim { width: 816px; height: 1056px; overflow: hidden; }
+body.trim .sheet { transform: translate(-12px, -12px); }
+body.trim { --page: 8.5in 11in; }
+
+body.guides .sheet::before, body.guides .sheet::after { content: ""; position: absolute; pointer-events: none; z-index: 20; }
+body.guides .sheet::before { inset: 12px; outline: 1px solid #ff00ff; }
+body.guides .sheet::after { inset: 48px; outline: 1px dashed #00b3ff; }
+
+.eyebrow {
+  padding: 6px 18px 7px; font: 900 15px/1 var(--font-body); letter-spacing: 0.08em; text-transform: uppercase;
+  background: var(--sunny); color: var(--ink);
+}
+.lede { margin: 0; font: 600 21px/1.4 var(--font-body); }
+
+.panel {
+  border: 4px solid var(--ink); border-radius: 28px; box-shadow: 6px 8px 0 var(--ink); background: var(--white);
+}
+.panel h2 { margin: 0; font: 400 34px/1.05 var(--font-display); color: var(--raspberry); }
+
+.steps { margin: 0; padding: 0; list-style: none; display: grid; gap: 14px; }
+.steps li { display: grid; grid-template-columns: 40px 1fr; gap: 12px; align-items: start; font: 600 17px/1.35 var(--font-body); }
+.steps b { display: block; font: 900 19px/1.25 var(--font-body); color: var(--ink); }
+.steps .n {
+  width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center;
+  font: 400 21px/1 var(--font-display); color: var(--white); background: var(--raspberry); border: 3px solid var(--ink);
+}
+.ticks { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; }
+.ticks li { display: grid; grid-template-columns: 30px 1fr; gap: 10px; font: 600 17px/1.35 var(--font-body); }
+.ticks b { display: block; font: 900 19px/1.25 var(--font-body); }
+.ticks svg { width: 30px; height: 30px; }
+
+/* Footer band: QR code + the call to action. */
+.cta { left: 0; right: 0; bottom: 0; height: 230px; background: var(--ink); color: var(--white); }
+.cta__qr { position: absolute; left: 60px; top: 26px; width: 150px; height: 150px; padding: 10px; border-radius: 18px; background: var(--white); }
+.cta__qr img { width: 100%; height: 100%; display: block; }
+.cta__copy { position: absolute; left: 244px; top: 30px; right: 60px; }
+.cta__head { margin: 0; font: 400 34px/1.05 var(--font-display); white-space: nowrap; }
+.cta__head em { font-style: normal; color: var(--sunny); }
+.cta__url { margin: 12px 0 0; font: 900 30px/1 var(--font-body); color: var(--dot); letter-spacing: 0.01em; }
+.cta__small { margin: 12px 0 0; font: 600 16px/1.4 var(--font-body); color: #ead9e2; }

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><!-- A girl's bike with a basket, drawn for print in the style of docs/mocks/assets/items. -->
+<g stroke="#3a2440" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+<circle cx="52" cy="136" r="32" fill="none" stroke="#3a2440" stroke-width="9"/><circle cx="52" cy="136" r="32" fill="none" stroke="#f48fb1" stroke-width="4"/>
+<circle cx="150" cy="136" r="32" fill="none" stroke="#3a2440" stroke-width="9"/><circle cx="150" cy="136" r="32" fill="none" stroke="#f48fb1" stroke-width="4"/>
+<circle cx="52" cy="136" r="5" fill="#fff"/><circle cx="150" cy="136" r="5" fill="#fff"/>
+<path d="M52 136 L88 136 L72 84 M88 136 L136 84 L72 84 M136 84 L150 136" fill="none" stroke="#3a2440" stroke-width="9"/>
+<path d="M52 136 L88 136 L72 84 M88 136 L136 84 L72 84 M136 84 L150 136" fill="none" stroke="#ce93d8" stroke-width="4.5"/>
+<path d="M136 84 L130 56" fill="none" stroke="#3a2440" stroke-width="7"/>
+<path d="M118 54 Q132 46 146 52" fill="none" stroke="#3a2440" stroke-width="7"/>
+<path d="M58 72 Q72 64 86 72 Q72 78 58 72 Z" fill="#f48fb1"/>
+<path d="M146 50 L176 50 L170 80 L150 80 Z" fill="#fff59d"/>
+<path d="M150 58 L172 58 M152 66 L171 66 M153 73 L170 73" fill="none" stroke="#e0b84c" stroke-width="2"/>
+<circle cx="158" cy="44" r="6" fill="#f48fb1"/><circle cx="168" cy="46" r="5" fill="#ce93d8"/>
+<circle cx="88" cy="136" r="9" fill="#fff"/>
+</g></svg>
