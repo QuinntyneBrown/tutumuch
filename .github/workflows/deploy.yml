@@ -121,7 +121,7 @@ jobs:
       - name: Smoke test
         run: |
           for i in $(seq 1 20); do
-            curl -fsS "https://${SITE_HOST}/api/health" && exit 0
+            curl -fsS --max-time 10 "https://${SITE_HOST}/api/health" && exit 0
             sleep 6
           done
           echo "health check failed" && exit 1

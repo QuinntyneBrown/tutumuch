@@ -53,7 +53,7 @@ public sealed partial class DeploymentPipelineTests
     [Fact]
     public void A_failed_health_check_fails_the_run()
     {
-        Assert.Contains("curl -fsS \"https://${SITE_HOST}/api/health\" && exit 0", Workflow);
+        Assert.Contains("curl -fsS --max-time 10 \"https://${SITE_HOST}/api/health\" && exit 0", Workflow);
         Assert.Contains("echo \"health check failed\" && exit 1", Workflow);
     }
 
