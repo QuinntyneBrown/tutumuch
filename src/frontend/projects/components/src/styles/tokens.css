@@ -570,28 +570,201 @@
 }
 
 /* ==========================================================================
+   TuTuMuch brand palette.
+
+   TuTuMuch uses the Giddy design system (everything above) with its own
+   colours, taken from the TuTuMuch logo: plum outline #382835, raspberry
+   shadow #b8336a, bubblegum dots #e39ac0 and lavender checks #b1a2e5 /
+   #ebe5fa. This block adds those primitives and points Giddy's semantic
+   colour tokens at them; type, space, shape, elevation and motion stay
+   Giddy's. Contrast checked for WCAG 2.2 AA in both themes.
+   ========================================================================== */
+
+:root,
+[data-theme='light'] {
+  --palette-raspberry-50: #fdf1f6;
+  --palette-raspberry-100: #fbe0ec;
+  --palette-raspberry-200: #f6bfd6;
+  --palette-raspberry-300: #ee94b8;
+  --palette-raspberry-400: #df6496;
+  --palette-raspberry-500: #cc4580;
+  --palette-raspberry-600: #b8336a; /* logo shadow */
+  --palette-raspberry-700: #9b2a59;
+  --palette-raspberry-800: #7d2148;
+  --palette-raspberry-900: #5f1937;
+  --palette-raspberry-950: #3d1023;
+
+  --palette-bubblegum-50: #fdf3f8;
+  --palette-bubblegum-100: #f9e3ee;
+  --palette-bubblegum-200: #f2c7dc;
+  --palette-bubblegum-300: #e39ac0; /* logo dots */
+  --palette-bubblegum-400: #d777a8;
+  --palette-bubblegum-500: #c35a91;
+
+  --palette-lavender-50: #f8f5ff;
+  --palette-lavender-100: #efeafc; /* logo light check */
+  --palette-lavender-200: #e1d9f8;
+  --palette-lavender-300: #ccc0f1;
+  --palette-lavender-400: #b1a2e5; /* logo dark check */
+  --palette-lavender-500: #9585d7;
+  --palette-lavender-600: #7766c5;
+  --palette-lavender-700: #5f4fa8;
+  --palette-lavender-800: #493c86;
+  --palette-lavender-900: #342b62;
+  --palette-lavender-950: #1f1a3d;
+
+  --palette-plum-50: #f8f3f6;
+  --palette-plum-100: #ede3ea;
+  --palette-plum-200: #d9c9d5;
+  --palette-plum-300: #bfa9ba;
+  --palette-plum-400: #9c8498;
+  --palette-plum-500: #7a6276;
+  --palette-plum-600: #5f4a5b;
+  --palette-plum-700: #4a3646;
+  --palette-plum-800: #382835; /* logo outline */
+  --palette-plum-850: #2e212b;
+  --palette-plum-900: #251a22;
+  --palette-plum-950: #1c1319;
+  --palette-plum-990: #150e13;
+
+  /* Semantic colour (light) */
+  --color-bg-canvas: var(--palette-lavender-50);
+  --color-bg-surface-sunken: var(--palette-lavender-100);
+  --color-bg-subtle: var(--palette-lavender-100);
+  --color-bg-subtle-hover: var(--palette-lavender-200);
+  --color-bg-inverse: var(--palette-plum-800);
+
+  --color-fg-default: var(--palette-plum-800);
+  --color-fg-muted: var(--palette-plum-600);
+  --color-fg-subtle: var(--palette-plum-500);
+  --color-fg-disabled: var(--palette-plum-300);
+  --color-fg-link: var(--palette-raspberry-700);
+  --color-fg-link-hover: var(--palette-raspberry-800);
+
+  --color-border-default: var(--palette-lavender-200);
+  --color-border-strong: var(--palette-plum-400);
+  --color-border-inverse: var(--palette-plum-600);
+
+  --color-accent: var(--palette-raspberry-600);
+  --color-accent-hover: var(--palette-raspberry-700);
+  --color-accent-active: var(--palette-raspberry-800);
+  --color-accent-subtle: var(--palette-lavender-100);
+  --color-accent-subtle-hover: var(--palette-lavender-200);
+  --color-fg-accent: var(--palette-raspberry-700);
+  --color-focus-ring: var(--palette-raspberry-600);
+  --color-accent-press: var(--palette-raspberry-800);
+
+  --color-pop-pink-bg: var(--palette-bubblegum-100);
+  --color-pop-pink-fg: var(--palette-raspberry-800);
+  --color-pop-grape-bg: var(--palette-lavender-100);
+  --color-pop-grape-fg: var(--palette-lavender-800);
+  --color-hero-from: var(--palette-raspberry-600);
+  --color-hero-to: var(--palette-lavender-600);
+}
+
+[data-theme='dark'] {
+  --color-bg-canvas: var(--palette-plum-950);
+  --color-bg-surface: var(--palette-plum-900);
+  --color-bg-surface-raised: var(--palette-plum-850);
+  --color-bg-surface-sunken: var(--palette-plum-990);
+  --color-bg-subtle: var(--palette-plum-800);
+  --color-bg-subtle-hover: var(--palette-plum-700);
+  --color-bg-inverse: var(--palette-lavender-100);
+
+  --color-fg-default: #f8f1f6;
+  --color-fg-muted: #d6c6d2;
+  --color-fg-subtle: #b8a4b4;
+  --color-fg-disabled: var(--palette-plum-600);
+  --color-fg-inverse: var(--palette-plum-800);
+  --color-fg-link: var(--palette-bubblegum-300);
+  --color-fg-link-hover: var(--palette-bubblegum-200);
+
+  --color-border-default: var(--palette-plum-700);
+  --color-border-strong: #a28c9e;
+  --color-border-inverse: var(--palette-plum-300);
+
+  --color-accent: var(--palette-bubblegum-300);
+  --color-accent-hover: var(--palette-bubblegum-200);
+  --color-accent-active: var(--palette-bubblegum-100);
+  --color-accent-subtle: var(--palette-raspberry-950);
+  --color-accent-subtle-hover: var(--palette-raspberry-900);
+  --color-fg-on-accent: var(--palette-plum-950);
+  --color-fg-accent: var(--palette-bubblegum-300);
+  --color-focus-ring: var(--palette-bubblegum-300);
+  --color-accent-press: var(--palette-raspberry-600);
+
+  --color-pop-pink-bg: var(--palette-raspberry-950);
+  --color-pop-pink-fg: var(--palette-bubblegum-300);
+  --color-pop-grape-bg: var(--palette-lavender-950);
+  --color-pop-grape-fg: var(--palette-lavender-200);
+  --color-hero-from: var(--palette-raspberry-800);
+  --color-hero-to: var(--palette-lavender-800);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --color-bg-canvas: var(--palette-plum-950);
+    --color-bg-surface: var(--palette-plum-900);
+    --color-bg-surface-raised: var(--palette-plum-850);
+    --color-bg-surface-sunken: var(--palette-plum-990);
+    --color-bg-subtle: var(--palette-plum-800);
+    --color-bg-subtle-hover: var(--palette-plum-700);
+    --color-bg-inverse: var(--palette-lavender-100);
+
+    --color-fg-default: #f8f1f6;
+    --color-fg-muted: #d6c6d2;
+    --color-fg-subtle: #b8a4b4;
+    --color-fg-disabled: var(--palette-plum-600);
+    --color-fg-inverse: var(--palette-plum-800);
+    --color-fg-link: var(--palette-bubblegum-300);
+    --color-fg-link-hover: var(--palette-bubblegum-200);
+
+    --color-border-default: var(--palette-plum-700);
+    --color-border-strong: #a28c9e;
+    --color-border-inverse: var(--palette-plum-300);
+
+    --color-accent: var(--palette-bubblegum-300);
+    --color-accent-hover: var(--palette-bubblegum-200);
+    --color-accent-active: var(--palette-bubblegum-100);
+    --color-accent-subtle: var(--palette-raspberry-950);
+    --color-accent-subtle-hover: var(--palette-raspberry-900);
+    --color-fg-on-accent: var(--palette-plum-950);
+    --color-fg-accent: var(--palette-bubblegum-300);
+    --color-focus-ring: var(--palette-bubblegum-300);
+    --color-accent-press: var(--palette-raspberry-600);
+
+    --color-pop-pink-bg: var(--palette-raspberry-950);
+    --color-pop-pink-fg: var(--palette-bubblegum-300);
+    --color-pop-grape-bg: var(--palette-lavender-950);
+    --color-pop-grape-fg: var(--palette-lavender-200);
+    --color-hero-from: var(--palette-raspberry-800);
+    --color-hero-to: var(--palette-lavender-800);
+  }
+}
+
+/* ==========================================================================
    TuTuMuch layout tokens.
 
    TuTuMuch keeps the 12L layout and components and takes its whole look
    (colour, type, shape, elevation, motion) from the Giddy design system
-   above. The tokens below name things only the 12L layout uses; each one
+   and the TuTuMuch brand palette above. The tokens below name things only the 12L layout uses; each one
    aliases a Giddy token, so Giddy stays the single source of the look.
    ========================================================================== */
 
 :root,
 [data-theme='light'] {
   /* 12L primitive names mapped onto Giddy's palette. */
-  --palette-ink-950: var(--palette-night-990);
-  --palette-ink-900: var(--palette-night-950);
-  --palette-ink-850: var(--palette-night-900);
-  --palette-ink-800: var(--palette-night-850);
-  --palette-ink-700: var(--palette-night-800);
-  --palette-ink-600: var(--palette-night-700);
+  --palette-ink-950: var(--palette-plum-990);
+  --palette-ink-900: var(--palette-plum-950);
+  --palette-ink-850: var(--palette-plum-900);
+  --palette-ink-800: var(--palette-plum-850);
+  --palette-ink-700: var(--palette-plum-800);
+  --palette-ink-600: var(--palette-plum-700);
 
   --palette-paper-25: var(--palette-white);
-  --palette-paper-50: var(--palette-cream-50);
-  --palette-paper-100: var(--palette-cream-100);
-  --palette-paper-200: var(--palette-cream-200);
+  --palette-paper-50: var(--palette-lavender-50);
+  --palette-paper-100: var(--palette-lavender-100);
+  --palette-paper-200: var(--palette-lavender-200);
   --palette-paper-300: var(--palette-gray-200);
   --palette-paper-400: var(--palette-gray-300);
 
@@ -602,16 +775,16 @@
   --palette-stone-600: var(--palette-gray-600);
   --palette-stone-700: var(--palette-gray-700);
 
-  --palette-signal-300: var(--palette-grape-300);
-  --palette-signal-500: var(--palette-grape-600);
+  --palette-signal-300: var(--palette-raspberry-300);
+  --palette-signal-500: var(--palette-raspberry-600);
   --palette-red-800: var(--palette-red-700);
 
   /* Listing photo wells: Giddy's party-pop tints. */
-  --photo-bg-1: var(--palette-pink-100);
+  --photo-bg-1: var(--palette-bubblegum-100);
   --photo-bg-2: var(--palette-mint-100);
   --photo-bg-3: var(--palette-sun-100);
   --photo-bg-4: var(--palette-sky-100);
-  --photo-bg-5: var(--palette-grape-50);
+  --photo-bg-5: var(--palette-lavender-100);
   --photo-bg-6: var(--palette-orange-100);
 
   --font-weight-black: var(--font-weight-heavy);
