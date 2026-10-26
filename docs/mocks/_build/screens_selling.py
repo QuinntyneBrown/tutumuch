@@ -4,7 +4,7 @@ from mk import *
 FEE = FEE_PERCENT / 100
 
 # A new listing Tessa is creating in the sell form (not yet in the catalog).
-NEW = {"cat": "Dresses", "sub": "Tutus", "title": "Lilac sparkle tutu", "brand": "Janie and Jack", "cond": "Used - Good",
+NEW = {"cat": "Dance", "sub": "Tutus", "title": "Lilac sparkle tutu", "brand": "Janie and Jack", "cond": "Used - Good",
        "desc": "Worn to two birthday parties. Tulle is still full and the waistband is soft. Washed and ready to twirl.", "price": "24.00", "ship": "5.00"}
 
 
@@ -71,7 +71,7 @@ def sell_form(v: dict, *, photos=(), errors: dict | None = None, rejected: bool 
     p = float(v["price"]) if v.get("price") and not e.get("price") else None
     s = float(v["ship"]) if v.get("ship") else 0.0
     earnings = earn(p, s) if p is not None else "—"
-    label_text = "This item is labelled in girls' sizing"
+    label_text = "This item is for girls"
     conf_err = ' aria-invalid="true" aria-describedby="confirm-error"' if e.get("confirm") else ""
     confirm = (f'<label class="choice"><input type="checkbox" id="confirm" name="confirm"{" checked" if v.get("confirm") else ""}{conf_err}>'
                f'<span>{label_text}</span></label>'
@@ -136,7 +136,7 @@ def _():
     return pg
 
 
-@s.state("filled", "Dresses chosen: size fixed at Girls', three photos with a cover, earnings after the fee.")
+@s.state("filled", "Dance chosen: size fixed at Girls', three photos with a cover, earnings after the fee.")
 def _():
     return sell_page(sell_form({**NEW, "confirm": True}, photos=FILLED_PHOTOS))
 
@@ -145,10 +145,10 @@ def _():
 def _():
     errs = {"photos": "Add at least one photo. Photos must be 10 MB or smaller.",
             "title": "Title must be 5 to 80 characters", "price": "Enter a price from $1.00 to $5,000.00",
-            "flaws": "Describe the item's flaws", "confirm": "Confirm the label shows girls' sizing"}
+            "flaws": "Describe the item's flaws", "confirm": "Confirm this item is for girls"}
     top = error_summary([("photos", "Add at least one photo"), ("title", "Title must be 5 to 80 characters"),
                          ("flaws", "Describe the item's flaws"), ("price", "Enter a price from $1.00 to $5,000.00"),
-                         ("confirm", "Confirm the label shows girls' sizing")])
+                         ("confirm", "Confirm this item is for girls")])
     v = {**NEW, "title": "Tutu", "cond": "Used - Fair", "price": "0.99", "confirm": False}
     pg = sell_page(sell_form(v, rejected=True, errors=errs, top=top))
     pg.notes = note("Errors are announced in a live region; focus moves to the summary (L2-065).", "top: 9rem; right: 1rem;")
@@ -196,7 +196,7 @@ def _():
 # ---------------------------------------------------------------------------
 # Edit listing
 # ---------------------------------------------------------------------------
-SUNDRESS = {"cat": "Dresses", "sub": "Dresses", "title": "Yellow gingham sundress", "brand": "Carter's", "cond": "Used - Fair",
+SUNDRESS = {"cat": "Clothing", "sub": "Dresses", "title": "Yellow gingham sundress", "brand": "Carter's", "cond": "Used - Fair",
             "flaws": ITEMS["sundress"]["flaws"], "desc": "Light cotton with shoulder ties. Loved for a whole summer.", "price": "12.00", "ship": "5.00", "confirm": True}
 SUNDRESS_PHOTOS = [("sundress", 5), ("sundress", 1), ("sundress", 3)]
 
@@ -285,7 +285,7 @@ def _():
 # ---------------------------------------------------------------------------
 ROWS = [  # newest first: (title, photo key or None, price, status, date)
     ("Lilac sparkle tutu", "pink-tutu", "$24", "Draft", "Today"),
-    ("Untitled draft · Tops", None, "—", "Draft", "Yesterday"),
+    ("Untitled draft · Shoes", None, "—", "Draft", "Yesterday"),
     ("Pink heart hoodie", "heart-hoodie", "$38", "Sold", "Sat 24 Oct"),
     ("Yellow gingham sundress", "sundress", "$12", "Active", "Wed 21 Oct"),
     ("Floral cotton shorts", "floral-shorts", "$30", "Sold", "Fri 2 Oct"),
@@ -337,7 +337,7 @@ def _():
 
 @ml.state("empty", "No listings yet: one action, sell an item.")
 def _():
-    return listings_page(empty("tag", "Nothing listed yet", "List a dress, a sweater or anything she’s outgrown.", btn("Sell an item", "primary", P("sell"))), sub="")
+    return listings_page(empty("tag", "Nothing listed yet", "List a dress, a leotard or anything she’s outgrown.", btn("Sell an item", "primary", P("sell"))), sub="")
 
 
 @ml.state("error", "Listings failed to load: retry with a reference.")

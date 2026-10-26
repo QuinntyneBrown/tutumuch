@@ -2,7 +2,7 @@
 
 ## Overview
 
-TuTuMuch is a marketplace for new and used girls' clothing. Like most web
+TuTuMuch is a marketplace for all things young girls. Like most web
 applications it uses cookies: some keep a member signed in and protect forms, and others
 could measure which pages are slow. This feature makes sure that only the cookies TuTuMuch
 cannot run without are set until the visitor decides about the rest, and that the

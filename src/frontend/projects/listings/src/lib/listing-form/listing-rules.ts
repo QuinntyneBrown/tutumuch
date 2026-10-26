@@ -72,10 +72,9 @@ function inRange(text: string, min: number, max: number): boolean {
   return value !== null && value >= min && value <= max;
 }
 
-/** "This item is labelled in girls' sizing" (L2-014); every category takes girls' sizes. */
-export function confirmLabel(category: string): string {
-  if (!category) return "The label shows girls' sizing";
-  return "This item is labelled in girls' sizing";
+/** "This item is for girls" (L2-014); every category is for girls. */
+export function confirmLabel(): string {
+  return 'This item is for girls';
 }
 
 /**
@@ -111,7 +110,7 @@ export function checkListing(value: ListingFormValue, mode: 'draft' | 'publish',
     errors.ship = 'Enter shipping from $0.00 to $100.00';
   }
   if (publish && !value.confirm) {
-    errors.confirm = "Confirm the label shows girls' sizing";
+    errors.confirm = 'Confirm this item is for girls';
   }
   return errors;
 }

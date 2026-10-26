@@ -18,7 +18,7 @@ public sealed record RenderedEmail(string Subject, string Body, IReadOnlyList<st
 /// </summary>
 public static class EmailTemplates
 {
-    private const string Footer = "\n\nTuTuMuch, the marketplace for girls' clothing.\nManage your emails: {0}/account/emails";
+    private const string Footer = "\n\nTuTuMuch, the marketplace for all things girls.\nManage your emails: {0}/account/emails";
 
     public static Type ModelType(NotificationType type) => type switch
     {

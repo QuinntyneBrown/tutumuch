@@ -18,19 +18,41 @@ export const unverifiedMarcus: MemberFixture = { ...marcus, emailVerified: false
 /** GET /api/categories: the L2-011 table. */
 export const categories = [
   {
-    name: 'Dresses',
-    subcategories: ['Dresses', 'Skirts', 'Tutus', 'Rompers'],
+    name: 'Clothing',
+    subcategories: ['Dresses', 'Tops', 'Bottoms', 'Outerwear', 'Pajamas', 'Swimwear'],
     acceptedSize: "Girls'",
     sizeLabel: 'Girls',
   },
   {
-    name: 'Tops',
-    subcategories: ['Shirts', 'T-shirts', 'Sweaters', 'Hoodies'],
+    name: 'Shoes',
+    subcategories: ['Sneakers', 'Boots', 'Sandals', 'Dress shoes'],
     acceptedSize: "Girls'",
     sizeLabel: 'Girls',
   },
-  { name: 'Outerwear', subcategories: ['Jackets', 'Coats'], acceptedSize: "Girls'", sizeLabel: 'Girls' },
-  { name: 'Bottoms', subcategories: ['Pants', 'Leggings', 'Shorts'], acceptedSize: "Girls'", sizeLabel: 'Girls' },
+  {
+    name: 'Dance',
+    subcategories: ['Tutus', 'Leotards', 'Dance shoes', 'Dance bags'],
+    acceptedSize: "Girls'",
+    sizeLabel: 'Girls',
+  },
+  {
+    name: 'Sports',
+    subcategories: ['Soccer', 'Volleyball', 'Gymnastics', 'Swimming', 'Bikes and scooters'],
+    acceptedSize: "Girls'",
+    sizeLabel: 'Girls',
+  },
+  {
+    name: 'Cameras and tech',
+    subcategories: ['Cameras', 'Headphones', 'Tablet accessories'],
+    acceptedSize: "Girls'",
+    sizeLabel: 'Girls',
+  },
+  {
+    name: 'Toys and crafts',
+    subcategories: ['Dolls', 'Arts and crafts', 'Games and puzzles', 'Books'],
+    acceptedSize: "Girls'",
+    sizeLabel: 'Girls',
+  },
 ];
 
 /** GET /api/selling/options. */
@@ -49,7 +71,7 @@ export async function serveCatalogue(page: Page): Promise<void> {
 
 /** A listing as the listings endpoints return it to its seller. */
 export function myListing(fields: Record<string, unknown>): Record<string, unknown> {
-  const category = (fields['category'] as string) ?? 'Dresses';
+  const category = (fields['category'] as string) ?? 'Clothing';
   return {
     reference: 'L-10001',
     status: 'Draft',
@@ -193,17 +215,28 @@ export const test = base.extend<{ consent: ConsentFixture; unfixturedApiCalls: s
 export { expect };
 
 /** One catalog card as GET /api/catalog/listings returns it; n picks the reference and title. */
+/** The catalog cards cycle through the categories: [category, subcategory, title]. */
+const cardKinds = [
+  ['Clothing', 'Dresses', 'Floral party dress'],
+  ['Shoes', 'Sneakers', 'Glitter sneakers'],
+  ['Dance', 'Tutus', 'Pink tulle tutu'],
+  ['Sports', 'Soccer', 'Pink shin guards'],
+  ['Cameras and tech', 'Cameras', 'Instant camera'],
+  ['Toys and crafts', 'Dolls', 'Rag doll'],
+] as const;
+
 export function catalogCard(n: number, fields: Record<string, unknown> = {}): Record<string, unknown> {
+  const [category, subcategory, name] = cardKinds[(n - 1) % cardKinds.length];
   const hash = String(n).padStart(64, 'c');
   const srcset = (ext: string) =>
     `/photos/${hash}/400.${ext} 400w, /photos/${hash}/800.${ext} 800w, /photos/${hash}/1600.${ext} 1200w`;
   return {
     id: `00000000-0000-0000-0000-${String(n).padStart(12, '0')}`,
     reference: `L-${10000 + n}`,
-    title: `Floral party dress no. ${n}`,
+    title: `${name} no. ${n}`,
     brand: 'Gymboree',
-    category: 'Dresses',
-    subcategory: 'Dresses',
+    category,
+    subcategory,
     sizeLabel: 'Girls',
     condition: 'Used - Excellent',
     price: '85.00',
@@ -212,7 +245,7 @@ export function catalogCard(n: number, fields: Record<string, unknown> = {}): Re
     coverPhoto: {
       width: 1200,
       height: 1600,
-      alt: `Photo 1 of Gymboree Floral party dress no. ${n}`,
+      alt: `Photo 1 of Gymboree ${name} no. ${n}`,
       src: `/photos/${hash}/400.jpg`,
       webp: srcset('webp'),
       jpeg: srcset('jpg'),
@@ -295,7 +328,7 @@ export function listingDetail(fields: Record<string, unknown> = {}, photos = 3):
     reference: 'L-10001',
     title: 'Floral party dress, pink',
     brand: 'Gymboree',
-    category: 'Dresses',
+    category: 'Clothing',
     subcategory: 'Dresses',
     sizeLabel: 'Girls',
     condition: 'Used - Excellent',
@@ -636,7 +669,7 @@ export function myListingRow(fields: Record<string, unknown> = {}): Record<strin
     reference: 'L-10021',
     status: 'Active',
     title: 'Arizona sandals',
-    category: 'Dresses',
+    category: 'Shoes',
     price: 45,
     photo: {
       width: 1200,

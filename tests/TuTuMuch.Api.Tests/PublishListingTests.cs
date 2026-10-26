@@ -23,7 +23,7 @@ public sealed class PublishListingTests : IDisposable
     public async Task A_complete_confirmed_listing_becomes_active_and_prompts_for_payouts()
     {
         await _client.SignInVerifiedMemberAsync(_factory);
-        var reference = await _client.CreateDraftWithPhotoAsync(Listings.Complete("Tops", "Hoodies"));
+        var reference = await _client.CreateDraftWithPhotoAsync(Listings.Complete("Clothing", "Tops"));
 
         using var response = await _client.PublishAsync(reference);
 
@@ -39,6 +39,24 @@ public sealed class PublishListingTests : IDisposable
     }
 
     [Fact]
+    public async Task A_cameras_and_tech_listing_publishes_for_girls()
+    {
+        await _client.SignInVerifiedMemberAsync(_factory);
+        var reference = await _client.CreateDraftWithPhotoAsync(Listings.Complete("Cameras and tech", "Cameras"));
+
+        using var response = await _client.PublishAsync(reference);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        _factory.InDatabase(db =>
+        {
+            var listing = db.Listings.Single();
+            Assert.Equal("Cameras and tech", listing.Category);
+            Assert.Equal("Girls'", listing.Size);
+            Assert.NotNull(listing.PublishedAt);
+        });
+    }
+
+    [Fact]
     public async Task Publishing_without_the_confirmation_flag_is_422()
     {
         await _client.SignInVerifiedMemberAsync(_factory);
@@ -49,14 +67,14 @@ public sealed class PublishListingTests : IDisposable
         Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
         var problem = await Problem.ReadAsync(response);
         Assert.Equal("SIZE_CONFIRMATION_REQUIRED", problem.Code);
-        Assert.Equal("Confirm the label shows girls' sizing", problem.Errors!["sizeConfirmed"].Message);
+        Assert.Equal("Confirm this item is for girls", problem.Errors!["sizeConfirmed"].Message);
     }
 
     [Fact]
     public async Task Every_missing_field_is_identified()
     {
         await _client.SignInVerifiedMemberAsync(_factory);
-        var reference = await _client.CreateDraftAsync(new { category = "Tops" });
+        var reference = await _client.CreateDraftAsync(new { category = "Clothing" });
 
         using var response = await _client.PublishAsync(reference, sizeConfirmed: false);
 
@@ -69,7 +87,7 @@ public sealed class PublishListingTests : IDisposable
         Assert.Equal("Add at least one photo", problem.Errors["photos"].Message);
         Assert.Equal("Title must be 5 to 80 characters", problem.Errors["title"].Message);
         Assert.Equal("Enter a price from $1.00 to $5,000.00", problem.Errors["price"].Message);
-        Assert.Equal("Confirm the label shows girls' sizing", problem.Errors["sizeConfirmed"].Message);
+        Assert.Equal("Confirm this item is for girls", problem.Errors["sizeConfirmed"].Message);
     }
 
     [Fact]

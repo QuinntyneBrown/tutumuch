@@ -100,7 +100,7 @@ public sealed class DraftCleanupTests : IDisposable
         {
             // The save the edit endpoint makes; the seller's session has long expired by day 84.
             var listing = db.Listings.Single(l => l.Reference == draft);
-            listing.UpdateDetails(ListingDetails.Empty with { Category = "Dresses", Title = "Smocked romper, yellow and white" }, _factory.Clock.GetUtcNow().UtcDateTime);
+            listing.UpdateDetails(ListingDetails.Empty with { Category = "Clothing", Title = "Smocked romper, yellow and white" }, _factory.Clock.GetUtcNow().UtcDateTime);
             db.SaveChanges();
             Assert.Null(listing.DraftReminderSentAt);
         });
@@ -134,7 +134,7 @@ public sealed class DraftCleanupTests : IDisposable
     {
         await _buyer.SignInVerifiedMemberAsync(_factory);
         var (_, seller) = await _factory.SeedPaidOrderAsync(_buyer);
-        var draft = await seller.CreateDraftWithPhotoAsync(new Dictionary<string, object?> { ["category"] = "Dresses", ["title"] = "Smocked romper, yellow" });
+        var draft = await seller.CreateDraftWithPhotoAsync(new Dictionary<string, object?> { ["category"] = "Clothing", ["title"] = "Smocked romper, yellow" });
         await _factory.DispatchEmailsAsync();
         return (seller, draft);
     }

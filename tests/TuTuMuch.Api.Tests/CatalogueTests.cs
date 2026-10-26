@@ -20,17 +20,17 @@ public sealed class CatalogueTests : IDisposable
     }
 
     [Fact]
-    public async Task Categories_are_the_4_categories_and_12_subcategories_with_their_sizes()
+    public async Task Categories_are_the_6_categories_and_26_subcategories_with_their_sizes()
     {
         using var response = await _client.GetAsync("/api/categories");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.Equal("public, max-age=3600", response.Headers.CacheControl?.ToString());
         var categories = (await response.Content.ReadFromJsonAsync<List<CategoryResponse>>())!;
-        Assert.Equal(["Dresses", "Tops", "Outerwear", "Bottoms"], categories.Select(c => c.Name));
-        Assert.Equal(13, categories.Sum(c => c.Subcategories.Count));
-        Assert.Equal(["Girls'", "Girls'", "Girls'", "Girls'"], categories.Select(c => c.AcceptedSize));
-        Assert.Equal(["Girls", "Girls", "Girls", "Girls"], categories.Select(c => c.SizeLabel));
+        Assert.Equal(["Clothing", "Shoes", "Dance", "Sports", "Cameras and tech", "Toys and crafts"], categories.Select(c => c.Name));
+        Assert.Equal(26, categories.Sum(c => c.Subcategories.Count));
+        Assert.All(categories, c => Assert.Equal("Girls'", c.AcceptedSize));
+        Assert.All(categories, c => Assert.Equal("Girls", c.SizeLabel));
     }
 
     [Fact]
@@ -41,6 +41,7 @@ public sealed class CatalogueTests : IDisposable
         Assert.Equal(10m, options!.FeePercent);
         Assert.Equal(["New with tags", "New without tags", "Used - Excellent", "Used - Good", "Used - Fair"], options.Conditions);
         Assert.Contains("Gymboree", options.SuggestedBrands);
+        Assert.Contains("Fujifilm Instax", options.SuggestedBrands);
         Assert.Equal(8, options.MaxPhotos);
     }
 

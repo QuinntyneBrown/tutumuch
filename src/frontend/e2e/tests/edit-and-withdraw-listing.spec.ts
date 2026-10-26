@@ -28,8 +28,8 @@ import { SaleDetailPage } from '../pages/sale-detail.page';
 
 const arizona = myListing({
   status: 'Active',
-  category: 'Dresses',
-  subcategory: 'Rompers',
+  category: 'Shoes',
+  subcategory: 'Sandals',
   title: 'Arizona sandals',
   brand: 'Birkenstock',
   condition: 'Used - Fair',
@@ -87,8 +87,8 @@ test.describe('edit listing', () => {
     await expect(edit.listingLink).toHaveText('Arizona sandals');
     await expect(edit.listingLink).toHaveAttribute('href', '/items/L-10001');
     await expect(edit.status).toHaveText('Active');
-    await expect(edit.form.category).toHaveValue('Dresses');
-    await expect(edit.form.type).toHaveValue('Rompers');
+    await expect(edit.form.category).toHaveValue('Shoes');
+    await expect(edit.form.type).toHaveValue('Sandals');
     await expect(edit.form.title).toHaveValue('Arizona sandals');
     await expect(edit.form.flaws).toHaveValue('Footbed shows wear at the heel.');
     await expect(edit.form.price).toHaveValue('45.00');

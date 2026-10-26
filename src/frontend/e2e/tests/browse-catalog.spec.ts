@@ -13,7 +13,7 @@ test.describe('browse catalog', () => {
     const catalog = new CatalogPage(page);
     await catalog.goto();
 
-    await expect(catalog.heading).toHaveText('Girls’ clothing. Nothing else.');
+    await expect(catalog.heading).toHaveText('Everything for girls. Nothing else.');
     await expect(catalog.count).toHaveText('30 items');
     await expect(catalog.cards).toHaveCount(24);
     const card = catalog.card('Floral party dress no. 1');
@@ -51,9 +51,9 @@ test.describe('browse catalog', () => {
     await catalog.goto();
 
     await expect(catalog.card('Floral party dress no. 1')).toContainText('Reserved');
-    await expect(catalog.card('Floral party dress no. 2')).toContainText('$18.50');
-    await expect(catalog.card('Floral party dress no. 2').getByLabel('Size Girls')).toBeVisible();
-    await expect(catalog.card('Floral party dress no. 3')).toContainText('$1,200');
+    await expect(catalog.card('Glitter sneakers no. 2')).toContainText('$18.50');
+    await expect(catalog.card('Glitter sneakers no. 2').getByLabel('Size Girls')).toBeVisible();
+    await expect(catalog.card('Pink tulle tutu no. 3')).toContainText('$1,200');
     await expect(catalog.loadMore).toBeHidden();
   });
 
@@ -105,12 +105,26 @@ test.describe('browse catalog', () => {
     await catalog.goto();
     await expect(catalog.cards).toHaveCount(24);
 
-    await page.getByRole('navigation', { name: 'Primary' }).getByRole('link', { name: 'Tops' }).click();
+    await page.getByRole('navigation', { name: 'Primary' }).getByRole('link', { name: 'Cameras and tech' }).click();
 
-    await expect(page).toHaveURL(/\/tops$/);
-    await expect(catalog.heading).toHaveText('Tops');
+    await expect(page).toHaveURL(/\/cameras-and-tech$/);
+    await expect(catalog.heading).toHaveText('Cameras and tech');
     await expect(page.locator('main .page-header').getByLabel('Size Girls')).toBeVisible();
-    await expect.poll(() => requests.at(-1)?.get('category')).toBe('tops');
+    await expect.poll(() => requests.at(-1)?.get('category')).toBe('cameras-and-tech');
+  });
+
+  test('a non-clothing category page lists cards for girls', async ({ page }) => {
+    const requests = await serveCatalog(page, 6);
+    const catalog = new CatalogPage(page);
+    await page.goto('/cameras-and-tech');
+
+    await expect(page).toHaveTitle('Cameras and tech · TuTuMuch');
+    await expect(catalog.heading).toHaveText('Cameras and tech');
+    await expect(catalog.cards).toHaveCount(6);
+    for (const card of await catalog.cards.all()) {
+      await expect(card.getByLabel('Size Girls')).toBeVisible();
+    }
+    expect(requests.at(-1)?.get('category')).toBe('cameras-and-tech');
   });
 
   test('skeleton cards show while the first page loads', async ({ page }) => {

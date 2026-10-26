@@ -18,15 +18,15 @@ test.describe('view listing detail', () => {
 
     await expect(detail.heading).toHaveText('Floral party dress, pink');
     await expect(page).toHaveTitle('Floral party dress, pink · Gymboree · TuTuMuch');
-    await expect(detail.breadcrumb.getByRole('link', { name: 'Dresses' })).toHaveAttribute('href', '/dresses');
-    await expect(detail.breadcrumb).toContainText('Dresses');
+    await expect(detail.breadcrumb.getByRole('link', { name: 'Clothing' })).toHaveAttribute('href', '/clothing');
+    await expect(detail.breadcrumb).toContainText('Clothing');
     await expect(detail.info).toContainText('Gymboree');
     await expect(detail.info.getByLabel('Size Girls')).toBeVisible();
     await expect(detail.price).toContainText('$85.00');
     await expect(detail.price).toContainText('$9.00 shipping · $94.00 total before tax');
     await expect(detail.info).toContainText('Worn a handful of times to parties.');
     await expect(detail.facts).toContainText("Girls'");
-    await expect(detail.facts).toContainText('Dresses · Dresses');
+    await expect(detail.facts).toContainText('Clothing · Dresses');
     await expect(detail.facts).toContainText('Used - Excellent');
     await expect(detail.facts.locator('time')).toHaveText('2 hours ago');
     await expect(detail.flaws).toHaveCount(0);
@@ -144,7 +144,7 @@ test.describe('view listing detail', () => {
     await expect(detail.buyNow).toHaveCount(0);
     await expect(detail.similar.getByRole('listitem')).toHaveCount(4);
     await expect(detail.similar.getByRole('link').first()).toHaveAttribute('href', '/items/L-10002');
-    expect(requests[0].get('category')).toBe('dresses');
+    expect(requests[0].get('category')).toBe('clothing');
   });
 
   test('a hidden or missing listing shows This item isn’t available', async ({ page }) => {

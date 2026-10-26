@@ -16,7 +16,7 @@ Thank you for your interest in contributing. This document explains how to propo
 
 ## Before you start
 
-TuTuMuch is a marketplace for new and used **girls' (children's) clothing**: dresses, tops, outerwear and bottoms. Changes should serve that focus. Features that widen the marketplace to other sizes (boys' or adult) or categories are out of scope unless an issue agrees otherwise.
+TuTuMuch is a marketplace for **all things young girls**: clothes, shoes, dance gear, sports equipment, cameras and tech, toys and crafts. Changes should serve that focus. Features that widen the marketplace to boys' or adult items, or add categories beyond the six in `L2-011`, are out of scope unless an issue agrees otherwise.
 
 For anything beyond a small fix, open an issue first so the scope can be agreed before work begins.
 

@@ -39,10 +39,35 @@ test.describe('empty guest shell', () => {
     expect(unfixturedApiCalls).toEqual([]);
   });
 
+  test('at 320px the menu button opens a sheet listing every category', async ({ page }) => {
+    const shell = new ShellPage(page);
+    await shell.goto();
+
+    await expect(page.getByRole('navigation', { name: 'Primary' })).toBeHidden();
+    await shell.menuButton.click();
+    const menu = page.getByRole('dialog', { name: 'Menu' });
+    await expect(shell.menuButton).toHaveAttribute('aria-expanded', 'true');
+    await expect(menu.getByRole('link')).toHaveText([
+      'Clothing',
+      'Shoes',
+      'Dance',
+      'Sports',
+      'Cameras and tech',
+      'Toys and crafts',
+    ]);
+    expect(await shell.hasHorizontalScroll()).toBe(false);
+
+    await menu.getByRole('link', { name: 'Dance' }).click();
+    await expect(menu).toBeHidden();
+    await expect(page).toHaveURL(/\/dance$/);
+    await expect(page).toHaveTitle('Dance · TuTuMuch');
+    await expect(shell.menuButton).toHaveAttribute('aria-expanded', 'false');
+  });
+
   test('the catalog renders inside main', async ({ page }) => {
     const shell = new ShellPage(page);
     await shell.goto();
 
-    await expect(shell.main.getByRole('heading', { level: 1 })).toHaveText('Girls’ clothing. Nothing else.');
+    await expect(shell.main.getByRole('heading', { level: 1 })).toHaveText('Everything for girls. Nothing else.');
   });
 });

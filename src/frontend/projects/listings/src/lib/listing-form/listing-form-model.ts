@@ -62,7 +62,7 @@ export class ListingFormModel {
 
   readonly value = toSignal(this.form.valueChanges.pipe(map(() => this.raw())), { initialValue: this.raw() });
   readonly category = computed(() => this.categories().find((c) => c.name === this.value().category) ?? null);
-  readonly confirmText = computed(() => confirmLabel(this.value().category));
+  readonly confirmText = computed(() => confirmLabel());
   readonly isUsedFair = computed(() => this.value().condition === 'Used - Fair');
   readonly titleCount = computed(() => `${this.value().title.length} / 80`);
   readonly descriptionCount = computed(() => `${this.value().description.length.toLocaleString('en-US')} / 2,000`);

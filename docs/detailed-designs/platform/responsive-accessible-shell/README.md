@@ -51,11 +51,12 @@ Per `AGENTS.md`, the application project holds `AppComponent`, the four shell co
 - **`TopbarComponent`** — states `member`, `guest`; inputs from `AuthState`
   (accounts).
   - Menu button: `aria-label="Open menu"`, `aria-expanded`,
-    `aria-controls="menu"`; shown below 768 px.
+    `aria-controls="menu"`; shown below 1280 px (six category links do not fit
+    narrower; ADR general/0006).
   - Logo linking to `/`.
-  - Primary navigation `<nav aria-label="Primary">`: Dresses, Tops, Outerwear,
-    Bottoms, with `aria-current="page"` on the active category; shown from
-    768 px.
+  - Primary navigation `<nav aria-label="Primary">`: Clothing, Shoes, Dance,
+    Sports, Cameras and tech, Toys and crafts, with `aria-current="page"` on the active category; shown from
+    1280 px.
   - Search form `role="search"` with visually hidden label "Search TuTuMuch" and
     placeholder "Search brands and items"; full field from 992 px, an icon link
     "Search" below 992 px.

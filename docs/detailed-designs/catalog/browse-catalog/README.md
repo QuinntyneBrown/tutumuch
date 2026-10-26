@@ -2,7 +2,7 @@
 
 ## Overview
 
-TuTuMuch is a marketplace for new and used girls' clothing. The *catalog* is the public grid of items that are currently for sale, and it is the home page of TuTuMuch (`/`). This feature covers browsing that grid: loading the first page of listing cards, loading further pages, and showing the right state when there is nothing to show, when the request fails, or when the device is offline.
+TuTuMuch is a marketplace for all things young girls. The *catalog* is the public grid of items that are currently for sale, and it is the home page of TuTuMuch (`/`). This feature covers browsing that grid: loading the first page of listing cards, loading further pages, and showing the right state when there is nothing to show, when the request fails, or when the device is offline.
 
 A *listing* is one item a seller offers for sale. A listing has a status, and only two statuses are visible in the catalog:
 
@@ -24,8 +24,8 @@ The slice runs from the catalog page in `TuTuMuch Web` through `TuTuMuch API` to
 
 Feature library `@tutumuch/catalog` (`src/frontend/projects/catalog/src/lib/`), API client in `@tutumuch/api`, shared UI in `@tutumuch/components`.
 
-- **`routes`** (`catalog.routes.ts`) — mounted by the application at `''`. `''` (full match) and the category paths `dresses`, `tops`, `outerwear` and `bottoms` lazy-load `CatalogPage`; each category route carries `data.category` (`Dresses`, `Tops`, `Outerwear`, `Bottoms`), bound to the page's `category` input. No guard, so anonymous visitors reach every route. These are the links of the top bar.
-- **`CatalogPage`** (`catalog/catalog-page`) — renders the hero ("Girls' clothing. *Nothing else.*" and the lead "Every listing is for girls. Dresses, tops, outerwear and bottoms from families who've outgrown them.") at `/`, or a page header with the category name and a large `tl-size-tag` on a category page; then the toolbar with the polite item count and the grid. It reads all state from `CatalogStore` and renders exactly one view:
+- **`routes`** (`catalog.routes.ts`) — mounted by the application at `''`. `''` (full match) and the category paths `clothing`, `shoes`, `dance`, `sports`, `cameras-and-tech` and `toys-and-crafts` lazy-load `CatalogPage`, titled "{Category} · TuTuMuch"; each category route carries `data.pageCategory` (`Clothing`, `Shoes`, `Dance`, `Sports`, `Cameras and tech`, `Toys and crafts`), bound to the page's `category` input. No guard, so anonymous visitors reach every route. These are the links of the top bar.
+- **`CatalogPage`** (`catalog/catalog-page`) — renders the hero ("Everything for girls. *Nothing else.*" and the lead "Clothes, dance and sports gear, cameras, toys and more, from families whose girls have outgrown them.") at `/`, or a page header with the category name and a large `tl-size-tag` on a category page; then the toolbar with the polite item count and the grid. It reads all state from `CatalogStore` and renders exactly one view:
   - `loading` — `tl-listing-grid` with 8 skeleton cards (`aria-busy="true"`, label "Loading listings"); the count shows a text skeleton.
   - `loaded` — the grid, the count "1,284 items" and `tl-load-more`.
   - `empty` — `tl-empty-state` "Nothing listed yet", "Be the first to list a pair of 12s or something in L.", primary link "Sell an item" to `/sell`; the count reads "0 items".

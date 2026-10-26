@@ -937,7 +937,7 @@ legend {
 .topbar__menu {
   display: inline-flex;
 }
-@media (min-width: 48rem) {
+@media (min-width: 80rem) {
   .topbar__menu {
     display: none;
   }
@@ -947,7 +947,7 @@ legend {
   min-width: 0;
   max-width: 28rem;
 }
-@media (min-width: 48rem) {
+@media (min-width: 80rem) {
   .topbar__nav {
     display: flex;
   }
@@ -2386,7 +2386,7 @@ a.tab {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
-@media (min-width: 75rem) {
+@media (min-width: 80rem) {
   .catalog-layout .listing-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }

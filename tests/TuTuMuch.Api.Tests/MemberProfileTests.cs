@@ -146,7 +146,7 @@ public sealed class MemberProfileTests : IDisposable
     private void Seed(ListingStatus status, DateTime? publishedAt = null)
     {
         var at = publishedAt ?? _joined;
-        var details = new ListingDetails("Dresses", "Dresses", null, "Floral party dress, pink", "Light wear, colours still bright.", "Gymboree", "Used - Good", null, 85m, 8m);
+        var details = new ListingDetails("Clothing", "Dresses", null, "Floral party dress, pink", "Light wear, colours still bright.", "Gymboree", "Used - Good", null, 85m, 8m);
         var listing = Listing.CreateDraft(_marcus.Id, ++_number, details, at);
         Assert.Empty(listing.Publish(sizeConfirmed: true, at, photoCount: 1));
         _factory.InDatabase(db =>

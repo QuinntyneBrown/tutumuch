@@ -38,7 +38,7 @@ export class ListingDetailPage {
     this.withdraw = page.getByRole('button', { name: 'Withdraw' });
     this.stamp = this.info.locator('.photo__stamp');
     this.reservedAlert = this.info.locator('.alert');
-    this.similar = page.getByRole('region', { name: 'More girls’ clothing' });
+    this.similar = page.getByRole('region', { name: 'More for girls' });
     this.loading = page.locator('[aria-busy="true"][aria-label="Loading listing"]');
   }
 

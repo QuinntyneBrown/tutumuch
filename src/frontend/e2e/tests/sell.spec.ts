@@ -43,27 +43,27 @@ test.describe('sell an item', () => {
       await expect(sell.type).toBeDisabled();
       await expect(sell.fixedSize).toHaveCount(0);
       await expect(sell.condition.getByRole('radio')).toHaveCount(5);
-      await expect(page.getByText("The label shows girls' sizing")).toBeVisible();
+      await expect(page.getByText('This item is for girls')).toBeVisible();
     });
 
     test('the size shown follows the category as read-only text', async ({ page }) => {
       const sell = new SellPage(page);
       await sell.goto();
 
-      await sell.category.selectOption('Dresses');
+      await sell.category.selectOption('Clothing');
       await expect(sell.fixedSize).toContainText("Size: Girls'");
       await expect(sell.fixedSize).toContainText('Set by category');
-      await expect(page.getByText("This item is labelled in girls' sizing")).toBeVisible();
+      await expect(page.getByText('This item is for girls')).toBeVisible();
 
-      await sell.category.selectOption('Tops');
+      await sell.category.selectOption('Shoes');
       await expect(sell.fixedSize).toContainText("Size: Girls'");
-      await expect(page.getByText("This item is labelled in girls' sizing")).toBeVisible();
+      await expect(page.getByText('This item is for girls')).toBeVisible();
       await expect(sell.type.getByRole('option')).toHaveText([
         'Choose a type',
-        'Shirts',
-        'T-shirts',
-        'Sweaters',
-        'Hoodies',
+        'Sneakers',
+        'Boots',
+        'Sandals',
+        'Dress shoes',
       ]);
     });
 
@@ -93,29 +93,29 @@ test.describe('sell an item', () => {
       const bodies: unknown[] = [];
       await page.route('**/api/listings', async (route) => {
         bodies.push(route.request().postDataJSON());
-        await route.fulfill({ status: 201, json: myListing({ category: 'Tops', title: 'Grey hoodie' }) });
+        await route.fulfill({ status: 201, json: myListing({ category: 'Shoes', title: 'Grey hoodie' }) });
       });
       let updated: Request | null = null;
       await page.route('**/api/listings/L-10001', async (route) => {
         updated = route.request();
-        await route.fulfill({ json: myListing({ category: 'Tops', title: 'Grey hoodie, heavy' }) });
+        await route.fulfill({ json: myListing({ category: 'Shoes', title: 'Grey hoodie, heavy' }) });
       });
       const sell = new SellPage(page);
       await sell.goto();
 
-      await sell.category.selectOption('Tops');
+      await sell.category.selectOption('Shoes');
       await sell.title.fill('Grey hoodie');
       await sell.saveDraft.click();
 
       const saved = page.getByRole('status').filter({ hasText: 'Draft saved' });
       await expect(saved).toContainText('Finish it any time from your listings.');
       await expect(saved.getByRole('link', { name: 'your listings' })).toHaveAttribute('href', '/account/listings');
-      expect(bodies).toEqual([{ category: 'Tops', title: 'Grey hoodie', photoIds: [] }]);
+      expect(bodies).toEqual([{ category: 'Shoes', title: 'Grey hoodie', photoIds: [] }]);
 
       await sell.title.fill('Grey hoodie, heavy');
       await sell.saveDraft.click();
       await expect.poll(() => updated?.method()).toBe('PUT');
-      expect(updated!.postDataJSON()).toEqual({ category: 'Tops', title: 'Grey hoodie, heavy', photoIds: [] });
+      expect(updated!.postDataJSON()).toEqual({ category: 'Shoes', title: 'Grey hoodie, heavy', photoIds: [] });
     });
 
     test('a draft needs a category', async ({ page, unfixturedApiCalls }) => {
@@ -135,7 +135,7 @@ test.describe('sell an item', () => {
       const sell = new SellPage(page);
       await sell.goto();
 
-      await sell.category.selectOption('Dresses');
+      await sell.category.selectOption('Clothing');
       await sell.type.selectOption('Dresses');
       await sell.title.fill('AF1');
       await sell.condition.getByLabel('Used - Fair').check();
@@ -151,12 +151,12 @@ test.describe('sell an item', () => {
         'Description must be 20 to 2,000 characters',
         'Enter a price from $1.00 to $5,000.00',
         'Enter shipping from $0.00 to $100.00',
-        "Confirm the label shows girls' sizing",
+        'Confirm this item is for girls',
       ]) {
         await expect(sell.errorSummary.getByRole('link', { name: message })).toBeVisible();
       }
       await expect(sell.title).toHaveAttribute('aria-invalid', 'true');
-      await expect(sell.fieldError('confirm')).toHaveText("Confirm the label shows girls' sizing");
+      await expect(sell.fieldError('confirm')).toHaveText('Confirm this item is for girls');
       expect(unfixturedApiCalls).toEqual([]);
     });
 
@@ -183,7 +183,7 @@ test.describe('sell an item', () => {
       await expect(page.getByRole('link', { name: 'Set up payouts' })).toBeVisible();
       await expect(page.getByRole('link', { name: 'View listing' })).toHaveAttribute('href', '/items/L-10001');
       expect(created).toEqual({
-        category: 'Dresses',
+        category: 'Clothing',
         subcategory: 'Dresses',
         title: 'Rainbow tulle tutu, pink',
         brand: 'Gymboree',
@@ -266,8 +266,8 @@ test.describe('sell an item', () => {
       await page.route('**/api/me/listings/L-10001', (route) =>
         route.fulfill({
           json: myListing({
-            category: 'Tops',
-            subcategory: 'Hoodies',
+            category: 'Shoes',
+            subcategory: 'Sneakers',
             title: 'Grey hoodie',
             condition: 'Used - Good',
             price: 25,
@@ -278,8 +278,8 @@ test.describe('sell an item', () => {
 
       await sell.goto('/sell/L-10001');
 
-      await expect(sell.category).toHaveValue('Tops');
-      await expect(sell.type).toHaveValue('Hoodies');
+      await expect(sell.category).toHaveValue('Shoes');
+      await expect(sell.type).toHaveValue('Sneakers');
       await expect(sell.title).toHaveValue('Grey hoodie');
       await expect(sell.condition.getByLabel('Used - Good')).toBeChecked();
       await expect(sell.price).toHaveValue('25.00');

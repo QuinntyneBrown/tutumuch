@@ -18,11 +18,11 @@ box "Backend — TuTuMuch Application" #ECFDF3
   participant "BrowseCatalogQueryHandler" as handler
 end box
 database "TuTuMuch database" as db
-actor -> page : Open / (or /tops)
+actor -> page : Open / (or /dance)
 page -> store : load(category)
 store -> page : view = loading (8 skeleton cards)
 store -> client : listings(1, category)
-client -> controller : GET /api/catalog/listings[?category=Tops]
+client -> controller : GET /api/catalog/listings[?category=dance]
 controller -> handler : BrowseCatalogQuery(1, null, category)
 alt page or page size below 1, or unknown category
   handler --> controller : 400 VALIDATION_FAILED

@@ -9,7 +9,7 @@ def filters_form(p: str = "f", *, cat: str = "", brands=(), conds=(), lo: str = 
         return f'<label class="choice"><input type="checkbox" name="{name}"{" checked" if checked else ""}><span>{esc(label)}</span></label>'
     cats = "".join(
         f'<label class="choice"><input type="radio" name="{p}-cat"{" checked" if cat == c else ""}><span>{c}</span></label>'
-        for c in ["All", "Dresses", "Tops", "Outerwear", "Bottoms"])
+        for c in ["All"] + [c for c, _, _ in CATEGORIES])
     subs = ""
     if cat and cat != "All":
         sub = next(s for c, s, _ in CATEGORIES if c == cat)
@@ -47,8 +47,8 @@ def chip(label: str) -> str:
 
 
 def hero() -> str:
-    return ('<section class="hero" aria-labelledby="hero-title"><h1 class="display" id="hero-title">Girls\' clothing. <em>Nothing else.</em></h1>'
-            '<p class="lead">Every listing is for girls. Dresses, tops, outerwear and bottoms from families who\'ve outgrown them.</p></section>')
+    return ('<section class="hero" aria-labelledby="hero-title"><h1 class="display" id="hero-title">Everything for girls. <em>Nothing else.</em></h1>'
+            '<p class="lead">Clothes, dance and sports gear, cameras, toys and more, from families whose girls have outgrown them.</p></section>')
 
 
 def catalog_page(grid: str, *, head: str | None = None, count: str = "1,284 items", chips: str = "", side=None, after_grid: str = "",
@@ -59,7 +59,7 @@ def catalog_page(grid: str, *, head: str | None = None, count: str = "1,284 item
     return Page(main=main, user=user, nav=nav, top=top)
 
 
-def load_more(shown: int = 14, total: str = "1,284") -> str:
+def load_more(shown: int = 16, total: str = "1,284") -> str:
     return (f'<div class="load-more"><span class="text-sm text-muted">Showing {shown} of {total}</span>'
             f'{btn("Load more", attrs="aria-describedby=\"lm-note\"")}<span id="lm-note" class="visually-hidden">Loads the next 24 items</span></div>')
 
@@ -82,13 +82,13 @@ def _():
     return catalog_page(listing_grid(CATALOG), after_grid=load_more(), user="guest")
 
 
-@s.state("category", "Dresses only: subcategory chips and the fixed size, reached from the Dresses nav link.")
+@s.state("category", "Clothing only: subcategory chips and the fixed size, reached from the Clothing nav link.")
 def _():
-    keys = [k for k in CATALOG if ITEMS[k]["cat"] == "Dresses"]
-    head = (f'<div class="page-header"><div class="stack stack--sm"><h1>Dresses</h1><div>{size_tag(CATEGORIES[0][2], "size-tag--lg")}</div></div></div>')
+    keys = [k for k in CATALOG if ITEMS[k]["cat"] == "Clothing"]
+    head = (f'<div class="page-header"><div class="stack stack--sm"><h1>Clothing</h1><div>{size_tag(CATEGORIES[0][2], "size-tag--lg")}</div></div></div>')
     subs = '<div class="cluster" style="margin-bottom: var(--space-8);">' + "".join(
-        f'<button class="chip" type="button" aria-pressed="{"true" if i == 0 else "false"}">{t}</button>' for i, t in enumerate(["All dresses", "Dresses", "Skirts", "Tutus", "Rompers"])) + "</div>"
-    return catalog_page(subs + listing_grid(keys), head=head, count="412 items", side={"cat": "Dresses"}, nav="dresses", after_grid=load_more(len(keys), "412"))
+        f'<button class="chip" type="button" aria-pressed="{"true" if i == 0 else "false"}">{t}</button>' for i, t in enumerate(["All clothing"] + CATEGORIES[0][1])) + "</div>"
+    return catalog_page(subs + listing_grid(keys), head=head, count="412 items", side={"cat": "Clothing"}, nav="clothing", after_grid=load_more(len(keys), "412"))
 
 
 @s.state("search", "Keyword results for “carter’s”, title and brand matches first.")
@@ -97,13 +97,13 @@ def _():
     return catalog_page(listing_grid(["sundress", "floral-shorts"]), head=head, count="2 items")
 
 
-@s.state("filtered", "Dresses, new with tags, $20–$200, sorted by price: filters live in the URL and show as removable chips.")
+@s.state("filtered", "Clothing, new with tags, $20–$200, sorted by price: filters live in the URL and show as removable chips.")
 def _():
-    chips = chip("Dresses") + chip("New with tags") + chip("$20–$200") + f'<button class="btn btn--link btn--sm" type="button">Clear all</button>'
+    chips = chip("Clothing") + chip("New with tags") + chip("$20–$200") + f'<button class="btn btn--link btn--sm" type="button">Clear all</button>'
     pg = catalog_page(listing_grid(["rainbow-romper", "velvet-dress"]), head="", count="2 items", chips=chips,
-                      side={"cat": "Dresses", "conds": ["New with tags"], "lo": "20", "hi": "200"}, sort="Price: low to high")
+                      side={"cat": "Clothing", "conds": ["New with tags"], "lo": "20", "hi": "200"}, sort="Price: low to high")
     pg.main = '<div class="page-header"><h1>Shop</h1></div>' + pg.main
-    pg.notes = note("URL: /?category=dresses&amp;condition=new-with-tags&amp;min=20&amp;max=200&amp;sort=price-asc — bookmarkable and shareable.", "top: 6rem; right: 1rem;")
+    pg.notes = note("URL: /?category=clothing&amp;condition=new-with-tags&amp;min=20&amp;max=200&amp;sort=price-asc — bookmarkable and shareable.", "top: 6rem; right: 1rem;")
     return pg
 
 
@@ -115,16 +115,16 @@ def _():
 
 @s.state("empty", "No active listings at all (launch day): one action, sell the first item.")
 def _():
-    grid = empty("tag", "Nothing listed yet", "Be the first to list a dress, a sweater or anything your daughter has outgrown.", btn("Sell an item", "primary", P("sell")))
+    grid = empty("tag", "Nothing listed yet", "Be the first to list a dress, a pair of sneakers or anything your daughter has outgrown.", btn("Sell an item", "primary", P("sell")))
     return catalog_page(grid, count="0 items")
 
 
 @s.state("no-results", "Search and filters matched nothing; filters stay visible and clearable.")
 def _():
-    chips = chip("Outerwear") + chip("New with tags")
+    chips = chip("Dance") + chip("New with tags")
     grid = empty("search", "No items match", "Try fewer filters or a different word.", btn("Clear search and filters", "primary"), cls="empty--compact")
     pg = catalog_page(grid, head='<div class="page-header"><div><p class="eyebrow">Search</p><h1>“sequin cape”</h1></div></div>',
-                      count="0 items", chips=chips, side={"cat": "Outerwear", "conds": ["New with tags"]})
+                      count="0 items", chips=chips, side={"cat": "Dance", "conds": ["New with tags"]})
     return pg
 
 
@@ -190,7 +190,7 @@ def detail(key: str, *, actions: str, stamp: str | None = None, user: str = "mem
             f'{seller_block(it["seller"])}{rep}</div>')
     crumbs = (f'<nav aria-label="Breadcrumb" style="margin-top: var(--space-6);"><ol class="breadcrumb"><li><a href="{P("catalog")}">Shop</a></li>'
               f'<li><a href="{P("catalog", "category")}">{it["cat"]}</a></li><li aria-current="page">{it["sub"]}</li></ol></nav>')
-    return Page(main=f'{crumbs}<div class="detail">{gallery(key)}{info}</div>{below}', user=user, nav=it["cat"].lower())
+    return Page(main=f'{crumbs}<div class="detail">{gallery(key)}{info}</div>{below}', user=user, nav=cat_key(it["cat"]))
 
 
 def buy_bar(total: float, actions: str) -> str:
@@ -201,7 +201,7 @@ def buy_bar(total: float, actions: str) -> str:
 
 
 def similar(keys) -> str:
-    return f'<section class="section" style="margin-top: var(--space-20);"><div class="section-head"><h2>More girls\' clothing</h2></div>{listing_grid(keys)}</section>'
+    return f'<section class="section" style="margin-top: var(--space-20);"><div class="section-head"><h2>More for girls</h2></div>{listing_grid(keys)}</section>'
 
 
 d = screen("listing-detail", "page", "Listing detail", route="/items/{id}", reqs=["L2-025", "L2-026", "L2-028", "L2-016", "L2-063", "L2-065"],
@@ -268,7 +268,7 @@ def _():
 
 
 # ---------------------------------------------------------------------------
-# Mobile menu (navigation collapsed under 768px, L2-062)
+# Menu sheet (category links collapse into it under 1280px, L2-062)
 # ---------------------------------------------------------------------------
 m = screen("nav-menu", "dialog", "Menu", opens_from="catalog", reqs=["L2-062", "L2-065"],
            na={"busy": "Opening the menu makes no request.", "invalid": "The menu has no inputs."})
@@ -312,18 +312,18 @@ def filter_sheet(form: str, apply: str, top: str = "") -> str:
             f'<form class="menu-sheet__body">{top}{form}</form><div class="menu-sheet__foot">{btn("Clear")}{apply}</div></div>')
 
 
-@f.state("default", "Filter panel with Dresses chosen; Apply shows the live result count.")
+@f.state("default", "Filter panel with Clothing chosen; Apply shows the live result count.")
 def _():
-    return Dialog(bg=("catalog", "default"), html=filter_sheet(filters_form("m", cat="Dresses", conds=["New with tags"]), btn("Show 38 items", "primary", attrs="autofocus")))
+    return Dialog(bg=("catalog", "default"), html=filter_sheet(filters_form("m", cat="Clothing", conds=["New with tags"]), btn("Show 38 items", "primary", attrs="autofocus")))
 
 
 @f.state("invalid", "Minimum price above maximum: inline error, Apply blocked until fixed.")
 def _():
-    form = filters_form("m", cat="Dresses", lo="200", hi="50", invalid=True)
+    form = filters_form("m", cat="Clothing", lo="200", hi="50", invalid=True)
     top = error_summary([("m-min", "Minimum price must be lower than maximum")], title="Check the price range")
     return Dialog(bg=("catalog", "default"), html=filter_sheet(form, btn("Show items", "primary", attrs="disabled"), top=top))
 
 
 @f.state("busy", "Counting results after a change: Apply is busy, the panel stays usable.")
 def _():
-    return Dialog(bg=("catalog", "default"), html=filter_sheet(filters_form("m", cat="Dresses", conds=["New with tags", "New without tags"]), btn("Show items", "primary", attrs='aria-busy="true"')))
+    return Dialog(bg=("catalog", "default"), html=filter_sheet(filters_form("m", cat="Clothing", conds=["New with tags", "New without tags"]), btn("Show items", "primary", attrs='aria-busy="true"')))

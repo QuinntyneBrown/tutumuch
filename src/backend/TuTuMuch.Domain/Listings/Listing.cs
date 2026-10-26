@@ -315,7 +315,7 @@ public sealed class Listing
 
         if (category is not null && Clean(details.Size) is { } size && !string.Equals(size, category.AcceptedSize, StringComparison.OrdinalIgnoreCase))
         {
-            violations.Add(new("size", "SIZE_NOT_ACCEPTED", $"TuTuMuch accepts only {category.AcceptedSize.ToLowerInvariant()} sizes in {category.Name}"));
+            violations.Add(new("size", "SIZE_NOT_ACCEPTED", $"TuTuMuch accepts only items for girls in {category.Name}"));
         }
 
         if (Clean(details.Title)?.Length > MaxTitle)
@@ -418,7 +418,7 @@ public sealed class Listing
         Check("shippingCost", details.ShippingCost is null, ShippingOutOfRange);
         if (!sizeConfirmed)
         {
-            violations.Add(new("sizeConfirmed", "SIZE_CONFIRMATION_REQUIRED", "Confirm the label shows girls' sizing"));
+            violations.Add(new("sizeConfirmed", "SIZE_CONFIRMATION_REQUIRED", "Confirm this item is for girls"));
         }
 
         return violations;

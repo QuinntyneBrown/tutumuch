@@ -5,7 +5,7 @@ title System Context — Browse the catalog
 
 Person(visitor, "Visitor", "Anonymous person browsing items for sale")
 Person(member, "Member", "Signed-in buyer or seller")
-System(tutumuch, "TuTuMuch", "Marketplace for girls' clothing")
+System(tutumuch, "TuTuMuch", "Marketplace for all things young girls")
 System_Ext(cdn, "Photo CDN", "Serves content-addressed listing photos from photo storage")
 
 Rel(visitor, tutumuch, "Browses the catalog using", "HTTPS")

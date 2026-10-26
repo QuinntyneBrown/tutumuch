@@ -2,7 +2,7 @@
 
 ## Overview
 
-TuTuMuch is a marketplace for new and used girls' clothing. Every
+TuTuMuch is a marketplace for all things young girls. Every
 listing is a single physical item, so a listing can be sold only once. This feature
 covers buying it: a verified member chooses "Buy now", TuTuMuch holds the item for them
 for 10 minutes, the member gives a US shipping address and pays by card, and TuTuMuch

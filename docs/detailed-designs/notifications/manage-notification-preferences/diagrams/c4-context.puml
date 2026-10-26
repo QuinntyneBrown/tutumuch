@@ -5,7 +5,7 @@ title System Context — Manage notification preferences
 
 Person(member, "Member", "Chooses which optional emails to receive")
 Person_Ext(recipient, "Marketing email recipient", "Holder of a marketing email, not necessarily signed in")
-System(tutumuch, "TuTuMuch", "Marketplace for girls' clothing")
+System(tutumuch, "TuTuMuch", "Marketplace for all things young girls")
 System_Ext(email, "Email provider", "Delivers marketing email with unsubscribe link and headers")
 System_Ext(client, "Mail client", "Sends RFC 8058 one-click unsubscribe requests")
 

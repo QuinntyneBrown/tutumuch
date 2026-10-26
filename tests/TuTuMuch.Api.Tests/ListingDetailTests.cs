@@ -45,7 +45,7 @@ public sealed class ListingDetailTests : IDisposable
         Assert.Equal(reference, detail.Reference);
         Assert.Equal("Floral party dress, pink", detail.Title);
         Assert.Equal("Gymboree", detail.Brand);
-        Assert.Equal("Dresses", detail.Category);
+        Assert.Equal("Clothing", detail.Category);
         Assert.Equal("Dresses", detail.Subcategory);
         Assert.Equal("Girls", detail.SizeLabel);
         Assert.Equal("Used - Good", detail.Condition);
@@ -143,7 +143,7 @@ public sealed class ListingDetailTests : IDisposable
         string condition = "Used - Good", string? flaws = null)
     {
         var seller = sellerId ?? _sellerId;
-        var details = new ListingDetails("Dresses", "Dresses", null, "Floral party dress, pink", "Light wear, colours still bright.", "Gymboree", condition, flaws, 85m, shipping);
+        var details = new ListingDetails("Clothing", "Dresses", null, "Floral party dress, pink", "Light wear, colours still bright.", "Gymboree", condition, flaws, 85m, shipping);
         var listing = Listing.CreateDraft(seller, ++_number, details, _start);
         var created = Enumerable.Range(0, photos).Select(i =>
         {

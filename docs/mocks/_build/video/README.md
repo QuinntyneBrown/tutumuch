@@ -19,8 +19,8 @@ chromium`); narration also needs `kokoro-onnx`, `onnxruntime`, `huggingface_hub`
   download into `kokoro/` (git-ignored, about 330 MB) on the first run.
 - **Music**: `music/upbeat-ukulele-kids-excerpt.mp3` is a 34-second excerpt of _Upbeat Ukulele
   Kids_ by Cold_Fire on Pixabay (Pixabay Content Licence), committed so the build is repeatable.
-  It is not in the repository yet: download the track from its Pixabay page and cut it with
-  `ffmpeg -ss 4 -t 34 -i upbeat-ukulele-kids-187874.mp3 -af "afade=t=out:st=32:d=2" -b:a 160k music/upbeat-ukulele-kids-excerpt.mp3`.
+  It was cut from the track on its Pixabay page, starting on the beat at 4.25 s, with
+  `ffmpeg -ss 4.25 -t 34 -i upbeat-ukulele-kids-187874.mp3 -af "afade=t=out:st=32:d=2" -b:a 160k music/upbeat-ukulele-kids-excerpt.mp3`.
   A sidechain compressor ducks it under the voice.
 - **Length**: the gaps between lines stretch so the video is exactly 30 s. The script stops if
   the narration no longer fits.

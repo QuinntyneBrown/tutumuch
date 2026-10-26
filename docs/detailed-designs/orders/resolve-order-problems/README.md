@@ -2,7 +2,7 @@
 
 ## Overview
 
-TuTuMuch is a marketplace for new and used girls' clothing. Parents buy for a
+TuTuMuch is a marketplace for all things young girls. Parents buy for a
 child who needs it now, so an item that arrives in the wrong size, differs from its
 description, never arrives or is counterfeit needs a clear remedy. This feature lets a
 buyer report a problem on a `Shipped` or `Delivered` order, lets the seller reply, and

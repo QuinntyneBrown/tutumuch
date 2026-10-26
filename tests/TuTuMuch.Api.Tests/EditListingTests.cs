@@ -156,7 +156,7 @@ public sealed class EditListingTests : IDisposable
         var reference = await ActiveListingAsync();
         var etag = await EtagAsync(reference);
 
-        using var response = await PutAsync(reference, Edited().With("category", "Tops").With("subcategory", "Hoodies"), etag);
+        using var response = await PutAsync(reference, Edited().With("category", "Cameras and tech").With("subcategory", "Cameras"), etag);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.Equal("Girls'", (await MineAsync(reference)).Size);

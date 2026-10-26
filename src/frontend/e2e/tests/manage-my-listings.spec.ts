@@ -23,7 +23,7 @@ const all = myListings(
       reference: 'L-10029',
       status: 'Draft',
       title: null,
-      category: 'Tops',
+      category: 'Shoes',
       price: null,
       photo: null,
       createdAt: '2026-10-25T09:00:00Z',
@@ -85,7 +85,7 @@ test.describe('manage my listings', () => {
     await expect(listings.rows.nth(0)).toContainText('Draft');
     await expect(listings.rows.nth(0)).toContainText('$60');
     await expect(listings.rows.nth(0)).toContainText('Today');
-    await expect(listings.rows.nth(1)).toContainText('Untitled draft · Tops');
+    await expect(listings.rows.nth(1)).toContainText('Untitled draft · Shoes');
     await expect(listings.rows.nth(1)).toContainText('—');
     await expect(listings.rows.nth(1)).toContainText('Yesterday');
     await expect(listings.rows.nth(2)).toContainText('Sat 24 Oct');

@@ -29,26 +29,26 @@ The page URL is the single source of truth for a result set. `catalog-query.ts` 
 | Parameter | Values | Example |
 |-----------|--------|---------|
 | `q` | keyword, trimmed, at most 100 characters | `q=air%20max` |
-| `category` | `dresses`, `tops`, `outerwear`, `bottoms` | `category=dresses` |
+| `category` | `clothing`, `shoes`, `dance`, `sports`, `cameras-and-tech`, `toys-and-crafts` | `category=dance` |
 | `subcategory` | repeatable slug from the chosen category, such as `tutus`, `skirts`, `t-shirts` | `subcategory=tutus` |
 | `brand` | repeatable brand name | `brand=Carter's&brand=Gap Kids` |
 | `condition` | repeatable `new-with-tags`, `new-without-tags`, `used-excellent`, `used-good`, `used-fair` | `condition=new-with-tags` |
 | `min`, `max` | price in dollars, up to two decimal places | `min=20&max=200` |
 | `sort` | `newest` (default, omitted), `price-asc`, `price-desc` | `sort=price-asc` |
 
-The mock example `/?category=dresses&condition=new-with-tags&min=20&max=200&sort=price-asc` is a valid URL under this contract. `toParams` writes parameters in the fixed order above and omits defaults, so one result set has one canonical URL. A `subcategory` is only valid with its parent `category`. Values the page does not recognise are dropped and the URL is replaced (`replaceUrl: true`) with its canonical form; parameters the catalog does not own (such as `from=sign-in`) are kept. Paging is not held in the URL; reopening a URL shows its first page. The category pages `/dresses`, `/tops`, `/outerwear` and `/bottoms` from browse-catalog fix the category through route data (`pageCategory`, not `category`, because input binding would also fill an input named `category` from the query string); any filter change there navigates to `/` with the category kept.
+The mock example `/?category=dance&condition=new-with-tags&min=20&max=200&sort=price-asc` is a valid URL under this contract. `toParams` writes parameters in the fixed order above and omits defaults, so one result set has one canonical URL. A `subcategory` is only valid with its parent `category`. Values the page does not recognise are dropped and the URL is replaced (`replaceUrl: true`) with its canonical form; parameters the catalog does not own (such as `from=sign-in`) are kept. Paging is not held in the URL; reopening a URL shows its first page. The six category pages (`/clothing`, `/shoes`, `/dance`, `/sports`, `/cameras-and-tech`, `/toys-and-crafts`) from browse-catalog fix the category through route data (`pageCategory`, not `category`, because input binding would also fill an input named `category` from the query string); any filter change there navigates to `/` with the category kept.
 
 ### Frontend — `TuTuMuch Web`, feature library `@tutumuch/catalog` (`src/frontend/projects/catalog/src/lib/`)
 
 - **`CatalogQuery`** (`catalog/catalog-query.ts`) — `{ q; category; subcategories; brands; conditions; min; max; sort }` with the slugs of the URL. The same file holds the category, subcategory, condition and sort option lists (`CATEGORIES`, `CONDITIONS`, `SORTS`) and pure functions `parseQuery(ParamMap)`, `toParams(query)`, `canonicalParams(params, query)`, `priceError(query)` and `chipsOf(query)`.
 - **`CatalogPage`** (from browse-catalog, `catalog/catalog-page.ts`) — subscribes to `ActivatedRoute.queryParamMap` in `ngOnInit`, replaces a non-canonical URL, and otherwise calls `CatalogStore.load(params)` once per distinct result set, so the back button, a bookmark and a shared link all go through one path. Every filter, chip, sort and clear action navigates to `/` with the new query. The page header:
   - keyword present: eyebrow "Search" and heading “{q}” (for example “tutu”);
-  - only a category: heading with the category name and its size tag ("Dresses" with "Girls");
+  - only a category: heading with the category name and its size tag ("Dance" with "Girls");
   - other filters without a keyword: heading "Shop";
   - nothing: the hero from browse-catalog.
 - **`CatalogStore`** (from browse-catalog) — loads page 1 of a result set and appends later pages; only the latest load may set the state. The offline snapshot is written and shown only for the unfiltered catalog.
-- **Toolbar** (in the page template) — the "Filters" button (`tlButton`, hidden from 992 px; opens the filter sheet), the result count in an `aria-live="polite"` region ("2 items", "0 items"), one `tl-chip` per active filter value ("Dresses", "New with tags", "$20–$200"), each with a remove button labelled "Remove filter {label}", a "Clear all" link button that removes every filter and the keyword, and the "Sort" select with options "Newest", "Price: low to high", "Price: high to low".
-- **`FilterForm`** (`tl-filter-form`, `filters/filter-form.ts`) — the controlled form both layouts use; it emits the edited query on every change. Fieldsets: "Category" (radios: All, Dresses, Tops, Outerwear, Bottoms), a subcategory group headed by the chosen category (checkboxes), "Brand" (checkboxes for the top 6 brands plus any chosen brand, with an "All {n} brands" link button that expands the full list), "Condition" (checkboxes for the 5 conditions) and "Price" (two `$` `tl-input-group` inputs labelled "Minimum price in dollars" and "Maximum price in dollars", `inputmode="decimal"`). When both prices are set and the minimum exceeds the maximum (equal values are allowed), the inputs carry `aria-invalid="true"` and `aria-describedby` pointing at "Minimum price must be lower than maximum" (`L2-024`).
+- **Toolbar** (in the page template) — the "Filters" button (`tlButton`, hidden from 992 px; opens the filter sheet), the result count in an `aria-live="polite"` region ("2 items", "0 items"), one `tl-chip` per active filter value ("Dance", "New with tags", "$20–$200"), each with a remove button labelled "Remove filter {label}", a "Clear all" link button that removes every filter and the keyword, and the "Sort" select with options "Newest", "Price: low to high", "Price: high to low".
+- **`FilterForm`** (`tl-filter-form`, `filters/filter-form.ts`) — the controlled form both layouts use; it emits the edited query on every change. Fieldsets: "Category" (radios: All, Clothing, Shoes, Dance, Sports, Cameras and tech, Toys and crafts), a subcategory group headed by the chosen category (checkboxes), "Brand" (checkboxes for the top 6 brands plus any chosen brand, with an "All {n} brands" link button that expands the full list), "Condition" (checkboxes for the 5 conditions) and "Price" (two `$` `tl-input-group` inputs labelled "Minimum price in dollars" and "Maximum price in dollars", `inputmode="decimal"`). When both prices are set and the minimum exceeds the maximum (equal values are allowed), the inputs carry `aria-invalid="true"` and `aria-describedby` pointing at "Minimum price must be lower than maximum" (`L2-024`).
 - **`FiltersSidebar`** (`tl-filters-sidebar`) — `<aside class="filters" aria-label="Filters">`, shown from 992 px without any tap (`L2-062`). Choice changes navigate immediately; price inputs navigate 400 ms after the last keystroke and only when the range is valid, merged into the latest URL.
 - **`FiltersSheet`** (`tl-filters-sheet`) — opened with `SheetService` from the "Filters" button; a `tl-sheet` with `side`, so it fills the screen under 768 px and is a 24rem left panel from 768 px to 991 px; title "Filters", close button "Close filters", Escape closes. It edits a draft copy of the query:
   - `default` — footer "Clear" and primary "Show {n} items" with the live count from `GET /api/catalog/listings/count`;
@@ -102,7 +102,7 @@ No change. The handlers query `ITuTuMuchDbContext`; there is no full-text index,
 ### Deferred
 
 - Saved searches.
-- The subcategory chips under a category header ("All dresses", "Tutus"…); the subcategory group of the filter form covers the same filter.
+- The subcategory chips under a category header ("All dance", "Tutus"…); the subcategory group of the filter form covers the same filter.
 
 ## Requirements
 
