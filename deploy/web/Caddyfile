@@ -2,6 +2,10 @@
 
 encode zstd gzip
 
+# The bare domain redirects to the canonical www host (both must be in SITE_ADDRESS so Caddy holds a certificate for each).
+@apex host {$APEX_HOST:tutumuch.kids}
+redir @apex https://{$CANONICAL_HOST:www.tutumuch.kids}{uri} permanent
+
 handle /api/* {
 	reverse_proxy api:8080
 }

@@ -15,7 +15,7 @@ few users and mirrors 12L's ([ADR platform/0012](adr/platform/0012-low-cost-sing
 | `worker`               | VM, 384 MB                              | `TuTuMuch.Worker`; shares the `photos` volume                         |
 | `migrator`             | VM, run once per deploy, 384 MB         | `TuTuMuch.Migrator`; applies EF Core migrations before the restart    |
 | Database               | Azure SQL Database, Basic tier          | Firewall allows only the VM's public IP                               |
-| DNS                    | Domain registrar                        | `A` records for `@` and `www` of `tutumuch.kids` point at the VM's static public IP |
+| DNS                    | Namecheap                               | `A` records for `@` and `www` of `tutumuch.kids` point at the VM's static public IP; Caddy redirects the bare domain to `www.tutumuch.kids` |
 
 One instance of each service, no load balancer, no staging environment. Every service logs
 through Docker's `json-file` driver, rotated at 10 MB with 3 files kept. The VM is a B1s
