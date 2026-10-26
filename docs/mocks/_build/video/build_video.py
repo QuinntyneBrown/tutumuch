@@ -121,8 +121,8 @@ class Narrator:
 def main():
     silent = "--silent" in sys.argv[1:]
     music = MUSIC.exists()
-    if not silent and not music:
-        raise SystemExit(f"{MUSIC} is missing; see README.md next to this script for the track and how to cut it")
+    if not music:
+        print(f"note: {MUSIC.name} is missing, building without music (see README.md for the track and how to cut it)")
     tmp = pathlib.Path(tempfile.mkdtemp())
     voices = []
     if silent:
@@ -163,7 +163,8 @@ def main():
             ms = int(starts[i] * 1000)
             filt.append(f"[{i}:a]aresample=48000,adelay={ms}|{ms}[a{i}]")
         n = len(voices)
-        filt.append("".join(f"[a{i}]" for i in range(n)) + f"amix=inputs={n}:normalize=0,apad,atrim=0:{total:.3f},volume=1.7,asplit=2[vx][key]")
+        mix = "".join(f"[a{i}]" for i in range(n)) + f"amix=inputs={n}:normalize=0,apad,atrim=0:{total:.3f},volume=1.7"
+        filt.append(f"{mix},asplit=2[vx][key]" if music else f"{mix},alimiter=limit=0.95[aout]")
     if music:
         inputs += ["-i", str(MUSIC)]
         bg = (f"[{n}:a]aresample=48000,atrim=0:{total:.3f},asetpts=PTS-STARTPTS,volume={MUSIC_DB}dB,"

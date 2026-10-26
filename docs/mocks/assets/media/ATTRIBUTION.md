@@ -11,6 +11,6 @@
 Visuals use only the TuTuMuch wordmark and design tokens (Ink, Cream, Raspberry, Lilac, Sunny; Giddy's
 rounded type and shapes).
 
-The current files are an interim **silent** build (`--silent`): no narration and no music yet, captions
-timed from the text. Rebuild with both once the music excerpt and the Kokoro model are available:
-`python -I docs/mocks/_build/video/build_video.py` (see `docs/mocks/_build/video/README.md`).
+The current files are narrated but have **no music yet**: the Pixabay track still has to be
+downloaded and cut into `docs/mocks/_build/video/music/` (see `README.md` there). Then rebuild:
+`python -I docs/mocks/_build/video/build_video.py`.
