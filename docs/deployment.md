@@ -95,6 +95,21 @@ docker compose up -d                      # restart with the tags in .env
 Photos live in the `tutumuch_photos` Docker volume. Back it up with
 `docker run --rm -v tutumuch_photos:/data -v "$PWD":/backup alpine tar czf /backup/photos.tgz -C /data .`.
 
+## Current resources
+
+Created with the Azure CLI on 2026-10-26 in the Pay-As-You-Go subscription, region Canada Central:
+
+| Resource | Name |
+| --- | --- |
+| Resource group | `tutumuch-prod` |
+| VM | `tutumuch-vm`, Ubuntu 24.04, `Standard_B1s`, 30 GB Standard SSD, static IP `20.104.204.145`, NSG `tutumuch-vmNSG` (22, 80, 443) |
+| SQL | server `tutumuch-sql` (`tutumuch-sql.database.windows.net`), database `TuTuMuch`, Basic, firewall rule `vm` |
+| Deploy key | `~/.ssh/tutumuch_deploy` on the owner's machine; the same key is `DEPLOY_SSH_KEY` |
+
+The `production` environment holds `DEPLOY_HOST`, `DEPLOY_SSH_KEY` and `SITE_HOST`. The SQL
+password and signing keys exist only in `/opt/tutumuch/.env` on the VM. DNS for
+`tutumuch.kids` is managed at Namecheap.
+
 ## Monthly cost
 
 At pay-as-you-go prices, roughly: a B1s VM about US$8 (B1ms about US$15), its 30 GB
