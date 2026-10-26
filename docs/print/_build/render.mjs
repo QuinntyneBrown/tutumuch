@@ -47,10 +47,17 @@ const STICKERS = [
   { slug: 'sticker-6-gently-loved', title: 'Gently loved, newly adored' },
 ]
 
+// Trim sizes in inches. Every sheet adds 0.125in bleed on each side; `safe` is
+// how far in from the bleed edge (CSS px) words and the QR code must stay.
+const LETTER = { w: 8.5, h: 11, safe: 48, name: 'letter' } // 0.375in inside the trim
+const CARD_5X7 = { w: 5, h: 7, safe: 36, name: '5x7' } // 0.25in inside the trim
+
 const FLYERS = [
-  { slug: 'flyer-1-join', title: 'Join TuTuMuch: buy and sell' },
-  { slug: 'flyer-2-shop', title: 'Shop new and gently loved' },
-  { slug: 'flyer-3-shop-gear', title: 'Shop bikes, sports and dance gear' },
+  { slug: 'flyer-1-join', title: 'Join TuTuMuch: buy and sell', size: LETTER },
+  { slug: 'flyer-2-shop', title: 'Shop new and gently loved', size: LETTER },
+  { slug: 'flyer-3-shop-gear', title: 'Shop bikes, sports and dance gear', size: LETTER },
+  { slug: 'flyer-4-shop-5x7', title: 'Shop new and gently loved, 5x7', size: CARD_5X7 },
+  { slug: 'flyer-5-shop-gear-5x7', title: 'Shop sports and dance gear, 5x7', size: CARD_5X7 },
 ]
 
 const KEYLINE = 60 // px of white beyond the artwork: 0.2in at 300 DPI
@@ -365,34 +372,54 @@ async function renderCards(browser) {
 async function renderFlyers(browser) {
   const dir = path.join(printRoot, 'flyers')
   await mkdir(dir, { recursive: true })
-  const W = 8.75 * CSS_DPI // Letter + 0.125in bleed on every side
-  const H = 11.25 * CSS_DPI
 
-  for (const { slug, title } of FLYERS.filter((f) => !pick || f.slug === pick)) {
+  for (const { slug, title, size } of FLYERS.filter((f) => !pick || f.slug === pick)) {
     const file = path.join(here, 'flyers', `${slug}.html`)
+    const bleedIn = { w: size.w + 0.25, h: size.h + 0.25 }
+    const W = bleedIn.w * CSS_DPI
+    const H = bleedIn.h * CSS_DPI
 
     const { context, page } = await openPage(browser, file, { width: W, height: H, scale: 2 })
 
-    // Words and the QR code must sit inside the safe area: 0.375in inside the trim.
-    const unsafe = await page.evaluate((safe) => {
-      const right = 840 - safe
-      const bottom = 1080 - safe
-      return [...document.querySelectorAll('.sheet :is(p, h1, h2, li, .chip, .cta__qr, [data-wordmark])')]
-        .map((el) => ({ el, r: el.getBoundingClientRect() }))
-        .filter(({ r }) => r.left < safe - 0.5 || r.top < safe - 0.5 || r.right > right + 0.5 || r.bottom > bottom + 0.5)
-        .map(({ el, r }) => `"${el.textContent.trim().slice(0, 30) || el.className}" (${Math.round(r.left)},${Math.round(r.top)})-(${Math.round(r.right)},${Math.round(r.bottom)})`)
-    }, 48)
+    // Words and the QR code must sit inside the safe area.
+    const unsafe = await page.evaluate(
+      ({ safe, W, H }) => {
+        const right = W - safe
+        const bottom = H - safe
+        return [...document.querySelectorAll('.sheet :is(p, h1, h2, li, .chip, .cta__qr, [data-wordmark])')]
+          .map((el) => {
+            // Measure the content, not the box: nowrap text can overflow its paragraph.
+            const range = document.createRange()
+            range.selectNodeContents(el)
+            const box = el.getBoundingClientRect()
+            // The wordmark's SVG box already includes its padding; its glyph boxes are not ink.
+            const ink = el.matches('[data-wordmark], .cta__qr') ? box : range.getBoundingClientRect()
+            const r = {
+              left: Math.min(box.left, ink.width ? ink.left : box.left),
+              top: Math.min(box.top, ink.height ? ink.top : box.top),
+              right: Math.max(box.right, ink.right),
+              bottom: Math.max(box.bottom, ink.bottom),
+            }
+            return { el, r }
+          })
+          .filter(({ r }) => r.left < safe - 0.5 || r.top < safe - 0.5 || r.right > right + 0.5 || r.bottom > bottom + 0.5)
+          .map(({ el, r }) => `"${el.textContent.trim().slice(0, 30) || el.className}" (${Math.round(r.left)},${Math.round(r.top)})-(${Math.round(r.right)},${Math.round(r.bottom)})`)
+      },
+      { safe: size.safe, W, H }
+    )
     if (unsafe.length) throw new Error(`${slug}: outside the safe area: ${unsafe.join('; ')}`)
 
     const preview = await page.locator('.sheet').screenshot()
     await writeFile(path.join(dir, `${slug}-preview.png`), preview)
-    await page.pdf({ path: path.join(dir, `${slug}-print-bleed.pdf`), width: '8.75in', height: '11.25in', printBackground: true, pageRanges: '1' })
+    await page.pdf({ path: path.join(dir, `${slug}-print-bleed.pdf`), width: `${bleedIn.w}in`, height: `${bleedIn.h}in`, printBackground: true, pageRanges: '1' })
     await context.close()
 
+    // The trimmed PDF: Letter for a home printer, or the 5x7 card without its bleed.
+    const trimmed = size === LETTER ? `${slug}-letter.pdf` : `${slug}.pdf`
     const home = await openPage(browser, file, { width: W, height: H, query: '?trim=1' })
-    await home.page.pdf({ path: path.join(dir, `${slug}-letter.pdf`), width: '8.5in', height: '11in', printBackground: true, pageRanges: '1' })
+    await home.page.pdf({ path: path.join(dir, trimmed), width: `${size.w}in`, height: `${size.h}in`, printBackground: true, pageRanges: '1' })
     await home.context.close()
-    console.log(`✓ ${title.padEnd(34)} ${slug}-print-bleed.pdf, ${slug}-letter.pdf, ${slug}-preview.png`)
+    console.log(`✓ ${title.padEnd(34)} ${slug}-print-bleed.pdf, ${trimmed}, ${slug}-preview.png`)
   }
 }
 

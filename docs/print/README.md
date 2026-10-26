@@ -9,7 +9,8 @@ hold in their hands matches the site. See [ADR general/0007](../adr/general/0007
 |---|---|---|
 | Business card | `business-cards/tutumuch-business-card.pdf` (front, back), or the two 300 DPI PNGs | `*-guides.png` |
 | Stickers (6) | `stickers/sticker-N-*.png` | `stickers/contact-sheet.png`, `*-preview.png` |
-| Flyers (3) | `flyers/flyer-N-*-print-bleed.pdf` (print shop), `flyer-N-*-letter.pdf` (home printer) | `flyers/*-preview.png` |
+| Flyers (3, Letter) | `flyers/flyer-N-*-print-bleed.pdf` (print shop), `flyer-N-*-letter.pdf` (home printer) | `flyers/*-preview.png` |
+| Buyer handouts (2, 5 × 7) | `flyers/flyer-N-*-5x7-print-bleed.pdf` (print shop), `flyer-N-*-5x7.pdf` (trimmed) | `flyers/*-5x7-preview.png` |
 
 ## Business card
 
@@ -92,12 +93,30 @@ the speech bubble.
 
 Every flyer ends with a QR code that opens https://www.tutumuch.kids.
 
+### 5 × 7 buyer handouts
+
+Card-sized versions of the two buyer flyers, to hand out:
+
+| Handout | Is |
+|---|---|
+| ![Shop 5x7](flyers/flyer-4-shop-5x7-preview.png) | **4. Shop, 5 × 7**: flyer 2 at card size |
+| ![Gear 5x7](flyers/flyer-5-shop-gear-5x7-preview.png) | **5. Shop gear, 5 × 7**: flyer 3 at card size |
+
+| | |
+|---|---|
+| Trim | 5 × 7 in, single-sided |
+| `-5x7-print-bleed.pdf` | 5.25 × 7.25 in: 0.125 in bleed for a print shop that trims |
+| `-5x7.pdf` | 5 × 7 in, bleed cropped off |
+| Safe area | 0.25 in inside the trim, checked by the renderer |
+
+Order "5 × 7 flyer" or "5 × 7 postcard", single-sided, and upload the bleed PDF.
+
 | | |
 |---|---|
 | Trim | US Letter, 8.5 × 11 in |
 | `-print-bleed.pdf` | 8.75 × 11.25 in: 0.125 in bleed for a print shop that trims |
 | `-letter.pdf` | 8.5 × 11 in with the bleed cropped off, for a home or office printer ("fit to page" off) |
-| Safe area | 0.375 in inside the trim. The renderer fails if any words or the QR code fall outside it |
+| Safe area | 0.375 in inside the trim. The renderer fails if any words (measured to the ink, so nowrap text that overflows its box counts) or the QR code fall outside it |
 | Preview PNG | 1680 × 2160 px, for review only |
 
 Tilly's images are about 1024 px, so on a full-page flyer she prints at roughly 150 to 200 DPI.
@@ -125,7 +144,7 @@ Edit the HTML sources, never the PNGs or PDFs.
 docs/print/
   business-cards/   tutumuch-business-card.pdf, tutumuch-card-{front,back}[-guides].png
   stickers/         sticker-N-*.png (print), *-preview.png, contact-sheet.png
-  flyers/           flyer-N-*-print-bleed.pdf, *-letter.pdf, *-preview.png
+  flyers/           flyer-N-*-print-bleed.pdf, *-letter.pdf or *-5x7.pdf, *-preview.png
   characters/       Tilly cutouts (transparent PNG) + ATTRIBUTION.md
   _build/
     render.mjs      renders and checks everything

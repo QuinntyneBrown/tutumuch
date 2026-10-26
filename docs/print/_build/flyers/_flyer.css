@@ -2,15 +2,16 @@
    (8.75 x 11.25 in = 840 x 1080 CSS px at 96/in). The trim is 12px in; keep
    words and the QR code inside the safe area, 48px in (0.375 in inside trim).
    ?trim=1 crops the bleed off for the Letter PDF you can print at home.
+   .sheet.c5x7 is the 5 x 7 in handout instead: 5.25 x 7.25 in = 504 x 696 px,
+   safe area 36px in (0.25 in inside the trim).
    ?guides=1 draws the trim (solid) and safe (dashed) lines. */
 @page { size: 8.75in 11.25in; margin: 0; }
 html, body { background: #ffffff; }
 .sheet { position: relative; width: 840px; height: 1080px; overflow: hidden; background: var(--cream); }
 .sheet > * { position: absolute; }
 
-body.trim { width: 816px; height: 1056px; overflow: hidden; }
+body.trim { overflow: hidden; } /* _flyer.js sets the trimmed width and height */
 body.trim .sheet { transform: translate(-12px, -12px); }
-body.trim { --page: 8.5in 11in; }
 
 body.guides .sheet::before, body.guides .sheet::after { content: ""; position: absolute; pointer-events: none; z-index: 20; }
 body.guides .sheet::before { inset: 12px; outline: 1px solid #ff00ff; }
@@ -48,3 +49,15 @@ body.guides .sheet::after { inset: 48px; outline: 1px dashed #00b3ff; }
 .cta__head em { font-style: normal; color: var(--sunny); }
 .cta__url { margin: 12px 0 0; font: 900 30px/1 var(--font-body); color: var(--dot); letter-spacing: 0.01em; }
 .cta__small { margin: 12px 0 0; font: 600 16px/1.4 var(--font-body); color: #ead9e2; }
+
+/* 5 x 7 in handouts: the same idioms at card scale. */
+.sheet.c5x7 { width: 504px; height: 696px; }
+body.guides .sheet.c5x7::after { inset: 36px; }
+.c5x7 .eyebrow { padding: 4px 12px 5px; font-size: 10px; }
+.c5x7 .lede { font-size: 13px; line-height: 1.35; }
+.c5x7 .cta { height: 168px; }
+.c5x7 .cta__qr { left: 38px; top: 22px; width: 108px; height: 108px; padding: 7px; border-radius: 12px; }
+.c5x7 .cta__copy { left: 162px; top: 24px; right: 36px; }
+.c5x7 .cta__head { font-size: 19px; }
+.c5x7 .cta__url { margin-top: 8px; font-size: 20px; }
+.c5x7 .cta__small { margin-top: 8px; font-size: 11.5px; line-height: 1.35; }
