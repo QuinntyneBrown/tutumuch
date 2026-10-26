@@ -22,6 +22,8 @@ export class DialogComponent {
   private readonly ref = inject(DialogRef, { optional: true });
 
   readonly heading = input.required<string>();
+  /** Keeps the heading as the dialog's accessible name but hides it, for media that speaks for itself. */
+  readonly headingHidden = input(false);
   readonly icon = input<IconName>();
   /** The icon's colour: `danger` for a destructive action such as cancelling a sale. */
   readonly tone = input<'info' | 'danger'>('info');

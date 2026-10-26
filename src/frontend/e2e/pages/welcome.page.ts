@@ -9,18 +9,16 @@ export class WelcomePage {
   readonly video: Locator;
   readonly playPause: Locator;
   readonly captions: Locator;
-  readonly transcript: Locator;
   readonly videoError: Locator;
 
   constructor(private readonly page: Page) {
     this.main = page.locator('main#main');
     this.heading = this.main.getByRole('heading', { level: 1 });
-    this.poster = this.main.getByRole('button', { name: 'Watch the 30-second pitch' });
-    this.dialog = page.getByRole('dialog', { name: 'TuTuMuch in 30 seconds' });
+    this.poster = this.main.getByRole('button', { name: 'Play' });
+    this.dialog = page.getByRole('dialog', { name: 'TuTuMuch video' });
     this.video = this.dialog.locator('video');
     this.playPause = this.dialog.getByRole('button', { name: /^(Play|Pause)$/ });
     this.captions = this.dialog.getByRole('button', { name: 'Captions' });
-    this.transcript = this.dialog.getByRole('link', { name: 'Read the transcript' });
     this.videoError = this.dialog.getByRole('alert');
   }
 

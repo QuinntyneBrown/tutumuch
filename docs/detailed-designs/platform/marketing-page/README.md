@@ -14,8 +14,8 @@ Terms used below:
   the video frame; ink in both themes, with cream text, pink headline emphasis and raspberry,
   lilac and sunny shapes ([design system](../../../design-system/components/marketing-hero.html))
 - **pitch video** — `tutumuch-pitch.mp4` (H.264/AAC) and `tutumuch-pitch.webm` (VP9/Opus),
-  30.0 s, with `tutumuch-pitch.vtt` captions, `tutumuch-pitch.txt` transcript and
-  `tutumuch-pitch-poster.png`
+  30.0 s, with `tutumuch-pitch.vtt` captions (off until turned on), `tutumuch-pitch-poster.png`
+  and `tutumuch-share.jpg`, the 1200×630 link-preview image
 
 The page calls no TuTuMuch API endpoint; the shell's `GET /api/auth/me` decides the seller
 target. Nothing in the size rules, the catalog, sell, accounts or the API changes. The copy
@@ -43,19 +43,25 @@ says everything is for girls and never promises boys' or adult sizes
 | `tl-feature-band` | `eyebrow`, `heading`, `headingId`, `points`, `tone: 'default' \| 'surface'`, `stacked`; slots `[actions]`, body | Section labelled by its h2 |
 | `tl-steps` | `steps: { title, text }[]` | Ordered list, h3 titles |
 | `tl-video-poster` | `poster`, `label`, `duration`; output `watch` | Native button; no `<video>` on the page |
-| `tl-video-player` | `label`, `sources`, `captions`, `transcript`, `poster`, `autoplay` | States: loading, ready, error; Play/Pause, Captions (`aria-pressed`), transcript link; error when the last `<source>` fails |
+| `tl-video-player` | `label`, `sources`, `captions`, `poster`, `autoplay` | States: loading, ready, error; Play/Pause, Captions (`aria-pressed`, off by default); error when the last `<source>` fails |
 
 ### Feature (`@tutumuch/marketing`)
 
 - **`WelcomePage`** — static copy (headlines of 3 to 6 words): hero "Twirl it *forward.*",
   For shoppers "Everything here is for girls.", For sellers "Pass it on to the next girl.",
   How it works "Three steps. That’s it.", closing "Her next favourite thing is *waiting.*";
-  `sellHref = computed(() => auth.member() ? '/sell' : '/join')`, the meta description
-  through Angular's `Meta` (removed on destroy), and `openVideo()` that calls
+  `sellHref = computed(() => auth.member() ? '/sell' : '/join')` and `openVideo()` that calls
   `DialogService.open(PitchVideoDialog)`.
-- **`PitchVideoDialog`** — `tl-dialog` (`lg`, "TuTuMuch in 30 seconds") around
+- **`PitchVideoDialog`** — `tl-dialog` (`lg`, heading "TuTuMuch video" hidden with `headingHidden`) around
   `tl-video-player` with `autoplay` true: it opens only from the poster press, so playback
   with sound is the visitor's choice. Closing destroys the video, which stops it.
+- **Share tags** — crawlers that build link previews do not run scripts, so the meta description,
+  Open Graph (`og:title`, `og:description`, `og:type`, `og:site_name`, `og:image` with type, width,
+  height and alt, `og:locale`) and Twitter card (`summary_large_image`) tags are static in
+  `projects/tutumuch/src/index.html`. The marketing build (served at `https://www.tutumuch.kids/`)
+  uses `index.marketing.html` (angular.json `index`), which adds `og:url`, the canonical link and
+  the title "Twirl it forward · TuTuMuch". `og:image` is the absolute
+  `https://www.tutumuch.kids/media/tutumuch-share.jpg`.
 
 ### Media and video build
 
@@ -75,7 +81,8 @@ copied to `docs/mocks/assets/media/`. `docs/mocks/_build/video/build_video.py` b
    excerpt, at −9 dB and ducked by a sidechain compressor keyed on the voice.
 5. Encode: MP4 (libx264, AAC, faststart) and WebM (VP9, Opus). The WebM exists because
    Playwright's Chromium has no H.264 decoder; browsers pick the first source they can play.
-6. Captions from the line timings, transcript, poster (last slide) and `ATTRIBUTION.md`.
+6. Captions from the line timings, poster (last slide), the 1200×630 share image cut from it and
+   `ATTRIBUTION.md`.
 
 The committed media are the full build: narrated by `af_bella`, with the music ducked under the
 voice.
@@ -94,9 +101,9 @@ motion and the footer link.
 | `L2-078` | `L1-020` | Page sections and CTA targets for visitors and members; copy for girls only |
 | `L2-079` | `L1-020` | Footer "About TuTuMuch" link |
 | `L2-080` | `L1-020` | Poster first, no autoplay, keyboard play and pause |
-| `L2-081` | `L1-020` | Captions toggle and transcript link |
+| `L2-081` | `L1-020` | Captions off by default, Captions toggle |
 | `L2-082` | `L1-020` | Video error state; page stays usable |
-| `L2-083` | `L1-020` | Contrast over gradients, heading order, reduced motion, title and meta description |
+| `L2-083` | `L1-020` | Contrast over gradients, heading order, reduced motion, title, meta description and link-preview tags |
 
 Related requirements applied without restating them: `L2-061` to `L2-065` (responsive,
 accessible shell), `L2-010` (no role needed), `L2-011` to `L2-014` (the girls' size rule the
@@ -118,5 +125,5 @@ with
 
 ## Open questions
 
-- Deferred: SEO beyond the title and meta description, analytics, A/B tests, newsletter
+- Deferred: SEO beyond the title, meta description and link-preview tags, analytics, A/B tests, newsletter
   sign-up, making `/welcome` the home page, translations and other video lengths or cuts.

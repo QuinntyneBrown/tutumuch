@@ -97,6 +97,7 @@
                 }
               ],
               "outputHashing": "all",
+              "index": { "input": "projects/tutumuch/src/index.marketing.html", "output": "index.html" },
               "fileReplacements": [
                 {
                   "replace": "projects/tutumuch/src/app/app.routes.ts",

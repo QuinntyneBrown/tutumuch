@@ -342,8 +342,9 @@ def banner(kind: str, text: str, actions: str = "", dismiss: bool = True, icon: 
 
 
 def dialog(title: str, body: str, footer: str = "", *, desc: str | None = None, icon: str | None = None, icon_kind: str = "info",
-           size: str = "", top: str = "") -> str:
-    """Modal dialog markup. `top` goes above the body (failed alerts, summaries)."""
+           size: str = "", top: str = "", title_hidden: bool = False) -> str:
+    """Modal dialog markup. `top` goes above the body (failed alerts, summaries); `title_hidden` keeps the
+    title as the accessible name only."""
     ic_html = f'<div class="dialog__icon dialog__icon--{icon_kind}" aria-hidden="true">{ic(icon)}</div>' if icon else ""
     d = f'<p id="dlg-desc" class="text-muted" style="margin-top: var(--space-2);">{desc}</p>' if desc else ""
     dd = ' aria-describedby="dlg-desc"' if desc else ""
@@ -351,7 +352,7 @@ def dialog(title: str, body: str, footer: str = "", *, desc: str | None = None, 
     sz = f" dialog__panel--{size}" if size else ""
     t = f'<div style="padding: var(--space-4) var(--space-6) 0;">{top}</div>' if top else ""
     return (f'<div class="backdrop"></div><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dlg-title"{dd} data-dismiss-on-escape>'
-            f'<div class="dialog__panel{sz}"><div class="dialog__header">{ic_html}<div style="flex: 1;"><h2 class="dialog__title" id="dlg-title">{title}</h2>{d}</div>'
+            f'<div class="dialog__panel{sz}"><div class="dialog__header">{ic_html}<div style="flex: 1;"><h2 class="dialog__title{' visually-hidden' if title_hidden else ''}" id="dlg-title">{title}</h2>{d}</div>'
             f'<button class="btn btn--ghost btn--icon" type="button" aria-label="Close">{ic("close")}</button></div>{t}'
             f'<div class="dialog__body stack">{body}</div>{f}</div></div>')
 

@@ -856,4 +856,3 @@ h1, h2, h3, h4, .display, .card__title, .dialog__title, .drawer__title, .empty__
 .video-player__state strong { font: var(--text-h4); }
 .video-player__state p { max-width: 28rem; margin: 0; color: var(--color-fg-showcase-muted); }
 .video-player__controls { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
-.video-player__transcript { margin-left: auto; }

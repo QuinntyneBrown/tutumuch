@@ -4,8 +4,8 @@ Inputs  LINES below                         one narrated line per slide (caption
         music/upbeat-ukulele-kids-excerpt.mp3  "Upbeat Ukulele Kids" (Cold_Fire, Pixabay), ducked under the voice
         kokoro/                             Kokoro-82M ONNX + af_bella voice from Hugging Face (auto-downloaded)
         docs/design-system/assets/logo.png  the TuTuMuch wordmark
-Outputs tutumuch-pitch.mp4 (H.264/AAC), tutumuch-pitch.webm (VP9/Opus), tutumuch-pitch.vtt, tutumuch-pitch.txt,
-        tutumuch-pitch-poster.png and ATTRIBUTION.md, written to the app's public media folder
+Outputs tutumuch-pitch.mp4 (H.264/AAC), tutumuch-pitch.webm (VP9/Opus), tutumuch-pitch.vtt,
+        tutumuch-pitch-poster.png, tutumuch-share.jpg (1200x630 link preview) and ATTRIBUTION.md, written to the app's public media folder
         (src/frontend/projects/tutumuch/public/media/) and copied to docs/mocks/assets/media/.
 
 Needs: ffmpeg/ffprobe, python playwright (chromium); for narration also kokoro-onnx, onnxruntime,
@@ -26,7 +26,7 @@ MUSIC, MUSIC_DB = HERE / "music/upbeat-ukulele-kids-excerpt.mp3", -9
 TARGET, LEAD, TAIL, MIN_GAP = 30.0, 0.6, 1.8, 0.25  # total length; seconds before the first line and after the last
 SILENT_WPS = 2.6  # words per second used to time captions when there is no narration
 
-# (caption and transcript text, text the narrator speaks)
+# (caption text, text the narrator speaks)
 LINES = [
     ("Growing fast? Outgrowing everything? Welcome to TuTuMuch.",
      "Growing fast? Outgrowing everything? Welcome to Tutu Much!"),
@@ -207,7 +207,9 @@ def main():
     for i, ((caption, _), (_, d)) in enumerate(zip(LINES, voices)):
         vtt += [str(i + 1), f"{ts(starts[i])} --> {ts(starts[i] + d)}", caption, ""]
     (out / f"{NAME}.vtt").write_text("\n".join(vtt), encoding="utf-8")
-    (out / f"{NAME}.txt").write_text("TuTuMuch in 30 seconds: transcript\n\n" + "\n".join(c for c, _ in LINES) + "\n", encoding="utf-8")
+    # Link-preview image for the og:image and twitter:image tags: the poster cut to 1200x630.
+    subprocess.check_call(["ffmpeg", "-y", "-loglevel", "error", "-i", str(out / f"{NAME}-poster.png"),
+                           "-vf", "scale=1200:-1,crop=1200:630", "-q:v", "3", str(out / "tutumuch-share.jpg")])
     shutil.copy(HERE / "ATTRIBUTION.md", out / "ATTRIBUTION.md")
     for other in OUT_DIRS[1:]:
         other.mkdir(parents=True, exist_ok=True)

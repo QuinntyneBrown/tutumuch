@@ -15,8 +15,7 @@ SHOPPER_POINTS = [("Every listing is for girls", "Clothes, dance and sports gear
                   ("Outgrown, not worn out", "Most things still have plenty of twirl left in them."),
                   ("Honest condition", "Five grades, and flaws named up front.")]
 SELLER_POINTS = [("List in minutes", "Photos, a price and the condition. That’s it."),
-                 ("Families are already looking", "Sell to parents who need exactly what she has outgrown."),
-                 ("10% fee, only when it sells", "Taken when the order completes. Listing is free.")]
+                 ("Families are already looking", "Sell to parents who need exactly what she has outgrown.")]
 STEPS = [("List it", "Add photos, a price and the condition."),
          ("Sell it", "A buyer pays. You ship within 5 business days."),
          ("Get paid", "The order completes and your payout is on its way.")]
@@ -35,7 +34,7 @@ def seller_href(member: bool) -> str:
 
 def poster() -> str:
     return (f'<a class="video-poster" href="{D("pitch-video")}"><img src="{MEDIA}tutumuch-pitch-poster.png" alt="" width="1920" height="1080">'
-            f'<span class="video-poster__play">{ic("play")}Watch the 30-second pitch</span>'
+            f'<span class="video-poster__play">{ic("play")}Play</span>'
             '<span class="video-poster__meta" aria-hidden="true">0:30</span></a>')
 
 
@@ -105,12 +104,9 @@ def _():
 # ---------------------------------------------------------------------------
 # Pitch video dialog
 # ---------------------------------------------------------------------------
-TRANSCRIPT = f"{MEDIA}tutumuch-pitch.txt"
-
-
 def player(state: str) -> str:
     track_default = " default" if state == "captions" else ""
-    video = (f'<video controls playsinline preload="metadata" poster="{MEDIA}tutumuch-pitch-poster.png" aria-label="TuTuMuch in 30 seconds">'
+    video = (f'<video controls playsinline preload="metadata" poster="{MEDIA}tutumuch-pitch-poster.png" aria-label="TuTuMuch video">'
              f'<source src="{MEDIA}tutumuch-pitch.mp4" type="video/mp4"><source src="{MEDIA}tutumuch-pitch.webm" type="video/webm">'
              f'<track kind="captions" src="{MEDIA}tutumuch-pitch.vtt" srclang="en" label="English"{track_default}></video>')
     overlay = ""
@@ -119,24 +115,23 @@ def player(state: str) -> str:
                    '<p>Loading video…</p></div>')
     elif state == "error":
         overlay = (f'<div class="video-player__state" role="alert">{ic("alert", "icon icon--lg")}<strong>The video didn’t load</strong>'
-                   f'<p>Check your connection and try again, or read the transcript.</p>{btn("Try again", "primary", icon="refresh")}</div>')
+                   f'<p>Check your connection and try again.</p>{btn("Try again", "primary", icon="refresh")}</div>')
     playing = state in ("default", "captions")
     play = btn("Pause", "primary", icon="pause") if playing else btn("Play", "primary", icon="play")
     cc_on = state == "captions"
     cc = btn("Captions", "", icon="captions", attrs=f'aria-pressed="{"true" if cc_on else "false"}"' + ("" if state != "error" else " disabled"))
     controls = "" if state == "error" else play + cc
-    link = f'<a class="btn btn--link video-player__transcript" href="{TRANSCRIPT}">Read the transcript</a>'
     return (f'<div class="video-player"><div class="video-player__frame">{video}{overlay}</div>'
-            f'<div class="video-player__controls">{controls}{link}</div></div>')
+            f'<div class="video-player__controls">{controls}</div></div>')
 
 
 pv = screen("pitch-video", "dialog", "Pitch video", opens_from="welcome", reqs=["L2-080", "L2-081", "L2-082"],
             na={"busy": "Playing a video sends nothing to the TuTuMuch API.", "invalid": "Nothing to fill in."})
 
 
-@pv.state("default", "Playing after the visitor pressed Watch: native controls plus Pause, Captions and the transcript link.")
+@pv.state("default", "Playing after the visitor pressed Play: no visible heading, native controls plus Pause and Captions; captions off by default.")
 def _():
-    d = Dialog(bg=("welcome", "default"), html=dialog("TuTuMuch in 30 seconds", player("default"), size="lg"))
+    d = Dialog(bg=("welcome", "default"), html=dialog("TuTuMuch video", player("default"), size="lg", title_hidden=True))
     d.notes = note("Opens only from the poster button and plays with sound because the visitor asked. Space or K pauses; Esc closes and returns focus to the poster.",
                    "top: 1rem; left: 1rem;")
     return d
@@ -144,16 +139,16 @@ def _():
 
 @pv.state("loading", "The video is buffering: spinner over the poster; Play and Captions stay usable.")
 def _():
-    return Dialog(bg=("welcome", "default"), html=dialog("TuTuMuch in 30 seconds", player("loading"), size="lg"))
+    return Dialog(bg=("welcome", "default"), html=dialog("TuTuMuch video", player("loading"), size="lg", title_hidden=True))
 
 
-@pv.state("error", "The video failed to load: plain message, Try again and the transcript; the page behind still works once closed.")
+@pv.state("error", "The video failed to load: plain message and Try again; the page behind still works once closed.")
 def _():
-    return Dialog(bg=("welcome", "default"), html=dialog("TuTuMuch in 30 seconds", player("error"), size="lg"))
+    return Dialog(bg=("welcome", "default"), html=dialog("TuTuMuch video", player("error"), size="lg", title_hidden=True))
 
 
 @pv.state("captions", "Captions on: the English track shows; the Captions button is pressed.")
 def _():
-    d = Dialog(bg=("welcome", "default"), html=dialog("TuTuMuch in 30 seconds", player("captions"), size="lg"))
+    d = Dialog(bg=("welcome", "default"), html=dialog("TuTuMuch video", player("captions"), size="lg", title_hidden=True))
     d.notes = note("Captions come from tutumuch-pitch.vtt and stay on for the rest of the visit.", "top: 1rem; left: 1rem;")
     return d

@@ -1,8 +1,9 @@
 // Acceptance Test
 // Traces to: L2-078, L2-079, L2-080, L2-081, L2-082, L2-083
 // Description: The public marketing page at /welcome: sections and CTA targets for visitors and
-// members, the footer link, the pitch video (poster first, keyboard play and pause, captions,
-// transcript, error state), reduced motion, heading order, title and meta description.
+// members, the footer link, the pitch video (poster first, keyboard play and pause, captions off
+// until turned on, error state), reduced motion, heading order, title, meta description and
+// link-preview tags.
 // The media files come from the static build; the error state fails their route.
 
 import { expect, marcus, serveCatalog, signInAs, test } from '../fixtures';
@@ -99,6 +100,22 @@ test.describe('marketing page', () => {
     await expect(page).toHaveURL(/\/welcome$/);
     await expect(new WelcomePage(page).heading).toBeVisible();
   });
+
+  test('the HTML a link preview fetches carries the share tags and the image exists', async ({ page }) => {
+    const html = await (await page.request.get('/welcome')).text();
+    const meta = (key: string) => html.match(new RegExp(`<meta (?:property|name)="${key}" content="([^"]*)"`))?.[1];
+    expect(meta('og:title')).toBe('TuTuMuch · Twirl it forward');
+    expect(meta('og:type')).toBe('website');
+    expect(meta('og:image')).toBe('https://www.tutumuch.kids/media/tutumuch-share.jpg');
+    expect(meta('og:image:width')).toBe('1200');
+    expect(meta('og:image:height')).toBe('630');
+    expect(meta('twitter:card')).toBe('summary_large_image');
+    expect(meta('twitter:image')).toBe('https://www.tutumuch.kids/media/tutumuch-share.jpg');
+    expect(meta('og:description')).toMatch(/for girls/);
+    const image = await page.request.get('/media/tutumuch-share.jpg');
+    expect(image.status()).toBe(200);
+    expect(image.headers()['content-type']).toBe('image/jpeg');
+  });
 });
 
 test.describe('pitch video', () => {
@@ -133,21 +150,21 @@ test.describe('pitch video', () => {
     await expect(welcome.poster).toBeFocused();
   });
 
-  test('turns captions on and links the transcript', async ({ page }) => {
+  test('opens with captions off and no visible heading; Captions turns them on', async ({ page }) => {
     const welcome = new WelcomePage(page);
     await welcome.goto();
     await welcome.poster.click();
 
+    await expect(welcome.dialog.getByRole('heading', { name: 'TuTuMuch video' })).toHaveClass(/visually-hidden/);
     await expect(welcome.captions).toHaveAttribute('aria-pressed', 'false');
+    await expect.poll(() => welcome.video.evaluate((v: HTMLVideoElement) => v.textTracks[0]?.mode)).toBe('hidden');
     await welcome.captions.click();
     await expect(welcome.captions).toHaveAttribute('aria-pressed', 'true');
     expect(await welcome.video.evaluate((v: HTMLVideoElement) => v.textTracks[0]?.mode)).toBe('showing');
-    await expect(welcome.transcript).toHaveAttribute('href', '/media/tutumuch-pitch.txt');
-    const transcript = await page.request.get('/media/tutumuch-pitch.txt');
-    expect(await transcript.text()).toContain('Twirl it forward');
+    await expect(welcome.dialog.getByRole('link')).toHaveCount(0);
   });
 
-  test('shows an error with Try again and the transcript, and the page still works', async ({ page }) => {
+  test('shows an error with Try again, and the page still works', async ({ page }) => {
     await page.route('**/media/tutumuch-pitch.{mp4,webm}', (route) => route.fulfill({ status: 404, body: '' }));
     await serveCatalog(page, 0);
     const welcome = new WelcomePage(page);
@@ -156,7 +173,6 @@ test.describe('pitch video', () => {
 
     await expect(welcome.videoError).toContainText('The video didn’t load');
     await expect(welcome.dialog.getByRole('button', { name: 'Try again' })).toBeVisible();
-    await expect(welcome.transcript).toBeVisible();
 
     await welcome.dialog.getByRole('button', { name: 'Close' }).click();
     await welcome.link('Shop the catalog').click();

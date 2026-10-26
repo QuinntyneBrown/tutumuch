@@ -19,7 +19,7 @@
         </div>
       }
       <div class="dialog__heading">
-        <h2 class="dialog__title" [id]="id + '-title'">{{ heading() }}</h2>
+        <h2 class="dialog__title" [class.visually-hidden]="headingHidden()" [id]="id + '-title'">{{ heading() }}</h2>
         <p class="text-muted dialog__description" [id]="id + '-desc'"><ng-content select="[description]" /></p>
       </div>
       <button tlButton="ghost" class="btn--icon" type="button" aria-label="Close" (click)="close()">

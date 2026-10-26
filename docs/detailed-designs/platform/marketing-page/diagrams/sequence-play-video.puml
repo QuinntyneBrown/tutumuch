@@ -19,7 +19,7 @@ participant "Static host /media/" as host
 
 v -> page : open /welcome
 page -> poster : render poster (no video element yet)
-v -> poster : Enter / click "Watch the 30-second pitch"
+v -> poster : Enter / click "Play"
 poster -> page : (watch)
 page -> ds : open(PitchVideoDialog)
 ds -> dlg : create, make page inert
@@ -31,7 +31,7 @@ alt loads
   v -> player : Pause / Play, Captions
 else both sources fail
   host --> player : 404 / network error
-  player -> player : error on the last <source> → "The video didn't load", Try again, transcript link
+  player -> player : error on the last <source> → "The video didn't load", Try again
 end
 v -> ds : Escape or Close
 ds -> dlg : destroy (video stops)
