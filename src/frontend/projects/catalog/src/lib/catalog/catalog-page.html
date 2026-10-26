@@ -1,6 +1,6 @@
 @if (store.view() === 'offline') {
-  <tm-alert tone="warning" icon="wifi-off" live="polite" [banner]="true"
-    >You’re offline. Showing items from your last visit.</tm-alert
+  <tl-alert tone="warning" icon="wifi-off" live="polite" [banner]="true"
+    >You’re offline. Showing items from your last visit.</tl-alert
   >
 }
 @if (query().q) {
@@ -14,7 +14,7 @@
   <div class="page-header">
     <div class="stack stack--sm">
       <h1>{{ category.label }}</h1>
-      <div><tm-size-tag [label]="category.sizeLabel" [large]="true" /></div>
+      <div><tl-size-tag [label]="category.sizeLabel" [large]="true" /></div>
     </div>
   </div>
 } @else if (filtered()) {
@@ -28,11 +28,11 @@
   </section>
 }
 <div class="catalog-layout">
-  <tm-filters-sidebar [query]="query()" [brands]="brands()" (apply)="show($event)" />
+  <tl-filters-sidebar [query]="query()" [brands]="brands()" (apply)="show($event)" />
   <section aria-label="Listings">
     <div class="toolbar">
       <div class="toolbar__left">
-        <button tmButton class="filters-toggle" type="button" (click)="openFilters()">Filters</button>
+        <button tlButton class="filters-toggle" type="button" (click)="openFilters()">Filters</button>
         <span class="text-muted text-sm" aria-live="polite">
           @switch (store.view()) {
             @case ('loading') {
@@ -48,10 +48,10 @@
           }
         </span>
         @for (chip of chips(); track chip.label) {
-          <tm-chip [label]="chip.label" (remove)="show(chip.without)" />
+          <tl-chip [label]="chip.label" (remove)="show(chip.without)" />
         }
         @if (filtered() && store.view() !== 'empty') {
-          <button tmButton="link" class="btn--sm" type="button" (click)="clearAll()">Clear all</button>
+          <button tlButton="link" class="btn--sm" type="button" (click)="clearAll()">Clear all</button>
         }
       </div>
       <label class="sort">
@@ -66,37 +66,37 @@
     @switch (store.view()) {
       @case ('empty') {
         @if (filtered()) {
-          <tm-empty-state icon="search" heading="No items match">
+          <tl-empty-state icon="search" heading="No items match">
             Try fewer filters or a different word.
-            <button actions tmButton="primary" type="button" (click)="clearAll()">Clear search and filters</button>
-          </tm-empty-state>
+            <button actions tlButton="primary" type="button" (click)="clearAll()">Clear search and filters</button>
+          </tl-empty-state>
         } @else {
-          <tm-empty-state icon="tag" heading="Nothing listed yet">
+          <tl-empty-state icon="tag" heading="Nothing listed yet">
             Be the first to list a pair of 12s or something in L.
-            <a actions tmButton="primary" routerLink="/sell">Sell an item</a>
-          </tm-empty-state>
+            <a actions tlButton="primary" routerLink="/sell">Sell an item</a>
+          </tl-empty-state>
         }
       }
       @case ('error') {
-        <tm-empty-state icon="refresh" heading="Couldn’t load items" tone="error">
+        <tl-empty-state icon="refresh" heading="Couldn’t load items" tone="error">
           Something went wrong on our side. <span class="ref">{{ store.errorRef() }}</span>
-          <button actions tmButton="primary" type="button" (click)="store.retry()">
-            <tm-icon name="refresh" />Try again
+          <button actions tlButton="primary" type="button" (click)="store.retry()">
+            <tl-icon name="refresh" />Try again
           </button>
-        </tm-empty-state>
+        </tl-empty-state>
       }
       @default {
-        <tm-listing-grid [cards]="cards()" [loading]="store.view() === 'loading'" />
+        <tl-listing-grid [cards]="cards()" [loading]="store.view() === 'loading'" />
         @if (store.moreErrorRef(); as ref) {
           <div class="catalog__more-error">
-            <tm-alert tone="danger" heading="Couldn’t load more items"
+            <tl-alert tone="danger" heading="Couldn’t load more items"
               >Something went wrong on our side. <span class="ref">{{ ref }}</span>
-              <button tmButton="link" type="button" (click)="store.loadMore()">Try again</button></tm-alert
+              <button tlButton="link" type="button" (click)="store.loadMore()">Try again</button></tl-alert
             >
           </div>
         }
         @if (store.view() === 'loaded') {
-          <tm-load-more
+          <tl-load-more
             [shown]="store.items().length"
             [total]="store.totalCount()"
             [busy]="store.loadingMore()"

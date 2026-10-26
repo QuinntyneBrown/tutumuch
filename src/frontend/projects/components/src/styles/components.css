@@ -1,5 +1,5 @@
 /* ==========================================================================
-   components.css — the Tutu Much component stylesheet, extracted from
+   components.css — the TuTuMuch component stylesheet, extracted from
    docs/mocks/assets/ui.css on 2026-10-25.
 
    Every colour, size and duration comes from ../tokens/tokens.css. Each
@@ -2055,7 +2055,7 @@ a.tab {
 }
 
 /* ==========================================================================
-   Tutu Much brand layer — components specific to the marketplace. Geometry follows
+   TuTuMuch brand layer — components specific to the marketplace. Geometry follows
    the logo: square corners, solid ink blocks, one 45° chamfer, a red accent.
    ========================================================================== */
 

@@ -55,7 +55,7 @@ class SecretGuard {
   +StartAsync(ct): Task
 }
 class SecretStoreConfigurationExtensions <<static>> {
-  +AddTutuMuchSecretStore(builder: IHostApplicationBuilder): IHostApplicationBuilder
+  +AddTuTuMuchSecretStore(builder: IHostApplicationBuilder): IHostApplicationBuilder
 }
 
 Pbkdf2PasswordHasher ..|> IPasswordHasher

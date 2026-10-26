@@ -3,7 +3,7 @@
 LAYOUT_WITH_LEGEND()
 title Components — Meet performance and scale targets
 
-Container_Boundary(api, "Tutu Much API") {
+Container_Boundary(api, "TuTuMuch API") {
   Component(kind, "EndpointKindAttribute", "Endpoint metadata", "Read, Write, PaymentBound")
   Component(dp, "Data Protection", "ASP.NET Core", "Key ring persisted to Redis")
   Component(rlstore, "RedisFixedWindowRateLimitStore", "IRateLimitStore", "From harden-http-and-api")
@@ -12,7 +12,7 @@ Container_Boundary(api, "Tutu Much API") {
   Component(queries, "Read query handlers", "MediatR handlers", "AsNoTracking projections, pages of 24")
 }
 ContainerDb(cache, "Distributed cache", "Redis", "Shared state")
-ContainerDb(db, "Tutu Much database", "SQL Server", "Business data")
+ContainerDb(db, "TuTuMuch database", "SQL Server", "Business data")
 
 Rel(dp, factory, "Uses")
 Rel(rlstore, factory, "Uses")

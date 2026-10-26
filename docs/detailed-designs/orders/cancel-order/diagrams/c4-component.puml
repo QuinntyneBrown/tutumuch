@@ -3,8 +3,8 @@
 LAYOUT_WITH_LEGEND()
 title Components — Cancel an order
 
-Container(web, "Tutu Much Web", "Angular, @tutumuch/orders and @tutumuch/api", "CancelOrderDialog, RequestCancellationDialog, RespondCancellationDialog, RelistDialog; OrdersApi")
-Container_Boundary(api, "Tutu Much API") {
+Container(web, "TuTuMuch Web", "Angular, @tutumuch/orders and @tutumuch/api", "CancelOrderDialog, RequestCancellationDialog, RespondCancellationDialog, RelistDialog; OrdersApi")
+Container_Boundary(api, "TuTuMuch API") {
   Component(ctrl, "OrdersController, ListingsController", "ASP.NET Core controllers", "Cancellation, request, response and relist endpoints")
   Component(cancel, "CancelOrderCommandHandler", "MediatR handler", "Seller cancels with a reason")
   Component(req, "RequestCancellationCommandHandler", "MediatR handler", "Buyer asks once")
@@ -16,10 +16,10 @@ Container_Boundary(api, "Tutu Much API") {
   Component(notify, "IEmailOutbox", "Application port (notifications)", "Enqueues email in the same save")
   Component(pay, "IPaymentProvider", "Application port", "RefundAsync with the refund ID as key")
 }
-Container_Boundary(worker, "Tutu Much Worker") {
+Container_Boundary(worker, "TuTuMuch Worker") {
   Component(dl, "ShipDeadlineJob", "Hosted service", "CancelUnshippedOrdersCommand, see ship-order")
 }
-ContainerDb(db, "Tutu Much database", "SQL Server", "Orders, refunds, listings, outbox")
+ContainerDb(db, "TuTuMuch database", "SQL Server", "Orders, refunds, listings, outbox")
 Rel(web, ctrl, "Calls", "JSON/HTTPS")
 Rel(ctrl, cancel, "CancelOrderCommand")
 Rel(ctrl, req, "RequestCancellationCommand")

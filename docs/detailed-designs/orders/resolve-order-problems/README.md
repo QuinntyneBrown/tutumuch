@@ -2,7 +2,7 @@
 
 ## Overview
 
-Tutu Much is a marketplace for new and used girls' clothing. Parents buy for a
+TuTuMuch is a marketplace for new and used girls' clothing. Parents buy for a
 child who needs it now, so an item that arrives in the wrong size, differs from its
 description, never arrives or is counterfeit needs a clear remedy. This feature lets a
 buyer report a problem on a `Shipped` or `Delivered` order, lets the seller reply, and
@@ -35,24 +35,24 @@ route to the `Refunded` status in the state machine of
 
 - **`ReportProblemDialog`** (`report-problem/`, mock `docs/mocks/dialogs/report-problem/`) — opened from ghost "Report a problem" beside "I received it" on `OrderDetailPage` (states `default` and `delivered`); the action renders only while `canReportProblem` is true. It contains:
   - title "Report a problem" and description "Open until {deadline}. We hold the seller's payout while our team looks into it." (a Shipped order has no deadline, so the first sentence is left out);
-  - `tm-segmented` "What's wrong?" with "Not received", "Not as described", "Wrong size", "Counterfeit";
-  - textarea "Describe it" and `tm-photo-uploader` with `[cover]="false"` under "Photos (up to 4)" with "Add photo"; photos are previewed locally and sent with the report;
-  - primary "Send to Tutu Much".
+  - `tl-segmented` "What's wrong?" with "Not received", "Not as described", "Wrong size", "Counterfeit";
+  - textarea "Describe it" and `tl-photo-uploader` with `[cover]="false"` under "Photos (up to 4)" with "Add photo"; photos are previewed locally and sent with the report;
+  - primary "Send to TuTuMuch".
 
-  States: `default`; `invalid` (`tm-error-summary` plus "Choose what's wrong" and "Tell us what happened", without calling the API); `busy` (Cancel disabled); `failed` ("Your photos and description are saved here. Try again."). A photo refused by the API shows its message under the uploader.
-- **`OrderDetailPage`** state `problem` (buyer, mock `order-detail/problem`) — heading "We're on it", warning alert (icon `flag`) "Problem open · {reason}" / "We're holding the seller's payout until our team decides. Usually within 2 business days.", and `tm-thread` with the claim ("You · {day}", photos) and the seller's reply. "I received it" and "Report a problem" are hidden. State `refunded` shows the success alert "Refunded in full" / "Our team reviewed the problem. {total} is on its way back to {card}.", "Resolved {day} by Tutu Much support." and "Back to purchases".
-- **`SaleDetailPage`** state `problem` (seller, mock `sale-detail/problem`) — heading "Problem reported", warning alert "Problem reported · {reason}" / "Your payout is on hold while our team reviews this.", the thread, textarea "Your reply" with help "Visible to the buyer and to Tutu Much.", and "Send reply" ("Write your reply" when blank). After a reply the form is replaced by the reply in the thread. A sale refunded on a problem shows "Refunded · Buyer refunded in full" with the administrator's reason.
-- **`problemThread()`** (`problem-thread.ts`) — maps an `OrderProblem` to `tm-thread` entries for the three pages.
+  States: `default`; `invalid` (`tl-error-summary` plus "Choose what's wrong" and "Tell us what happened", without calling the API); `busy` (Cancel disabled); `failed` ("Your photos and description are saved here. Try again."). A photo refused by the API shows its message under the uploader.
+- **`OrderDetailPage`** state `problem` (buyer, mock `order-detail/problem`) — heading "We're on it", warning alert (icon `flag`) "Problem open · {reason}" / "We're holding the seller's payout until our team decides. Usually within 2 business days.", and `tl-thread` with the claim ("You · {day}", photos) and the seller's reply. "I received it" and "Report a problem" are hidden. State `refunded` shows the success alert "Refunded in full" / "Our team reviewed the problem. {total} is on its way back to {card}.", "Resolved {day} by TuTuMuch support." and "Back to purchases".
+- **`SaleDetailPage`** state `problem` (seller, mock `sale-detail/problem`) — heading "Problem reported", warning alert "Problem reported · {reason}" / "Your payout is on hold while our team reviews this.", the thread, textarea "Your reply" with help "Visible to the buyer and to TuTuMuch.", and "Send reply" ("Write your reply" when blank). After a reply the form is replaced by the reply in the thread. A sale refunded on a problem shows "Refunded · Buyer refunded in full" with the administrator's reason.
+- **`problemThread()`** (`problem-thread.ts`) — maps an `OrderProblem` to `tl-thread` entries for the three pages.
 - **`ProblemsApi`** (`@tutumuch/api`, `orders/problems-api.ts`) — `reportProblem(orderId, reason, description, photos)` as `multipart/form-data`, `respondToProblem(orderId, message)`. `Purchase` gains `canReportProblem`, `problemDeadline` and `problem`; `Sale` gains `problem`.
 
 ### Frontend — administrator side (`src/frontend/projects/orders/src/lib/problem-detail/`, admin shell)
 
-- **Admin shell** — routes with `data.shell = 'admin'` render in `AppShellComponent` with `tm-top-bar variant="admin"` (logo, "Admin", the member's initials) and no footer.
-- **`ProblemDetailPage`** (route `/admin/problems/:reference`, mock `docs/mocks/pages/problem-detail/`) — heading is the reason ("Not as described"), subtitle "Order problem {reference} · opened {day}". The body holds `tm-thread` with the buyer's claim and photos ("{buyer} · buyer · {day}") and the seller's reply ("{seller} · seller · {day}"). A sunken side panel shows "Order {number}", the item (`tm-item-row`), `tm-facts` with Status (`tm-status`), Total, Delivered, Payout ("Held", "Not paid" or "Released") and primary "Resolve". The `resolved` state shows the success alert "Refunded in full" / "{total} back to the buyer. No payout. {day}." (or "Released to the seller") with the reason and no action. Other states are `loading` (skeleton) and `error` ("Couldn't load this problem", reference). The page does not check the role: a 403 shows the error state.
+- **Admin shell** — routes with `data.shell = 'admin'` render in `AppShellComponent` with `tl-top-bar variant="admin"` (logo, "Admin", the member's initials) and no footer.
+- **`ProblemDetailPage`** (route `/admin/problems/:reference`, mock `docs/mocks/pages/problem-detail/`) — heading is the reason ("Not as described"), subtitle "Order problem {reference} · opened {day}". The body holds `tl-thread` with the buyer's claim and photos ("{buyer} · buyer · {day}") and the seller's reply ("{seller} · seller · {day}"). A sunken side panel shows "Order {number}", the item (`tl-item-row`), `tl-facts` with Status (`tl-status`), Total, Delivered, Payout ("Held", "Not paid" or "Released") and primary "Resolve". The `resolved` state shows the success alert "Refunded in full" / "{total} back to the buyer. No payout. {day}." (or "Released to the seller") with the reason and no action. Other states are `loading` (skeleton) and `error` ("Couldn't load this problem", reference). The page does not check the role: a 403 shows the error state.
 - **`ResolveProblemDialog`** (`resolve-problem/`, mock `docs/mocks/dialogs/resolve-problem/`) — title "Resolve problem {reference}". The "Decision" radios are "Refund buyer in full" ("{total} to {buyer} · no payout") and "Release payout to seller" ("Order completes · {seller} is paid"), followed by the reason field ("Sent to both members."). Buttons are "Cancel" and a primary that reads "Refund buyer" or "Release payout"; it shows busy "Refunding" or "Releasing". States: `default`; `invalid` ("Add a reason. Both members see it."); `busy`; a failure shows a danger alert and "Try again".
 - **`AdminProblemsApi`** (`@tutumuch/api`) — `getProblem(reference)`, `resolve(reference, outcome, reason)`.
 
-### API (`TutuMuch.Api`)
+### API (`TuTuMuch.Api`)
 
 - **`OrderProblemsController`** (policy `VerifiedMember`; a non-party receives `404`, `L2-010`).
   - `POST /api/orders/{id}/problem` — buyer; `multipart/form-data` with `reason`, `description`, `photos` (0–4). `201` `ProblemDto`. Errors: `422` `PROBLEM_INVALID` (field errors `reason`, `description`, `photos`); `409` `PROBLEM_WINDOW_CLOSED` (`L2-036` criterion 2); `409` `PROBLEM_ALREADY_REPORTED`; `413` `PHOTO_TOO_LARGE`, `415` `PHOTO_TYPE_UNSUPPORTED`, `422` `PHOTO_TOO_MANY_PIXELS` per photo.
@@ -65,7 +65,7 @@ route to the `Refunded` status in the state machine of
 
 ### Application and domain
 
-- **`OrderProblem`** (aggregate, `TutuMuch.Domain/Orders/`) — `Id`, `Number`, `Reference` (`P-1001` and up: highest number plus one, guarded by a unique index), `OrderId`, `Reason` (`ProblemReason`), `Description`, `Photos` (0–4 `ProblemPhoto`), `Status` (`Open`, `Resolved`), `OpenedAt`, `SellerResponse`, `SellerRespondedAt`, `Outcome`, `RefundAmount`, `ResolutionReason`, `ResolvedBy`, `ResolvedAt`. `RecordSellerResponse` accepts one reply while `Open`. `Resolve` accepts one decision. Texts are trimmed and at most 1000 characters.
+- **`OrderProblem`** (aggregate, `TuTuMuch.Domain/Orders/`) — `Id`, `Number`, `Reference` (`P-1001` and up: highest number plus one, guarded by a unique index), `OrderId`, `Reason` (`ProblemReason`), `Description`, `Photos` (0–4 `ProblemPhoto`), `Status` (`Open`, `Resolved`), `OpenedAt`, `SellerResponse`, `SellerRespondedAt`, `Outcome`, `RefundAmount`, `ResolutionReason`, `ResolvedBy`, `ResolvedAt`. `RecordSellerResponse` accepts one reply while `Open`. `Resolve` accepts one decision. Texts are trimmed and at most 1000 characters.
 - **`Order.CanReportProblem(now)`** — true when `Status = Shipped`, or when `Status = Delivered` and `now < DeliveredAt + 3 days` (`Order.ProblemWindow`). `Order.ProblemDeadline` carries the end of the window. `Order.RefundForProblem(now)` moves Shipped or Delivered to Refunded as the administrator.
 - **`Member.IsAdministrator`** — the Administrator role, granted in the database by operations.
 - **`ReportProblemCommandHandler`** — loads the order by `BuyerId = caller`, validates, and checks the window. It checks each photo's size (10 MB), sniffed type and pixel count with `IImageInspector` as `L2-017` does, without the 800-pixel minimum. It re-encodes each as one JPEG of at most 1600 pixels (stripping metadata) and stores it privately with `IPhotoStorage.SaveOriginalAsync` under `problems/{problemId}/{photoId}.jpg`. Problem photos are never published. In one save it inserts the problem, calls `Payout.HoldForProblem()` and enqueues `NotificationType.ProblemReported` to the seller and to every administrator, linking to `/admin/problems/{reference}` (`L2-036` criterion 1).
@@ -107,8 +107,8 @@ gains `ProblemResolved`. The problem window is the constant `Order.ProblemWindow
 
 ### Tests
 
-- `tests/TutuMuch.Api.Tests/ResolveOrderProblemsTests.cs` — the endpoints end to end on SQLite in-memory, with fake photo storage, payment provider and email sender.
-- `tests/TutuMuch.Domain.Tests/OrderProblemTests.cs` — the window, the aggregate and the payout hold.
+- `tests/TuTuMuch.Api.Tests/ResolveOrderProblemsTests.cs` — the endpoints end to end on SQLite in-memory, with fake photo storage, payment provider and email sender.
+- `tests/TuTuMuch.Domain.Tests/OrderProblemTests.cs` — the window, the aggregate and the payout hold.
 - `src/frontend/e2e/tests/resolve-order-problems.spec.ts` — the buyer, seller and administrator screens with `page.route` fixtures.
 
 ## Requirements
@@ -121,15 +121,15 @@ gains `ProblemResolved`. The problem window is the constant `Order.ProblemWindow
 
 ### System context
 
-Buyer, seller and administrator all act through Tutu Much. Tutu Much refunds or pays out through
+Buyer, seller and administrator all act through TuTuMuch. TuTuMuch refunds or pays out through
 the payment provider and emails both members.
 
 ![C4 system context for resolving order problems](diagrams/c4-context.png)
 
 ### Containers
 
-`Tutu Much API` stores problem photos privately in `Photo storage` and records the decision.
-`Tutu Much Worker` carries out refunds, payouts and email.
+`TuTuMuch API` stores problem photos privately in `Photo storage` and records the decision.
+`TuTuMuch Worker` carries out refunds, payouts and email.
 
 ![C4 container view for resolving order problems](diagrams/c4-container.png)
 

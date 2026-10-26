@@ -4,7 +4,7 @@
 // sale's payout after the fee; a seller who has not finished onboarding is asked to set up payouts
 // and is sent to the provider-hosted onboarding. The page has loading, empty and error states. The
 // payout banner above the top bar reflects onboarding and payout state, and a completed sale shows
-// the payout after the Tutu Much fee.
+// the payout after the TuTuMuch fee.
 
 import { Page } from '@playwright/test';
 
@@ -203,7 +203,7 @@ test.describe('seller payouts', () => {
     await expect(payouts.dismissBanner).toHaveCount(0);
   });
 
-  test('a completed sale shows the payout after the Tutu Much fee', async ({ page }) => {
+  test('a completed sale shows the payout after the TuTuMuch fee', async ({ page }) => {
     await page.route('**/api/sales/o-1', (route) =>
       route.fulfill({
         json: sale({
@@ -233,7 +233,7 @@ test.describe('seller payouts', () => {
     const panel = page.locator('main').locator('.panel--sunken');
     await expect(panel.getByRole('heading', { name: 'Payout' })).toBeVisible();
     await expect(panel).toContainText('Item and shipping$37.00');
-    await expect(panel).toContainText('Tutu Much fee (10%)−$3.70');
+    await expect(panel).toContainText('TuTuMuch fee (10%)−$3.70');
     await expect(panel).toContainText('Your payout$33.30');
     await expect(panel).toContainText('Sent Wed 7 Oct to Chase •••• 6021.');
   });

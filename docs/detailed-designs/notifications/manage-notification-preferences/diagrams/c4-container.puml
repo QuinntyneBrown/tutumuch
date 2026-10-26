@@ -4,11 +4,11 @@ LAYOUT_WITH_LEGEND()
 title Containers — Manage notification preferences
 
 Person(member, "Member or email recipient", "Changes settings or unsubscribes")
-System_Boundary(tutumuch, "Tutu Much") {
-  Container(web, "Tutu Much Web", "Angular", "NotificationSettingsPageComponent at /account/emails; UnsubscribePageComponent at /emails/unsubscribe")
-  Container(api, "Tutu Much API", "ASP.NET Core", "Preference endpoints and anonymous unsubscribe endpoint")
-  Container(worker, "Tutu Much Worker", ".NET worker service", "Checks preferences before each send")
-  ContainerDb(db, "Tutu Much database", "SQL Server", "NotificationPreferences")
+System_Boundary(tutumuch, "TuTuMuch") {
+  Container(web, "TuTuMuch Web", "Angular", "NotificationSettingsPageComponent at /account/emails; UnsubscribePageComponent at /emails/unsubscribe")
+  Container(api, "TuTuMuch API", "ASP.NET Core", "Preference endpoints and anonymous unsubscribe endpoint")
+  Container(worker, "TuTuMuch Worker", ".NET worker service", "Checks preferences before each send")
+  ContainerDb(db, "TuTuMuch database", "SQL Server", "NotificationPreferences")
 }
 
 Rel(member, web, "Uses", "HTTPS")

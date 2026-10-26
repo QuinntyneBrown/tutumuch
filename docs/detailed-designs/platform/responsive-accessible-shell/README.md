@@ -2,7 +2,7 @@
 
 ## Overview
 
-Every Tutu Much page sits inside the same frame: a skip link, a top bar with the logo,
+Every TuTuMuch page sits inside the same frame: a skip link, a top bar with the logo,
 navigation, search and account entry, a main region, a footer, and an area for
 toasts and banners. That frame is the **application shell**. This feature, part
 of the `platform` subsystem, builds the shell and the shared behaviour that makes
@@ -37,7 +37,7 @@ with tokens in `docs/mocks/assets/tokens.css` and components in
 
 ### Frontend — shell components (`src/frontend/projects/tutumuch/src/app/` and `projects/components/`)
 
-Per `AGENTS.md`, the application project holds `AppComponent`, the four shell components and the routes; every reusable piece below (`tm-skip-link`, `tm-top-bar`, `tm-footer`, `tm-toast-region`, sheets, dialogs, form fields) lives in the `components` library (`@tutumuch/components`). Feature libraries never re-implement them.
+Per `AGENTS.md`, the application project holds `AppComponent`, the four shell components and the routes; every reusable piece below (`tl-skip-link`, `tl-top-bar`, `tl-footer`, `tl-toast-region`, sheets, dialogs, form fields) lives in the `components` library (`@tutumuch/components`). Feature libraries never re-implement them.
 
 - **`AppComponent`** — root component. Renders `SkipLinkComponent`, the shell
   chosen by the active route's `data.shell` (`'app' | 'auth' | 'admin' |
@@ -56,7 +56,7 @@ Per `AGENTS.md`, the application project holds `AppComponent`, the four shell co
   - Primary navigation `<nav aria-label="Primary">`: Dresses, Tops, Outerwear,
     Bottoms, with `aria-current="page"` on the active category; shown from
     768 px.
-  - Search form `role="search"` with visually hidden label "Search Tutu Much" and
+  - Search form `role="search"` with visually hidden label "Search TuTuMuch" and
     placeholder "Search brands and items"; full field from 992 px, an icon link
     "Search" below 992 px.
   - Member: "Sell" link (from 768 px) and avatar link "Your account,
@@ -72,14 +72,14 @@ Per `AGENTS.md`, the application project holds `AppComponent`, the four shell co
 - **`FooterComponent`** — links "Marketplace rules", "Privacy", "Terms",
   a "Cookie settings" button (emits `cookieSettings`; the shell opens the
   cookie-settings dialog of `@tutumuch/privacy`) and
-  "© 2026 Tutu Much" (year from the clock).
+  "© 2026 TuTuMuch" (year from the clock).
 - **`NavMenuSheetComponent`** (`docs/mocks/dialogs/nav-menu/`) — opened by the
   menu button through `SheetService` as a full-screen sheet with `id="menu"`,
   `role="dialog"`, `aria-modal="true"`, visually hidden heading "Menu", and a
   "Close menu" button that receives initial focus. Body: category links (large),
   then for a member "Sell an item", "Your listings", "Purchases", "Sales",
   "Settings" and a "Sign out" button; for a guest "Sell an item",
-  "Marketplace rules" with "Sign in" and "Join Tutu Much" buttons. States: `default`
+  "Marketplace rules" with "Sign in" and "Join TuTuMuch" buttons. States: `default`
   (member), `guest`. The sheet closes on navigation and on a resize to 768 px or
   wider.
 
@@ -97,11 +97,11 @@ Per `AGENTS.md`, the application project holds `AppComponent`, the four shell co
 - **Layout rules** — `.container` gutters per breakpoint from tokens;
   `min-width: 0` on grid children; long words wrap (`overflow-wrap: anywhere`)
   so no page scrolls horizontally at 320 px. Catalog grid: 2 columns XS/SM,
-  3 MD, 4 LG/XL (`L2-061` AC2), implemented by `tm-listing-grid` in `@tutumuch/components`. The mock `ui.css` shows 3 columns at LG when the
+  3 MD, 4 LG/XL (`L2-061` AC2), implemented by `tl-listing-grid` in `@tutumuch/components`. The mock `ui.css` shows 3 columns at LG when the
   filter sidebar is present; the implementation follows `L2-061` with 4.
 - **`SheetComponent` and `SheetService`** — built by search-and-filter-catalog
   in `@tutumuch/components` (`src/lib/sheet/`): `SheetService` opens a component whose
-  template is a `tm-sheet` through `DialogService` (inert page, Escape closes,
+  template is a `tl-sheet` through `DialogService` (inert page, Escape closes,
   focus returns to the opener). The sheet fills the screen; with `side` it is a
   24rem left panel from 768 px. The catalog filter panel opens through it from the "Filters" button with "Clear" and "Show {n}
   items" actions; from 992 px the catalog renders the same filter form as a
@@ -115,7 +115,7 @@ Per `AGENTS.md`, the application project holds `AppComponent`, the four shell co
 - **`RouteFocusService`** — on `NavigationEnd` (not on the first load), moves
   focus to the page `h1` (rendered with `tabindex="-1"`) or to `#main`, and
   announces the new page title through `LiveRegionService`.
-- **`TutuMuchTitleStrategy`** — `TitleStrategy` that sets `document.title` from
+- **`TuTuMuchTitleStrategy`** — `TitleStrategy` that sets `document.title` from
   route `title`; the suffix format is `<TO SUPPLY>`.
 - **`LiveRegionService`** — wraps CDK `LiveAnnouncer`; `polite(message)` and
   `assertive(message)`.
@@ -206,14 +206,14 @@ The feature adds no endpoint.
 
 ### System context
 
-Visitors use Tutu Much with a mouse, touch, keyboard or screen reader, on viewports
+Visitors use TuTuMuch with a mouse, touch, keyboard or screen reader, on viewports
 from 320 px upwards. CI checks every page with axe-core and visual snapshots.
 
 ![C4 system context for the responsive, accessible shell](diagrams/c4-context.png)
 
 ### Containers
 
-The shell lives entirely in `Tutu Much Web`. CI runs Playwright against the production
+The shell lives entirely in `TuTuMuch Web`. CI runs Playwright against the production
 build with fixture API responses.
 
 ![C4 container view for the responsive, accessible shell](diagrams/c4-container.png)

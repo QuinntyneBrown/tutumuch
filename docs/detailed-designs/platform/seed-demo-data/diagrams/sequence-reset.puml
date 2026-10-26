@@ -6,7 +6,7 @@ skinparam roundcorner 12
 skinparam defaultFontName Arial
 skinparam ArrowColor #344054
 actor "Developer" as dev
-box "TutuMuch.Cli" #FFF4E5
+box "TuTuMuch.Cli" #FFF4E5
   participant "CliApp" as cli
   participant "ResetGuard" as guard
   participant "DemoReset" as reset
@@ -16,13 +16,13 @@ box "Infrastructure" #D1FADF
   participant "MigratorApp" as mig
   participant "Photo store folder" as store
 end box
-database "Tutu Much database" as sql
+database "TuTuMuch database" as sql
 dev -> cli : reset [--force]
-alt ConnectionStrings__TutuMuch not set
-  cli --> dev : "Set ConnectionStrings__TutuMuch ..." exit 2 (L2-077)
+alt ConnectionStrings__TuTuMuch not set
+  cli --> dev : "Set ConnectionStrings__TuTuMuch ..." exit 2 (L2-077)
 else connection string set
   cli -> guard : environment, --force, connection string
-  guard --> dev : "Target: server (localdb)\\MSSQLLocalDB, database TutuMuch"
+  guard --> dev : "Target: server (localdb)\\MSSQLLocalDB, database TuTuMuch"
   alt not Development and no --force
     guard --> dev : "reset only runs in Development or with --force" exit 3 (L2-073)
   else allowed

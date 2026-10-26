@@ -6,11 +6,11 @@ title Containers — Resolve order problems
 Person(buyer, "Buyer", "Member")
 Person(seller, "Seller", "Member")
 Person(admin, "Administrator", "Administrator role")
-System_Boundary(tutumuch, "Tutu Much") {
-  Container(web, "Tutu Much Web", "Angular", "Report problem dialog, order and sale pages, admin problem detail")
-  Container(api, "Tutu Much API", "ASP.NET Core", "Problem endpoints")
-  Container(worker, "Tutu Much Worker", ".NET worker service", "Outbox dispatch, payout release")
-  ContainerDb(db, "Tutu Much database", "SQL Server", "Order problems, orders, refunds, payouts")
+System_Boundary(tutumuch, "TuTuMuch") {
+  Container(web, "TuTuMuch Web", "Angular", "Report problem dialog, order and sale pages, admin problem detail")
+  Container(api, "TuTuMuch API", "ASP.NET Core", "Problem endpoints")
+  Container(worker, "TuTuMuch Worker", ".NET worker service", "Outbox dispatch, payout release")
+  ContainerDb(db, "TuTuMuch database", "SQL Server", "Order problems, orders, refunds, payouts")
   Container(photos, "Photo storage", "Object storage", "Private problem photos")
 }
 System_Ext(pay, "Payment provider", "Refunds and payouts")

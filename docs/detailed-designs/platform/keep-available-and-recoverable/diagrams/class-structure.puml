@@ -9,7 +9,7 @@ skinparam class {
   FontColor #101828
   BackgroundColor #F9FAFB
 }
-title Class structure — Keep Tutu Much available and recoverable
+title Class structure — Keep TuTuMuch available and recoverable
 
 class MaintenanceWindow {
   +DateTimeOffset StartsAtUtc

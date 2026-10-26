@@ -15,7 +15,7 @@ import { IconComponent } from '@tutumuch/components';
  * security codes go to the provider only (L2-030), and returns the payment method token.
  */
 @Component({
-  selector: 'tm-hosted-card-fields',
+  selector: 'tl-hosted-card-fields',
   imports: [IconComponent],
   templateUrl: './hosted-card-fields.html',
   styleUrl: './hosted-card-fields.css',

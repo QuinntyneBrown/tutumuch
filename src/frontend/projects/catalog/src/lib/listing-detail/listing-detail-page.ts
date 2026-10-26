@@ -42,7 +42,7 @@ export function listedAgo(iso: string, now = Date.now()): string {
  * All listing text is bound as text, never as HTML.
  */
 @Component({
-  selector: 'tm-listing-detail-page',
+  selector: 'tl-listing-detail-page',
   imports: [
     RouterLink,
     AlertComponent,
@@ -96,7 +96,7 @@ export class ListingDetailPage {
     });
     effect(() => {
       const listing = this.store.listing();
-      if (listing) this.title.setTitle(`${listing.title} · ${listing.brand} · Tutu Much`);
+      if (listing) this.title.setTitle(`${listing.title} · ${listing.brand} · TuTuMuch`);
     });
   }
 }

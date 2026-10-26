@@ -9,7 +9,7 @@ export interface FieldProblem {
 
 /**
  * A refused call as RFC 9457 problem details (L2-068). status 0 with code NETWORK means the
- * request never reached Tutu Much API; retryAfter is in seconds for 429.
+ * request never reached TuTuMuch API; retryAfter is in seconds for 429.
  */
 export interface ApiProblem {
   status: number;

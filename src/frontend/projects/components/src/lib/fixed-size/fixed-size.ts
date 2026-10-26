@@ -7,7 +7,7 @@ import { SizeTagComponent } from '../size-tag/size-tag';
  * (design system: Fixed size, L2-012). There is never a size input.
  */
 @Component({
-  selector: 'tm-fixed-size',
+  selector: 'tl-fixed-size',
   imports: [SizeTagComponent],
   templateUrl: './fixed-size.html',
   styleUrl: './fixed-size.css',

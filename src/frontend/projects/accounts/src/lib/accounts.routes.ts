@@ -9,31 +9,31 @@ export const routes: Routes = [
   {
     path: 'join',
     loadComponent: () => import('./join/join-page').then((m) => m.JoinPage),
-    title: 'Join Tutu Much',
+    title: 'Join TuTuMuch',
     data: { shell: 'auth' },
   },
   {
     path: 'verify',
     loadComponent: () => import('./verify-email/verify-email-page').then((m) => m.VerifyEmailPage),
-    title: 'Verify your email · Tutu Much',
+    title: 'Verify your email · TuTuMuch',
     data: { shell: 'auth' },
   },
   {
     path: 'sign-in',
     loadComponent: () => import('./sign-in/sign-in-page').then((m) => m.SignInPage),
-    title: 'Sign in · Tutu Much',
+    title: 'Sign in · TuTuMuch',
     data: { shell: 'auth' },
   },
   {
     path: 'emails/unsubscribe',
     loadComponent: () => import('./unsubscribe/unsubscribe-page').then((m) => m.UnsubscribePage),
-    title: 'Unsubscribe · Tutu Much',
+    title: 'Unsubscribe · TuTuMuch',
     data: { shell: 'auth' },
   },
   {
     path: 'account/emails',
     loadComponent: () =>
       import('./notification-settings/notification-settings-page').then((m) => m.NotificationSettingsPage),
-    title: 'Emails · Tutu Much',
+    title: 'Emails · TuTuMuch',
   },
 ];

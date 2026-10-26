@@ -1,6 +1,6 @@
 import { Locator, Page } from '@playwright/test';
 
-/** Join Tutu Much at /join (mocks pages/register). */
+/** Join TuTuMuch at /join (mocks pages/register). */
 export class JoinPage {
   readonly heading: Locator;
   readonly displayName: Locator;
@@ -19,7 +19,7 @@ export class JoinPage {
     this.password = page.getByLabel('Password');
     this.age = page.getByLabel('I’m 18 or older');
     this.terms = page.getByRole('checkbox', { name: /I accept the terms/ });
-    this.submit = page.getByRole('button', { name: 'Join Tutu Much' });
+    this.submit = page.getByRole('button', { name: 'Join TuTuMuch' });
     this.errorSummary = page.getByRole('alert').filter({ hasText: 'Fix these to continue' });
     this.resend = page.getByRole('button', { name: 'Resend email' });
   }

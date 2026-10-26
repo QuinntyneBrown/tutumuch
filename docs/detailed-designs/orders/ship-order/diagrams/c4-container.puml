@@ -5,11 +5,11 @@ title Containers — Ship an order
 
 Person(seller, "Seller", "Ships the item")
 Person(buyer, "Buyer", "Receives the item")
-System_Boundary(tutumuch, "Tutu Much") {
-  Container(web, "Tutu Much Web", "Angular", "Sale page, Add tracking dialog and the buyer's order page")
-  Container(api, "Tutu Much API", "ASP.NET Core", "Order endpoints and the order state machine")
-  Container(worker, "Tutu Much Worker", ".NET worker service", "Ship deadline job (cancels and refunds Paid orders past their ship-by date)")
-  ContainerDb(db, "Tutu Much database", "SQL Server", "Orders, status history, outbox")
+System_Boundary(tutumuch, "TuTuMuch") {
+  Container(web, "TuTuMuch Web", "Angular", "Sale page, Add tracking dialog and the buyer's order page")
+  Container(api, "TuTuMuch API", "ASP.NET Core", "Order endpoints and the order state machine")
+  Container(worker, "TuTuMuch Worker", ".NET worker service", "Ship deadline job (cancels and refunds Paid orders past their ship-by date)")
+  ContainerDb(db, "TuTuMuch database", "SQL Server", "Orders, status history, outbox")
 }
 System_Ext(email, "Email provider", "Transactional email")
 System_Ext(carrier, "Carrier tracking service", "<TO SUPPLY>")

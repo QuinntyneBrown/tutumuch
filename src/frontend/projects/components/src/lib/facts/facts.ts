@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 import { StatusComponent, StatusTone } from '../status/status';
 
-/** One fact: its label and value; a status tone shows the value as `tm-status`, numeric aligns figures. */
+/** One fact: its label and value; a status tone shows the value as `tl-status`, numeric aligns figures. */
 export interface Fact {
   label: string;
   value: string;
@@ -12,7 +12,7 @@ export interface Fact {
 
 /** Label and value pairs in two columns, such as an order's facts on a side panel (design system: Facts). */
 @Component({
-  selector: 'tm-facts',
+  selector: 'tl-facts',
   imports: [StatusComponent],
   templateUrl: './facts.html',
   styleUrl: './facts.css',

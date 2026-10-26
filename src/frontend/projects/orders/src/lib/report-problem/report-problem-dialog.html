@@ -1,4 +1,4 @@
-<tm-dialog heading="Report a problem">
+<tl-dialog heading="Report a problem">
   <span description>
     @if (data.deadline) {
       Open until {{ data.deadline }}.
@@ -6,20 +6,20 @@
     We hold the seller’s payout while our team looks into it.</span
   >
   @if (summary().length) {
-    <tm-error-summary top [errors]="summary()" />
+    <tl-error-summary top [errors]="summary()" />
   } @else if (state() === 'failed') {
-    <tm-alert top tone="danger" heading="That didn’t go through"
-      >Your photos and description are saved here. Try again.</tm-alert
+    <tl-alert top tone="danger" heading="That didn’t go through"
+      >Your photos and description are saved here. Try again.</tl-alert
     >
   }
-  <tm-segmented
+  <tl-segmented
     legend="What’s wrong?"
     groupId="problem-reason"
     [options]="labels"
     [error]="reasonError()"
     (change)="choose($any($event.target).value)"
   />
-  <tm-form-field #df fieldId="problem-description" label="Describe it" [error]="descriptionError()">
+  <tl-form-field #df fieldId="problem-description" label="Describe it" [error]="descriptionError()">
     <textarea
       class="textarea"
       id="problem-description"
@@ -29,10 +29,10 @@
       [attr.aria-invalid]="df.invalid()"
       (input)="description.set($any($event.target).value)"
     ></textarea>
-  </tm-form-field>
+  </tl-form-field>
   <div class="field">
     <span class="field__label">Photos <span class="optional">(up to 4)</span></span>
-    <tm-photo-uploader
+    <tl-photo-uploader
       inputId="problem-photos"
       [tiles]="tiles()"
       [max]="max"
@@ -43,9 +43,9 @@
     />
   </div>
   <ng-container ngProjectAs="[footer]">
-    <button tmButton type="button" [disabled]="state() === 'busy'" (click)="ref.close()">Cancel</button>
-    <button tmButton="primary" type="submit" [busy]="state() === 'busy'" (click)="submit()">
-      {{ state() === 'failed' ? 'Try again' : 'Send to Tutu Much' }}
+    <button tlButton type="button" [disabled]="state() === 'busy'" (click)="ref.close()">Cancel</button>
+    <button tlButton="primary" type="submit" [busy]="state() === 'busy'" (click)="submit()">
+      {{ state() === 'failed' ? 'Try again' : 'Send to TuTuMuch' }}
     </button>
   </ng-container>
-</tm-dialog>
+</tl-dialog>

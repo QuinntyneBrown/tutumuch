@@ -15,8 +15,8 @@ module.exports = tseslint.config(
     ],
     processor: angular.processInlineTemplates,
     rules: {
-      '@angular-eslint/directive-selector': ['error', { type: 'attribute', prefix: 'tm', style: 'camelCase' }],
-      '@angular-eslint/component-selector': ['error', { type: 'element', prefix: 'tm', style: 'kebab-case' }],
+      '@angular-eslint/directive-selector': ['error', { type: 'attribute', prefix: 'tl', style: 'camelCase' }],
+      '@angular-eslint/component-selector': ['error', { type: 'element', prefix: 'tl', style: 'kebab-case' }],
       '@angular-eslint/prefer-on-push-component-change-detection': 'error',
     },
   },

@@ -5,7 +5,7 @@ title System Context — Complete an order
 
 Person(buyer, "Buyer", "Received the item")
 Person(seller, "Seller", "Awaits the payout")
-System(tutumuch, "Tutu Much", "Girls' clothing marketplace")
+System(tutumuch, "TuTuMuch", "Girls' clothing marketplace")
 Rel(buyer, tutumuch, "Confirms receipt using")
 Rel(seller, tutumuch, "Sees the completed sale using")
 @enduml

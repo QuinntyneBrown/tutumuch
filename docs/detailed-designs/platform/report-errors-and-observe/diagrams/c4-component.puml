@@ -3,22 +3,22 @@
 LAYOUT_WITH_LEGEND()
 title Components — Report errors and observe the system
 
-Container_Boundary(web, "Tutu Much Web") {
+Container_Boundary(web, "TuTuMuch Web") {
   Component(interceptor, "ApiErrorInterceptor", "HttpInterceptorFn", "Maps HttpErrorResponse to AppError")
   Component(pages, "ServerError / NotFound / Forbidden / Offline pages", "Route components", "Full-page error states")
   Component(loaderr, "LoadErrorComponent", "Component", "In-place 'Couldn’t load' state")
   Component(conn, "ConnectivityService", "Service", "Online signal; offline banner, 'Back online' toast")
   Component(toasts, "ToastService", "Shell service", "Danger toast with Try again and Ref")
 }
-Container_Boundary(api, "Tutu Much API") {
+Container_Boundary(api, "TuTuMuch API") {
   Component(corr, "CorrelationIdMiddleware", "Middleware", "Assigns ID, header, log scope, Activity baggage")
   Component(pd, "ProblemDetailsExceptionHandler", "IExceptionHandler", "RFC 9457 body with code and correlationId")
   Component(log, "Serilog + SensitiveDataRedactionPolicy", "Logging", "JSON to stdout, redacted")
-  Component(meter, "TutuMuch Meter + OpenTelemetry", "Metrics", "HTTP, checkout, webhook, job metrics on /metrics")
+  Component(meter, "TuTuMuch Meter + OpenTelemetry", "Metrics", "HTTP, checkout, webhook, job metrics on /metrics")
   Component(health, "Health checks", "ASP.NET Core", "/health/live, /health/ready (database, photo storage)")
   Component(handler, "CorrelationIdDelegatingHandler", "HttpClient handler", "Forwards X-Correlation-ID")
 }
-ContainerDb(db, "Tutu Much database", "SQL Server", "")
+ContainerDb(db, "TuTuMuch database", "SQL Server", "")
 ContainerDb(photos, "Photo storage", "Object storage", "")
 
 Rel(interceptor, pages, "Routes to")

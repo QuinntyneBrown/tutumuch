@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-Tutu Much is under active development. Security fixes are applied to the `main` branch only.
+TuTuMuch is under active development. Security fixes are applied to the `main` branch only.
 
 | Version | Supported |
 | --- | --- |
@@ -30,11 +30,11 @@ You should receive an acknowledgement within 72 hours. If you do not, please fol
 
 ## Disclosure policy
 
-Tutu Much follows coordinated disclosure. Please give us a reasonable amount of time to investigate and fix the issue before any public disclosure. We will credit reporters in the fix unless they ask to remain anonymous.
+TuTuMuch follows coordinated disclosure. Please give us a reasonable amount of time to investigate and fix the issue before any public disclosure. We will credit reporters in the fix unless they ask to remain anonymous.
 
 ## Scope
 
-Tutu Much stores member accounts, listings, orders, shipping addresses and payment-related information. Issues that could expose that data, allow one member to act as another, tamper with listings, orders or payments, or allow unauthenticated access are in scope and taken seriously.
+TuTuMuch stores member accounts, listings, orders, shipping addresses and payment-related information. Issues that could expose that data, allow one member to act as another, tamper with listings, orders or payments, or allow unauthenticated access are in scope and taken seriously.
 
 ## Preferred languages
 

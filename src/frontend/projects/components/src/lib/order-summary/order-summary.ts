@@ -16,7 +16,7 @@ export interface OrderSummaryItem {
  * visible title, as on the order pages, which project the other party below the totals.
  */
 @Component({
-  selector: 'tm-order-summary',
+  selector: 'tl-order-summary',
   imports: [ItemRowComponent],
   templateUrl: './order-summary.html',
   styleUrl: './order-summary.css',

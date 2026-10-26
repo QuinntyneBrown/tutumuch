@@ -40,12 +40,12 @@ const HEADINGS: Record<string, string> = {
 /**
  * The seller's sale at /sales/{id} (mocks pages/sale-detail, L2-033): the ship-by date and the
  * buyer's address while Paid, with Add tracking and Cancel order; the buyer's request to cancel
- * with Respond; the timeline and tracking link once shipped; the payout after the Tutu Much fee once
+ * with Respond; the timeline and tracking link once shipped; the payout after the TuTuMuch fee once
  * Completed (L2-031); Relist item once Cancelled (L2-035); and the buyer's open problem with the
  * payout on hold and one reply (L2-036).
  */
 @Component({
-  selector: 'tm-sale-detail-page',
+  selector: 'tl-sale-detail-page',
   imports: [
     RouterLink,
     AlertComponent,
@@ -80,7 +80,7 @@ export class SaleDetailPage {
   readonly requested = computed(
     () => this.sale()?.status === 'Paid' && this.sale()?.cancellationRequest?.status === 'Pending',
   );
-  /** The buyer's problem waiting for Tutu Much (mocks sale-detail/problem). */
+  /** The buyer's problem waiting for TuTuMuch (mocks sale-detail/problem). */
   readonly problemOpen = computed(() => this.sale()?.problem?.status === 'Open');
   readonly heading = computed(() =>
     this.requested()

@@ -2,7 +2,7 @@
 
 ## Basis
 
-The estimate assumes the platform baseline already provides `TutuMuchDbContext`, the outbox dispatcher, `IEmailOutbox` and the problem-details middleware. The `Order` aggregate and state machine are built here and reused by the other six orders features, so their cost sits in this estimate only. The carrier tracking service is `<TO SUPPLY>`; the hours assume one provider with a documented REST API and webhook. The US holiday list is assumed to be a static configuration list. Hours cover implementation, unit and integration tests, acceptance tests and review fixes for an intermediate Angular/TypeScript and ASP.NET Core/C# developer; they exclude requirements, design and mock work. [Detailed design](../../detailed-designs/orders/ship-order/README.md)
+The estimate assumes the platform baseline already provides `TuTuMuchDbContext`, the outbox dispatcher, `IEmailOutbox` and the problem-details middleware. The `Order` aggregate and state machine are built here and reused by the other six orders features, so their cost sits in this estimate only. The carrier tracking service is `<TO SUPPLY>`; the hours assume one provider with a documented REST API and webhook. The US holiday list is assumed to be a static configuration list. Hours cover implementation, unit and integration tests, acceptance tests and review fixes for an intermediate Angular/TypeScript and ASP.NET Core/C# developer; they exclude requirements, design and mock work. [Detailed design](../../detailed-designs/orders/ship-order/README.md)
 
 ## Full design
 

@@ -6,23 +6,23 @@ skinparam roundcorner 12
 skinparam defaultFontName Arial
 skinparam ArrowColor #344054
 actor "Visitor or member" as actor
-box "Frontend — Tutu Much Web application" #E0F2FE
+box "Frontend — TuTuMuch Web application" #E0F2FE
   participant "TopBarComponent" as form
   participant "AppShellComponent" as shell
   participant "CatalogPage" as page
   participant "CatalogStore" as store
   participant "CatalogApi" as client
 end box
-box "Backend — Tutu Much API application" #D1FADF
+box "Backend — TuTuMuch API application" #D1FADF
   participant "CatalogController" as controller
 end box
-box "Backend — TutuMuch Application" #ECFDF3
+box "Backend — TuTuMuch Application" #ECFDF3
   participant "BrowseCatalogQueryHandler" as handler
   participant "CatalogCriteria" as criteria
 end box
-box "Backend — TutuMuch Infrastructure" #FFF4E5
-  participant "ITutuMuchDbContext" as ctx
-  database "Tutu Much database" as db
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  participant "ITuTuMuchDbContext" as ctx
+  database "TuTuMuch database" as db
 end box
 actor -> form : Submit "party dress"
 form -> form : Trim, cut to 100 characters (L2-023)

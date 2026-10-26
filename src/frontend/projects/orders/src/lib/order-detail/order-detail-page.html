@@ -15,12 +15,12 @@
     </div>
   }
   @case ('error') {
-    <tm-center-state heading="Couldn’t load this order">
+    <tl-center-state heading="Couldn’t load this order">
       <p class="text-muted">Something went wrong on our side. Try again in a moment.</p>
       <span class="ref">{{ errorRef() }}</span>
-      <button actions tmButton="primary" type="button" (click)="retry()"><tm-icon name="refresh" />Try again</button>
-      <a actions tmButton routerLink="/account/purchases">Back to purchases</a>
-    </tm-center-state>
+      <button actions tlButton="primary" type="button" (click)="retry()"><tl-icon name="refresh" />Try again</button>
+      <a actions tlButton routerLink="/account/purchases">Back to purchases</a>
+    </tl-center-state>
   }
   @default {
     @if (order(); as order) {
@@ -37,32 +37,32 @@
             <h1>{{ heading() }}</h1>
           </div>
           @if (refundedOnProblem()) {
-            <tm-alert tone="success" heading="Refunded in full">{{ problemRefund() }}</tm-alert>
+            <tl-alert tone="success" heading="Refunded in full">{{ problemRefund() }}</tl-alert>
             @if (order.problem?.resolvedAt; as resolvedAt) {
-              <p class="text-muted text-sm">Resolved {{ day(resolvedAt) }} by Tutu Much support.</p>
+              <p class="text-muted text-sm">Resolved {{ day(resolvedAt) }} by TuTuMuch support.</p>
             }
             <div class="cluster">
-              <a tmButton routerLink="/account/purchases">Back to purchases</a>
+              <a tlButton routerLink="/account/purchases">Back to purchases</a>
             </div>
           } @else if (problemOpen() && order.problem; as problem) {
-            <tm-alert tone="warning" icon="flag" [heading]="'Problem open · ' + problem.reasonLabel"
-              >We’re holding the seller’s payout until our team decides. Usually within 2 business days.</tm-alert
+            <tl-alert tone="warning" icon="flag" [heading]="'Problem open · ' + problem.reasonLabel"
+              >We’re holding the seller’s payout until our team decides. Usually within 2 business days.</tl-alert
             >
-            <tm-thread [entries]="thread()" />
+            <tl-thread [entries]="thread()" />
           } @else if (ended()) {
-            <tm-alert tone="info" heading="Refunded in full">{{ refund() }}</tm-alert>
+            <tl-alert tone="info" heading="Refunded in full">{{ refund() }}</tl-alert>
             @if (order.cancellation?.note; as note) {
-              <tm-quote [text]="note" [cite]="order.sellerDisplayName" />
+              <tl-quote [text]="note" [cite]="order.sellerDisplayName" />
             }
             @if (order.status === 'Cancelled') {
               <div class="cluster">
-                <a tmButton="primary" routerLink="/">Shop similar items</a>
+                <a tlButton="primary" routerLink="/">Shop similar items</a>
               </div>
             }
           } @else {
-            <tm-order-timeline [steps]="steps()" />
+            <tl-order-timeline [steps]="steps()" />
             @if (order.tracking; as tracking) {
-              <tm-tracking-link [carrier]="tracking.carrier" [number]="tracking.number" [url]="tracking.url" />
+              <tl-tracking-link [carrier]="tracking.carrier" [number]="tracking.number" [url]="tracking.url" />
             }
             @if (order.status === 'Paid') {
               <p class="text-muted order__note">
@@ -74,7 +74,7 @@
             }
             @if (canAskToCancel()) {
               <div class="cluster">
-                <button tmButton type="button" (click)="askToCancel()">Ask to cancel</button>
+                <button tlButton type="button" (click)="askToCancel()">Ask to cancel</button>
               </div>
             }
             @if (order.status === 'Delivered' && order.autoCompletesAt) {
@@ -84,16 +84,16 @@
             }
             @if (canConfirm()) {
               <div class="cluster">
-                <button tmButton="primary" type="button" (click)="confirmReceipt()">I received it</button>
+                <button tlButton="primary" type="button" (click)="confirmReceipt()">I received it</button>
                 @if (order.canReportProblem) {
-                  <button tmButton="ghost" type="button" (click)="reportProblem()">Report a problem</button>
+                  <button tlButton="ghost" type="button" (click)="reportProblem()">Report a problem</button>
                 }
               </div>
             }
           }
         </div>
         @if (summaryItem(); as item) {
-          <tm-order-summary
+          <tl-order-summary
             heading=""
             [item]="item"
             [itemPrice]="money(order.itemPrice)"
@@ -101,8 +101,8 @@
             [salesTax]="money(order.salesTax)"
             [total]="money(order.total)"
           >
-            <tm-order-party role="Seller" [displayName]="order.sellerDisplayName" />
-          </tm-order-summary>
+            <tl-order-party role="Seller" [displayName]="order.sellerDisplayName" />
+          </tl-order-summary>
         }
       </div>
     }

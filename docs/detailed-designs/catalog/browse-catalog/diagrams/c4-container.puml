@@ -4,11 +4,11 @@ LAYOUT_WITH_LEGEND()
 title Containers — Browse the catalog
 
 Person(visitor, "Visitor or member", "Browses listings, signed in or not")
-System_Boundary(tutumuch, "Tutu Much") {
-  Container(web, "Tutu Much Web", "Angular", "Catalog page, listing grid, responsive photos")
-  Container(api, "Tutu Much API", "ASP.NET Core", "GET /api/catalog/listings")
-  Container(worker, "Tutu Much Worker", ".NET worker service", "Returns expired reservations to Active")
-  ContainerDb(db, "Tutu Much database", "SQL Server", "Listings, photos and photo versions")
+System_Boundary(tutumuch, "TuTuMuch") {
+  Container(web, "TuTuMuch Web", "Angular", "Catalog page, listing grid, responsive photos")
+  Container(api, "TuTuMuch API", "ASP.NET Core", "GET /api/catalog/listings")
+  Container(worker, "TuTuMuch Worker", ".NET worker service", "Returns expired reservations to Active")
+  ContainerDb(db, "TuTuMuch database", "SQL Server", "Listings, photos and photo versions")
   ContainerDb(photos, "Photo storage", "Object storage behind a CDN", "Processed WebP and JPEG photo versions")
 }
 Rel(visitor, web, "Uses", "HTTPS")

@@ -1,4 +1,4 @@
-# ADR-0010: TutuMuch.Cli for Demo Seeding and Database Reset
+# ADR-0010: TuTuMuch.Cli for Demo Seeding and Database Reset
 
 **Date:** 2026-10-26
 **Category:** platform
@@ -7,9 +7,9 @@
 
 ## Context
 
-A developer who wants to demo Tutu Much has to register members, verify them, upload photos and
+A developer who wants to demo TuTuMuch has to register members, verify them, upload photos and
 publish listings by hand before any catalog page shows anything. There is no way to wipe a
-local install either: the only console tool, `TutuMuch.Migrator`, applies pending migrations
+local install either: the only console tool, `TuTuMuch.Migrator`, applies pending migrations
 and is the one thing a deployment runs, so it must not learn to drop databases.
 
 Demo listings need photos. They must be real product photographs (dresses, shirts, jackets,
@@ -25,14 +25,14 @@ and processed by the same pipeline as uploads (`L2-017`, `L2-059`,
 
 ### A separate developer tool project
 
-Add `src/backend/TutuMuch.Cli/` (console, `TutuMuch.Cli.dll`) and `tests/TutuMuch.Cli.Tests/`
-to `TutuMuch.sln` and to the `AGENTS.md` folder tree. It has two commands:
+Add `src/backend/TuTuMuch.Cli/` (console, `TuTuMuch.Cli.dll`) and `tests/TuTuMuch.Cli.Tests/`
+to `TuTuMuch.sln` and to the `AGENTS.md` folder tree. It has two commands:
 
 - `reset [--force]` drops the database, applies every migration and empties the photo store
   (`PhotoStorage:RootPath`).
 - `seed [--reset] [--force]` loads the demo catalogue; `--reset` runs `reset` first.
 
-`TutuMuch.Migrator` stays the only tool deployments run. The CLI references it and calls
+`TuTuMuch.Migrator` stays the only tool deployments run. The CLI references it and calls
 the same `MigratorApp.ApplyMigrations` method that `MigratorApp.Run` uses, so migration
 logic exists once. Arguments are parsed by hand: two commands and two flags do not justify
 a `System.CommandLine` dependency.
@@ -65,7 +65,7 @@ that built this feature. The photos come instead from the
 images are Flickr photographs under the Creative Commons Attribution 2.0 licence, with the
 author and original page listed for every image.
 
-- 24 photos, 6 per category, committed under `src/backend/TutuMuch.Cli/SeedPhotos/{Dresses,
+- 24 photos, 6 per category, committed under `src/backend/TuTuMuch.Cli/SeedPhotos/{Dresses,
   Tops, Outerwear, Bottoms}/`, each under 200 KB (about 2.4 MB in total). Listings reuse
   them; stored versions are content-addressed, so a reused photo is stored once.
 - Chosen by hand: one item on a plain or simple background, no person, no logo or
@@ -79,12 +79,12 @@ author and original page listed for every image.
 
 ## Options Considered
 
-### Option 1: A separate `TutuMuch.Cli` that reuses the migrator (chosen)
+### Option 1: A separate `TuTuMuch.Cli` that reuses the migrator (chosen)
 - **Pros:** Deploy-time tooling cannot drop a database; one place for migration logic;
   the demo catalogue lives with the tool that loads it.
 - **Cons:** One more project and test project in the solution.
 
-### Option 2: Add `reset` and `seed` to `TutuMuch.Migrator`
+### Option 2: Add `reset` and `seed` to `TuTuMuch.Migrator`
 - **Pros:** No new project.
 - **Cons:** The binary every deployment runs would carry a drop-database path and the demo
   photos.

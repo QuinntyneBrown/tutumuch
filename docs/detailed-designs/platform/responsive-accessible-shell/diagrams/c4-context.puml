@@ -5,7 +5,7 @@ title System Context — Responsive, accessible application shell
 
 Person(visitor, "Visitor or member", "Phone, tablet or desktop; mouse, touch, keyboard or screen reader")
 Person(admin, "Administrator", "Uses the admin shell")
-System(tutumuch, "Tutu Much", "Marketplace web application")
+System(tutumuch, "TuTuMuch", "Marketplace web application")
 System_Ext(ci, "GitHub Actions CI", "Playwright, axe-core, visual snapshots")
 
 Rel(visitor, tutumuch, "Uses from 320 px upwards", "HTTPS")

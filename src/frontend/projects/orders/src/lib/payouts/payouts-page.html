@@ -12,28 +12,28 @@
     <span class="skeleton skeleton--rect payouts__skeleton-row"></span>
   }
   @case ('error') {
-    <tm-empty-state icon="alert" heading="Couldn’t load payouts" tone="error">
+    <tl-empty-state icon="alert" heading="Couldn’t load payouts" tone="error">
       Try again in a moment. <span class="ref">{{ errorRef() }}</span>
-      <button actions tmButton type="button" (click)="retry()"><tm-icon name="refresh" />Try again</button>
-    </tm-empty-state>
+      <button actions tlButton type="button" (click)="retry()"><tl-icon name="refresh" />Try again</button>
+    </tl-empty-state>
   }
   @default {
     @if (summary(); as summary) {
       @if (empty()) {
-        <tm-empty-state icon="tag" heading="No payouts yet">
+        <tl-empty-state icon="tag" heading="No payouts yet">
           Your earnings show up here after your first sale.
-          <a actions tmButton="primary" routerLink="/sell">Sell an item</a>
-        </tm-empty-state>
+          <a actions tlButton="primary" routerLink="/sell">Sell an item</a>
+        </tl-empty-state>
       } @else {
         @if (setupError(); as error) {
           <div class="payouts__alert">
-            <tm-alert tone="danger">{{ error }}</tm-alert>
+            <tl-alert tone="danger">{{ error }}</tl-alert>
           </div>
         }
         @if (onboarded()) {
           <div class="stats payouts__stats">
-            <tm-stat label="Paid out" [value]="money(summary.paidOut)" />
-            <tm-stat label="Pending" [value]="money(summary.pending)" />
+            <tl-stat label="Paid out" [value]="money(summary.paidOut)" />
+            <tl-stat label="Pending" [value]="money(summary.pending)" />
           </div>
           <ul class="settings-list payouts__method" role="list">
             <li>
@@ -41,18 +41,18 @@
                 <span class="settings-list__title">{{ summary.bankDisplay }}</span>
                 <span class="settings-list__meta">Managed by our payment provider</span>
               </div>
-              <button tmButton type="button" [disabled]="settingUp()" (click)="setUp()">
-                Change<tm-icon name="external" />
+              <button tlButton type="button" [disabled]="settingUp()" (click)="setUp()">
+                Change<tl-icon name="external" />
               </button>
             </li>
           </ul>
         } @else {
-          <tm-alert tone="warning" heading="Set up payouts to get paid">
+          <tl-alert tone="warning" heading="Set up payouts to get paid">
             {{ money(summary.pending) }} is waiting for you.
-            <button actions tmButton="primary" class="btn--sm" type="button" [disabled]="settingUp()" (click)="setUp()">
-              Set up payouts<tm-icon name="external" />
+            <button actions tlButton="primary" class="btn--sm" type="button" [disabled]="settingUp()" (click)="setUp()">
+              Set up payouts<tl-icon name="external" />
             </button>
-          </tm-alert>
+          </tl-alert>
         }
         <div class="section-head" [class.payouts__held]="!onboarded()">
           <h2>{{ onboarded() ? 'History' : 'Held' }}</h2>
@@ -61,7 +61,7 @@
           @for (row of summary.history; track row.orderId) {
             <li>
               <a [routerLink]="['/sales', row.orderId]">
-                <tm-item-row [title]="row.item.title" [meta]="meta(row)">
+                <tl-item-row [title]="row.item.title" [meta]="meta(row)">
                   <div thumb class="thumb">
                     <div class="photo photo--6">
                       @if (row.item.photo; as photo) {
@@ -79,7 +79,7 @@
                       }
                     </div>
                   </div>
-                </tm-item-row>
+                </tl-item-row>
                 <div class="order-list__end">
                   <span class="price">{{ money(row.amount) }}</span>
                   <span class="text-caption">{{ caption(row) }}</span>

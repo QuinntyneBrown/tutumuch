@@ -18,7 +18,7 @@ export const PROBLEM_REASONS: readonly { value: ProblemReason; label: string }[]
 
 export type ProblemOutcome = 'FullRefund' | 'ReleaseToSeller';
 
-/** One private evidence photo; the URL is served by Tutu Much API to the order's members and administrators. */
+/** One private evidence photo; the URL is served by TuTuMuch API to the order's members and administrators. */
 export interface ProblemPhoto {
   id: string;
   url: string;

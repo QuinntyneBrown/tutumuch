@@ -20,16 +20,16 @@ box "Frontend — @tutumuch/accounts and @tutumuch/api" #E0F2FE
   participant "AuthState" as auth
   participant "sessionInterceptor" as icpt
 end box
-box "Backend — Tutu Much API application" #D1FADF
+box "Backend — TuTuMuch API application" #D1FADF
   participant "AuthController" as ctrl
   participant "SessionCookies" as cookies
 end box
-box "Backend — TutuMuch Application and Domain" #ECFDF3
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
   participant "SignInCommandHandler" as signin
   participant "RefreshSessionCommandHandler" as refresh
 end box
-box "Backend — TutuMuch Infrastructure" #FFF4E5
-  database "Tutu Much database" as db
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
 end box
 actor -> page : Email and password, choose "Sign in"
 page -> auth : signIn(email, password)
@@ -41,15 +41,15 @@ alt unknown email or wrong password (L2-006)
   page --> actor : Same message for both; email kept
 else correct
   signin -> db : Insert session (refresh token hash, new family, 14 days)
-  ctrl -> cookies : Write tm_access (JWT, 15 minutes) and tm_refresh (HttpOnly, Secure, SameSite=Strict)
+  ctrl -> cookies : Write tl_access (JWT, 15 minutes) and tl_refresh (HttpOnly, Secure, SameSite=Strict)
   ctrl --> auth : 200 member
   page --> actor : Back to returnUrl; top bar shows the member
 end
 == 15 minutes later ==
-actor -> icpt : Any call to Tutu Much API
-icpt -> ctrl : Request with the expired tm_access
+actor -> icpt : Any call to TuTuMuch API
+icpt -> ctrl : Request with the expired tl_access
 ctrl --> icpt : 401
-icpt -> ctrl : POST /api/auth/refresh (tm_refresh)
+icpt -> ctrl : POST /api/auth/refresh (tl_refresh)
 ctrl -> refresh : RefreshSessionCommand
 refresh -> db : Find the token by hash
 alt already rotated (reuse, L2-008)

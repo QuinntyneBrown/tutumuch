@@ -19,15 +19,15 @@ box "Frontend — @tutumuch/listings and @tutumuch/api" #E0F2FE
   participant "SellPage" as form
   participant "ListingsApi" as client
 end box
-box "Backend — Tutu Much API application" #D1FADF
+box "Backend — TuTuMuch API application" #D1FADF
   participant "ListingsController" as controller
 end box
-box "Backend — TutuMuch Application and Domain" #ECFDF3
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
   participant "ListingCommandHandlers" as handler
   participant "Listing" as entity
 end box
-box "Backend — TutuMuch Infrastructure" #FFF4E5
-  database "Tutu Much database" as db
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
 end box
 actor -> form : Choose "Save draft"
 form -> form : checkListing(draft); without a category show "Choose a category"

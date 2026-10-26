@@ -18,7 +18,7 @@ import { OrderHistoryList, orderMeta, orderSubtitle, statusTone } from './order-
  * order or the seller's sale. The route's `list` data picks the list.
  */
 @Component({
-  selector: 'tm-order-history-page',
+  selector: 'tl-order-history-page',
   imports: [RouterLink, ButtonDirective, EmptyStateComponent, IconComponent, ItemRowComponent, StatusComponent],
   templateUrl: './order-history-page.html',
   styleUrl: './order-history-page.css',

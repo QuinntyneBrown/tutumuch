@@ -43,7 +43,7 @@ export interface UploaderMove {
  * photos of an order problem) there is no cover, no reordering and the add tile reads "Add photo".
  */
 @Component({
-  selector: 'tm-photo-uploader',
+  selector: 'tl-photo-uploader',
   imports: [IconComponent],
   templateUrl: './photo-uploader.html',
   styleUrl: './photo-uploader.css',

@@ -10,9 +10,9 @@
 `L2-057` required 95th-percentile latencies at 200 requests per second against 100,000
 Active listings, and the acceptance criteria of `L2-060` were written as tests against
 three API instances. The `meet-performance-and-scale` design turned those into a
-`TutuMuch.LoadTestSeeder` console app, k6 scenarios under `tests/load/`, a weekly
+`TuTuMuch.LoadTestSeeder` console app, k6 scenarios under `tests/load/`, a weekly
 `load-test.yml` workflow, a performance environment, `docker-compose.scale.yml` and a
-`TutuMuch.ScaleTests` xUnit project. That was 22 of the feature's 53 estimated hours
+`TuTuMuch.ScaleTests` xUnit project. That was 22 of the feature's 53 estimated hours
 plus an unpriced environment, for a marketplace that has not launched and has no
 traffic data to size against.
 
@@ -59,7 +59,7 @@ tests are specified, designed, estimated or built.
 
 ### Positive
 - The performance feature estimate drops from 53 to 31 hours.
-- No `tests/load/`, `TutuMuch.LoadTestSeeder` or `TutuMuch.ScaleTests`, and no
+- No `tests/load/`, `TuTuMuch.LoadTestSeeder` or `TuTuMuch.ScaleTests`, and no
   performance environment.
 
 ### Negative

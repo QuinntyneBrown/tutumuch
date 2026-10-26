@@ -25,7 +25,7 @@ type View = 'loading' | 'error' | 'form' | 'locked' | 'sold' | 'withdrawn';
  * (L2-020). A listing removed after a cancelled order can be edited before it is relisted.
  */
 @Component({
-  selector: 'tm-edit-listing-page',
+  selector: 'tl-edit-listing-page',
   imports: [
     ReactiveFormsModule,
     RouterLink,

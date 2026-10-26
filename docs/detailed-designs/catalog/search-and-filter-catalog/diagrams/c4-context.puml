@@ -5,7 +5,7 @@ title System Context — Search and filter the catalog
 
 Person(visitor, "Visitor", "Anonymous person narrowing the catalog")
 Person(member, "Member", "Signed-in buyer narrowing the catalog")
-System(tutumuch, "Tutu Much", "Marketplace for girls' clothing")
+System(tutumuch, "TuTuMuch", "Marketplace for girls' clothing")
 
 Rel(visitor, tutumuch, "Searches, filters, sorts and shares result sets in", "HTTPS")
 Rel(member, tutumuch, "Searches, filters, sorts and shares result sets in", "HTTPS")

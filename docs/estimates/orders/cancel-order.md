@@ -21,7 +21,7 @@ The estimate assumes the `Order` aggregate, `Refund` table and `IssueRefund` out
 
 ## Minimal scope
 
-Minimal scope keeps seller cancellation with a full refund, the shared handler used by the ship deadline job, and the moderation port. It drops the buyer's cancellation request and the respond dialog; a buyer contacts Tutu Much support instead. It satisfies `L2-035` criteria 1, 3 and 4 and `L2-045` criterion 4; it defers criterion 2.
+Minimal scope keeps seller cancellation with a full refund, the shared handler used by the ship deadline job, and the moderation port. It drops the buyer's cancellation request and the respond dialog; a buyer contacts TuTuMuch support instead. It satisfies `L2-035` criteria 1, 3 and 4 and `L2-045` criterion 4; it defers criterion 2.
 
 Minimal scope total: **27 hours**.
 

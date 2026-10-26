@@ -8,7 +8,7 @@ import { AuthState } from './auth-state';
 let refreshing: Observable<unknown> | null = null;
 
 /**
- * Sends the session cookies with every call to Tutu Much API and, when the 15-minute access token has
+ * Sends the session cookies with every call to TuTuMuch API and, when the 15-minute access token has
  * expired (401), renews the session once through POST /api/auth/refresh and retries (L2-008).
  */
 export const sessionInterceptor: HttpInterceptorFn = (request, next) => {

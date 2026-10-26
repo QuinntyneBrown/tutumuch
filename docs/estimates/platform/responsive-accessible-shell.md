@@ -3,7 +3,7 @@
 ## Basis
 
 The hours assume an intermediate Angular/TypeScript developer who knows the
-Angular CDK and Playwright at a working level and does not yet know the Tutu Much
+Angular CDK and Playwright at a working level and does not yet know the TuTuMuch
 codebase. They cover implementation, automated tests and review fixes, and
 exclude requirements, design and mock work. The estimate assumes the mock
 `tokens.css` and `ui.css` are ported into the Angular styles with the breakpoint
@@ -24,7 +24,7 @@ feature's tests; this estimate counts the harness and the shell's own fixtures.
 | `SheetService` and `SheetComponent` (full and side variants, focus trap) | 6 |
 | `NavMenuSheetComponent` (member and guest) | 4 |
 | `DialogService` wrapper with focus restore, inert background, bottom-sheet layout | 4 |
-| `RouteFocusService` and `TutuMuchTitleStrategy` | 3 |
+| `RouteFocusService` and `TuTuMuchTitleStrategy` | 3 |
 | `LiveRegionService` | 1 |
 | `FormFieldComponent`, `FormErrorsDirective`, `ErrorSummaryComponent` with server-error mapping | 8 |
 | `ToastService`, `ToastRegionComponent`, `ToastComponent` (auto-dismiss, pause, danger rules) | 6 |

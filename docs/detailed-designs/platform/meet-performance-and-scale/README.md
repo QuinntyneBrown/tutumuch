@@ -2,7 +2,7 @@
 
 ## Overview
 
-Tutu Much shoppers mostly browse on phones, and a sale lost to a failed request loses
+TuTuMuch shoppers mostly browse on phones, and a sale lost to a failed request loses
 a seller's income. This feature, part of the `platform` subsystem, makes the API
 safe to run as several identical instances behind a load balancer. No load test,
 performance environment or multi-instance scale test is built
@@ -16,7 +16,7 @@ It covers one concern:
 
 Terms used below:
 
-- **shared state** — state that every API instance reads and writes in the `Distributed cache` (Redis) or the `Tutu Much database`
+- **shared state** — state that every API instance reads and writes in the `Distributed cache` (Redis) or the `TuTuMuch database`
 
 The feature owns the shared-state wiring and the architecture test that guards
 it. Query design for each read belongs to its own feature; for example
@@ -28,7 +28,7 @@ measured budget.
 
 ## Description
 
-### API (`TutuMuch.Api`)
+### API (`TuTuMuch.Api`)
 
 - **`EndpointKindAttribute(EndpointKind.Read | Write | PaymentBound)`** —
   endpoint metadata used by the latency metrics of report-errors-and-observe.
@@ -36,12 +36,12 @@ measured budget.
   update-listing and every other command. `PaymentBound` marks checkout and
   refund endpoints whose time includes the payment provider.
 - **Stateless rules** — enforced by an architecture test
-  (`StatelessApiTests`, NetArchTest) that fails when `TutuMuch.Api` or
-  `TutuMuch.Application` registers `IMemoryCache`, `AddSession`,
+  (`StatelessApiTests`, NetArchTest) that fails when `TuTuMuch.Api` or
+  `TuTuMuch.Application` registers `IMemoryCache`, `AddSession`,
   `AddDistributedMemoryCache`, or a singleton holding mutable collections.
   Sticky sessions are off at the load balancer.
 
-### Infrastructure (`TutuMuch.Infrastructure`)
+### Infrastructure (`TuTuMuch.Infrastructure`)
 
 - **`RedisConnectionFactory`** — singleton `IConnectionMultiplexer` from
   `Redis:ConnectionString` (secret store), `AbortOnConnectFail = false`,
@@ -55,12 +55,12 @@ measured budget.
   | Rate-limit counters | harden-http-and-api | `tutumuch:rl:…` | window length |
   | `IDistributedCache` entries | any feature | `tutumuch:cache:{name}:{key}` | per entry |
 
-  `AddDataProtection().SetApplicationName("Tutu Much").PersistKeysToStackExchangeRedis(…)`
+  `AddDataProtection().SetApplicationName("TuTuMuch").PersistKeysToStackExchangeRedis(…)`
   makes a cookie or antiforgery token issued by one instance readable by every
   other instance. Protection of the key ring at rest with a key from the secret
   store is `<TO SUPPLY>` (depends on the vault product).
 - **Shared state in the database** — listing reservations (`L2-028`) and
-  single sale (`L2-029`) rely on the `Tutu Much database` with a `rowversion`
+  single sale (`L2-029`) rely on the `TuTuMuch database` with a `rowversion`
   concurrency token on `Listings` and a unique index on the active reservation
   (orders subsystem, [checkout-and-pay](../../orders/checkout-and-pay/README.md)).
   This feature owns that wiring.
@@ -85,16 +85,16 @@ measured budget.
 
 ### System context
 
-Shoppers on phones and desktops use Tutu Much, which runs as several stateless API
+Shoppers on phones and desktops use TuTuMuch, which runs as several stateless API
 instances.
 
 ![C4 system context for performance and scale](diagrams/c4-context.png)
 
 ### Containers
 
-Several identical `Tutu Much API` instances sit behind the load balancer. Session keys,
+Several identical `TuTuMuch API` instances sit behind the load balancer. Session keys,
 refresh-token families and rate-limit counters live in the `Distributed cache`;
-reservations live in the `Tutu Much database`.
+reservations live in the `TuTuMuch database`.
 
 ![C4 container view for performance and scale](diagrams/c4-container.png)
 

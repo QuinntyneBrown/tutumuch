@@ -14,22 +14,22 @@ skinparam package {
   FontColor #101828
   BackgroundColor #F9FAFB
 }
-box "Frontend — Tutu Much Web application" #E0F2FE
+box "Frontend — TuTuMuch Web application" #E0F2FE
   participant "Checkout page" as page
 end box
-box "Backend — Tutu Much API application" #D1FADF
+box "Backend — TuTuMuch API application" #D1FADF
   participant "CorrelationIdMiddleware" as corr
   participant "CheckoutController" as ctrl
 end box
-box "Backend — Tutu Much Application and Domain" #ECFDF3
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
   participant "PayOrderCommandHandler" as handler
 end box
-box "Backend — Tutu Much Infrastructure" #FFF4E5
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
   participant "Serilog + redaction" as log
   participant "Payment adapter + CorrelationIdDelegatingHandler" as pay
-  database "Tutu Much database" as db
+  database "TuTuMuch database" as db
 end box
-box "Backend — Tutu Much Worker application" #ECFDF3
+box "Backend — TuTuMuch Worker application" #ECFDF3
   participant "OutboxDispatcher" as worker
 end box
 page -> corr : POST /api/checkout/{id}/pay

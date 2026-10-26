@@ -21,7 +21,7 @@ export interface RequestCancellationData {
  * the order and its pending request.
  */
 @Component({
-  selector: 'tm-request-cancellation-dialog',
+  selector: 'tl-request-cancellation-dialog',
   imports: [AlertComponent, ButtonDirective, DialogComponent, FormFieldComponent],
   templateUrl: './request-cancellation-dialog.html',
   styleUrl: './request-cancellation-dialog.css',

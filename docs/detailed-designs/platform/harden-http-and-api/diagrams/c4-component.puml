@@ -3,8 +3,8 @@
 LAYOUT_WITH_LEGEND()
 title Components — Harden HTTP and the API
 
-Container(web, "Tutu Much Web", "Angular", "AntiforgeryInterceptor, RateLimitInterceptor")
-Container_Boundary(api, "Tutu Much API") {
+Container(web, "TuTuMuch Web", "Angular", "AntiforgeryInterceptor, RateLimitInterceptor")
+Container_Boundary(api, "TuTuMuch API") {
   Component(fwd, "ForwardedHeaders + HttpsRedirection + Hsts", "ASP.NET Core middleware", "Trusted client IP, 301 to HTTPS, HSTS one year")
   Component(headers, "SecurityHeadersMiddleware", "Middleware", "CSP, nosniff, Referrer-Policy; strips Server")
   Component(cors, "CORS policy Frontend", "Middleware", "Allows only Cors:AllowedOrigins")
@@ -15,10 +15,10 @@ Container_Boundary(api, "Tutu Much API") {
   Component(vb, "ValidationBehavior", "MediatR pipeline behaviour", "Runs FluentValidation validators")
   Component(handler, "Feature handlers", "MediatR handlers", "Business logic of each feature")
   Component(store, "RedisFixedWindowRateLimitStore", "IRateLimitStore", "Atomic INCR + EXPIRE Lua script")
-  Component(ef, "TutuMuchDbContext", "EF Core", "Parameterised SQL; raw SQL APIs banned")
+  Component(ef, "TuTuMuchDbContext", "EF Core", "Parameterised SQL; raw SQL APIs banned")
 }
 ContainerDb(cache, "Distributed cache", "Redis", "Rate-limit counters")
-ContainerDb(db, "Tutu Much database", "SQL Server", "Business data")
+ContainerDb(db, "TuTuMuch database", "SQL Server", "Business data")
 
 Rel(web, fwd, "Sends requests", "HTTPS")
 Rel(fwd, headers, "Passes request")

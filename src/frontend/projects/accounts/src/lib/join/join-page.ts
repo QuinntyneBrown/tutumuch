@@ -23,9 +23,9 @@ const FIELDS = {
 
 type FieldId = (typeof FIELDS)[keyof typeof FIELDS];
 
-/** Join Tutu Much at /join (L2-001, mocks pages/register). Client checks mirror Tutu Much API and are never trusted. */
+/** Join TuTuMuch at /join (L2-001, mocks pages/register). Client checks mirror TuTuMuch API and are never trusted. */
 @Component({
-  selector: 'tm-join-page',
+  selector: 'tl-join-page',
   imports: [
     ReactiveFormsModule,
     RouterLink,

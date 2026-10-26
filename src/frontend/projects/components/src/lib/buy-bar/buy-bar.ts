@@ -6,7 +6,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
  * (L2-063). With two actions the total is hidden on small screens.
  */
 @Component({
-  selector: 'tm-buy-bar',
+  selector: 'tl-buy-bar',
   templateUrl: './buy-bar.html',
   styleUrl: './buy-bar.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

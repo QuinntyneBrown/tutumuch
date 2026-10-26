@@ -9,7 +9,7 @@ import { CookieConsentService } from '../consent/cookie-consent.service';
  * which also counts as a first choice; "Cancel" changes nothing. No request, so no busy state.
  */
 @Component({
-  selector: 'tm-cookie-settings-dialog',
+  selector: 'tl-cookie-settings-dialog',
   imports: [ButtonDirective, DialogComponent, SwitchComponent],
   templateUrl: './cookie-settings-dialog.html',
   styleUrl: './cookie-settings-dialog.css',

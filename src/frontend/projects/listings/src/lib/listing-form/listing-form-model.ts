@@ -28,7 +28,7 @@ interface PhotoTile extends UploaderTile {
  * The state of the listing form shared by the sell page and the edit page: the controls, the
  * catalogue, the photo tiles and the field errors. Create it in an injection context. Photos
  * upload one file per request as soon as they are chosen; a save sends the uploaded IDs in display
- * order (upload-listing-photos, L2-017). There is no size input: Tutu Much API sets it (L2-013).
+ * order (upload-listing-photos, L2-017). There is no size input: TuTuMuch API sets it (L2-013).
  */
 export class ListingFormModel {
   private readonly photoUploads = inject(PhotosApi);

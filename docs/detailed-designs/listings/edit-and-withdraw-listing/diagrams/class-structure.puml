@@ -11,7 +11,7 @@ skinparam class {
 }
 title Class structure — Edit and withdraw a listing
 
-package "TutuMuch.Domain" {
+package "TuTuMuch.Domain" {
   enum ListingStatus {
     Draft
     Active
@@ -44,7 +44,7 @@ package "TutuMuch.Domain" {
   }
 }
 
-package "TutuMuch.Application" {
+package "TuTuMuch.Application" {
   class GetMyListingQuery {
     +string Reference
   }
@@ -85,7 +85,7 @@ package "TutuMuch.Application" {
   class ListingPhotoAttacher
 }
 
-package "TutuMuch.Api" {
+package "TuTuMuch.Api" {
   class ListingsController {
     +GetMine(reference): IActionResult
     +Update(reference, body): IActionResult

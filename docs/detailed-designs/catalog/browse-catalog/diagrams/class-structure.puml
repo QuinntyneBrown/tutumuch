@@ -30,7 +30,7 @@ class BrowseCatalogQuery <<record>> {
 }
 
 class BrowseCatalogQueryHandler {
-  -ITutuMuchDbContext db
+  -ITuTuMuchDbContext db
   +Handle(query: BrowseCatalogQuery, ct: CancellationToken): Task<Result<CatalogPageDto>>
 }
 

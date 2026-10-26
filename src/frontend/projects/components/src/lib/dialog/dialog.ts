@@ -12,7 +12,7 @@ let nextId = 0;
  * DialogService. Project `[description]`, `[top]` and `[footer]` content.
  */
 @Component({
-  selector: 'tm-dialog',
+  selector: 'tl-dialog',
   imports: [ButtonDirective, IconComponent],
   templateUrl: './dialog.html',
   styleUrl: './dialog.css',
@@ -28,7 +28,7 @@ export class DialogComponent {
   /** Panel width: `sm` for a short confirmation, `lg` for wide content. */
   readonly size = input<'sm' | 'md' | 'lg'>('md');
 
-  readonly id = `tm-dialog-${nextId++}`;
+  readonly id = `tl-dialog-${nextId++}`;
 
   close(): void {
     this.ref?.close();

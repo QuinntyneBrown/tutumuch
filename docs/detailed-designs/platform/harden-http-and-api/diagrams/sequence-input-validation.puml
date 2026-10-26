@@ -15,20 +15,20 @@ skinparam package {
   BackgroundColor #F9FAFB
 }
 actor "Member" as actor
-box "Frontend — Tutu Much Web application" #E0F2FE
+box "Frontend — TuTuMuch Web application" #E0F2FE
   participant "Edit listing page" as page
   participant "ListingsApiService" as client
 end box
-box "Backend — Tutu Much API application" #D1FADF
+box "Backend — TuTuMuch API application" #D1FADF
   participant "Kestrel + JSON input" as kestrel
   participant "ListingsController" as ctrl
 end box
-box "Backend — Tutu Much Application and Domain" #ECFDF3
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
   participant "ValidationBehavior" as vb
   participant "UpdateListingCommandHandler" as handler
 end box
-box "Backend — Tutu Much Infrastructure" #FFF4E5
-  database "Tutu Much database" as db
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
 end box
 actor -> page : Save listing
 page -> client : PUT /api/listings/{id}

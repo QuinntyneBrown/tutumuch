@@ -18,7 +18,7 @@ export interface TopBarMember {
  * "Admin" label and the signed-in member's initials.
  */
 @Component({
-  selector: 'tm-top-bar',
+  selector: 'tl-top-bar',
   imports: [RouterLink, RouterLinkActive, ButtonDirective, IconComponent, LogoComponent],
   templateUrl: './top-bar.html',
   styleUrl: './top-bar.css',

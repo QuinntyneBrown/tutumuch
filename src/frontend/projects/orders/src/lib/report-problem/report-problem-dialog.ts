@@ -35,12 +35,12 @@ const MAX_PHOTOS = 4;
 
 /**
  * "Report a problem" (L2-036, mocks dialogs/report-problem): what's wrong, a description and up
- * to 4 photos, sent with "Send to Tutu Much". Missing answers show the error summary and inline errors
+ * to 4 photos, sent with "Send to TuTuMuch". Missing answers show the error summary and inline errors
  * without calling the API; while sending, Cancel is disabled; a failure keeps everything and
  * offers "Try again". Closes with the opened problem.
  */
 @Component({
-  selector: 'tm-report-problem-dialog',
+  selector: 'tl-report-problem-dialog',
   imports: [
     AlertComponent,
     ButtonDirective,

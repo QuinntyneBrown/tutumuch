@@ -2,10 +2,10 @@
 
 ## Overview
 
-Tutu Much is a marketplace for new and used girls' clothing. A fresh local
+TuTuMuch is a marketplace for new and used girls' clothing. A fresh local
 install has no members and no listings, so every catalog page is empty until someone
 registers, verifies, uploads photos and publishes by hand. This feature, part of the
-`platform` subsystem, adds `TutuMuch.Cli`, a developer tool with two commands: `reset`
+`platform` subsystem, adds `TuTuMuch.Cli`, a developer tool with two commands: `reset`
 gives an empty, fully migrated database and an empty photo store; `seed` loads a small
 demo catalogue of members and Active listings with real product photographs in every
 category. `seed --reset` does both. It refines `L1-019` through `L2-072` to `L2-077`.
@@ -16,7 +16,7 @@ Terms used below:
 - **photo store** — the folder `FileSystemPhotoStorage` writes to, `PhotoStorage:RootPath`
   (`public/` versions, `private/` originals)
 - **seed photos** — the 24 committed photographs under
-  `src/backend/TutuMuch.Cli/SeedPhotos/{Dresses,Tops,Outerwear,Bottoms}/`
+  `src/backend/TuTuMuch.Cli/SeedPhotos/{Dresses,Tops,Outerwear,Bottoms}/`
 - **reset guard** — the check that `reset` runs only in Development or with `--force`
   (`L2-073`)
 - **seed clock** — the `TimeProvider` the seeder moves back in time per step
@@ -29,10 +29,10 @@ The demo set is not a load or scale fixture
 
 ## Description
 
-### Project and composition (`src/backend/TutuMuch.Cli`)
+### Project and composition (`src/backend/TuTuMuch.Cli`)
 
-A console project (`OutputType Exe`) in `TutuMuch.sln`, referencing `TutuMuch.Application`,
-`TutuMuch.Infrastructure` and `TutuMuch.Migrator`, plus `Microsoft.Extensions.Configuration.*`
+A console project (`OutputType Exe`) in `TuTuMuch.sln`, referencing `TuTuMuch.Application`,
+`TuTuMuch.Infrastructure` and `TuTuMuch.Migrator`, plus `Microsoft.Extensions.Configuration.*`
 and `Microsoft.Extensions.DependencyInjection`. `SeedPhotos/**` is copied to the output
 folder.
 
@@ -59,7 +59,7 @@ folder.
 |------|---------|
 | 0 | Success, help, or `seed` found the demo data already there |
 | 1 | Unknown command or option; usage is printed |
-| 2 | `ConnectionStrings__TutuMuch` is not set |
+| 2 | `ConnectionStrings__TuTuMuch` is not set |
 | 3 | The reset guard refused |
 | 4 | A seed photo folder or file is missing |
 | 5 | The database cannot be reached, or a migration or seed step failed |
@@ -75,7 +75,7 @@ folder.
    store by deleting `RootPath/public` and `RootPath/private`. It prints each step.
 4. **`MigratedSchema`** — `db.Database.EnsureDeleted()` then
    `MigratorApp.ApplyMigrations(db, output)`. `ApplyMigrations` is the method
-   `MigratorApp.Run` now calls, so `TutuMuch.Migrator` and the CLI share one migration path.
+   `MigratorApp.Run` now calls, so `TuTuMuch.Migrator` and the CLI share one migration path.
 
 The migrations hold SQL Server SQL, so tests cannot run them on SQLite. Tests use
 `EnsureCreatedSchema` (`EnsureDeleted` then `EnsureCreated`) behind the same
@@ -95,7 +95,7 @@ keeps covering the migration list.
    `RegisterMemberCommand` (all `L2-001` rules, including the breached-password check),
    then the token is read from the queued `EmailVerification` outbox message's link and
    sent with `VerifyEmailCommand` (`L2-002`), then that outbox message is claimed and
-   suppressed ("Demo member verified by TutuMuch.Cli") so the Worker never sends it. A
+   suppressed ("Demo member verified by TuTuMuch.Cli") so the Worker never sends it. A
    failed command result stops the seed with exit 5 and its error code.
 4. **Listings** — in catalogue order (oldest first), listing *i* of *n* is created and
    published with the seed clock at `now − 30 days + i × (30 days ÷ n)`. For each:
@@ -118,8 +118,8 @@ served by `/photos/{hash}/{file}` like any upload.
 
 ### Demo catalogue (`DemoCatalogue`)
 
-All demo members share the password `TutuMuch-demo-only-2026`, documented in
-`src/backend/TutuMuch.Cli/README.md` as for local use only. Emails use the reserved `.test`
+All demo members share the password `TuTuMuch-demo-only-2026`, documented in
+`src/backend/TuTuMuch.Cli/README.md` as for local use only. Emails use the reserved `.test`
 domain. No member is an administrator, onboarded for payouts or the author of any review,
 report or order.
 
@@ -152,7 +152,7 @@ A listing's first photo is its cover and matches its title; extra photos are oth
 of the same category, so a buyer sees a gallery. Photo sources and licences are in
 `SeedPhotos/ATTRIBUTION.md` (CC BY 2.0, Open Images).
 
-### Tests (`tests/TutuMuch.Cli.Tests`)
+### Tests (`tests/TuTuMuch.Cli.Tests`)
 
 xUnit, SQLite in-memory through the `configureServices` hook, a fake `IPhotoStorage`
 (dictionary) and `EnsureCreatedSchema`; the reset tests point `PhotoStorage:RootPath` at a
@@ -177,12 +177,12 @@ The real SkiaSharp pipeline runs on the committed photos. Each test file starts 
 
 | Setting | Value | Source |
 |---------|-------|--------|
-| `ConnectionStrings__TutuMuch` | Required; the same setting as `TutuMuch.Migrator` | Environment |
+| `ConnectionStrings__TuTuMuch` | Required; the same setting as `TuTuMuch.Migrator` | Environment |
 | `DOTNET_ENVIRONMENT` | `Development` to allow `reset`; `Production` when unset | Environment |
 | `PhotoStorage:RootPath` | Same as the API (default `{temp}/tutumuch-photos`) | `PhotoStorageOptions` |
 | `Selling:PublishesPerDay` | 20, unchanged | `SellingOptions` |
 | `Seed:PhotosPath` | `{AppContext.BaseDirectory}/SeedPhotos` | `DemoSeeder` |
-| Demo password | `TutuMuch-demo-only-2026` | `DemoCatalogue`, CLI README |
+| Demo password | `TuTuMuch-demo-only-2026` | `DemoCatalogue`, CLI README |
 
 ## Requirements
 
@@ -225,7 +225,7 @@ through MediatR and the photo pipeline, and reset goes through the migrator's co
 - `reset` against SQL Server is verified by hand on a developer machine; tests rebuild the
   schema with `EnsureCreated` on SQLite. The environment that built this feature had no SQL
   Server or LocalDB (and could not install one), so its hand check seeded a SQLite file
-  through `CliApp` with the real file-system photo store, served it through `TutuMuch.Api`
+  through `CliApp` with the real file-system photo store, served it through `TuTuMuch.Api`
   and the Angular dev server, and confirmed the home, category and detail pages and a demo
   sign-in. The `reset` run against LocalDB on Windows on Arm is still owed.
 - A seed interrupted half way leaves a partial demo; `seed --reset` is the documented

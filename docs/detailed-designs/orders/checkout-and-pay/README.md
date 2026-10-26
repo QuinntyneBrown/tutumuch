@@ -2,10 +2,10 @@
 
 ## Overview
 
-Tutu Much is a marketplace for new and used girls' clothing. Every
+TuTuMuch is a marketplace for new and used girls' clothing. Every
 listing is a single physical item, so a listing can be sold only once. This feature
-covers buying it: a verified member chooses "Buy now", Tutu Much holds the item for them
-for 10 minutes, the member gives a US shipping address and pays by card, and Tutu Much
+covers buying it: a verified member chooses "Buy now", TuTuMuch holds the item for them
+for 10 minutes, the member gives a US shipping address and pays by card, and TuTuMuch
 creates the order when the payment provider confirms the payment.
 
 The feature starts on the listing detail page (catalog subsystem) and ends with a
@@ -16,10 +16,10 @@ Terms used in this design:
 
 - **checkout** — record of one buyer's attempt to buy one listing, from "Buy now" to payment or release
 - **reservation** — exclusive 10-minute hold a checkout places on a listing, shown as listing status `Reserved`
-- **hosted card fields** — card inputs served in an iframe by the payment provider, so card numbers and security codes never reach Tutu Much servers
+- **hosted card fields** — card inputs served in an iframe by the payment provider, so card numbers and security codes never reach TuTuMuch servers
 - **payment method token** — opaque reference the provider returns for card details entered in hosted fields
 - **idempotency key** — client-generated identifier sent with a payment request so a repeated request charges once
-- **signed webhook** — HTTPS callback from the payment provider whose body carries a signature Tutu Much verifies
+- **signed webhook** — HTTPS callback from the payment provider whose body carries a signature TuTuMuch verifies
 - **duplicate payment** — successful payment for a listing that already has an order, or for a checkout whose listing was lost; refunded automatically
 
 Three guarantees shape the design. First, exactly one buyer can hold the listing, and
@@ -33,15 +33,15 @@ and a webhook event table absorb repeats.
 
 Screens and copy come from `docs/mocks/pages/checkout/` (states `default`, `new-address`, `invalid`, `non-us`, `submitting`, `declined`, `expired`, `conflict`, `loading`, `error`), `docs/mocks/pages/order-confirmation/` (`default`, `loading`, `error`) and `docs/mocks/notifications/reservation-timer/` (`info`, `warning`, `danger`, `success`). The payment provider stays behind a port until it is chosen ([ADR orders/0001](../../../adr/orders/0001-payment-provider-behind-a-port-until-chosen.md)); the reservation guard is the conditional update and filtered unique index of [ADR orders/0002](../../../adr/orders/0002-reserve-with-a-conditional-update-and-a-filtered-unique-index.md).
 
-### Frontend — `Tutu Much Web`, feature library `@tutumuch/orders` (`src/frontend/projects/orders/src/lib/`)
+### Frontend — `TuTuMuch Web`, feature library `@tutumuch/orders` (`src/frontend/projects/orders/src/lib/`)
 
-- **Routes** — the orders library is mounted at `/` and declares `checkout/:reference` (`CheckoutPage`, title "Checkout · Tutu Much") and `orders/:id/confirmed` (`OrderConfirmationPage`, title "Order confirmed · Tutu Much"). `reference` is the listing's `L-…` reference from "Buy now". No route guard: a 401 from starting checkout sends a visitor to `/sign-in?returnUrl=/checkout/{reference}`.
+- **Routes** — the orders library is mounted at `/` and declares `checkout/:reference` (`CheckoutPage`, title "Checkout · TuTuMuch") and `orders/:id/confirmed` (`OrderConfirmationPage`, title "Order confirmed · TuTuMuch"). `reference` is the listing's `L-…` reference from "Buy now". No route guard: a 401 from starting checkout sends a visitor to `/sign-in?returnUrl=/checkout/{reference}`.
 - **`CheckoutPage`** with **`CheckoutStore`** (`checkout/`) — on init `POST /api/checkouts`. States:
   - `loading` — skeletons in the two-column layout (`aria-label="Loading checkout"`).
   - `default` — the saved address preselected with "New address" beside it; when the checkout has no address yet the store sets the saved one at once so the summary shows tax and total. Primary "Pay $102.34" (or "Continue" while no total is known), ghost "Cancel and release item".
   - `new-address` — "Full name" (prefilled from the saved address), "Street address", "Apartment, suite" (optional), "City", "State" (50 states and DC by name, code sent), "ZIP code" (`inputmode="numeric"`), "Country" (United States, Canada, Mexico).
-  - `invalid` — a 422 `ADDRESS_INVALID` marks each field and lists them in `tm-error-summary`, which takes focus.
-  - `non-us` — a 422 `NON_US_ADDRESS` shows the danger alert "Tutu Much ships within the United States only" / "Choose a US address to continue." and marks Country.
+  - `invalid` — a 422 `ADDRESS_INVALID` marks each field and lists them in `tl-error-summary`, which takes focus.
+  - `non-us` — a 422 `NON_US_ADDRESS` shows the danger alert "TuTuMuch ships within the United States only" / "Choose a US address to continue." and marks Country.
   - `submitting` — Pay is `aria-busy`, "Confirming with your bank…" shows as a status and further clicks are ignored.
   - `declined` — "Your bank declined the card" with the provider's reason and "Try another card — the item is still reserved for you."
   - `expired` — "Your reservation ended" with "Back to the item" and "Keep shopping", on `RESERVATION_EXPIRED` or when polling finds the checkout Expired.
@@ -49,13 +49,13 @@ Screens and copy come from `docs/mocks/pages/checkout/` (states `default`, `new-
   - `error` — "Couldn’t start checkout", reference, "Try again", "Back to the item".
   - A start refused with 404, `LISTING_UNAVAILABLE` or `CANNOT_BUY_OWN_LISTING` returns to `/items/{reference}`, which shows Sold, unavailable or the seller's view.
 - **Paying** — the store sets the address first when it changed. If that changes a total the buyer had already seen, it stops with the warning "The total changed", so the buyer only pays a total they saw (`L2-027` criteria 5 and 6). It then asks the card fields for a token and sends `POST /api/checkouts/{id}/payments` with `{ paymentMethodToken, expectedTotal }` and one `crypto.randomUUID()` `Idempotency-Key` per attempt, kept for a retry when the request may not have arrived. After the 202 it polls `GET /api/checkouts/{id}` once a second, up to 60 times: Paid goes to `/orders/{orderId}/confirmed`, Open shows the decline, Expired the expired state.
-- **`HostedCardFieldsComponent`** (`checkout/`) — the "Card" field and the note "Card details go straight to our payment provider. Tutu Much never sees them." It mounts the fields created by `PAYMENT_FIELDS` from `@tutumuch/api` and exposes `tokenize()`. Until a provider is chosen the default is `TestModePaymentFields`, a "Test card" select of `tok_visa` and `tok_chargeDeclined`.
-- **`tm-reservation-timer`** (`@tutumuch/components`) — `role="timer"` "Reserved for you · 9:41 left" counted from the server's `expiresAt`; it emits its phase. In the last minute the page shows the warning banner "Less than a minute left to pay. After that, the item goes back on sale."; at zero the danger banner "Your reservation ended. You weren’t charged." with "Start again", and Pay is disabled. Each is announced once through a polite status.
-- **`tm-order-summary`** (`@tutumuch/components`) — the "Summary" panel: item row, Item, Shipping ("Free" at $0.00), Sales tax ("With your address" before one is set), Total. Reused by order pages.
+- **`HostedCardFieldsComponent`** (`checkout/`) — the "Card" field and the note "Card details go straight to our payment provider. TuTuMuch never sees them." It mounts the fields created by `PAYMENT_FIELDS` from `@tutumuch/api` and exposes `tokenize()`. Until a provider is chosen the default is `TestModePaymentFields`, a "Test card" select of `tok_visa` and `tok_chargeDeclined`.
+- **`tl-reservation-timer`** (`@tutumuch/components`) — `role="timer"` "Reserved for you · 9:41 left" counted from the server's `expiresAt`; it emits its phase. In the last minute the page shows the warning banner "Less than a minute left to pay. After that, the item goes back on sale."; at zero the danger banner "Your reservation ended. You weren’t charged." with "Start again", and Pay is disabled. Each is announced once through a polite status.
+- **`tl-order-summary`** (`@tutumuch/components`) — the "Summary" panel: item row, Item, Shipping ("Free" at $0.00), Sales tax ("With your address" before one is set), Total. Reused by order pages.
 - **`OrderConfirmationPage`** (`order-confirmation/`) — loads `GET /api/purchases/{id}`: `loading` "Confirming your payment", `default` "Order TM-10001", "It’s yours.", "Paid $102.34 · Visa ending 4242", the three next steps with the seller's name, "View order" and "Keep shopping"; `error` "We couldn’t show your order" with "Try again" and "Go to purchases". The "Payment confirmed" toast waits for `ToastService` (responsive-accessible-shell).
 - **`CheckoutApi`** (`@tutumuch/api`, `src/lib/orders/checkout-api.ts`) — `start`, `get`, `setAddress`, `pay`, `release`, `purchase`.
 
-### API — `TutuMuch.Api`
+### API — `TuTuMuch.Api`
 
 - **`CheckoutsController`** (policy `VerifiedMember`: 401 `UNAUTHENTICATED`, 403 `EMAIL_NOT_VERIFIED`)
   - `POST /api/checkouts` — body `{ listingReference }`. `201` `CheckoutDto` (`id`, `status`, `expiresAt`, `item` with reference, title, brand, size, condition and cover photo, `itemPrice`, `shippingCost`, `salesTax`, `total`, `address`, `savedAddress`, `lastDeclineReason`, `orderId`; money as two-place strings). Opening checkout again during the buyer's own live reservation returns it unchanged. Errors: `404 LISTING_NOT_FOUND`, `422 CANNOT_BUY_OWN_LISTING`, `409 LISTING_RESERVED`, `409 LISTING_UNAVAILABLE`.
@@ -66,20 +66,20 @@ Screens and copy come from `docs/mocks/pages/checkout/` (states `default`, `new-
   - `GET /api/purchases/{id}` — the buyer's order for the confirmation page (`PurchaseDto`: reference, item, total, card brand and last four, seller display name, paid time; [ship-order](../ship-order/README.md) adds the item, shipping and tax lines, ship-by date, timeline and tracking for the buyer's order page); `404 ORDER_NOT_FOUND` for anyone else. order-history extends this endpoint.
 - **`PaymentWebhookController`** — `POST /api/payments/webhook`, anonymous, reads the raw body and the `Payment-Signature` header. `200` for processed, repeated and ignored events; `400 WEBHOOK_SIGNATURE_INVALID`, logged as security event `payment.webhook.invalid_signature` (`L2-030` criterion 4).
 
-### Application and domain — `TutuMuch.Application/Checkouts`, `TutuMuch.Domain/Orders`
+### Application and domain — `TuTuMuch.Application/Checkouts`, `TuTuMuch.Domain/Orders`
 
 - **`Checkout`** — `Start`, `IsLive(now)`, `SetAddress(address, tax)` (total = item + shipping + tax), `BeginPayment`, `RecordDecline(reason)` (Processing back to Open), `MarkPaid`, `Release(Released | Expired)`. `ReservationDuration` is 10 minutes (`L2-028`).
 - **`ShippingAddress`** — value object with `Check` (full name, street, city, a US state or DC code, ZIP `^\d{5}(-\d{4})?$`) and `IsOutsideUnitedStates`.
 - **`Listing`** (listings subsystem) — gains `ReservedByCheckoutId`, `ReservedUntil`, `CanBePurchasedBy(buyerId)` (`L2-026` criterion 2), `ReleaseReservation(checkoutId, now)` and `MarkSold(now)`. Active to Reserved is the conditional update below.
 - **`CheckoutCommandHandlers`** — `StartCheckoutCommand` refuses the seller with `CANNOT_BUY_OWN_LISTING` before writing anything, then in one transaction runs `UPDATE Listings SET Status='Reserved', ReservedByCheckoutId, ReservedUntil WHERE Id=@id AND (Status='Active' OR (Status='Reserved' AND ReservedUntil <= @now))`, expires any checkout still holding the listing, and inserts the `Checkout`. Zero rows or a violation of `UX_Checkouts_ListingId_Open` answer 409, so exactly one of 50 concurrent requests wins (`L2-029` criterion 1). `SetCheckoutAddressCommand` validates and calls `IPaymentProvider.QuoteTaxAsync` on item plus shipping. `SubmitPaymentCommand` returns the existing payment for a repeated key, checks the reservation, the address and `expectedTotal == Total` to the cent, inserts `Payment` (Pending), moves the checkout to Processing and calls `CreatePaymentAsync` with the same key. `ReleaseCheckoutCommand` releases the checkout and the listing.
-- **`PaymentWebhookHandler`** — `ReadWebhook` verifies the signature; a known event id changes nothing. A failure sets `Payment` Failed and the decline reason on the checkout. A success stores the provider id, card brand and last four (the only card details kept, `L2-030`). When the listing is still Reserved for this checkout, or Active again, and has no order, it creates `Order.CreatePaid` (reference `Tutu Much-` and a number from 10001), marks the listing Sold and the checkout Paid and saves the address to `SavedAddress`. Otherwise it records a `Refund` (`DuplicatePayment`, full amount) and calls `RefundAsync` with the refund id as key (`L2-029` criterion 2).
+- **`PaymentWebhookHandler`** — `ReadWebhook` verifies the signature; a known event id changes nothing. A failure sets `Payment` Failed and the decline reason on the checkout. A success stores the provider id, card brand and last four (the only card details kept, `L2-030`). When the listing is still Reserved for this checkout, or Active again, and has no order, it creates `Order.CreatePaid` (reference `TuTuMuch-` and a number from 10001), marks the listing Sold and the checkout Paid and saves the address to `SavedAddress`. Otherwise it records a `Refund` (`DuplicatePayment`, full amount) and calls `RefundAsync` with the refund id as key (`L2-029` criterion 2).
 - **`ExpireReservationsCommand`** — releases Open and Processing checkouts past `ExpiresAt` and their listings (`L2-028` criterion 3).
 - **`IPaymentProvider`** — `QuoteTaxAsync`, `CreatePaymentAsync`, `RefundAsync`, `ReadWebhook`. Payout methods arrive with [seller-payouts](../seller-payouts/README.md).
 
 ### Infrastructure, worker and data
 
-- **`UnconfiguredPaymentProvider`** (`TutuMuch.Infrastructure/Payments/`) — registered until a provider adapter exists: no tax, no charge, every webhook rejected. Tests replace the port with `FakePaymentProvider`.
-- **`ReservationExpiryJob`** (`TutuMuch.Worker`) — every `Checkout:ExpiryJobInterval` (30 seconds) sends `ExpireReservationsCommand`.
+- **`UnconfiguredPaymentProvider`** (`TuTuMuch.Infrastructure/Payments/`) — registered until a provider adapter exists: no tax, no charge, every webhook rejected. Tests replace the port with `FakePaymentProvider`.
+- **`ReservationExpiryJob`** (`TuTuMuch.Worker`) — every `Checkout:ExpiryJobInterval` (30 seconds) sends `ExpireReservationsCommand`.
 - **Migration `AddCheckoutAndPayment`**:
 
 | Table | Key columns and constraints |
@@ -129,21 +129,21 @@ Address columns are plain until [protect-personal-data](../../privacy/protect-pe
 | `L2-027` | `L1-007` | A verified member shall be able to buy one Active listing at a time. Checkout shall collect a US shipping address and show the item price, shipping cost, sales tax where it applies, and the total before payment. |
 | `L2-028` | `L1-007` | When a buyer starts checkout, the listing shall become Reserved for that buyer for 10 minutes. While Reserved, no other member shall be able to start checkout for it. If payment does not succeed within 10 minutes, the listing shall return to Active. |
 | `L2-029` | `L1-007` | Concurrent purchase attempts for the same listing shall result in exactly one order. This shall be guaranteed by the database (for example by optimistic concurrency on the listing), not by the client. |
-| `L2-030` | `L1-007` | Payment shall be taken through a PCI DSS compliant third-party payment provider using the provider's hosted fields or hosted page. Card numbers and security codes shall never pass through or be stored on Tutu Much servers. Tutu Much shall store only the provider's payment reference, card brand and last four digits. Payment results shall be confirmed from the provider's signed webhook, not from the browser. |
+| `L2-030` | `L1-007` | Payment shall be taken through a PCI DSS compliant third-party payment provider using the provider's hosted fields or hosted page. Card numbers and security codes shall never pass through or be stored on TuTuMuch servers. TuTuMuch shall store only the provider's payment reference, card brand and last four digits. Payment results shall be confirmed from the provider's signed webhook, not from the browser. |
 
 ## Diagrams
 
 ### System context
 
-The buyer types card details into the payment provider's hosted fields. Tutu Much talks to
+The buyer types card details into the payment provider's hosted fields. TuTuMuch talks to
 the provider for payments, tax and refunds, and receives results by signed webhook.
 
 ![C4 system context for checkout and payment](diagrams/c4-context.png)
 
 ### Containers
 
-`Tutu Much Web` hosts the provider iframe and calls `Tutu Much API`. `Tutu Much API` owns the
-reservation and the order. `Tutu Much Worker` expires reservations and dispatches refunds
+`TuTuMuch Web` hosts the provider iframe and calls `TuTuMuch API`. `TuTuMuch API` owns the
+reservation and the order. `TuTuMuch Worker` expires reservations and dispatches refunds
 and email.
 
 ![C4 container view for checkout and payment](diagrams/c4-container.png)

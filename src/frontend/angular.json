@@ -37,7 +37,7 @@
       },
       "root": "projects/tutumuch",
       "sourceRoot": "projects/tutumuch/src",
-      "prefix": "tm",
+      "prefix": "tl",
       "architect": {
         "build": {
           "builder": "@angular/build:application",
@@ -107,7 +107,7 @@
       "projectType": "library",
       "root": "projects/api",
       "sourceRoot": "projects/api/src",
-      "prefix": "tm",
+      "prefix": "tl",
       "architect": {
         "build": {
           "builder": "@angular/build:ng-packagr",
@@ -127,7 +127,7 @@
       "projectType": "library",
       "root": "projects/components",
       "sourceRoot": "projects/components/src",
-      "prefix": "tm",
+      "prefix": "tl",
       "architect": {
         "build": {
           "builder": "@angular/build:ng-packagr",
@@ -147,7 +147,7 @@
       "projectType": "library",
       "root": "projects/accounts",
       "sourceRoot": "projects/accounts/src",
-      "prefix": "tm",
+      "prefix": "tl",
       "architect": {
         "build": {
           "builder": "@angular/build:ng-packagr",
@@ -167,7 +167,7 @@
       "projectType": "library",
       "root": "projects/catalog",
       "sourceRoot": "projects/catalog/src",
-      "prefix": "tm",
+      "prefix": "tl",
       "architect": {
         "build": {
           "builder": "@angular/build:ng-packagr",
@@ -187,7 +187,7 @@
       "projectType": "library",
       "root": "projects/listings",
       "sourceRoot": "projects/listings/src",
-      "prefix": "tm",
+      "prefix": "tl",
       "architect": {
         "build": {
           "builder": "@angular/build:ng-packagr",
@@ -207,7 +207,7 @@
       "projectType": "library",
       "root": "projects/orders",
       "sourceRoot": "projects/orders/src",
-      "prefix": "tm",
+      "prefix": "tl",
       "architect": {
         "build": {
           "builder": "@angular/build:ng-packagr",
@@ -227,7 +227,7 @@
       "projectType": "library",
       "root": "projects/reviews",
       "sourceRoot": "projects/reviews/src",
-      "prefix": "tm",
+      "prefix": "tl",
       "architect": {
         "build": {
           "builder": "@angular/build:ng-packagr",
@@ -247,7 +247,7 @@
       "projectType": "library",
       "root": "projects/privacy",
       "sourceRoot": "projects/privacy/src",
-      "prefix": "tm",
+      "prefix": "tl",
       "architect": {
         "build": {
           "builder": "@angular/build:ng-packagr",

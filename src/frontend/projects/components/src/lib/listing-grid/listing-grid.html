@@ -16,7 +16,7 @@
 } @else {
   <ul class="listing-grid" role="list">
     @for (card of cards(); track card.href; let i = $index) {
-      <li><tm-listing-card [card]="card" [priority]="i < eagerCount()" /></li>
+      <li><tl-listing-card [card]="card" [priority]="i < eagerCount()" /></li>
     }
   </ul>
 }

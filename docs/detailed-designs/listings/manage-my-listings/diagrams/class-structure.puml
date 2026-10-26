@@ -11,7 +11,7 @@ skinparam class {
 }
 title Class structure — Manage my listings
 
-package "TutuMuch.Application" {
+package "TuTuMuch.Application" {
   class GetMyListingsQuery {
     +Guid SellerId
     +string? Status
@@ -49,7 +49,7 @@ package "TutuMuch.Application" {
   }
 }
 
-package "TutuMuch.Domain" {
+package "TuTuMuch.Domain" {
   class Listing {
     +Guid Id
     +string Reference
@@ -62,7 +62,7 @@ package "TutuMuch.Domain" {
   }
 }
 
-package "TutuMuch.Worker" {
+package "TuTuMuch.Worker" {
   class "DraftCleanupJob (deferred)" as DraftCleanupJob {
     +ExecuteAsync(ct): Task
   }
@@ -74,7 +74,7 @@ package "TutuMuch.Worker" {
   }
 }
 
-package "TutuMuch.Api" {
+package "TuTuMuch.Api" {
   class ListingsController {
     +Mine(status): Task<IActionResult>
     +GetMine(reference): Task<IActionResult>

@@ -24,7 +24,7 @@ export interface ResolveProblemData {
  * reason. Both members see it." without calling the API. Closes with the resolved problem.
  */
 @Component({
-  selector: 'tm-resolve-problem-dialog',
+  selector: 'tl-resolve-problem-dialog',
   imports: [AlertComponent, ButtonDirective, ChoiceComponent, DialogComponent, FormFieldComponent, RadioGroupComponent],
   templateUrl: './resolve-problem-dialog.html',
   styleUrl: './resolve-problem-dialog.css',

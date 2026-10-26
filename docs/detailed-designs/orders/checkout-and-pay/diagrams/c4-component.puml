@@ -3,8 +3,8 @@
 LAYOUT_WITH_LEGEND()
 title Components — Check out and pay
 
-Container(web, "Tutu Much Web", "Angular", "@tutumuch/orders: CheckoutPage, HostedCardFieldsComponent, OrderConfirmationPage; @tutumuch/api: CheckoutApi, PAYMENT_FIELDS; @tutumuch/components: tm-reservation-timer, tm-order-summary")
-Container_Boundary(api, "Tutu Much API") {
+Container(web, "TuTuMuch Web", "Angular", "@tutumuch/orders: CheckoutPage, HostedCardFieldsComponent, OrderConfirmationPage; @tutumuch/api: CheckoutApi, PAYMENT_FIELDS; @tutumuch/components: tl-reservation-timer, tl-order-summary")
+Container_Boundary(api, "TuTuMuch API") {
   Component(cc, "CheckoutsController", "ASP.NET Core controller", "/api/checkouts and /api/purchases/{id}")
   Component(wh, "PaymentWebhookController", "ASP.NET Core controller", "POST /api/payments/webhook")
   Component(handlers, "CheckoutCommandHandlers", "MediatR handlers", "Start (reserve), get, set address, submit payment, release")
@@ -12,12 +12,12 @@ Container_Boundary(api, "Tutu Much API") {
   Component(purchase, "GetPurchaseQueryHandler", "MediatR handler", "The confirmation page's order")
   Component(dom, "Checkout, Listing, Payment, Order, Refund", "Domain", "Reservation and order rules")
   Component(ppa, "IPaymentProvider", "Port", "UnconfiguredPaymentProvider until a provider is chosen; a fake in tests")
-  Component(ctx, "TutuMuchDbContext", "EF Core", "Conditional reservation update, unique indexes")
+  Component(ctx, "TuTuMuchDbContext", "EF Core", "Conditional reservation update, unique indexes")
 }
-Container_Boundary(worker, "Tutu Much Worker") {
+Container_Boundary(worker, "TuTuMuch Worker") {
   Component(exp, "ReservationExpiryJob", "Hosted service", "Sends ExpireReservationsCommand every 30 s")
 }
-ContainerDb(db, "Tutu Much database", "SQL Server", "Checkout state")
+ContainerDb(db, "TuTuMuch database", "SQL Server", "Checkout state")
 System_Ext(pay, "Payment provider", "Payments")
 
 Rel(web, cc, "Calls", "JSON/HTTPS")

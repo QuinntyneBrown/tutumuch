@@ -23,89 +23,89 @@
     </div>
   }
   @case ('conflict') {
-    <tm-center-state icon="lock" heading="Someone else is checking out">
+    <tl-center-state icon="lock" heading="Someone else is checking out">
       <p class="text-muted">If they don’t finish within 10 minutes, it’s back on sale.</p>
-      <a actions tmButton="primary" [routerLink]="['/items', reference()]">Back to the item</a>
-      <a actions tmButton routerLink="/">Keep shopping</a>
-    </tm-center-state>
+      <a actions tlButton="primary" [routerLink]="['/items', reference()]">Back to the item</a>
+      <a actions tlButton routerLink="/">Keep shopping</a>
+    </tl-center-state>
   }
   @case ('expired') {
-    <tm-center-state icon="clock" heading="Your reservation ended">
+    <tl-center-state icon="clock" heading="Your reservation ended">
       <p class="text-muted">
         You weren’t charged. The item is back on sale — if it’s still there, you can start again.
       </p>
-      <a actions tmButton="primary" [routerLink]="['/items', reference()]">Back to the item</a>
-      <a actions tmButton routerLink="/">Keep shopping</a>
-    </tm-center-state>
+      <a actions tlButton="primary" [routerLink]="['/items', reference()]">Back to the item</a>
+      <a actions tlButton routerLink="/">Keep shopping</a>
+    </tl-center-state>
   }
   @case ('error') {
-    <tm-center-state heading="Couldn’t start checkout">
+    <tl-center-state heading="Couldn’t start checkout">
       <p class="text-muted">Something went wrong on our side. Try again in a moment.</p>
       <span class="ref">{{ store.errorRef() }}</span>
-      <button actions tmButton="primary" type="button" (click)="store.retry()">
-        <tm-icon name="refresh" />Try again
+      <button actions tlButton="primary" type="button" (click)="store.retry()">
+        <tl-icon name="refresh" />Try again
       </button>
-      <a actions tmButton [routerLink]="['/items', reference()]">Back to the item</a>
-    </tm-center-state>
+      <a actions tlButton [routerLink]="['/items', reference()]">Back to the item</a>
+    </tl-center-state>
   }
   @default {
     @if (store.checkout(); as checkout) {
       @if (phase() === 'warning') {
         <div class="checkout__banner">
-          <tm-alert tone="warning" icon="clock" [banner]="true"
-            >Less than a minute left to pay. After that, the item goes back on sale.</tm-alert
+          <tl-alert tone="warning" icon="clock" [banner]="true"
+            >Less than a minute left to pay. After that, the item goes back on sale.</tl-alert
           >
         </div>
       } @else if (phase() === 'danger') {
         <div class="checkout__banner">
-          <tm-alert tone="danger" icon="clock" [banner]="true" live="off"
+          <tl-alert tone="danger" icon="clock" [banner]="true" live="off"
             >Your reservation ended. You weren’t charged.
-            <a [routerLink]="['/items', reference()]">Start again</a></tm-alert
+            <a [routerLink]="['/items', reference()]">Start again</a></tl-alert
           >
         </div>
       }
       <div class="page-header">
         <div class="stack stack--sm">
           <h1>Checkout</h1>
-          <tm-reservation-timer [expiresAt]="checkout.expiresAt" (phaseChange)="onPhase($event)" />
+          <tl-reservation-timer [expiresAt]="checkout.expiresAt" (phaseChange)="onPhase($event)" />
         </div>
       </div>
       <div class="split">
         <form class="stack stack--lg" novalidate [formGroup]="form" (ngSubmit)="submit()">
-          <tm-error-summary [errors]="summary()" />
+          <tl-error-summary [errors]="summary()" />
           @if (store.alert(); as alert) {
             @switch (alert.kind) {
               @case ('non-us') {
-                <tm-alert tone="danger" heading="Tutu Much ships within the United States only"
-                  >Choose a US address to continue.</tm-alert
+                <tl-alert tone="danger" heading="TuTuMuch ships within the United States only"
+                  >Choose a US address to continue.</tl-alert
                 >
               }
               @case ('declined') {
                 @if (alert.kind === 'declined') {
-                  <tm-alert tone="danger" heading="Your bank declined the card"
-                    >{{ alert.reason }} Try another card — the item is still reserved for you.</tm-alert
+                  <tl-alert tone="danger" heading="Your bank declined the card"
+                    >{{ alert.reason }} Try another card — the item is still reserved for you.</tl-alert
                   >
                 }
               }
               @case ('total-changed') {
-                <tm-alert tone="warning" heading="The total changed"
+                <tl-alert tone="warning" heading="The total changed"
                   >Tax for this address is {{ money(checkout.salesTax ?? '0') }}. Check the total and pay
-                  again.</tm-alert
+                  again.</tl-alert
                 >
               }
               @case ('card') {
                 @if (alert.kind === 'card') {
-                  <tm-alert tone="danger" heading="Check your card">{{ alert.message }}</tm-alert>
+                  <tl-alert tone="danger" heading="Check your card">{{ alert.message }}</tl-alert>
                 }
               }
               @default {
                 @if (alert.kind === 'error') {
-                  <tm-alert tone="danger" heading="We couldn’t take the payment"
+                  <tl-alert tone="danger" heading="We couldn’t take the payment"
                     >You weren’t charged. Try again in a moment.
                     @if (alert.ref) {
                       <span class="ref">{{ alert.ref }}</span>
                     }
-                  </tm-alert>
+                  </tl-alert>
                 }
               }
             }
@@ -142,7 +142,7 @@
             }
             @if (store.addressChoice() === 'new') {
               <div class="stack">
-                <tm-form-field #fn fieldId="a-name" label="Full name" [error]="errors()['a-name']">
+                <tl-form-field #fn fieldId="a-name" label="Full name" [error]="errors()['a-name']">
                   <input
                     class="input"
                     id="a-name"
@@ -152,8 +152,8 @@
                     [attr.aria-describedby]="fn.describedBy()"
                     [attr.aria-invalid]="fn.invalid()"
                   />
-                </tm-form-field>
-                <tm-form-field #st fieldId="a-street" label="Street address" [error]="errors()['a-street']">
+                </tl-form-field>
+                <tl-form-field #st fieldId="a-street" label="Street address" [error]="errors()['a-street']">
                   <input
                     class="input"
                     id="a-street"
@@ -163,8 +163,8 @@
                     [attr.aria-describedby]="st.describedBy()"
                     [attr.aria-invalid]="st.invalid()"
                   />
-                </tm-form-field>
-                <tm-form-field
+                </tl-form-field>
+                <tl-form-field
                   #apt
                   fieldId="a-apt"
                   label="Apartment, suite"
@@ -180,9 +180,9 @@
                     [attr.aria-describedby]="apt.describedBy()"
                     [attr.aria-invalid]="apt.invalid()"
                   />
-                </tm-form-field>
+                </tl-form-field>
                 <div class="form-row">
-                  <tm-form-field #ci fieldId="a-city" label="City" [error]="errors()['a-city']">
+                  <tl-form-field #ci fieldId="a-city" label="City" [error]="errors()['a-city']">
                     <input
                       class="input"
                       id="a-city"
@@ -192,8 +192,8 @@
                       [attr.aria-describedby]="ci.describedBy()"
                       [attr.aria-invalid]="ci.invalid()"
                     />
-                  </tm-form-field>
-                  <tm-form-field #sta fieldId="a-state" label="State" [error]="errors()['a-state']">
+                  </tl-form-field>
+                  <tl-form-field #sta fieldId="a-state" label="State" [error]="errors()['a-state']">
                     <select
                       class="select"
                       id="a-state"
@@ -207,10 +207,10 @@
                         <option [value]="state.code">{{ state.name }}</option>
                       }
                     </select>
-                  </tm-form-field>
+                  </tl-form-field>
                 </div>
                 <div class="form-row">
-                  <tm-form-field #zp fieldId="a-zip" label="ZIP code" [error]="errors()['a-zip']">
+                  <tl-form-field #zp fieldId="a-zip" label="ZIP code" [error]="errors()['a-zip']">
                     <input
                       class="input"
                       id="a-zip"
@@ -221,8 +221,8 @@
                       [attr.aria-describedby]="zp.describedBy()"
                       [attr.aria-invalid]="zp.invalid()"
                     />
-                  </tm-form-field>
-                  <tm-form-field #co fieldId="a-country" label="Country" [error]="errors()['a-country']">
+                  </tl-form-field>
+                  <tl-form-field #co fieldId="a-country" label="Country" [error]="errors()['a-country']">
                     <select
                       class="select"
                       id="a-country"
@@ -235,7 +235,7 @@
                         <option [value]="country.code">{{ country.name }}</option>
                       }
                     </select>
-                  </tm-form-field>
+                  </tl-form-field>
                 </div>
               </div>
             }
@@ -243,12 +243,12 @@
 
           <section class="checkout-step" aria-labelledby="pay-h">
             <h2 id="pay-h">Pay</h2>
-            <tm-hosted-card-fields />
+            <tl-hosted-card-fields />
           </section>
 
           <div class="stack stack--sm">
             <button
-              tmButton="primary"
+              tlButton="primary"
               size="lg"
               [block]="true"
               type="submit"
@@ -260,13 +260,13 @@
             @if (store.paying()) {
               <p class="text-caption checkout__paying" role="status">Confirming with your bank…</p>
             }
-            <button tmButton="ghost" [block]="true" type="button" (click)="store.cancel()">
+            <button tlButton="ghost" [block]="true" type="button" (click)="store.cancel()">
               Cancel and release item
             </button>
           </div>
         </form>
         @if (summaryItem(); as item) {
-          <tm-order-summary
+          <tl-order-summary
             [item]="item"
             [itemPrice]="money(checkout.itemPrice)"
             [shipping]="shipping()"

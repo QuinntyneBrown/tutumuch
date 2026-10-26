@@ -33,7 +33,7 @@ export type FieldId = (typeof FIELD_IDS)[number];
 
 export type FieldErrors = Partial<Record<FieldId, string>>;
 
-/** Request fields of Tutu Much API mapped to control ids, so server errors land on their control. */
+/** Request fields of TuTuMuch API mapped to control ids, so server errors land on their control. */
 export const SERVER_FIELDS: Record<string, FieldId> = {
   photos: 'photos',
   photoIds: 'photos',
@@ -52,7 +52,7 @@ export const SERVER_FIELDS: Record<string, FieldId> = {
 
 const USED_FAIR = 'Used - Fair';
 
-/** Largest photo Tutu Much API accepts: 10 MB, read as 10 MiB (L2-017). */
+/** Largest photo TuTuMuch API accepts: 10 MB, read as 10 MiB (L2-017). */
 export const MAX_PHOTO_BYTES = 10 * 1024 * 1024;
 
 /** "11.4 MB" for a rejected tile. */
@@ -79,7 +79,7 @@ export function confirmLabel(category: string): string {
 }
 
 /**
- * Client checks mirroring Tutu Much API, for fast feedback only; the server decides. Drafts need a
+ * Client checks mirroring TuTuMuch API, for fast feedback only; the server decides. Drafts need a
  * category and every present field within its limits (L2-019); publishing adds L2-014 to L2-018,
  * including at least one photo (L2-017).
  */

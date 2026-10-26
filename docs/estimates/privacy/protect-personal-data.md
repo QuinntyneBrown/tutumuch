@@ -25,7 +25,7 @@ platform without those settings would move the infrastructure rows.
 | `FieldEncryptionKeyRing` loading active and retired keys from the secret store | 5 |
 | `EncryptedShippingAddressConverter`, EF Core mapping and migration for `Orders` and `SavedAddresses` | 5 |
 | Raw-column ciphertext integration test | 3 |
-| `ReEncryptShippingAddressesJob` in `Tutu Much Worker` | 6 |
+| `ReEncryptShippingAddressesJob` in `TuTuMuch Worker` | 6 |
 | `DatabaseEncryptionHealthCheck` | 3 |
 | `PhotoStorageEncryptionHealthCheck` | 3 |
 | Infrastructure-as-code encryption settings and `verify-encryption-at-rest` CI step | 6 |

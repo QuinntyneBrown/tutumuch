@@ -4,16 +4,16 @@ LAYOUT_WITH_LEGEND()
 title Components — Manage cookie consent
 
 Person(visitor, "Visitor", "Browser user")
-Container_Boundary(web, "Tutu Much Web") {
-  Component(banner, "CookieConsentComponent + tm-consent-banner", "@tutumuch/privacy, @tutumuch/components", "First-visit banner")
+Container_Boundary(web, "TuTuMuch Web") {
+  Component(banner, "CookieConsentComponent + tl-consent-banner", "@tutumuch/privacy, @tutumuch/components", "First-visit banner")
   Component(dialog, "CookieSettingsDialog", "@tutumuch/privacy dialog", "Analytics switch, Cancel / Save")
-  Component(entry, "Entry points", "tm-footer Cookie settings button, banner", "Open the dialog")
+  Component(entry, "Entry points", "tl-footer Cookie settings button, banner", "Open the dialog")
   Component(consent, "CookieConsentService", "@tutumuch/privacy service, signals", "Consent state and tm_consent cookie")
   Component(analyticsSvc, "AnalyticsService", "@tutumuch/privacy service", "Starts, stops and tracks; deletes analytics cookies")
   Component(toast, "ToastService", "@tutumuch/components", "Cookie choice saved")
   Component(apis, "Typed API services", "@tutumuch/api", "Catalog, session and other API calls")
 }
-Container_Boundary(api, "Tutu Much API") {
+Container_Boundary(api, "TuTuMuch API") {
   Component(mw, "CookieAllowListMiddleware", "ASP.NET Core middleware", "Drops non-allow-listed Set-Cookie headers")
 }
 System_Ext(analytics, "Analytics provider", "Script and collection endpoint")

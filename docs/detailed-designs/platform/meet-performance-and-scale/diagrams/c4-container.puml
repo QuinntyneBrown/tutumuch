@@ -4,14 +4,14 @@ LAYOUT_WITH_LEGEND()
 title Containers — Meet performance and scale targets
 
 Person(shopper, "Visitor or member", "Browser")
-System_Boundary(tutumuch, "Tutu Much") {
-  Container(web, "Tutu Much Web", "Angular", "Calls the API through the load balancer")
+System_Boundary(tutumuch, "TuTuMuch") {
+  Container(web, "TuTuMuch Web", "Angular", "Calls the API through the load balancer")
   Container(lb, "Load balancer", "Hosting platform <TO SUPPLY>", "Round-robin, no sticky sessions")
-  Container(api1, "Tutu Much API instance 1", "ASP.NET Core", "Stateless")
-  Container(api2, "Tutu Much API instance 2", "ASP.NET Core", "Stateless")
-  Container(api3, "Tutu Much API instance 3", "ASP.NET Core", "Stateless")
+  Container(api1, "TuTuMuch API instance 1", "ASP.NET Core", "Stateless")
+  Container(api2, "TuTuMuch API instance 2", "ASP.NET Core", "Stateless")
+  Container(api3, "TuTuMuch API instance 3", "ASP.NET Core", "Stateless")
   ContainerDb(cache, "Distributed cache", "Redis", "Data Protection keys, refresh-token families, rate-limit counters")
-  ContainerDb(db, "Tutu Much database", "SQL Server", "Listings with rowversion; reservations")
+  ContainerDb(db, "TuTuMuch database", "SQL Server", "Listings with rowversion; reservations")
 }
 Rel(shopper, web, "Loads", "HTTPS")
 Rel(web, lb, "Calls API", "JSON/HTTPS")

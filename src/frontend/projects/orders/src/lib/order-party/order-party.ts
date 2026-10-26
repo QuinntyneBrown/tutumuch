@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 
 /** The other party of an order under its summary: avatar, "Buyer" or "Seller" and the profile link (mocks pages/sale-detail, pages/order-detail). */
 @Component({
-  selector: 'tm-order-party',
+  selector: 'tl-order-party',
   imports: [RouterLink],
   templateUrl: './order-party.html',
   styleUrl: './order-party.css',

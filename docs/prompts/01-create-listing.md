@@ -16,7 +16,7 @@ signed-in, verified member. Build only the minimum, as its own first slices:
 - A new design `docs/detailed-designs/accounts/sign-up-and-sign-in/` covering `L2-001` (registration),
   `L2-002` (email verification), `L2-006` (sign-in), `L2-008` (sessions) and `L2-010` (authorisation), using
   the mocks `pages/register`, `pages/verify-email` and `pages/sign-in`.
-- `AuthState` in `@tutumuch/api`, the member state of `tm-top-bar`, and the `VerifiedMember` / `CanSell` policies.
+- `AuthState` in `@tutumuch/api`, the member state of `tl-top-bar`, and the `VerifiedMember` / `CanSell` policies.
 - Defer password reset, lockout, manage sessions, edit profile and close account; list them in the design's
   open questions.
 
@@ -45,16 +45,16 @@ signed-in, verified member. Build only the minimum, as its own first slices:
   - **Out of scope (CRITICAL).** No moderation, review authoring, data export, load or scale tests.
   - **Testing rules (CRITICAL).** Backend tests never touch a real database or external system: use fakes or
     the EF Core in-memory or SQLite in-memory provider. Playwright never runs the backend: serve every
-    `Tutu Much API` call through `page.route` fixtures (`src/frontend/e2e/fixtures.ts`).
+    `TuTuMuch API` call through `page.route` fixtures (`src/frontend/e2e/fixtures.ts`).
   - **Folder structure and frontend workspace layout (MANDATORY).** Pages and dialogs live in
     `src/frontend/projects/listings/src/lib/`; HTTP calls only through
     `@tutumuch/api`; shared UI only in `@tutumuch/components`.
   - **Scope lock and zero-waste engineering.** Build only what is described here. If something seems to need
     more scope, leave it out, note it as deferred, and continue. Do not stop.
-  - **The components library is mandatory.** Build all UI from `tm-*` components in `@tutumuch/components`;
+  - **The components library is mandatory.** Build all UI from `tl-*` components in `@tutumuch/components`;
     follow `docs/screen-composition.md`.
   - **ATDD in small slices** with Playwright page objects (`src/frontend/e2e/pages/`), Chromium only, and xUnit
-    tests in `tests/TutuMuch.*.Tests/`. The only architecture test is the existing `StatelessApiTests`.
+    tests in `tests/TuTuMuch.*.Tests/`. The only architecture test is the existing `StatelessApiTests`.
   - No single-file components: each component gets `.ts`, `.html` and `.css`.
 - Work through the phases below **in order**, using the repo skill each phase names.
 - Copy the house style of each folder. Read the existing neighbours before you write anything new.
@@ -69,7 +69,7 @@ signed-in, verified member. Build only the minimum, as its own first slices:
 
 ## Phase 2: Design system (`extracting-design-systems`)
 - Add a page in `docs/design-system/components/` for every component this feature needs that the catalogue
-  lacks, and the matching `tm-*` component in `src/frontend/projects/components/`. Update tokens only if new
+  lacks, and the matching `tl-*` component in `src/frontend/projects/components/`. Update tokens only if new
   values are needed.
 - Compose this feature's screens in `docs/screen-composition.md` (`writing-screen-composition`), replacing
   "not yet composed".
@@ -94,12 +94,12 @@ signed-in, verified member. Build only the minimum, as its own first slices:
   1. Register, verify and sign in a member (API with fakes for email; Playwright with fixtures).
   2. Category and size catalogue: `GET /api/categories` and the server-side size rule (`L2-011` to `L2-014`).
   3. Save a draft from `/sell`.
-  4. Publish a listing, with validation errors shown through `tm-form-field` and the error summary.
+  4. Publish a listing, with validation errors shown through `tl-form-field` and the error summary.
   5. Unverified and daily-limit states.
 - For each slice:
   - Write the Given-When-Then criteria.
   - Write the acceptance test first: Playwright in `src/frontend/e2e/tests/` with a `Traces to: L2-xxx` header
-    and page objects in `src/frontend/e2e/pages/`, or xUnit in `tests/TutuMuch.*.Tests/`.
+    and page objects in `src/frontend/e2e/pages/`, or xUnit in `tests/TuTuMuch.*.Tests/`.
   - Run it and show that it fails for the expected reason.
   - Implement the minimum that makes it pass, and refactor while the tests are green.
   - Run `npm run verify`, then commit.

@@ -13,7 +13,7 @@ export interface FilterChipOption {
  * application keeps the value and changes it on (selectedChange).
  */
 @Component({
-  selector: 'tm-filter-chips',
+  selector: 'tl-filter-chips',
   templateUrl: './filter-chips.html',
   styleUrl: './filter-chips.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

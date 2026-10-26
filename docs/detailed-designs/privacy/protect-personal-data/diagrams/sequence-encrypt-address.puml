@@ -16,20 +16,20 @@ skinparam package {
 }
 actor "Buyer" as buyer
 actor "Seller" as seller
-box "Frontend — Tutu Much Web application" #E0F2FE
+box "Frontend — TuTuMuch Web application" #E0F2FE
   participant "CheckoutPage / SaleDetailPage" as page
 end box
-box "Backend — Tutu Much API application" #D1FADF
+box "Backend — TuTuMuch API application" #D1FADF
   participant "OrdersController" as controller
 end box
-box "Backend — TutuMuch.Application and Domain" #ECFDF3
+box "Backend — TuTuMuch.Application and Domain" #ECFDF3
   participant "Order handlers" as handler
   participant "ShippingAddressProtector" as protector
 end box
-box "Backend — TutuMuch.Infrastructure" #FFF4E5
+box "Backend — TuTuMuch.Infrastructure" #FFF4E5
   participant "EncryptedShippingAddressConverter" as converter
   participant "AesGcmFieldEncryptor" as enc
-  database "Tutu Much database" as db
+  database "TuTuMuch database" as db
 end box
 == Store ==
 buyer -> page : Pay with shipping address

@@ -16,13 +16,13 @@ skinparam package {
 }
 actor "Visitor" as actor
 actor "Operator" as op
-box "Frontend — Tutu Much Web application" #E0F2FE
+box "Frontend — TuTuMuch Web application" #E0F2FE
   participant "SystemStatusService" as status
   participant "SystemBannerService" as banner
   participant "MaintenanceInterceptor" as mint
   participant "MaintenancePageComponent" as mpage
 end box
-box "Backend — Tutu Much API application" #D1FADF
+box "Backend — TuTuMuch API application" #D1FADF
   participant "SystemStatusController" as ctrl
   participant "MaintenanceModeMiddleware" as mmw
   participant "MaintenanceOptionsValidator" as val
@@ -43,7 +43,7 @@ actor -> mint : Any API call
 mint -> mmw : Request
 mmw --> mint : 503 code maintenance, Retry-After
 mint -> mpage : Navigate
-mpage --> actor : "Back at 3:00 AM ET" / "Tutu Much is down for planned maintenance. Orders and payments are safe."
+mpage --> actor : "Back at 3:00 AM ET" / "TuTuMuch is down for planned maintenance. Orders and payments are safe."
 == Window ends ==
 op -> mmw : maintenance.yml action=off
 actor -> mpage : "Check status"

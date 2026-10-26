@@ -1,34 +1,34 @@
 @if (state() === 'success') {
   <div><h1>Check your email</h1></div>
-  <div class="empty__icon join__icon"><tm-icon name="mail" size="lg" /></div>
+  <div class="empty__icon join__icon"><tl-icon name="mail" size="lg" /></div>
   <p>
     We sent a link to <strong>{{ email() }}</strong
     >. It works for 24 hours.
   </p>
   @if (resend() === 'sent') {
-    <tm-alert tone="success" heading="Link sent" live="polite">Earlier links no longer work.</tm-alert>
+    <tl-alert tone="success" heading="Link sent" live="polite">Earlier links no longer work.</tl-alert>
   } @else if (resend() === 'limited') {
-    <tm-alert tone="warning" heading="Too many requests" icon="clock"
-      >You can request 3 links an hour. Try again later.</tm-alert
+    <tl-alert tone="warning" heading="Too many requests" icon="clock"
+      >You can request 3 links an hour. Try again later.</tl-alert
     >
   }
   <div class="stack">
-    <a tmButton="primary" size="lg" [block]="true" routerLink="/">Browse while you wait</a>
-    <button tmButton="link" type="button" [busy]="resend() === 'busy'" (click)="resendEmail()">Resend email</button>
+    <a tlButton="primary" size="lg" [block]="true" routerLink="/">Browse while you wait</a>
+    <button tlButton="link" type="button" [busy]="resend() === 'busy'" (click)="resendEmail()">Resend email</button>
   </div>
 } @else {
   <div>
-    <h1>Join Tutu Much</h1>
+    <h1>Join TuTuMuch</h1>
     <p class="text-muted join__lead">Buy and sell with one account.</p>
   </div>
-  <tm-error-summary [errors]="summary()" />
+  <tl-error-summary [errors]="summary()" />
   @if (failure() !== null) {
-    <tm-alert tone="danger" heading="Couldn’t create your account"
-      >Try again in a moment. <span class="ref">{{ failure() }}</span></tm-alert
+    <tl-alert tone="danger" heading="Couldn’t create your account"
+      >Try again in a moment. <span class="ref">{{ failure() }}</span></tl-alert
     >
   }
   <form class="stack stack--lg" novalidate [formGroup]="form" (ngSubmit)="submit()">
-    <tm-form-field
+    <tl-form-field
       #name
       fieldId="display-name"
       label="Display name"
@@ -45,8 +45,8 @@
         [attr.aria-describedby]="name.describedBy()"
         [attr.aria-invalid]="name.invalid()"
       />
-    </tm-form-field>
-    <tm-form-field #mail fieldId="email" label="Email" [error]="errors().email">
+    </tl-form-field>
+    <tl-form-field #mail fieldId="email" label="Email" [error]="errors().email">
       <input
         class="input"
         id="email"
@@ -57,8 +57,8 @@
         [attr.aria-describedby]="mail.describedBy()"
         [attr.aria-invalid]="mail.invalid()"
       />
-    </tm-form-field>
-    <tm-form-field #pass fieldId="password" label="Password" help="At least 12 characters." [error]="errors().password">
+    </tl-form-field>
+    <tl-form-field #pass fieldId="password" label="Password" help="At least 12 characters." [error]="errors().password">
       <input
         class="input"
         id="password"
@@ -69,9 +69,9 @@
         [attr.aria-describedby]="pass.describedBy()"
         [attr.aria-invalid]="pass.invalid()"
       />
-    </tm-form-field>
+    </tl-form-field>
     <div class="stack stack--sm">
-      <tm-choice #age inputId="age" [error]="errors().age">
+      <tl-choice #age inputId="age" [error]="errors().age">
         <input
           type="checkbox"
           id="age"
@@ -80,8 +80,8 @@
           [attr.aria-invalid]="age.invalid()"
         />
         I’m 18 or older
-      </tm-choice>
-      <tm-choice #terms inputId="terms" [error]="errors().terms">
+      </tl-choice>
+      <tl-choice #terms inputId="terms" [error]="errors().terms">
         <input
           type="checkbox"
           id="terms"
@@ -90,11 +90,11 @@
           [attr.aria-invalid]="terms.invalid()"
         />
         I accept the <a routerLink="/terms">terms</a> and <a routerLink="/rules">marketplace rules</a>
-      </tm-choice>
+      </tl-choice>
     </div>
     <div class="stack">
-      <button tmButton="primary" size="lg" [block]="true" type="submit" [busy]="state() === 'submitting'">
-        Join Tutu Much
+      <button tlButton="primary" size="lg" [block]="true" type="submit" [busy]="state() === 'submitting'">
+        Join TuTuMuch
       </button>
     </div>
   </form>

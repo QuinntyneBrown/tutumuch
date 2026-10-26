@@ -16,7 +16,7 @@ licence-key validation task at build time and is under the Six Labors Split Lice
 
 ## Decision
 
-Use SkiaSharp 4.153.1 (MIT) in `TutuMuch.Infrastructure`, with
+Use SkiaSharp 4.153.1 (MIT) in `TuTuMuch.Infrastructure`, with
 `SkiaSharp.NativeAssets.Linux.NoDependencies` so CI on ubuntu-latest needs no system
 packages. `SkiaImageInspector` sniffs magic bytes and reads dimensions from the header;
 `SkiaPhotoProcessor` decodes to sRGB, applies the EXIF orientation, draws onto an opaque

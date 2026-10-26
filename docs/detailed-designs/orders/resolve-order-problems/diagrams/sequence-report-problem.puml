@@ -17,25 +17,25 @@ skinparam package {
 skinparam sequenceMessageAlign left
 skinparam maxMessageSize 260
 actor "Buyer" as actor
-box "Frontend — Tutu Much Web application" #E0F2FE
+box "Frontend — TuTuMuch Web application" #E0F2FE
   participant "OrderDetailPage" as page
   participant "ReportProblemDialog" as dlg
   participant "ProblemsApi (@tutumuch/api)" as client
 end box
-box "Backend — Tutu Much API application (TutuMuch.Api)" #D1FADF
+box "Backend — TuTuMuch API application (TuTuMuch.Api)" #D1FADF
   participant "OrderProblemsController" as ctrl
 end box
-box "Backend — TutuMuch.Application and TutuMuch.Domain" #ECFDF3
+box "Backend — TuTuMuch.Application and TuTuMuch.Domain" #ECFDF3
   participant "ReportProblemCommandHandler" as h
   participant "Order" as order
   participant "OrderProblem" as prob
 end box
-box "Backend — TutuMuch.Infrastructure" #FFF4E5
+box "Backend — TuTuMuch.Infrastructure" #FFF4E5
   participant "IPhotoStorage" as store
-  database "Tutu Much database" as db
+  database "TuTuMuch database" as db
 end box
 page -> page : Offer "Report a problem" only while Order.CanReportProblem
-actor -> dlg : Pick "What's wrong?", describe it, add up to 4 photos, "Send to Tutu Much"
+actor -> dlg : Pick "What's wrong?", describe it, add up to 4 photos, "Send to TuTuMuch"
 alt no reason or no description
   dlg --> actor : "Choose what's wrong" / "Tell us what happened" (invalid state)
 else complete

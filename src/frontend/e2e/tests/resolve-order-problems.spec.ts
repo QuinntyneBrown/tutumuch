@@ -170,7 +170,7 @@ test.describe('resolve order problems: buyer', () => {
     await expect(order.alert).toContainText(
       'Our team reviewed the problem. $102.34 is on its way back to Visa ending 4242.',
     );
-    await expect(page.locator('main')).toContainText('Resolved Sat 24 Oct by Tutu Much support.');
+    await expect(page.locator('main')).toContainText('Resolved Sat 24 Oct by TuTuMuch support.');
     await expect(page.getByRole('link', { name: 'Back to purchases' })).toBeVisible();
   });
 });
@@ -210,7 +210,7 @@ test.describe('resolve order problems: seller', () => {
     await expect(section.alert).toContainText('Your payout is on hold while our team reviews this.');
     await expect(section.entries).toHaveCount(1);
     await expect(section.entries.first()).toContainText('twirly_tara · Sat 24 Oct');
-    await expect(page.locator('main')).toContainText('Visible to the buyer and to Tutu Much.');
+    await expect(page.locator('main')).toContainText('Visible to the buyer and to TuTuMuch.');
 
     await section.sendReply.click();
     await expect(page.locator('main .field__error')).toHaveText('Write your reply');
@@ -316,7 +316,7 @@ test.describe('resolve order problems: administrator', () => {
 
   test('a member without the role sees the load error', async ({ page }) => {
     await page.route('**/api/admin/problems/P-1001', (route) =>
-      route.fulfill(problem(403, 'ADMINISTRATOR_REQUIRED', 'Only Tutu Much administrators can do that')),
+      route.fulfill(problem(403, 'ADMINISTRATOR_REQUIRED', 'Only TuTuMuch administrators can do that')),
     );
     const admin = new ProblemDetailPage(page);
     await admin.goto();

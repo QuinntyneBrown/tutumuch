@@ -17,21 +17,21 @@ skinparam package {
 skinparam sequenceMessageAlign left
 skinparam maxMessageSize 260
 actor "Seller" as actor
-box "Frontend — Tutu Much Web application" #E0F2FE
+box "Frontend — TuTuMuch Web application" #E0F2FE
   participant "PayoutsPage" as page
   participant "PayoutsApi (@tutumuch/api)" as client
 end box
 participant "Payment provider" as pay
-box "Backend — Tutu Much API application (TutuMuch.Api)" #D1FADF
+box "Backend — TuTuMuch API application (TuTuMuch.Api)" #D1FADF
   participant "PayoutsController" as ctrl
   participant "PayoutWebhookController" as wh
 end box
-box "Backend — TutuMuch.Application and TutuMuch.Domain" #ECFDF3
+box "Backend — TuTuMuch.Application and TuTuMuch.Domain" #ECFDF3
   participant "CreateOnboardingLinkHandler" as h
   participant "SellerPayoutAccount" as acct
 end box
-box "Backend — TutuMuch.Infrastructure" #FFF4E5
-  database "Tutu Much database" as db
+box "Backend — TuTuMuch.Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
 end box
 actor -> page : Open /account/payouts
 page -> client : summary()

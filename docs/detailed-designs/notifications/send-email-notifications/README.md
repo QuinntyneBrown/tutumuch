@@ -2,7 +2,7 @@
 
 ## Overview
 
-Tutu Much tells members by email about events that affect their account, their listings and
+TuTuMuch tells members by email about events that affect their account, their listings and
 their orders (`L1-011`). Email is the only notification channel. There is no in-app
 notification centre (see the open questions in `docs/mocks/README.md`). In-app feedback
 uses toasts and banners, which each feature designs for itself.
@@ -10,7 +10,7 @@ uses toasts and banners, which each feature designs for itself.
 This feature is the shared mechanism that every other feature uses to send an email. A
 feature never calls the email provider directly. Instead, its handler records an
 *email notification request* in the *outbox*, in the same database transaction as the
-state change. A background dispatcher in `Tutu Much Worker` then renders the email from a
+state change. A background dispatcher in `TuTuMuch Worker` then renders the email from a
 *template* and hands it to the external email provider. The dispatcher retries failures
 with back-off for up to 24 hours (`L2-042`).
 
@@ -21,7 +21,7 @@ Terms used throughout:
 - **outbox** — `OutboxMessages` table that holds messages written in the same transaction as the business change that caused them, so an email is never lost or sent for a change that rolled back
 - **email notification request** — outbox message of type `EmailNotificationRequested` that names the notification type, the recipient member and the template data
 - **template** — subject, HTML body and plain-text body for one notification type, filled from a typed model
-- **deep link** — absolute URL in an email that opens the related page in Tutu Much (`L2-042`)
+- **deep link** — absolute URL in an email that opens the related page in TuTuMuch (`L2-042`)
 - **dispatch** — one attempt by the worker to render and send one outbox message
 - **delivery SLA** — upper bound of 2 minutes between the event and the email being handed to the provider (`L2-042`)
 
@@ -42,7 +42,7 @@ designed in
 
 ### Notification types and categories
 
-`NotificationType` (enumeration in `TutuMuch.Domain`) lists each email that `L2-042` and
+`NotificationType` (enumeration in `TuTuMuch.Domain`) lists each email that `L2-042` and
 the related L2 requirements name. Each type maps to exactly one `NotificationCategory`.
 Only the Reviews and Marketing categories honour a member's opt-out (`L2-043`); the other
 two are always sent.
@@ -76,7 +76,7 @@ The types that `L2-042` names and whose events exist in the code are built:
 `EmailVerification`, `SaleMade`, `OrderShipped`, `OrderDelivered`, `ShipByReminder`,
 `OrderCancelled`, `OrderRefunded`, (added by cancel-order) `CancellationRequested` and (added by
 resolve-order-problems) `ProblemReported` and `ProblemResolved`. The `NotificationType` enumeration in
-`TutuMuch.Domain` holds only these. The other rows of the table above are added, each with its
+`TuTuMuch.Domain` holds only these. The other rows of the table above are added, each with its
 model and template, by the feature that raises the event (password reset, lockout, draft
 expiry, reviews and marketing). See
 [ADR notifications/0001](../../../adr/notifications/0001-email-outbox-plain-text-templates-and-provider-port.md).
@@ -95,7 +95,7 @@ expiry, reviews and marketing). See
 A buyer who confirms receipt of a Shipped order gets no delivery email, because they made the
 change themselves.
 
-### Producing a notification (`TutuMuch.Application`)
+### Producing a notification (`TuTuMuch.Application`)
 
 - **`IEmailOutbox`** — application port with one method:
   `Enqueue<TModel>(NotificationType type, Guid recipientMemberId, TModel model)`.
@@ -103,8 +103,8 @@ change themselves.
   OrderReference, ItemTitle, Total, ShipBy)`; `Enqueue` refuses any other model. Handlers call
   it before `SaveChangesAsync`. The design first named it `INotificationPublisher`, which
   clashes with MediatR's interface of the same name in every handler file.
-- **`EmailOutbox`** (in `TutuMuch.Application.Notifications`) — implements the port. It
-  serializes the model as JSON and adds an `OutboxMessage` to the current `ITutuMuchDbContext`.
+- **`EmailOutbox`** (in `TuTuMuch.Application.Notifications`) — implements the port. It
+  serializes the model as JSON and adds an `OutboxMessage` to the current `ITuTuMuchDbContext`.
   The message commits or rolls back with the business change.
 - **Template models carry no secrets.** No model type has a property for a password, a
   card number or a security code. Card details appear only as brand and last 4 digits,
@@ -113,7 +113,7 @@ change themselves.
 - **Recipient addresses are resolved at dispatch**, not at enqueue. The message stores the
   member ID only, so the outbox holds no email addresses.
 
-### Dispatching (`TutuMuch.Worker`, `TutuMuch.Application`)
+### Dispatching (`TuTuMuch.Worker`, `TuTuMuch.Application`)
 
 - **`EmailDispatchJob`** — hosted service. Every `Notifications:PollInterval` (10 seconds) it
   sends one `DispatchEmailsCommand`, and sends it again at once while a pass returns a full
@@ -187,7 +187,7 @@ by the dispatcher.
 A `Processing` message whose `LockedUntil` has passed is claimable again, which recovers
 messages from a crashed worker. `Sent`, `Suppressed` and `Failed` are terminal.
 
-### Data (`TutuMuch.Infrastructure`)
+### Data (`TuTuMuch.Infrastructure`)
 
 - Table **`OutboxMessages`**, for email requests only. Columns:
   - `Id uniqueidentifier` primary key.
@@ -252,21 +252,21 @@ requirement, cited by identifier.
 
 ### System context
 
-Members receive email from Tutu Much through the external email provider. Each email links
-back to the related page in Tutu Much.
+Members receive email from TuTuMuch through the external email provider. Each email links
+back to the related page in TuTuMuch.
 
 ![C4 system context for sending email notifications](diagrams/c4-context.png)
 
 ### Containers
 
-`Tutu Much API` writes outbox messages in `Tutu Much database` in the same transaction as each
-business change. `Tutu Much Worker` claims and sends them through the email provider.
+`TuTuMuch API` writes outbox messages in `TuTuMuch database` in the same transaction as each
+business change. `TuTuMuch Worker` claims and sends them through the email provider.
 
 ![C4 container view for sending email notifications](diagrams/c4-container.png)
 
 ### Components
 
-A handler in any subsystem calls `IEmailOutbox`. In `Tutu Much Worker`, `EmailDispatchJob`
+A handler in any subsystem calls `IEmailOutbox`. In `TuTuMuch Worker`, `EmailDispatchJob`
 runs `DispatchEmailsHandler`, which claims, renders, guards and sends each message.
 
 ![C4 component view for sending email notifications](diagrams/c4-component.png)

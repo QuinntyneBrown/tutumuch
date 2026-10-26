@@ -7,7 +7,7 @@ import { ApiResult, toResult } from '../api-result';
 import { Photo } from './photos-api';
 
 /**
- * The editable fields of a listing. There is no size: Tutu Much API sets it from the category
+ * The editable fields of a listing. There is no size: TuTuMuch API sets it from the category
  * (L2-013). Empty fields are left out of the request.
  */
 export interface ListingDetails {
@@ -49,7 +49,7 @@ export interface MyListing {
   photos: Photo[];
 }
 
-/** A listing with the ETag Tutu Much API sent for it, to send back in If-Match when saving (L2-020). */
+/** A listing with the ETag TuTuMuch API sent for it, to send back in If-Match when saving (L2-020). */
 export interface VersionedListing {
   listing: MyListing;
   etag: string;

@@ -18,7 +18,7 @@ type BannerKind = 'info' | 'success' | 'warning' | 'danger';
  * On the payouts page only success shows, because the page itself carries the rest.
  */
 @Component({
-  selector: 'tm-payout-banner',
+  selector: 'tl-payout-banner',
   imports: [RouterLink, AlertComponent],
   templateUrl: './payout-banner.html',
   styleUrl: './payout-banner.css',

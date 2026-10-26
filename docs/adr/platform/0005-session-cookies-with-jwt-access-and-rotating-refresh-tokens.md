@@ -16,13 +16,13 @@ revocation on sign-out and reuse detection. `L2-060` asks for a stateless API, a
 ## Decision
 
 - The access token is a JWT signed with HMAC-SHA256 (`Auth:SigningKey` from configuration),
-  carrying only the member ID in `sub`, valid for 15 minutes, in the cookie `tm_access`
+  carrying only the member ID in `sub`, valid for 15 minutes, in the cookie `tl_access`
   (path `/`). ASP.NET Core JWT bearer authentication reads it from the cookie.
-- The refresh token is 32 random bytes in the cookie `tm_refresh` (path `/api/auth`). Only
-  its SHA-256 hash is stored, in the `Sessions` table of `Tutu Much database`, with a family ID.
+- The refresh token is 32 random bytes in the cookie `tl_refresh` (path `/api/auth`). Only
+  its SHA-256 hash is stored, in the `Sessions` table of `TuTuMuch database`, with a family ID.
   `POST /api/auth/refresh` marks the presented token rotated and issues its successor in the
   same family; presenting a rotated token revokes the whole family. Sign-out revokes the family.
-- The `VerifiedMember` and `CanSell` policies read `EmailVerifiedAt` from `Tutu Much database`, so
+- The `VerifiedMember` and `CanSell` policies read `EmailVerifiedAt` from `TuTuMuch database`, so
   verification takes effect without waiting for a new access token.
 - The Angular app learns who is signed in only from `GET /api/auth/me`; the session
   interceptor in `@tutumuch/api` renews an expired access token once through the refresh endpoint.

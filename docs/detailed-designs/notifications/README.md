@@ -1,6 +1,6 @@
 # Notifications subsystem
 
-The notifications subsystem tells members by email about events that affect their account, listings and orders (`L1-011`). Every other subsystem enqueues email through one outbox port. `Tutu Much Worker` renders, guards and sends each email with retry and back-off. Members choose which optional categories they receive, and anyone can leave marketing email in one click without signing in.
+The notifications subsystem tells members by email about events that affect their account, listings and orders (`L1-011`). Every other subsystem enqueues email through one outbox port. `TuTuMuch Worker` renders, guards and sends each email with retry and back-off. Members choose which optional categories they receive, and anyone can leave marketing email in one click without signing in.
 
 | Feature | Design | L2 requirements |
 |---------|--------|-----------------|

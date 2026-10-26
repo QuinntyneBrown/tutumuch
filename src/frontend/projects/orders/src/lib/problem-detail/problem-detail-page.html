@@ -17,10 +17,10 @@
     <div class="page-header">
       <div class="stack stack--sm"><h1>Order problem</h1></div>
     </div>
-    <tm-empty-state icon="refresh" heading="Couldn’t load this problem" tone="error"
+    <tl-empty-state icon="refresh" heading="Couldn’t load this problem" tone="error"
       >Something went wrong on our side. <span class="ref">{{ errorRef() }}</span>
-      <button actions tmButton="primary" type="button" (click)="retry()"><tm-icon name="refresh" />Try again</button>
-    </tm-empty-state>
+      <button actions tlButton="primary" type="button" (click)="retry()"><tl-icon name="refresh" />Try again</button>
+    </tl-empty-state>
   }
   @default {
     @if (detail(); as detail) {
@@ -33,16 +33,16 @@
       <div class="split">
         <div class="stack stack--lg">
           @if (decision(); as decision) {
-            <tm-alert tone="success" [heading]="decision.heading">{{ decision.text }}</tm-alert>
+            <tl-alert tone="success" [heading]="decision.heading">{{ decision.text }}</tl-alert>
             @if (detail.problem.resolutionReason; as reason) {
               <p class="text-muted text-sm">Reason: {{ reason }}</p>
             }
           }
-          <tm-thread [entries]="thread()" />
+          <tl-thread [entries]="thread()" />
         </div>
         <aside class="panel panel--sunken stack" aria-label="Order">
           <span class="eyebrow">Order {{ detail.order.reference }}</span>
-          <tm-item-row
+          <tl-item-row
             [title]="detail.order.item.title"
             [meta]="detail.order.item.brand + ' · ' + detail.order.item.size"
           >
@@ -53,10 +53,10 @@
                 }
               </div>
             </div>
-          </tm-item-row>
-          <tm-facts [facts]="facts()" />
+          </tl-item-row>
+          <tl-facts [facts]="facts()" />
           @if (detail.problem.status === 'Open') {
-            <button tmButton="primary" type="button" (click)="resolve()">Resolve</button>
+            <button tlButton="primary" type="button" (click)="resolve()">Resolve</button>
           }
         </aside>
       </div>

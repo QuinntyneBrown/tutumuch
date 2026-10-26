@@ -26,7 +26,7 @@ export interface RelistData {
  * once relisted.
  */
 @Component({
-  selector: 'tm-relist-dialog',
+  selector: 'tl-relist-dialog',
   imports: [RouterLink, AlertComponent, ButtonDirective, DialogComponent, ItemRowComponent],
   templateUrl: './relist-dialog.html',
   styleUrl: './relist-dialog.css',

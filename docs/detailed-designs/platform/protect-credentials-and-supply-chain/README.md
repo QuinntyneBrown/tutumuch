@@ -2,30 +2,30 @@
 
 ## Overview
 
-Tutu Much holds member passwords, a payment provider API key, an email provider API
+TuTuMuch holds member passwords, a payment provider API key, an email provider API
 key, token signing keys and database connection strings. A leak of any one of
 them would let an attacker sign in as members, move money or read personal data.
-Tutu Much is also built from hundreds of third-party .NET and npm packages, any of which
+TuTuMuch is also built from hundreds of third-party .NET and npm packages, any of which
 may carry a known vulnerability.
 
-This feature, part of the `platform` subsystem, covers how Tutu Much keeps those
+This feature, part of the `platform` subsystem, covers how TuTuMuch keeps those
 credentials out of reach and how CI keeps vulnerable code out of the build. It
 has three parts:
 
 - **password hashing** — one-way transformation of a password with a random salt and a deliberately slow key-derivation function, so a stolen database does not reveal passwords (`L2-052`)
-- **secret store** — managed vault from which `Tutu Much API` and `Tutu Much Worker` load secrets at runtime under their own workload identity, so no secret lives in source control or in deployed configuration files (`L2-052`)
+- **secret store** — managed vault from which `TuTuMuch API` and `TuTuMuch Worker` load secrets at runtime under their own workload identity, so no secret lives in source control or in deployed configuration files (`L2-052`)
 - **supply-chain gates** — CI jobs that scan the repository for committed secrets, scan .NET and npm dependencies for known vulnerabilities, and run static analysis on every pull request (`L2-052`, `L2-053`)
 
 Other features consume these parts. The accounts subsystem calls the password
 hasher in [register-account](../../accounts/register-account/README.md),
 [sign-in](../../accounts/sign-in/README.md) and
 [reset-password](../../accounts/reset-password/README.md). Every adapter in
-`TutuMuch.Infrastructure` reads its secret through configuration fed by the
+`TuTuMuch.Infrastructure` reads its secret through configuration fed by the
 secret store.
 
 ## Description
 
-### Application and domain (`TutuMuch.Application`, `TutuMuch.Domain`)
+### Application and domain (`TuTuMuch.Application`, `TuTuMuch.Domain`)
 
 - **`IPasswordHasher`** — application port with three methods:
   `Hash(string password): string`, `Verify(string password, string encoded):
@@ -36,7 +36,7 @@ secret store.
   holds only the encoded hash. The `Member` entity is owned by the accounts
   subsystem; this feature fixes the format of the field.
 
-### Infrastructure (`TutuMuch.Infrastructure/Security`)
+### Infrastructure (`TuTuMuch.Infrastructure/Security`)
 
 - **`Pbkdf2PasswordHasher : IPasswordHasher`** — uses
   `Rfc2898DeriveBytes.Pbkdf2` with `HashAlgorithmName.SHA512`, a 16-byte salt
@@ -56,9 +56,9 @@ secret store.
   column holds password material, and no plain-text password is logged
   (report-errors-and-observe redacts the `password` property).
 
-### Secret loading (`TutuMuch.Api`, `TutuMuch.Worker`)
+### Secret loading (`TuTuMuch.Api`, `TuTuMuch.Worker`)
 
-- **`SecretStoreConfigurationExtensions.AddTutuMuchSecretStore(builder)`** —
+- **`SecretStoreConfigurationExtensions.AddTuTuMuchSecretStore(builder)`** —
   adds the secret store configuration provider for the hosting platform's vault
   (product `<TO SUPPLY>`). It authenticates with the container's workload
   identity, so no credential for the vault is itself stored in configuration.
@@ -69,7 +69,7 @@ secret store.
 
   | Vault entry | Configuration key | Used by |
   |-------------|-------------------|---------|
-  | `ConnectionStrings--TutuMuch` | `ConnectionStrings:TutuMuch` | `TutuMuchDbContext` |
+  | `ConnectionStrings--TuTuMuch` | `ConnectionStrings:TuTuMuch` | `TuTuMuchDbContext` |
   | `Redis--ConnectionString` | `Redis:ConnectionString` | `Distributed cache` client |
   | `PaymentProvider--ApiKey` | `PaymentProvider:ApiKey` | payment adapter |
   | `PaymentProvider--WebhookSigningSecret` | `PaymentProvider:WebhookSigningSecret` | webhook verifier |
@@ -90,7 +90,7 @@ secret store.
   any key in `SecretKeys.All`; the keys are absent.
 - **Frontend configuration** — `src/frontend/src/environments/*.ts` holds only
   public values: API base URL and the payment provider's publishable key. No
-  secret is bundled into `Tutu Much Web`.
+  secret is bundled into `TuTuMuch Web`.
 
 ### CI (`.github/workflows/ci.yml`, job per gate)
 
@@ -140,21 +140,21 @@ log event, member ID only).
 
 ### System context
 
-Developers change Tutu Much through pull requests in GitHub, where CI runs the gates.
-At runtime Tutu Much reads its secrets from the secret store of the hosting platform.
+Developers change TuTuMuch through pull requests in GitHub, where CI runs the gates.
+At runtime TuTuMuch reads its secrets from the secret store of the hosting platform.
 
 ![C4 system context for credentials and supply chain](diagrams/c4-context.png)
 
 ### Containers
 
-`Tutu Much API` and `Tutu Much Worker` read secrets from the secret store at start. The CI
+`TuTuMuch API` and `TuTuMuch Worker` read secrets from the secret store at start. The CI
 pipeline scans the repository and its lock files before any image is built.
 
 ![C4 container view for credentials and supply chain](diagrams/c4-container.png)
 
 ### Components
 
-Inside `Tutu Much API`, the secret store configuration provider feeds options, and
+Inside `TuTuMuch API`, the secret store configuration provider feeds options, and
 `SecretGuard` refuses to start when a secret is missing or misplaced. The
 accounts handlers call `IPasswordHasher`, implemented by `Pbkdf2PasswordHasher`.
 

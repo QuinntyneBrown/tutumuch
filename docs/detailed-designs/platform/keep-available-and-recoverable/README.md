@@ -1,10 +1,10 @@
-# Keep Tutu Much available and recoverable
+# Keep TuTuMuch available and recoverable
 
 ## Overview
 
-Members expect to browse, list and buy on Tutu Much at any hour, and sellers expect
+Members expect to browse, list and buy on TuTuMuch at any hour, and sellers expect
 that a sale, once made, is never lost. This feature, part of the `platform`
-subsystem, sets how Tutu Much stays up when an instance fails, how planned maintenance
+subsystem, sets how TuTuMuch stays up when an instance fails, how planned maintenance
 is announced and served, and how the database is backed up and restored.
 
 Terms used below:
@@ -14,7 +14,7 @@ Terms used below:
 - **maintenance window** — start and end time in UTC of one announced maintenance
 - **point-in-time recovery (PITR)** — restore of the database to any moment within the retention period from full, differential and transaction log backups (`L2-067`)
 - **recovery point objective (RPO)** — maximum data loss measured in time; 15 minutes (`L2-067`)
-- **recovery time objective (RTO)** — maximum time from the decision to restore until the restored database serves Tutu Much; 4 hours (`L2-067`)
+- **recovery time objective (RTO)** — maximum time from the decision to restore until the restored database serves TuTuMuch; 4 hours (`L2-067`)
 - **restore test** — scheduled exercise that restores a copy of the database, checks it, and records the time taken (`L2-067`)
 
 The readiness and liveness endpoints this feature relies on are defined in
@@ -33,7 +33,7 @@ The hosting platform is `<TO SUPPLY>`. The design states the settings it shall
 support; infrastructure-as-code files live under `deploy/infra/` (tool
 `<TO SUPPLY>`).
 
-- **Instances** — at least 3 `Tutu Much API` instances and 2 `Tutu Much Worker` instances
+- **Instances** — at least 3 `TuTuMuch API` instances and 2 `TuTuMuch Worker` instances
   spread across at least 2 availability zones (counts `<TO SUPPLY>`).
   Autoscaling bounds `<TO SUPPLY>`.
 - **Load balancer health probe** — `GET /health/ready` every 10 s, timeout 5 s,
@@ -48,7 +48,7 @@ support; infrastructure-as-code files live under `deploy/infra/` (tool
   routing to the instance before in-flight requests end.
 - **Zero-downtime deployment** — rolling replacement: a new instance joins only
   after `/health/ready` passes; the old instance drains after. Database
-  migrations follow expand-then-contract, run by the `TutuMuch.Migrator` console
+  migrations follow expand-then-contract, run by the `TuTuMuch.Migrator` console
   job before the rollout, and stay compatible with the version still running.
 - **Uptime monitor** — external monitor (`<TO SUPPLY>` product) checks every
   1 minute from at least 2 regions: `GET https://tutumuch.<TO SUPPLY>/` (catalog),
@@ -58,7 +58,7 @@ support; infrastructure-as-code files live under `deploy/infra/` (tool
   threshold). The monthly report computes successful minutes over total minutes
   after removing announced maintenance windows.
 
-### Maintenance — API (`TutuMuch.Api`)
+### Maintenance — API (`TuTuMuch.Api`)
 
 - **`MaintenanceOptions`** — bound to `Maintenance`:
   `Windows: [{ StartsAtUtc, EndsAtUtc }]`, `Active: bool`,
@@ -81,7 +81,7 @@ support; infrastructure-as-code files live under `deploy/infra/` (tool
   `EndsAtUtc` of the current window. Readiness stays healthy so the load balancer
   keeps the instances in rotation and the 503 reaches clients.
 
-### Maintenance — frontend (`Tutu Much Web`)
+### Maintenance — frontend (`TuTuMuch Web`)
 
 - **`SystemStatusService`** — calls `GET /api/system/status` at start and
   every 15 minutes (`<TO SUPPLY>` interval). When a window is announced it shows
@@ -92,7 +92,7 @@ support; infrastructure-as-code files live under `deploy/infra/` (tool
 - **`MaintenanceInterceptor`** — on HTTP 503 with code `maintenance`, navigates
   to `MaintenancePageComponent` with the window end.
 - **`MaintenancePageComponent`** — bare shell, guest top bar: wrench icon,
-  heading "Back at {h:mm AM|PM} ET" (example "Back at 3:00 AM ET"), text "Tutu Much is
+  heading "Back at {h:mm AM|PM} ET" (example "Back at 3:00 AM ET"), text "TuTuMuch is
   down for planned maintenance. Orders and payments are safe.", primary "Check
   status" (calls the status endpoint and returns to the previous route when
   maintenance has ended).
@@ -104,7 +104,7 @@ support; infrastructure-as-code files live under `deploy/infra/` (tool
   (`workflow_dispatch`, inputs `action: on | off`, `endsAtUtc`) switches the
   load balancer rule and `Maintenance:Active` together.
 
-### Backups and recovery (`Tutu Much database`)
+### Backups and recovery (`TuTuMuch database`)
 
 - **Managed SQL Server** (product `<TO SUPPLY>`) with PITR enabled and backup
   retention 35 days, set in `deploy/infra/` as code. Transaction log backups at
@@ -114,10 +114,10 @@ support; infrastructure-as-code files live under `deploy/infra/` (tool
   fails when PITR is disabled or retention is below 35 days (`L2-067` AC1).
 - **Restore runbook** — `docs/runbooks/restore-database.md` (written with this
   feature): decide the restore point, restore to a new database, run the
-  verifier, switch `ConnectionStrings--TutuMuch` in the secret store, restart
+  verifier, switch `ConnectionStrings--TuTuMuch` in the secret store, restart
   instances, replay or reconcile payment provider events received after the
   restore point using the provider's event list (procedure `<TO SUPPLY>`).
-- **`TutuMuch.RestoreVerifier`** — console app run against a restored database.
+- **`TuTuMuch.RestoreVerifier`** — console app run against a restored database.
   Checks: `__EFMigrationsHistory` matches the deployed migration set;
   `DBCC CHECKDB` reports no errors; foreign keys are trusted; business
   invariants hold — each `Sold` listing has exactly one non-cancelled order,
@@ -129,7 +129,7 @@ support; infrastructure-as-code files live under `deploy/infra/` (tool
   schedule in the first week of January, April, July and October (exact cron
   `<TO SUPPLY>`) and on manual dispatch. It restores production to a new,
   isolated database at the point 15 minutes before the start, runs
-  `TutuMuch.RestoreVerifier`, records the elapsed time from start to verified
+  `TuTuMuch.RestoreVerifier`, records the elapsed time from start to verified
   (shall be under 4 hours), uploads `restore-report.json` as an artifact, posts
   the result to the on-call channel, and deletes the restored database. Access
   to the restored copy is restricted to the operations role because it holds
@@ -156,7 +156,7 @@ unhealthy threshold 2.
 
 ### System context
 
-Visitors use Tutu Much, an external uptime monitor measures it every minute, and
+Visitors use TuTuMuch, an external uptime monitor measures it every minute, and
 operators run maintenance and restore tests. Backups stay inside the managed
 database service.
 
@@ -174,7 +174,7 @@ point-in-time backups.
 
 `SystemStatusController` and `MaintenanceModeMiddleware` serve the maintenance
 state. `ShutdownReadinessHealthCheck` drains instances on shutdown, and
-`TutuMuch.RestoreVerifier` checks restored databases.
+`TuTuMuch.RestoreVerifier` checks restored databases.
 
 ![C4 component view for availability and recovery](diagrams/c4-component.png)
 

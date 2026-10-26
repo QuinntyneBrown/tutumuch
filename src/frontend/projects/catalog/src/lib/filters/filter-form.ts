@@ -13,7 +13,7 @@ const TOP_BRANDS = 6;
  * emits the edited query and the host decides when to apply it.
  */
 @Component({
-  selector: 'tm-filter-form',
+  selector: 'tl-filter-form',
   imports: [ButtonDirective, ChoiceComponent, InputGroupComponent],
   templateUrl: './filter-form.html',
   styleUrl: './filter-form.css',

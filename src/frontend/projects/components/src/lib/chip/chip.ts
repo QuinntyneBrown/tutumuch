@@ -7,7 +7,7 @@ import { IconComponent } from '../icon/icon';
  * Chip). The application removes the value on (remove).
  */
 @Component({
-  selector: 'tm-chip',
+  selector: 'tl-chip',
   imports: [IconComponent],
   templateUrl: './chip.html',
   styleUrl: './chip.css',

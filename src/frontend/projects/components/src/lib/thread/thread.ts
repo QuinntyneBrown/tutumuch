@@ -13,7 +13,7 @@ export interface ThreadEntry {
  * reply (design system: Thread). Photos show as square thumbnails under the text.
  */
 @Component({
-  selector: 'tm-thread',
+  selector: 'tl-thread',
   templateUrl: './thread.html',
   styleUrl: './thread.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

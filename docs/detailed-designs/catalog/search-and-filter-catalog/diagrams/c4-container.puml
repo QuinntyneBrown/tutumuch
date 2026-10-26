@@ -4,10 +4,10 @@ LAYOUT_WITH_LEGEND()
 title Containers — Search and filter the catalog
 
 Person(visitor, "Visitor or member", "Narrows the catalog")
-System_Boundary(tutumuch, "Tutu Much") {
-  Container(web, "Tutu Much Web", "Angular", "Top-bar search, filter sidebar and sheet, URL-held result set")
-  Container(api, "Tutu Much API", "ASP.NET Core", "GET /api/catalog/listings, /listings/count, /brands")
-  ContainerDb(db, "Tutu Much database", "SQL Server", "Listings")
+System_Boundary(tutumuch, "TuTuMuch") {
+  Container(web, "TuTuMuch Web", "Angular", "Top-bar search, filter sidebar and sheet, URL-held result set")
+  Container(api, "TuTuMuch API", "ASP.NET Core", "GET /api/catalog/listings, /listings/count, /brands")
+  ContainerDb(db, "TuTuMuch database", "SQL Server", "Listings")
 }
 Rel(visitor, web, "Uses", "HTTPS")
 Rel(web, api, "Sends URL parameters", "JSON/HTTPS")

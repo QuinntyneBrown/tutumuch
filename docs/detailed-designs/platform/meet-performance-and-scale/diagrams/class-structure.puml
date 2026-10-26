@@ -11,7 +11,7 @@ skinparam class {
 }
 title Class structure — Meet performance and scale targets
 
-package "Tutu Much API" {
+package "TuTuMuch API" {
   enum EndpointKind {
     Read
     Write

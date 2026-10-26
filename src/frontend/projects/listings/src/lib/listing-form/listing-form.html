@@ -1,6 +1,6 @@
 <section class="form-section" aria-labelledby="s-photos">
   <h2 id="s-photos">Photos</h2>
-  <tm-photo-uploader
+  <tl-photo-uploader
     [tiles]="model().photos()"
     [max]="model().maxPhotos()"
     [error]="model().photoError()"
@@ -13,7 +13,7 @@
 <section class="form-section" aria-labelledby="s-item">
   <h2 id="s-item">Item</h2>
   <div class="form-row">
-    <tm-form-field #cat fieldId="cat" label="Category" [error]="model().errors().cat">
+    <tl-form-field #cat fieldId="cat" label="Category" [error]="model().errors().cat">
       <select
         class="select"
         id="cat"
@@ -26,8 +26,8 @@
           <option [value]="option.name">{{ option.name }}</option>
         }
       </select>
-    </tm-form-field>
-    <tm-form-field #sub fieldId="sub" label="Type" [error]="model().errors().sub">
+    </tl-form-field>
+    <tl-form-field #sub fieldId="sub" label="Type" [error]="model().errors().sub">
       <select
         class="select"
         id="sub"
@@ -40,12 +40,12 @@
           <option [value]="option">{{ option }}</option>
         }
       </select>
-    </tm-form-field>
+    </tl-form-field>
   </div>
   @if (model().category(); as chosen) {
-    <tm-fixed-size [size]="chosen.acceptedSize" [sizeLabel]="chosen.sizeLabel" />
+    <tl-fixed-size [size]="chosen.acceptedSize" [sizeLabel]="chosen.sizeLabel" />
   }
-  <tm-form-field #title fieldId="title" label="Title" [error]="model().errors().title" [counter]="model().titleCount()">
+  <tl-form-field #title fieldId="title" label="Title" [error]="model().errors().title" [counter]="model().titleCount()">
     <input
       class="input"
       id="title"
@@ -55,8 +55,8 @@
       [attr.aria-describedby]="title.describedBy()"
       [attr.aria-invalid]="title.invalid()"
     />
-  </tm-form-field>
-  <tm-form-field #brand fieldId="brand" label="Brand" [error]="model().errors().brand">
+  </tl-form-field>
+  <tl-form-field #brand fieldId="brand" label="Brand" [error]="model().errors().brand">
     <input
       class="input"
       id="brand"
@@ -72,8 +72,8 @@
         <option [value]="suggestion"></option>
       }
     </datalist>
-  </tm-form-field>
-  <tm-segmented
+  </tl-form-field>
+  <tl-segmented
     legend="Condition"
     groupId="cond"
     formControlName="condition"
@@ -81,7 +81,7 @@
     [error]="model().errors()['cond-0']"
   />
   @if (model().isUsedFair()) {
-    <tm-form-field
+    <tl-form-field
       #flaws
       fieldId="flaws"
       label="Describe the flaws"
@@ -96,9 +96,9 @@
         [attr.aria-describedby]="flaws.describedBy()"
         [attr.aria-invalid]="flaws.invalid()"
       ></textarea>
-    </tm-form-field>
+    </tl-form-field>
   }
-  <tm-form-field
+  <tl-form-field
     #desc
     fieldId="desc"
     label="Description"
@@ -113,14 +113,14 @@
       [attr.aria-describedby]="desc.describedBy()"
       [attr.aria-invalid]="desc.invalid()"
     ></textarea>
-  </tm-form-field>
+  </tl-form-field>
 </section>
 
 <section class="form-section" aria-labelledby="s-price">
   <h2 id="s-price">Price</h2>
   <div class="form-row">
-    <tm-form-field #price fieldId="price" label="Price" [error]="model().errors().price">
-      <tm-input-group addon="$">
+    <tl-form-field #price fieldId="price" label="Price" [error]="model().errors().price">
+      <tl-input-group addon="$">
         <input
           class="input"
           id="price"
@@ -129,16 +129,16 @@
           [attr.aria-describedby]="price.describedBy()"
           [attr.aria-invalid]="price.invalid()"
         />
-      </tm-input-group>
-    </tm-form-field>
-    <tm-form-field
+      </tl-input-group>
+    </tl-form-field>
+    <tl-form-field
       #ship
       fieldId="ship"
       label="Shipping"
       help="Flat rate. $0 shows as free shipping."
       [error]="model().errors().ship"
     >
-      <tm-input-group addon="$">
+      <tl-input-group addon="$">
         <input
           class="input"
           id="ship"
@@ -147,15 +147,15 @@
           [attr.aria-describedby]="ship.describedBy()"
           [attr.aria-invalid]="ship.invalid()"
         />
-      </tm-input-group>
-    </tm-form-field>
+      </tl-input-group>
+    </tl-form-field>
   </div>
-  <tm-earnings [feePercent]="model().options()?.feePercent ?? 0" [amount]="model().earnings()" />
+  <tl-earnings [feePercent]="model().options()?.feePercent ?? 0" [amount]="model().earnings()" />
 </section>
 
 <section class="form-section" aria-labelledby="s-confirm">
   <h2 id="s-confirm" class="visually-hidden">Size confirmation</h2>
-  <tm-choice #confirm inputId="confirm" [error]="model().errors().confirm">
+  <tl-choice #confirm inputId="confirm" [error]="model().errors().confirm">
     <input
       type="checkbox"
       id="confirm"
@@ -164,5 +164,5 @@
       [attr.aria-invalid]="confirm.invalid()"
     />
     {{ model().confirmText() }}
-  </tm-choice>
+  </tl-choice>
 </section>

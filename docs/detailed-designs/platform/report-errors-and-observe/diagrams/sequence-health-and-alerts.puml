@@ -15,12 +15,12 @@ skinparam package {
   BackgroundColor #F9FAFB
 }
 participant "Load balancer" as lb
-box "Backend — Tutu Much API application" #D1FADF
+box "Backend — TuTuMuch API application" #D1FADF
   participant "Health check endpoints" as health
   participant "/metrics (management port)" as metrics
 end box
-box "Backend — Tutu Much Infrastructure" #FFF4E5
-  database "Tutu Much database" as db
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
   participant "Photo storage" as photos
 end box
 participant "Monitoring platform" as mon

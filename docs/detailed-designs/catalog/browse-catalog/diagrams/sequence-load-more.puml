@@ -6,12 +6,12 @@ skinparam roundcorner 12
 skinparam defaultFontName Arial
 skinparam ArrowColor #344054
 actor "Visitor or member" as actor
-box "Frontend — Tutu Much Web application" #E0F2FE
-  participant "tm-load-more" as more
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "tl-load-more" as more
   participant "CatalogStore" as store
   participant "CatalogApi" as client
 end box
-box "Backend — Tutu Much API application" #D1FADF
+box "Backend — TuTuMuch API application" #D1FADF
   participant "CatalogController" as controller
 end box
 participant "Photo origin (/photos)" as photos

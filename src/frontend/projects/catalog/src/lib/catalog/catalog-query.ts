@@ -104,7 +104,7 @@ export function toParams(query: CatalogQuery): Params {
   return params;
 }
 
-/** The same parameters for Tutu Much API, whose names and slugs match the URL. */
+/** The same parameters for TuTuMuch API, whose names and slugs match the URL. */
 export function toApiParams(query: CatalogQuery): CatalogFilterParams {
   return toParams(query) as CatalogFilterParams;
 }

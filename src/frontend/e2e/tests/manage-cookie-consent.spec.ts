@@ -33,13 +33,13 @@ test.describe('manage cookie consent', () => {
       await expect(cookies.banner).toBeVisible();
       await expect(cookies.banner.getByRole('heading', { name: 'Cookies' })).toBeVisible();
       await expect(cookies.banner).toContainText(
-        'We use necessary cookies to run Tutu Much. Analytics only if you say yes.',
+        'We use necessary cookies to run TuTuMuch. Analytics only if you say yes.',
       );
       await expect(cookies.accept).toBeVisible();
       await expect(cookies.necessaryOnly).toBeVisible();
       await expect(cookies.bannerSettings).toBeVisible();
       for (const name of await cookies.cookieNames()) {
-        expect(['tm_access', 'tm_refresh', 'tm_consent']).toContain(name);
+        expect(['tl_access', 'tl_refresh', 'tm_consent']).toContain(name);
       }
       expect(requests).toHaveLength(0);
     });

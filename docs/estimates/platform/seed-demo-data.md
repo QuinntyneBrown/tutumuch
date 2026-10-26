@@ -3,9 +3,9 @@
 ## Basis
 
 The hours assume an intermediate ASP.NET Core/C# developer who does not yet know
-the Tutu Much codebase. They cover implementation, automated tests and review fixes, and
+the TuTuMuch codebase. They cover implementation, automated tests and review fixes, and
 exclude requirements, design and photo curation. They assume the account, listing
-and photo commands and `TutuMuch.Migrator` exist. Tests use SQLite in-memory and a
+and photo commands and `TuTuMuch.Migrator` exist. Tests use SQLite in-memory and a
 fake photo store only; `reset` against SQL Server is checked by hand.
 [Detailed design](../../detailed-designs/platform/seed-demo-data/README.md)
 
@@ -13,7 +13,7 @@ fake photo store only; `reset` against SQL Server is checked by hand.
 
 | Work item | Hours |
 |-----------|------:|
-| `TutuMuch.Cli` and `TutuMuch.Cli.Tests` projects, `CliArguments`, help and exit codes | 3 |
+| `TuTuMuch.Cli` and `TuTuMuch.Cli.Tests` projects, `CliArguments`, help and exit codes | 3 |
 | `reset`: `ResetGuard`, `IDatabaseSchema` with `MigratorApp.ApplyMigrations`, photo store clean-up | 4 |
 | `seed` members: register, verify from the queued link, suppress the email | 3 |
 | `seed` listings: `DemoCatalogue`, `SeedClock`, drafts and publish across four categories | 5 |
@@ -25,7 +25,7 @@ fake photo store only; `reset` against SQL Server is checked by hand.
 ## Minimal scope
 
 The minimal version ships `seed` without `reset` and without the missing-file check:
-the developer drops the database by hand and runs `TutuMuch.Migrator`. It still loads
+the developer drops the database by hand and runs `TuTuMuch.Migrator`. It still loads
 the full demo catalogue through the application. Minimal total: **15** hours.
 
 ## Partial descoping

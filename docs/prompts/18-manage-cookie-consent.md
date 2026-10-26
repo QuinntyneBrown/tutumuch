@@ -33,16 +33,16 @@ Unchanged: every journey, screen and design outside this feature.
   - **Out of scope (CRITICAL).** No moderation, review authoring, data export, load or scale tests.
   - **Testing rules (CRITICAL).** Backend tests never touch a real database or external system: use fakes or
     the EF Core in-memory or SQLite in-memory provider. Playwright never runs the backend: serve every
-    `Tutu Much API` call through `page.route` fixtures (`src/frontend/e2e/fixtures.ts`).
+    `TuTuMuch API` call through `page.route` fixtures (`src/frontend/e2e/fixtures.ts`).
   - **Folder structure and frontend workspace layout (MANDATORY).** Pages and dialogs live in
     `src/frontend/projects/privacy/src/lib/`; HTTP calls only through
     `@tutumuch/api`; shared UI only in `@tutumuch/components`.
   - **Scope lock and zero-waste engineering.** Build only what is described here. If something seems to need
     more scope, leave it out, note it as deferred, and continue. Do not stop.
-  - **The components library is mandatory.** Build all UI from `tm-*` components in `@tutumuch/components`;
+  - **The components library is mandatory.** Build all UI from `tl-*` components in `@tutumuch/components`;
     follow `docs/screen-composition.md`.
   - **ATDD in small slices** with Playwright page objects (`src/frontend/e2e/pages/`), Chromium only, and xUnit
-    tests in `tests/TutuMuch.*.Tests/`. The only architecture test is the existing `StatelessApiTests`.
+    tests in `tests/TuTuMuch.*.Tests/`. The only architecture test is the existing `StatelessApiTests`.
   - No single-file components: each component gets `.ts`, `.html` and `.css`.
 - Work through the phases below **in order**, using the repo skill each phase names.
 - Copy the house style of each folder. Read the existing neighbours before you write anything new.
@@ -57,7 +57,7 @@ Unchanged: every journey, screen and design outside this feature.
 
 ## Phase 2: Design system (`extracting-design-systems`)
 - Add a page in `docs/design-system/components/` for every component this feature needs that the catalogue
-  lacks, and the matching `tm-*` component in `src/frontend/projects/components/`. Update tokens only if new
+  lacks, and the matching `tl-*` component in `src/frontend/projects/components/`. Update tokens only if new
   values are needed.
 - Compose this feature's screens in `docs/screen-composition.md` (`writing-screen-composition`), replacing
   "not yet composed".
@@ -85,7 +85,7 @@ Unchanged: every journey, screen and design outside this feature.
 - For each slice:
   - Write the Given-When-Then criteria.
   - Write the acceptance test first: Playwright in `src/frontend/e2e/tests/` with a `Traces to: L2-xxx` header
-    and page objects in `src/frontend/e2e/pages/`, or xUnit in `tests/TutuMuch.*.Tests/`.
+    and page objects in `src/frontend/e2e/pages/`, or xUnit in `tests/TuTuMuch.*.Tests/`.
   - Run it and show that it fails for the expected reason.
   - Implement the minimum that makes it pass, and refactor while the tests are green.
   - Run `npm run verify`, then commit.

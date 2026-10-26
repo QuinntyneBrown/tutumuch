@@ -20,7 +20,7 @@ function read(): ConsentState {
 /**
  * Holds the consent state in a signal and the tm_consent cookie (`v1.necessary` or
  * `v1.analytics`, Path=/, Secure, SameSite=Strict). An unknown or malformed value counts as no
- * choice. Nothing is sent to Tutu Much API, so saving cannot fail.
+ * choice. Nothing is sent to TuTuMuch API, so saving cannot fail.
  */
 @Injectable({ providedIn: 'root' })
 export class CookieConsentService {

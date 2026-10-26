@@ -6,7 +6,7 @@
   @if (heading()) {
     <h2 id="order-summary-title" class="panel__title">{{ heading() }}</h2>
   }
-  <tm-item-row [title]="item().title" [meta]="item().meta">
+  <tl-item-row [title]="item().title" [meta]="item().meta">
     <div thumb class="thumb">
       <div class="photo photo--6">
         @if (item().photo; as photo) {
@@ -17,7 +17,7 @@
         }
       </div>
     </div>
-  </tm-item-row>
+  </tl-item-row>
   <dl class="totals">
     <div>
       <dt>Item</dt>

@@ -9,24 +9,24 @@
         <span class="skeleton skeleton--text skeleton--w30"></span>
       </div>
     </section>
-    <tm-listing-grid [cards]="[]" [loading]="true" />
+    <tl-listing-grid [cards]="[]" [loading]="true" />
   }
   @case ('unavailable') {
-    <tm-center-state code="404" heading="This member isn’t available">
+    <tl-center-state code="404" heading="This member isn’t available">
       <p class="text-muted">The account may have been closed.</p>
-      <a actions tmButton="primary" routerLink="/">Back to shop</a>
-    </tm-center-state>
+      <a actions tlButton="primary" routerLink="/">Back to shop</a>
+    </tl-center-state>
   }
   @case ('error') {
-    <tm-center-state heading="Couldn’t load this profile">
+    <tl-center-state heading="Couldn’t load this profile">
       <p class="text-muted">
         It’s us, not you. <span class="ref">{{ store.errorRef() }}</span>
       </p>
-      <button actions tmButton="primary" type="button" (click)="store.retry()">
-        <tm-icon name="refresh" />Try again
+      <button actions tlButton="primary" type="button" (click)="store.retry()">
+        <tl-icon name="refresh" />Try again
       </button>
-      <a actions tmButton routerLink="/">Back to shop</a>
-    </tm-center-state>
+      <a actions tlButton routerLink="/">Back to shop</a>
+    </tl-center-state>
   }
   @default {
     @if (store.profile(); as profile) {
@@ -40,18 +40,18 @@
           <h1>{{ profile.displayName }}</h1>
           @if (profile.publicLocation) {
             <span class="text-muted member-profile__location"
-              ><tm-icon name="map-pin" size="sm" />{{ profile.publicLocation }}</span
+              ><tl-icon name="map-pin" size="sm" />{{ profile.publicLocation }}</span
             >
           }
-          <tm-rating-summary [rating]="profile.rating" />
+          <tl-rating-summary [rating]="profile.rating" />
           @if (profile.bio) {
             <p class="text-muted member-profile__bio">{{ profile.bio }}</p>
           }
         </div>
       </section>
       <div class="stats">
-        <tm-stat label="Sales" [value]="profile.completedSales.toLocaleString('en-US')" />
-        <tm-stat label="Member since" [value]="since()" />
+        <tl-stat label="Sales" [value]="profile.completedSales.toLocaleString('en-US')" />
+        <tl-stat label="Member since" [value]="since()" />
       </div>
       <section class="section member-profile__section" aria-labelledby="for-sale-heading">
         <div class="section-head">
@@ -59,18 +59,18 @@
           <span class="text-muted text-sm">{{ store.totalListings() }}</span>
         </div>
         @if (store.totalListings() === 0) {
-          <tm-empty-state icon="tag" heading="No items for sale" [compact]="true">
+          <tl-empty-state icon="tag" heading="No items for sale" [compact]="true">
             {{ profile.displayName }} hasn’t listed anything yet.
-          </tm-empty-state>
+          </tl-empty-state>
         } @else {
-          <tm-listing-grid [cards]="cards()" />
+          <tl-listing-grid [cards]="cards()" />
           @if (store.moreErrorRef(); as ref) {
-            <tm-alert tone="danger" heading="Couldn’t load more items"
+            <tl-alert tone="danger" heading="Couldn’t load more items"
               >Something went wrong on our side. <span class="ref">{{ ref }}</span>
-              <button tmButton="link" type="button" (click)="store.loadMore()">Try again</button></tm-alert
+              <button tlButton="link" type="button" (click)="store.loadMore()">Try again</button></tl-alert
             >
           }
-          <tm-load-more
+          <tl-load-more
             [shown]="store.listings().length"
             [total]="store.totalListings()"
             [busy]="store.loadingMore()"

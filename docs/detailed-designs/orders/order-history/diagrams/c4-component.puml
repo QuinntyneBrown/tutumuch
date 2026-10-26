@@ -3,8 +3,8 @@
 LAYOUT_WITH_LEGEND()
 title Components — Order history
 
-Container(web, "Tutu Much Web", "Angular", "PurchasesPage, SalesPage, OrderDetailPage, SaleDetailPage, OrdersApiService")
-Container_Boundary(api, "Tutu Much API") {
+Container(web, "TuTuMuch Web", "Angular", "PurchasesPage, SalesPage, OrderDetailPage, SaleDetailPage, OrdersApiService")
+Container_Boundary(api, "TuTuMuch API") {
   Component(pc, "PurchasesController", "ASP.NET Core controller", "GET /api/purchases, /api/purchases/{id}")
   Component(sc, "SalesController", "ASP.NET Core controller", "GET /api/sales, /api/sales/{id}")
   Component(lq, "ListOrdersQueryHandler", "MediatR handler", "Newest-first keyset pages by role")
@@ -13,7 +13,7 @@ Container_Boundary(api, "Tutu Much API") {
   Component(vis, "ShippingAddressVisibility", "Domain policy", "Seller only, until EndedAt + 30 days")
   Component(enc, "AesGcmFieldEncryptor", "EF Core value converter (privacy)", "Decrypts ShippingAddressCipher")
 }
-ContainerDb(db, "Tutu Much database", "SQL Server", "Orders")
+ContainerDb(db, "TuTuMuch database", "SQL Server", "Orders")
 Rel(web, pc, "Calls", "JSON/HTTPS")
 Rel(web, sc, "Calls", "JSON/HTTPS")
 Rel(pc, lq, "Sends ListOrdersQuery(Buyer)")

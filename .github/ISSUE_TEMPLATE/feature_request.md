@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an idea for Tutu Much
+about: Suggest an idea for TuTuMuch
 title: ''
 labels: enhancement
 assignees: ''

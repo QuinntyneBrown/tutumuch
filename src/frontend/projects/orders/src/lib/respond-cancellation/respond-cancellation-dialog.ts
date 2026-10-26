@@ -27,7 +27,7 @@ export interface RespondCancellationData {
  * Cancelled when accepted and still Paid when declined.
  */
 @Component({
-  selector: 'tm-respond-cancellation-dialog',
+  selector: 'tl-respond-cancellation-dialog',
   imports: [AlertComponent, ButtonDirective, DialogComponent, QuoteComponent],
   templateUrl: './respond-cancellation-dialog.html',
   styleUrl: './respond-cancellation-dialog.css',

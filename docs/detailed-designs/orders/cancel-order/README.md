@@ -2,7 +2,7 @@
 
 ## Overview
 
-Tutu Much is a marketplace for new and used girls' clothing. Sometimes a
+TuTuMuch is a marketplace for new and used girls' clothing. Sometimes a
 sale should not go ahead: the seller finds damage while packing, or the buyer ordered
 the wrong item. This feature lets the seller cancel a `Paid` order before it ships, and
 lets the buyer ask the seller to cancel. A cancelled order is refunded to the buyer in
@@ -31,16 +31,16 @@ Terms used in this design:
 
 - **`SaleDetailPage`** (`sale-detail/`, route `/sales/:id`, mock `docs/mocks/pages/sale-detail/`) — this feature owns three of its states:
   - `default` (Paid) — ghost button "Cancel order" next to "Add tracking".
-  - `cancel-requested` (Paid with a Pending request) — heading "Buyer asked to cancel", the buyer's message in `tm-quote`, primary "Respond", and the "Ship to" block. "Add tracking" and "Cancel order" are hidden until the seller answers.
+  - `cancel-requested` (Paid with a Pending request) — heading "Buyer asked to cancel", the buyer's message in `tl-quote`, primary "Respond", and the "Ship to" block. "Add tracking" and "Cancel order" are hidden until the seller answers.
   - `cancelled` — heading "Cancelled", info alert "Cancelled · Buyer refunded in full" / "The listing stays off the catalog until you relist it.", primary "Relist item" while `canRelist`. Once relisted the button goes and the alert reads "The listing is back in the catalog."
-- **`CancelOrderDialog`** (`cancel-order/`, mock `docs/mocks/dialogs/cancel-order/`) — danger-icon dialog "Cancel this sale?". The description reads "{buyer} is refunded {total} in full. The listing stays off the catalog until you relist." A required "Reason" `tm-radio-group` offers "Item damaged", "No longer have it", "Listed by mistake" and "Buyer asked me to cancel", followed by an optional "Note to buyer". Buttons are "Keep sale" and danger "Cancel sale". States: `default`; `invalid` ("Choose a reason", shown without calling the API); `busy`; `failed` ("Try again", choices kept).
+- **`CancelOrderDialog`** (`cancel-order/`, mock `docs/mocks/dialogs/cancel-order/`) — danger-icon dialog "Cancel this sale?". The description reads "{buyer} is refunded {total} in full. The listing stays off the catalog until you relist." A required "Reason" `tl-radio-group` offers "Item damaged", "No longer have it", "Listed by mistake" and "Buyer asked me to cancel", followed by an optional "Note to buyer". Buttons are "Keep sale" and danger "Cancel sale". States: `default`; `invalid` ("Choose a reason", shown without calling the API); `busy`; `failed` ("Try again", choices kept).
 - **`RequestCancellationDialog`** (`request-cancellation/`, mock `docs/mocks/dialogs/request-cancellation/`) — opened from "Ask to cancel" on `OrderDetailPage` state `paid`. Title "Ask to cancel?", optional "Message to {seller}". The description reads "If {seller} accepts, you're refunded in full. Until then the order stays as is." Buttons are "Keep order" and "Send request". States: `default`, `busy`, `failed` (message kept).
 - **`RespondCancellationDialog`** (`respond-cancellation/`, mock `docs/mocks/dialogs/respond-cancellation/`) — title "{buyer} asked to cancel", the quoted message. The description reads "Accepting refunds {total} in full. Declining keeps the order — you still ship by {shipBy}." Buttons are "Decline" and primary "Accept and refund". States: `default`, `busy` (the chosen button), `failed`.
 - **`RelistDialog`** (`relist/`, mock `docs/mocks/dialogs/relist/`) — "Relist this item?" with the item, "{price} · {shipping} shipping", "Not now" and primary "Relist". It lives in `@tutumuch/orders` because feature libraries do not import each other; "Edit first" waits for [edit-and-withdraw-listing](../../listings/edit-and-withdraw-listing/README.md), which builds the edit page.
-- **`OrderDetailPage`** (`order-detail/`) — `paid` adds "Ask to cancel" while the buyer has never asked; `cancel-requested` shows "You asked {seller} to cancel. They haven't answered yet."; `cancel-declined` shows "{seller} declined to cancel. They still ship by {shipBy}."; `cancelled` shows the info alert "Refunded in full" / "{total} back to {brand} ending {last4}. Allow 5–10 days.", the seller's note in `tm-quote` and "Shop similar items" (the catalog home; the order does not carry the category).
+- **`OrderDetailPage`** (`order-detail/`) — `paid` adds "Ask to cancel" while the buyer has never asked; `cancel-requested` shows "You asked {seller} to cancel. They haven't answered yet."; `cancel-declined` shows "{seller} declined to cancel. They still ship by {shipBy}."; `cancelled` shows the info alert "Refunded in full" / "{total} back to {brand} ending {last4}. Allow 5–10 days.", the seller's note in `tl-quote` and "Shop similar items" (the catalog home; the order does not carry the category).
 - **`OrdersApi`** (`@tutumuch/api`, `src/lib/orders/orders-api.ts`) — `cancelOrder`, `requestCancellation`, `respondToCancellation` and `relist`; `Sale` and `Purchase` carry `cancellation` and `cancellationRequest`, and `Sale` carries `canRelist`.
 
-### API (`TutuMuch.Api`)
+### API (`TuTuMuch.Api`)
 
 Order endpoints use policy `VerifiedMember`; relist uses `CanSell`. A non-party receives `404` (`L2-010`).
 
@@ -86,8 +86,8 @@ Migration `AddOrderCancellation` backfills earlier deadline cancellations: their
 
 ### Tests
 
-- xUnit acceptance tests in `tests/TutuMuch.Api.Tests/CancelOrderTests.cs` run the API on SQLite in memory with `FakePaymentProvider` and `CapturingEmailSender`; domain tests in `tests/TutuMuch.Domain.Tests/OrderTests.cs`.
-- Playwright tests in `src/frontend/e2e/tests/cancel-order.spec.ts` serve every `Tutu Much API` call through `page.route`, with page objects in `e2e/pages/cancel-order.page.ts`, `sale-detail.page.ts` and `order-detail.page.ts`.
+- xUnit acceptance tests in `tests/TuTuMuch.Api.Tests/CancelOrderTests.cs` run the API on SQLite in memory with `FakePaymentProvider` and `CapturingEmailSender`; domain tests in `tests/TuTuMuch.Domain.Tests/OrderTests.cs`.
+- Playwright tests in `src/frontend/e2e/tests/cancel-order.spec.ts` serve every `TuTuMuch API` call through `page.route`, with page objects in `e2e/pages/cancel-order.page.ts`, `sale-detail.page.ts` and `order-detail.page.ts`.
 
 ## Requirements
 
@@ -99,14 +99,14 @@ Migration `AddOrderCancellation` backfills earlier deadline cancellations: their
 
 ### System context
 
-The seller and the buyer act through Tutu Much. Tutu Much refunds through the payment provider and
+The seller and the buyer act through TuTuMuch. TuTuMuch refunds through the payment provider and
 emails both parties.
 
 ![C4 system context for cancelling an order](diagrams/c4-context.png)
 
 ### Containers
 
-`Tutu Much API` performs the cancellation and issues the refund. `Tutu Much Worker` dispatches the email
+`TuTuMuch API` performs the cancellation and issues the refund. `TuTuMuch Worker` dispatches the email
 from the outbox, and runs the ship deadline job that also cancels orders.
 
 ![C4 container view for cancelling an order](diagrams/c4-container.png)

@@ -1,5 +1,5 @@
 // Serves the production build of projects/tutumuch with SPA fallback.
-// Playwright tests run against this build only; Tutu Much API never runs (AGENTS.md testing rules).
+// Playwright tests run against this build only; TuTuMuch API never runs (AGENTS.md testing rules).
 import { createReadStream, existsSync, statSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { extname, join, normalize } from 'node:path';

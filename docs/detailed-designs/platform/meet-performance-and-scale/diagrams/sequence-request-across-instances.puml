@@ -15,19 +15,19 @@ skinparam package {
   BackgroundColor #F9FAFB
 }
 actor "Member" as actor
-box "Frontend — Tutu Much Web application" #E0F2FE
+box "Frontend — TuTuMuch Web application" #E0F2FE
   participant "Feature page" as page
 end box
 box "Backend — Load balancer" #FFF4E5
   participant "Load balancer (round-robin)" as lb
 end box
-box "Backend — Tutu Much API application" #D1FADF
+box "Backend — TuTuMuch API application" #D1FADF
   participant "API instance 1" as a1
   participant "API instance 2" as a2
 end box
-box "Backend — Tutu Much Infrastructure" #FFF4E5
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
   database "Distributed cache (Redis)" as redis
-  database "Tutu Much database" as db
+  database "TuTuMuch database" as db
 end box
 actor -> page : Browse, then start checkout
 page -> lb : GET /api/catalog (session cookie)

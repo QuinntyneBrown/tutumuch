@@ -1,14 +1,14 @@
-<tm-dialog [heading]="'Withdraw “' + data.title + '”?'" icon="trash" tone="danger" size="sm">
+<tl-dialog [heading]="'Withdraw “' + data.title + '”?'" icon="trash" tone="danger" size="sm">
   <span description>It leaves the shop right away. This can’t be undone.</span>
   @if (state() === 'failed') {
-    <tm-alert top tone="danger" heading="Couldn’t withdraw">Your listing is still live.</tm-alert>
+    <tl-alert top tone="danger" heading="Couldn’t withdraw">Your listing is still live.</tl-alert>
   }
   <ng-container ngProjectAs="[footer]">
-    <button tmButton type="button" data-autofocus [disabled]="state() === 'busy'" (click)="ref.close()">
+    <button tlButton type="button" data-autofocus [disabled]="state() === 'busy'" (click)="ref.close()">
       Keep listing
     </button>
-    <button tmButton="danger" type="button" [busy]="state() === 'busy'" (click)="submit()">
+    <button tlButton="danger" type="button" [busy]="state() === 'busy'" (click)="submit()">
       {{ state() === 'failed' ? 'Try again' : 'Withdraw' }}
     </button>
   </ng-container>
-</tm-dialog>
+</tl-dialog>

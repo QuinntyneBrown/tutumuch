@@ -2,7 +2,7 @@
 
 ## Overview
 
-Tutu Much is a marketplace for new and used girls' clothing. The *catalog* is the public grid of items that are currently for sale, and it is the home page of Tutu Much (`/`). This feature covers browsing that grid: loading the first page of listing cards, loading further pages, and showing the right state when there is nothing to show, when the request fails, or when the device is offline.
+TuTuMuch is a marketplace for new and used girls' clothing. The *catalog* is the public grid of items that are currently for sale, and it is the home page of TuTuMuch (`/`). This feature covers browsing that grid: loading the first page of listing cards, loading further pages, and showing the right state when there is nothing to show, when the request fails, or when the device is offline.
 
 A *listing* is one item a seller offers for sale. A listing has a status, and only two statuses are visible in the catalog:
 
@@ -18,26 +18,26 @@ Keyword search, filters and sort run through the same endpoint and page componen
 
 ## Description
 
-The slice runs from the catalog page in `Tutu Much Web` through `Tutu Much API` to the `Tutu Much database`; photos come from the public photo origin (`/photos`, the CDN origin once one exists). The screens and copy come from `docs/mocks/pages/catalog/` (states `default`, `guest`, `category`, `loading`, `empty`, `error`, `offline`). The screen is composed as listed in `docs/screen-composition.md`.
+The slice runs from the catalog page in `TuTuMuch Web` through `TuTuMuch API` to the `TuTuMuch database`; photos come from the public photo origin (`/photos`, the CDN origin once one exists). The screens and copy come from `docs/mocks/pages/catalog/` (states `default`, `guest`, `category`, `loading`, `empty`, `error`, `offline`). The screen is composed as listed in `docs/screen-composition.md`.
 
-### Frontend — `Tutu Much Web`
+### Frontend — `TuTuMuch Web`
 
 Feature library `@tutumuch/catalog` (`src/frontend/projects/catalog/src/lib/`), API client in `@tutumuch/api`, shared UI in `@tutumuch/components`.
 
 - **`routes`** (`catalog.routes.ts`) — mounted by the application at `''`. `''` (full match) and the category paths `dresses`, `tops`, `outerwear` and `bottoms` lazy-load `CatalogPage`; each category route carries `data.category` (`Dresses`, `Tops`, `Outerwear`, `Bottoms`), bound to the page's `category` input. No guard, so anonymous visitors reach every route. These are the links of the top bar.
-- **`CatalogPage`** (`catalog/catalog-page`) — renders the hero ("Girls' clothing. *Nothing else.*" and the lead "Every listing is for girls. Dresses, tops, outerwear and bottoms from families who've outgrown them.") at `/`, or a page header with the category name and a large `tm-size-tag` on a category page; then the toolbar with the polite item count and the grid. It reads all state from `CatalogStore` and renders exactly one view:
-  - `loading` — `tm-listing-grid` with 8 skeleton cards (`aria-busy="true"`, label "Loading listings"); the count shows a text skeleton.
-  - `loaded` — the grid, the count "1,284 items" and `tm-load-more`.
-  - `empty` — `tm-empty-state` "Nothing listed yet", "Be the first to list a pair of 12s or something in L.", primary link "Sell an item" to `/sell`; the count reads "0 items".
-  - `error` — `tm-empty-state` in the error tone: "Couldn’t load items", "Something went wrong on our side. Ref {ref}", "Try again" repeats the request.
-  - `offline` — warning `tm-alert` banner "You’re offline. Showing items from your last visit." at the top of `main`, the saved cards and the count "{n} saved items"; no Load more.
-- **`CatalogStore`** — signal store provided by the page. `load(category)` fetches page 1 and replaces the cards; `retry()` repeats it; `loadMore()` fetches the next page and appends cards whose `id` is not shown yet (offset paging can repeat a card when newer listings are published between requests). When a next page fails, the cards stay and a danger `tm-alert` "Couldn’t load more items" with the reference and a Try again link is shown. After a successful first page of `/` it writes the cards to `localStorage` key `tutumuch.catalog.snapshot.v1` (public listing data only); when page 1 fails with status 0 while `navigator.onLine` is false, that snapshot is shown. Storage failures are ignored and only disable the offline view.
+- **`CatalogPage`** (`catalog/catalog-page`) — renders the hero ("Girls' clothing. *Nothing else.*" and the lead "Every listing is for girls. Dresses, tops, outerwear and bottoms from families who've outgrown them.") at `/`, or a page header with the category name and a large `tl-size-tag` on a category page; then the toolbar with the polite item count and the grid. It reads all state from `CatalogStore` and renders exactly one view:
+  - `loading` — `tl-listing-grid` with 8 skeleton cards (`aria-busy="true"`, label "Loading listings"); the count shows a text skeleton.
+  - `loaded` — the grid, the count "1,284 items" and `tl-load-more`.
+  - `empty` — `tl-empty-state` "Nothing listed yet", "Be the first to list a pair of 12s or something in L.", primary link "Sell an item" to `/sell`; the count reads "0 items".
+  - `error` — `tl-empty-state` in the error tone: "Couldn’t load items", "Something went wrong on our side. Ref {ref}", "Try again" repeats the request.
+  - `offline` — warning `tl-alert` banner "You’re offline. Showing items from your last visit." at the top of `main`, the saved cards and the count "{n} saved items"; no Load more.
+- **`CatalogStore`** — signal store provided by the page. `load(category)` fetches page 1 and replaces the cards; `retry()` repeats it; `loadMore()` fetches the next page and appends cards whose `id` is not shown yet (offset paging can repeat a card when newer listings are published between requests). When a next page fails, the cards stay and a danger `tl-alert` "Couldn’t load more items" with the reference and a Try again link is shown. After a successful first page of `/` it writes the cards to `localStorage` key `tutumuch.catalog.snapshot.v1` (public listing data only); when page 1 fails with status 0 while `navigator.onLine` is false, that snapshot is shown. Storage failures are ignored and only disable the offline view.
 - **`formatPrice`** — "$85" for whole dollars, "$18.50" when cents are non-zero, thousands separators ("$1,200").
 - **`CatalogApi`** (`@tutumuch/api`, `catalog/catalog-api.ts`) — `listings(page, category)` calls `GET /api/catalog/listings`, leaving out `page` when it is 1, and resolves to `ApiResult<CatalogPage>` through the shared `toResult` (problem details with correlation ID, status 0 for network failures).
-- **`tm-listing-grid`** and **`tm-listing-card`** (`@tutumuch/components`) — the grid is a `ul role="list"` with 2 columns below 768 px, 3 from 768 px and 4 from 992 px (`L2-061`, the `.listing-grid` styles). Each card is one link to `/items/{reference}` with a `<picture>`: a `type="image/webp"` source and a JPEG `<img>`, both with `srcset` of the 400, 800 and 1600 px versions and `sizes="(min-width: 1200px) 270px, (min-width: 992px) 23vw, (min-width: 768px) 31vw, 50vw"`, so a 375 px viewport selects the 400 w version (`L2-059`). The `<img>` carries the photo's `width` and `height`. The first 4 cards are eager with `fetchpriority="high"`; the rest are `loading="lazy"` and `decoding="async"`. A Reserved card shows the "Reserved" stamp. All text is bound as text (`L2-015`).
-- **`tm-load-more`**, **`tm-empty-state`** (`@tutumuch/components`) — see the design system pages of the same names. `tm-alert` gained a title-less banner form for the offline banner.
+- **`tl-listing-grid`** and **`tl-listing-card`** (`@tutumuch/components`) — the grid is a `ul role="list"` with 2 columns below 768 px, 3 from 768 px and 4 from 992 px (`L2-061`, the `.listing-grid` styles). Each card is one link to `/items/{reference}` with a `<picture>`: a `type="image/webp"` source and a JPEG `<img>`, both with `srcset` of the 400, 800 and 1600 px versions and `sizes="(min-width: 1200px) 270px, (min-width: 992px) 23vw, (min-width: 768px) 31vw, 50vw"`, so a 375 px viewport selects the 400 w version (`L2-059`). The `<img>` carries the photo's `width` and `height`. The first 4 cards are eager with `fetchpriority="high"`; the rest are `loading="lazy"` and `decoding="async"`. A Reserved card shows the "Reserved" stamp. All text is bound as text (`L2-015`).
+- **`tl-load-more`**, **`tl-empty-state`** (`@tutumuch/components`) — see the design system pages of the same names. `tl-alert` gained a title-less banner form for the offline banner.
 
-### API — `TutuMuch.Api`
+### API — `TuTuMuch.Api`
 
 - **`CatalogController`** — `[AllowAnonymous]`.
   - `GET /api/catalog/listings?page={n}&pageSize={n}&category={name}`; `page` defaults to 1, `pageSize` to 24, `category` is optional.
@@ -47,17 +47,17 @@ Feature library `@tutumuch/catalog` (`src/frontend/projects/catalog/src/lib/`), 
   - A `pageSize` above 48 is not an error: the handler caps it at 48 (`L2-022` criterion 5).
 - Keyword search, the other filters and sort are added to the same endpoint by search-and-filter-catalog.
 
-### Application and domain — `TutuMuch.Application`, `TutuMuch.Domain`
+### Application and domain — `TuTuMuch.Application`, `TuTuMuch.Domain`
 
 - **`BrowseCatalogQuery`** (`Catalog/BrowseCatalog.cs`) — record `(int Page, int? PageSize, string? Category)`.
-- **`BrowseCatalogQueryHandler`** — validates the page, page size and category, caps the page size with `CatalogOptions.MaxPageSize`, counts and reads one page through `ITutuMuchDbContext` with `AsNoTracking()`, ordered by `PublishedAt DESC, Id DESC`, then reads the cover photos (`ListingPhotos` at `Position = 0` with their versions) in one query and maps each listing to `ListingCardDto`. It reads through the existing unit-of-work port rather than a separate read-store port ([ADR catalog/0001](../../../adr/catalog/0001-catalog-reads-through-the-db-context-port.md)).
-- **`CatalogVisibility`** (`TutuMuch.Domain.Listings`) — the single rule for what the catalog shows: `Status` is `Active` or `Reserved`, as a LINQ expression the query uses.
+- **`BrowseCatalogQueryHandler`** — validates the page, page size and category, caps the page size with `CatalogOptions.MaxPageSize`, counts and reads one page through `ITuTuMuchDbContext` with `AsNoTracking()`, ordered by `PublishedAt DESC, Id DESC`, then reads the cover photos (`ListingPhotos` at `Position = 0` with their versions) in one query and maps each listing to `ListingCardDto`. It reads through the existing unit-of-work port rather than a separate read-store port ([ADR catalog/0001](../../../adr/catalog/0001-catalog-reads-through-the-db-context-port.md)).
+- **`CatalogVisibility`** (`TuTuMuch.Domain.Listings`) — the single rule for what the catalog shows: `Status` is `Active` or `Reserved`, as a LINQ expression the query uses.
 - **`CatalogPageDto`** — `{ items, page, pageSize, totalCount }`.
 - **`ListingCardDto`** — `{ id, reference, title, brand, category, subcategory, sizeLabel ("Girls"), condition, price, status ("Active" | "Reserved"), publishedAt, coverPhoto }`. `price` is a decimal string with two places (`"85.00"`) so no floating-point value crosses the wire (`L2-018`).
 - **`CardPhotoDto`** — `{ width, height, alt, src, webp, jpeg }`: the original dimensions, "Photo 1 of {brand} {title}", the 400 px JPEG, and the WebP and JPEG `srcset` strings (`{base}/{hash}/{size}.{ext} {width}w`). URLs are built from `Photos:PublicBaseUrl` and the content-addressed keys produced by `listings/upload-listing-photos`, which also serves them with `Cache-Control: public, max-age=31536000, immutable` (`L2-059`).
 - **`CatalogOptions`** — configuration section `Catalog`: `DefaultPageSize = 24`, `MaxPageSize = 48`.
 
-### Infrastructure and data — `TutuMuch.Infrastructure`, `Tutu Much database`
+### Infrastructure and data — `TuTuMuch.Infrastructure`, `TuTuMuch database`
 
 - **Tables read** (owned by listings): `Listings`, `ListingPhotos`, `ListingPhotoVersions`.
 - **Index** — the existing `IX_Listings_Status_PublishedAt` on `Listings (Status, PublishedAt)` serves the filter and the order; no new index or migration is introduced. A covering filtered index is left until measurements show a need.
@@ -65,15 +65,15 @@ Feature library `@tutumuch/catalog` (`src/frontend/projects/catalog/src/lib/`), 
 
 ### Testing
 
-- xUnit acceptance tests `tests/TutuMuch.Api.Tests/BrowseCatalogTests.cs` host the API in memory with SQLite in-memory: visibility and order, card fields and photo `srcset`, paging, the page-size cap, validation and the category filter.
-- Playwright `src/frontend/e2e/tests/browse-catalog.spec.ts` with page object `e2e/pages/catalog.page.ts` serves `Tutu Much API` through `page.route` fixtures (`serveCatalog`, `catalogCard`, `catalogPage` in `e2e/fixtures.ts`): cards and Load more, Reserved and price formatting, `picture` markup, 2, 3 and 4 columns at 375, 800 and 1280 px, no horizontal scroll at 320 px, category routes, loading, empty, error, next-page failure and offline.
+- xUnit acceptance tests `tests/TuTuMuch.Api.Tests/BrowseCatalogTests.cs` host the API in memory with SQLite in-memory: visibility and order, card fields and photo `srcset`, paging, the page-size cap, validation and the category filter.
+- Playwright `src/frontend/e2e/tests/browse-catalog.spec.ts` with page object `e2e/pages/catalog.page.ts` serves `TuTuMuch API` through `page.route` fixtures (`serveCatalog`, `catalogCard`, `catalogPage` in `e2e/fixtures.ts`): cards and Load more, Reserved and price formatting, `picture` markup, 2, 3 and 4 columns at 375, 800 and 1280 px, no horizontal scroll at 320 px, category routes, loading, empty, error, next-page failure and offline.
 
 ### Deferred
 
 - Search, filters, sort, the filter sidebar and the subcategory chips: search-and-filter-catalog.
-- A Reserved listing whose reservation has expired shows as Reserved until `Tutu Much Worker` returns it to Active; reservations and their expiry arrive with checkout (`L2-028`).
+- A Reserved listing whose reservation has expired shows as Reserved until `TuTuMuch Worker` returns it to Active; reservations and their expiry arrive with checkout (`L2-028`).
 - The anonymous rate limit of `L2-060` on this endpoint, and HTTP caching of anonymous catalog pages.
-- The next-page failure uses an inline alert, and the offline banner sits at the top of `main`, until `ToastService` and `tm-system-banner` exist (responsive-accessible-shell).
+- The next-page failure uses an inline alert, and the offline banner sits at the top of `main`, until `ToastService` and `tl-system-banner` exist (responsive-accessible-shell).
 
 ### Error codes
 
@@ -96,19 +96,19 @@ The feature realizes the following level-2 (L2) requirements. Each L2 requiremen
 
 ### System context
 
-Visitors and members browse Tutu Much; Tutu Much serves listing photos through the CDN in front of photo storage. No other external system takes part in browsing.
+Visitors and members browse TuTuMuch; TuTuMuch serves listing photos through the CDN in front of photo storage. No other external system takes part in browsing.
 
 ![C4 system context for browsing the catalog](diagrams/c4-context.png)
 
 ### Containers
 
-The Angular application calls `Tutu Much API` for listing data and loads photos directly from the CDN. `Tutu Much API` reads the `Tutu Much database`; `Tutu Much Worker` returns expired reservations to Active, which changes what the catalog shows.
+The Angular application calls `TuTuMuch API` for listing data and loads photos directly from the CDN. `TuTuMuch API` reads the `TuTuMuch database`; `TuTuMuch Worker` returns expired reservations to Active, which changes what the catalog shows.
 
 ![C4 container view for browsing the catalog](diagrams/c4-container.png)
 
 ### Components
 
-Inside `Tutu Much Web`, `CatalogPage` reads `CatalogStore`, which calls `CatalogApi`, and renders the `@tutumuch/components` grid and states. Inside `Tutu Much API`, `CatalogController` sends `BrowseCatalogQuery` to its handler, which reads the database and builds photo URLs from `PhotoOptions`.
+Inside `TuTuMuch Web`, `CatalogPage` reads `CatalogStore`, which calls `CatalogApi`, and renders the `@tutumuch/components` grid and states. Inside `TuTuMuch API`, `CatalogController` sends `BrowseCatalogQuery` to its handler, which reads the database and builds photo URLs from `PhotoOptions`.
 
 ![C4 component view for browsing the catalog](diagrams/c4-component.png)
 

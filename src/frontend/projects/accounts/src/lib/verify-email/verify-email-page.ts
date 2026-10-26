@@ -7,7 +7,7 @@ type State = 'loading' | 'verified' | 'expired' | 'used' | 'error';
 
 /** Opens a verification link at /verify?token=… (L2-002, mocks pages/verify-email). */
 @Component({
-  selector: 'tm-verify-email-page',
+  selector: 'tl-verify-email-page',
   imports: [RouterLink, AlertComponent, ButtonDirective, IconComponent, SpinnerComponent],
   templateUrl: './verify-email-page.html',
   styleUrl: './verify-email-page.css',

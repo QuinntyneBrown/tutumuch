@@ -2,8 +2,8 @@
 
 ## Overview
 
-Tutu Much is a marketplace where parents and families buy and sell girls'
-clothing. To trade, members give Tutu Much personal data: an email address to sign in, a
+TuTuMuch is a marketplace where parents and families buy and sell girls'
+clothing. To trade, members give TuTuMuch personal data: an email address to sign in, a
 shipping address at checkout and, where a later feature collects one, a phone number.
 This feature keeps that data out of public view and unreadable to anyone who obtains a
 copy of the stored bytes.
@@ -14,8 +14,8 @@ The feature has three parts.
   dedicated data transfer object (DTO) whose fields are listed one by one. A field that
   is not on the list cannot reach a public response.
 - **Field-level encryption.** The street, city, state, ZIP code and recipient name of each
-  shipping address are encrypted by `Tutu Much API` before they are written to `Tutu Much database`.
-- **Encryption at rest.** `Tutu Much database`, its backups and `Photo storage` are encrypted
+  shipping address are encrypted by `TuTuMuch API` before they are written to `TuTuMuch database`.
+- **Encryption at rest.** `TuTuMuch database`, its backups and `Photo storage` are encrypted
   by the hosting platform, and a health check reports when that setting is off.
 
 Terms used below:
@@ -40,15 +40,15 @@ Privacy page (`docs/mocks/pages/privacy/`) explains these rules to visitors.
 
 ## Description
 
-The slice runs from the Privacy page through `Tutu Much API` down to the stored bytes.
+The slice runs from the Privacy page through `TuTuMuch API` down to the stored bytes.
 
-### Frontend (`Tutu Much Web`, `src/frontend/src/app/privacy/`)
+### Frontend (`TuTuMuch Web`, `src/frontend/src/app/privacy/`)
 
 - **`PrivacyPageComponent`** — static route component at `/privacy`
   (`docs/mocks/pages/privacy/default.html`). It shows the heading "Privacy", the line
   "Updated 1 Oct 2026" and six rules, each a title and one line:
   - "What we collect" — "Email, password hash, display name, shipping addresses, and orders."
-  - "Never public" — "Your email, phone and street address never appear on Tutu Much pages."
+  - "Never public" — "Your email, phone and street address never appear on TuTuMuch pages."
   - "Encrypted" — "Shipping addresses are encrypted at rest. Card numbers never reach us."
   - "Your copy" — "Download everything we hold from Settings as a JSON file."
   - "Erasure" — "Close your account and we erase your data within 30 days."
@@ -62,7 +62,7 @@ The slice runs from the Privacy page through `Tutu Much API` down to the stored 
   `PublicListingDetail`, `PublicMemberProfile`, `PublicReview`). The interfaces carry no
   field for email, phone or street address, so a component cannot bind to one.
 
-### API (`TutuMuch.Api`)
+### API (`TuTuMuch.Api`)
 
 - **Public endpoints.** `GET /api/catalog`, `GET /api/listings/{id}`,
   `GET /api/members/{displayName}` and `GET /api/members/{displayName}/reviews` are owned
@@ -78,7 +78,7 @@ The slice runs from the Privacy page through `Tutu Much API` down to the stored 
   `JsonIgnoreCondition.WhenWritingNull` and no polymorphic type discovery, so a subtype
   cannot add fields at run time.
 
-### Application and domain (`TutuMuch.Application`, `TutuMuch.Domain`)
+### Application and domain (`TuTuMuch.Application`, `TuTuMuch.Domain`)
 
 - **`IPublicDto`** — marker interface for every public DTO. The public DTOs are C#
   `record` types with only init-only properties:
@@ -94,7 +94,7 @@ The slice runs from the Privacy page through `Tutu Much API` down to the stored 
 - **`PersonalDataFieldNames`** — static list of forbidden property names used by the
   architecture test: `Email`, `EmailAddress`, `Phone`, `PhoneNumber`, `Street`,
   `Line1`, `Line2`, `PostalCode`, `Zip`, `ShippingAddress`, `FullName`, `RecipientName`.
-- **`ShippingAddress`** — value object in `TutuMuch.Domain` with `RecipientName`,
+- **`ShippingAddress`** — value object in `TuTuMuch.Domain` with `RecipientName`,
   `Line1`, `Line2`, `City`, `State`, `PostalCode` and `Country` (always `US`, `L2-027`).
   It has no setters; a change creates a new instance.
 - **`IFieldEncryptor`** — application port with
@@ -110,7 +110,7 @@ The slice runs from the Privacy page through `Tutu Much API` down to the stored 
   30 days of the order ending). The buyer's own checkout and saved-address queries also
   decrypt. No public query decrypts.
 
-### Infrastructure (`TutuMuch.Infrastructure`)
+### Infrastructure (`TuTuMuch.Infrastructure`)
 
 - **`AesGcmFieldEncryptor`** — implements `IFieldEncryptor` with AES-256-GCM from
   `System.Security.Cryptography.AesGcm`. Each value gets a fresh 12-byte random nonce.
@@ -122,19 +122,19 @@ The slice runs from the Privacy page through `Tutu Much API` down to the stored 
   `FieldDecryptionException`, logged without the ciphertext. The secret store product is
   `<TO SUPPLY>`.
 - **`EncryptedShippingAddressConverter`** — EF Core `ValueConverter<ShippingAddress, byte[]>`
-  that calls `ShippingAddressProtector`. `TutuMuchDbContext` applies it to every
+  that calls `ShippingAddressProtector`. `TuTuMuchDbContext` applies it to every
   `ShippingAddress` property, so encryption cannot be skipped by a new handler.
-- **`ReEncryptShippingAddressesJob`** — `Tutu Much Worker` job, run on demand after a key
+- **`ReEncryptShippingAddressesJob`** — `TuTuMuch Worker` job, run on demand after a key
   rotation. It reads rows whose key ID is not the active one in batches of
   `Privacy:Encryption:ReEncryptBatchSize` (default 500), re-encrypts and saves them.
 - **`DatabaseEncryptionHealthCheck`** — ASP.NET Core health check that queries
-  `sys.dm_database_encryption_keys` and reports `Unhealthy` unless the Tutu Much database has
+  `sys.dm_database_encryption_keys` and reports `Unhealthy` unless the TuTuMuch database has
   `encryption_state = 3` (encrypted). It is part of the readiness probe owned by the
   platform subsystem (`L2-070`).
 - **`PhotoStorageEncryptionHealthCheck`** — reads the bucket encryption setting of
   `Photo storage` through the storage SDK and reports `Unhealthy` when server-side
   encryption is off. The SDK call depends on the storage product, `<TO SUPPLY>`.
-- **Platform configuration.** Transparent data encryption on `Tutu Much database`, encrypted
+- **Platform configuration.** Transparent data encryption on `TuTuMuch database`, encrypted
   point-in-time backups (35-day retention, `L2-067`) and server-side encryption on
   `Photo storage` are set in the infrastructure-as-code templates. The hosting platform
   and template tool are `<TO SUPPLY>`. A CI step `verify-encryption-at-rest` reads the
@@ -143,7 +143,7 @@ The slice runs from the Privacy page through `Tutu Much API` down to the stored 
   replaces any property in `PersonalDataFieldNames` with `"[redacted]"`, so a logged
   object cannot write an address to the log (`L2-069`).
 
-### Data (`Tutu Much database`)
+### Data (`TuTuMuch database`)
 
 | Table | Column | Type | Notes |
 |-------|--------|------|-------|
@@ -171,13 +171,13 @@ No plaintext address column exists once this feature is built. Searching by addr
 
 ### Tests
 
-- **Architecture test** (`PublicDtoAllowListTests`) — reflects over `TutuMuch.Application`
+- **Architecture test** (`PublicDtoAllowListTests`) — reflects over `TuTuMuch.Application`
   and fails if any `IPublicDto` type, or any type it references, has a property named in
   `PersonalDataFieldNames`.
 - **Contract test** (`PublicResponsesContainNoPersonalDataTests`) — seeds members with
   known emails, phone numbers and addresses, calls each public endpoint and fails if the
   response body matches an email pattern, a seeded phone number or a seeded street line.
-- **Ciphertext test** — saves an order through `TutuMuchDbContext`, reads
+- **Ciphertext test** — saves an order through `TuTuMuchDbContext`, reads
   `ShippingAddressCipher` with raw ADO.NET and asserts the bytes do not contain the
   seeded street text and do decrypt to the original value.
 
@@ -191,22 +191,22 @@ No plaintext address column exists once this feature is built. Searching by addr
 
 ### System context
 
-Visitors and members use Tutu Much. Tutu Much reads encryption keys from the secret store, and the
+Visitors and members use TuTuMuch. TuTuMuch reads encryption keys from the secret store, and the
 hosting platform encrypts storage at rest.
 
 ![C4 system context for protecting personal data](diagrams/c4-context.png)
 
 ### Containers
 
-`Tutu Much API` builds public responses and encrypts addresses before they reach
-`Tutu Much database`. `Tutu Much Worker` re-encrypts rows after a key rotation. `Photo storage` and
+`TuTuMuch API` builds public responses and encrypts addresses before they reach
+`TuTuMuch database`. `TuTuMuch Worker` re-encrypts rows after a key rotation. `Photo storage` and
 the database are encrypted by the platform.
 
 ![C4 container view for protecting personal data](diagrams/c4-container.png)
 
 ### Components
 
-Inside `Tutu Much API`, `PublicResponseGuardFilter` checks public results, and
+Inside `TuTuMuch API`, `PublicResponseGuardFilter` checks public results, and
 `EncryptedShippingAddressConverter` routes every address through
 `AesGcmFieldEncryptor`. Two health checks report the at-rest settings.
 

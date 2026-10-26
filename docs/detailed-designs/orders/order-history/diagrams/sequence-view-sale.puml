@@ -17,20 +17,20 @@ skinparam package {
 skinparam sequenceMessageAlign left
 skinparam maxMessageSize 260
 actor "Seller" as actor
-box "Frontend — Tutu Much Web application" #E0F2FE
+box "Frontend — TuTuMuch Web application" #E0F2FE
   participant "SaleDetailPage" as page
   participant "OrdersApiService" as client
 end box
-box "Backend — Tutu Much API application (TutuMuch.Api)" #D1FADF
+box "Backend — TuTuMuch API application (TuTuMuch.Api)" #D1FADF
   participant "SalesController" as ctrl
 end box
-box "Backend — TutuMuch.Application and TutuMuch.Domain" #ECFDF3
+box "Backend — TuTuMuch.Application and TuTuMuch.Domain" #ECFDF3
   participant "GetSaleDetailQueryHandler" as h
   participant "ShippingAddressVisibility" as vis
 end box
-box "Backend — TutuMuch.Infrastructure" #FFF4E5
+box "Backend — TuTuMuch.Infrastructure" #FFF4E5
   participant "AesGcmFieldEncryptor" as enc
-  database "Tutu Much database" as db
+  database "TuTuMuch database" as db
 end box
 actor -> page : Open /sales/{id}
 page -> client : getSale(id)

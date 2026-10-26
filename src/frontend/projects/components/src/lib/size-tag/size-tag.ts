@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
-/** The Tutu Much size mark, "Girls", with the last word emphasised (design system: Size tag). */
+/** The TuTuMuch size mark, "Girls", with the last word emphasised (design system: Size tag). */
 @Component({
-  selector: 'tm-size-tag',
+  selector: 'tl-size-tag',
   templateUrl: './size-tag.html',
   styleUrl: './size-tag.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

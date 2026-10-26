@@ -25,7 +25,7 @@ edited for 90 days (L2-019 criterion 4). The payout banner already sits in the a
   The endpoint stays on `ListingsController` under the `CanSell` policy; an unknown status answers
   `400 VALIDATION_FAILED`.
 - **The status filter lives in the URL** (`?status=sold`) and is drawn by a new library component,
-  `tm-filter-chips`; each change asks the API for that status.
+  `tl-filter-chips`; each change asks the API for that status.
 - **The payout banner stays in the app shell.** Moving it into `MyListingsPage` would make
   `@tutumuch/listings` import `@tutumuch/orders`, which the workspace layout forbids; the shell already shows
   it on this page.

@@ -4,24 +4,24 @@ LAYOUT_WITH_LEGEND()
 title Components — Search and filter the catalog
 
 Person(visitor, "Visitor or member", "Narrows the catalog")
-Container_Boundary(web, "Tutu Much Web") {
+Container_Boundary(web, "TuTuMuch Web") {
   Component(topbar, "TopBarComponent + AppShell", "@tutumuch/components, tutumuch", "Search form, cuts to 100 characters, navigates to /?q=")
   Component(form, "FilterForm", "@tutumuch/catalog component", "Category, subcategory, brand, condition, price")
   Component(sidebar, "FiltersSidebar", "@tutumuch/catalog component", "Permanent sidebar from 992 px")
-  Component(sheet, "FiltersSheet", "@tutumuch/catalog, tm-sheet via SheetService", "Full screen under 768 px, side panel 768-991 px")
+  Component(sheet, "FiltersSheet", "@tutumuch/catalog, tl-sheet via SheetService", "Full screen under 768 px, side panel 768-991 px")
   Component(page, "CatalogPage + CatalogStore", "@tutumuch/catalog route component", "Parses URL, header, chips, sort, no-results")
   Component(query, "catalog-query.ts", "TypeScript functions", "URL <-> CatalogQuery")
   Component(client, "CatalogApi", "@tutumuch/api", "Listings, count, brands")
 }
-Container_Boundary(api, "Tutu Much API") {
+Container_Boundary(api, "TuTuMuch API") {
   Component(ctrl, "CatalogController", "ASP.NET Core controller", "Catalog read endpoints")
   Component(criteria, "CatalogCriteria", "Application record", "Validates filters, Apply and Order")
   Component(browse_h, "BrowseCatalogQueryHandler", "MediatR handler", "Ranked, sorted page")
   Component(count_h, "CountCatalogListingsQueryHandler", "MediatR handler", "Live result count")
   Component(brand_h, "GetCatalogBrandsQueryHandler", "MediatR handler", "Brand list")
-  Component(ctx, "ITutuMuchDbContext", "EF Core port", "Listings")
+  Component(ctx, "ITuTuMuchDbContext", "EF Core port", "Listings")
 }
-ContainerDb(db, "Tutu Much database", "SQL Server", "Listings")
+ContainerDb(db, "TuTuMuch database", "SQL Server", "Listings")
 
 Rel(visitor, topbar, "Types keyword")
 Rel(visitor, sheet, "Edits filters")

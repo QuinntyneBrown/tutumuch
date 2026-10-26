@@ -26,7 +26,7 @@ test.describe('view member profile', () => {
     await profile.goto();
 
     await expect(profile.heading).toHaveText('tutu_tessa');
-    await expect(page).toHaveTitle('tutu_tessa · Tutu Much');
+    await expect(page).toHaveTitle('tutu_tessa · TuTuMuch');
     await expect(profile.header.locator('.avatar')).toHaveText('TU');
     await expect(profile.header).toContainText('No reviews yet');
     await expect(profile.stat('Sales')).toHaveText('141');

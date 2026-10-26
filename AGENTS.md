@@ -1,11 +1,13 @@
-# Agent instructions for Tutu Much
+# Agent instructions for TuTuMuch
 
-Tutu Much is an open marketplace for new and used girls' (children's) clothing: dresses, tops,
+TuTuMuch is an open marketplace for new and used girls' (children's) clothing: dresses, tops,
 outerwear and bottoms, every one accepted only in girls' sizes. Anyone can join, set up a profile
-and sell what their daughter has outgrown; Tutu Much's owner sells on it as an ordinary member
-too. The look is a soft, playful children's theme (pink, lavender, rounded shapes) defined in
-`docs/design-system/`. Tutu Much began as a clone of 12L, so every journey, screen, component and
-rule mirrors 12L; only the domain words, the size rule and the theme differ. The product
+and sell what their daughter has outgrown; TuTuMuch's owner sells on it as an ordinary member
+too. TuTuMuch began as a clone of 12L, so every journey, screen, layout, component (including
+the `tl` selector prefix) and rule mirrors 12L; only the domain words and the size rule differ.
+The look is the **Giddy design system**: `docs/design-system/tokens/tokens.css` is Giddy's token
+file plus a short block of TuTuMuch layout tokens that alias 12L-only names onto Giddy tokens.
+Change colour, type, shape or motion in Giddy's tokens, never in components. The product
 is defined, before code, by `docs/journeys.md`, `docs/specs/` (L1 and L2 requirements),
 `docs/mocks/` (generated HTML mocks), `docs/detailed-designs/` and `docs/estimates/`.
 Architecture decisions live in `docs/adr/`.
@@ -27,8 +29,8 @@ not re-add references to them in other documents. The decision is recorded in
   erasure stay.
 
 - **Load and scale tests**: no load-test seeder, k6 or other load scripts, performance
-  environment, multi-instance docker-compose, `TutuMuch.LoadTestSeeder`,
-  `TutuMuch.ScaleTests` or latency-under-load requirement. Statelessness (`L2-060`) is
+  environment, multi-instance docker-compose, `TuTuMuch.LoadTestSeeder`,
+  `TuTuMuch.ScaleTests` or latency-under-load requirement. Statelessness (`L2-060`) is
   checked by an architecture test only. See
   [ADR-0002](docs/adr/general/0002-no-load-or-scale-tests.md).
 - **Frontend performance testing**: no Lighthouse or Lighthouse CI, no bundle-size or
@@ -46,13 +48,13 @@ by the `Administrator` role check of `L2-010`. That is the only administrator fe
 ## Testing rules (CRITICAL)
 
 - **Backend tests never touch a real database.** Unit, integration and architecture tests
-  under `tests/TutuMuch.*.Tests/` use mocks, fakes or an in-memory substitute (the EF Core
+  under `tests/TuTuMuch.*.Tests/` use mocks, fakes or an in-memory substitute (the EF Core
   in-memory or SQLite in-memory provider). No SQL Server, LocalDB, Testcontainers, Docker or
   connection string to a live database in any test, fixture or CI job. The same applies to
   Redis and every other external system: fake the port.
 - **Playwright tests never run the backend.** Every e2e test in `src/frontend/e2e/` serves
-  the `Tutu Much API` through `page.route` fixtures or an equivalent fake. No test starts, waits
-  for, or calls `TutuMuch.Api`, `TutuMuch.Worker` or a database. The frontend under test is
+  the `TuTuMuch API` through `page.route` fixtures or an equivalent fake. No test starts, waits
+  for, or calls `TuTuMuch.Api`, `TuTuMuch.Worker` or a database. The frontend under test is
   the built Angular application only.
 - These rules are absolute. Do not add an opt-in flag, an "integration" tag or a separate
   CI lane that relaxes them.
@@ -79,14 +81,14 @@ tutumuch/
 │   ├── prompts/                 ready-to-run implementation prompts, NN-journey.md in build order
 │   └── adr/                     {category}/NNNN-title.md
 ├── src/
-│   ├── backend/                 .NET solution, namespace prefix TutuMuch
-│   │   ├── TutuMuch.Api/         ASP.NET Core Web API: controllers, policies, middleware
-│   │   ├── TutuMuch.Application/ MediatR commands, queries, validators, DTOs, ports
-│   │   ├── TutuMuch.Domain/      entities, value objects, state machines, domain events
-│   │   ├── TutuMuch.Infrastructure/ EF Core DbContext, repositories, outbox, adapters
-│   │   ├── TutuMuch.Worker/      hosted background jobs
-│   │   ├── TutuMuch.Migrator/    applies EF Core migrations
-│   │   └── TutuMuch.Cli/         developer tool: `reset` and `seed` a local demo install
+│   ├── backend/                 .NET solution, namespace prefix TuTuMuch
+│   │   ├── TuTuMuch.Api/         ASP.NET Core Web API: controllers, policies, middleware
+│   │   ├── TuTuMuch.Application/ MediatR commands, queries, validators, DTOs, ports
+│   │   ├── TuTuMuch.Domain/      entities, value objects, state machines, domain events
+│   │   ├── TuTuMuch.Infrastructure/ EF Core DbContext, repositories, outbox, adapters
+│   │   ├── TuTuMuch.Worker/      hosted background jobs
+│   │   ├── TuTuMuch.Migrator/    applies EF Core migrations
+│   │   └── TuTuMuch.Cli/         developer tool: `reset` and `seed` a local demo install
 │   │       └── SeedPhotos/      {category}/ demo product photos + ATTRIBUTION.md
 │   └── frontend/                Angular workspace (see below)
 │       ├── angular.json
@@ -106,14 +108,14 @@ tutumuch/
 │           ├── reviews/         library: feature area (public profile only)
 │           └── privacy/         library: feature area
 └── tests/
-    └── TutuMuch.*.Tests/         unit, integration and architecture tests per backend project
-                                 (including TutuMuch.Cli.Tests)
+    └── TuTuMuch.*.Tests/         unit, integration and architecture tests per backend project
+                                 (including TuTuMuch.Cli.Tests)
 ```
 
-`TutuMuch.Cli` is a developer tool only: deployments and CI never run it against a database
+`TuTuMuch.Cli` is a developer tool only: deployments and CI never run it against a database
 ([ADR platform/0010](docs/adr/platform/0010-tutumuch-cli-for-demo-seeding.md)).
 
-There is no `moderation` library and no `TutuMuch.Moderation` project.
+There is no `moderation` library and no `TuTuMuch.Moderation` project.
 
 ## Frontend workspace layout (MANDATORY)
 
@@ -130,7 +132,7 @@ library per area, all registered in `angular.json`. Follow these rules:
   screen (`src/lib/sign-in/`, `src/lib/checkout/`...). The library exports its lazy
   route table (`export { routes } from './lib/<area>.routes';`) and nothing the app does
   not need.
-- **`projects/api/`** is the only place that calls `Tutu Much API`: typed services per area
+- **`projects/api/`** is the only place that calls `TuTuMuch API`: typed services per area
   (`src/lib/orders/`, `src/lib/listings/`...), DTOs, `provide-api.ts`, base URL,
   interceptors, auth and session state, and shared result types. Feature libraries
   import from it; they never call `HttpClient` directly.
@@ -152,7 +154,7 @@ library per area, all registered in `angular.json`. Follow these rules:
 
 - The `tutumuch` application and every feature library MUST be built from
   `@tutumuch/components` (`src/frontend/projects/components/`). Never hand-write markup, CSS,
-  icons, overlays or toasts the library already provides. Use the `tm-*` component,
+  icons, overlays or toasts the library already provides. Use the `tl-*` component,
   `DialogService`, `SheetService` and `ToastService`.
 - `docs/screen-composition.md` is binding. Before implementing any page, dialog,
   notification or shell part, read its entry and use exactly the components it lists.

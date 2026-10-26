@@ -1,7 +1,7 @@
 @switch (state()) {
   @case ('loading') {
     <div><h1>Verifying</h1></div>
-    <tm-spinner label="Checking your link…" />
+    <tl-spinner label="Checking your link…" />
   }
   @case ('verified') {
     <div>
@@ -9,8 +9,8 @@
       <p class="text-muted verify__lead">Buying and selling are open.</p>
     </div>
     <div class="stack">
-      <a tmButton="primary" size="lg" [block]="true" routerLink="/">Start shopping</a>
-      <a tmButton size="lg" [block]="true" routerLink="/sell">Sell an item</a>
+      <a tlButton="primary" size="lg" [block]="true" routerLink="/">Start shopping</a>
+      <a tlButton size="lg" [block]="true" routerLink="/sell">Sell an item</a>
     </div>
   }
   @case ('expired') {
@@ -19,15 +19,15 @@
       <p class="text-muted verify__lead">Links work for 24 hours. A new one replaces it.</p>
     </div>
     @if (resend() === 'sent') {
-      <tm-alert tone="success" heading="Link sent" live="polite">Earlier links no longer work.</tm-alert>
+      <tl-alert tone="success" heading="Link sent" live="polite">Earlier links no longer work.</tl-alert>
     } @else if (resend() === 'limited') {
-      <tm-alert tone="warning" heading="Too many requests" icon="clock"
-        >You can request 3 links an hour. Try again later.</tm-alert
+      <tl-alert tone="warning" heading="Too many requests" icon="clock"
+        >You can request 3 links an hour. Try again later.</tl-alert
       >
     }
     <div class="stack">
       <button
-        tmButton="primary"
+        tlButton="primary"
         size="lg"
         [block]="true"
         type="button"
@@ -44,7 +44,7 @@
       <p class="text-muted verify__lead">This email is already verified.</p>
     </div>
     <div class="stack">
-      <a tmButton="primary" size="lg" [block]="true" routerLink="/sign-in">Sign in</a>
+      <a tlButton="primary" size="lg" [block]="true" routerLink="/sign-in">Sign in</a>
     </div>
   }
   @case ('error') {
@@ -54,8 +54,8 @@
     </div>
     <span class="ref">{{ ref() }}</span>
     <div class="stack">
-      <button tmButton="primary" size="lg" [block]="true" type="button" (click)="verify()">
-        <tm-icon name="refresh" />Try again
+      <button tlButton="primary" size="lg" [block]="true" type="button" (click)="verify()">
+        <tl-icon name="refresh" />Try again
       </button>
     </div>
   }

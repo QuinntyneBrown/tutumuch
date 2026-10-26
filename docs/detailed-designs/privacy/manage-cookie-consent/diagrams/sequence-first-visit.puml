@@ -15,13 +15,13 @@ skinparam package {
   BackgroundColor #F9FAFB
 }
 actor "Visitor" as actor
-box "Frontend — Tutu Much Web application" #E0F2FE
-  participant "CookieConsentComponent (tm-consent-banner)" as banner
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "CookieConsentComponent (tl-consent-banner)" as banner
   participant "CookieConsentService" as consent
   participant "AnalyticsService" as analytics
   participant "ToastService" as toast
 end box
-box "Backend — Tutu Much API application" #D1FADF
+box "Backend — TuTuMuch API application" #D1FADF
   participant "CookieAllowListMiddleware" as mw
 end box
 participant "Analytics provider" as provider

@@ -14,18 +14,18 @@ skinparam package {
   FontColor #101828
   BackgroundColor #F9FAFB
 }
-box "Backend — Tutu Much Worker application" #D1FADF
+box "Backend — TuTuMuch Worker application" #D1FADF
   participant "EmailDispatchJob" as dispatcher
 end box
-box "Backend — TutuMuch Application and Domain" #ECFDF3
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
   participant "DispatchEmailsHandler" as handler
   participant "OutboxMessage" as msg
   participant "EmailTemplates" as renderer
   participant "EmailContentGuard" as guard
 end box
-box "Backend — TutuMuch Infrastructure" #FFF4E5
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
   participant "IEmailSender" as sender
-  database "Tutu Much database" as db
+  database "TuTuMuch database" as db
 end box
 participant "Email provider" as provider
 loop every 10 seconds

@@ -3,7 +3,7 @@
 LAYOUT_WITH_LEGEND()
 title Components — Responsive, accessible application shell
 
-Container_Boundary(web, "Tutu Much Web") {
+Container_Boundary(web, "TuTuMuch Web") {
   Component(app, "AppComponent", "Root component", "Skip link, shell by route data, toast region")
   Component(shells, "AppShell / AuthShell / AdminShell / BareShell", "Shell components", "Frame each page around main#main")
   Component(topbar, "TopbarComponent + AdminTopbarComponent", "Components", "Menu button, primary nav, search, account")

@@ -19,9 +19,9 @@ Terms used in this design:
 
 Screens, states and copy come from `docs/mocks/pages/edit-listing/` (default, loading, error, invalid, submitting, success, locked, changed, sold, withdrawn), `docs/mocks/dialogs/withdraw-listing/`, `docs/mocks/dialogs/relist/` and the `own` state of `docs/mocks/pages/listing-detail/`. Decisions are recorded in [ADR listings/0003](../../../adr/listings/0003-edit-with-a-version-etag-and-withdraw-from-the-detail-page.md).
 
-### Frontend (`Tutu Much Web`, `@tutumuch/listings`, `@tutumuch/catalog`, `@tutumuch/orders`, `@tutumuch/api`)
+### Frontend (`TuTuMuch Web`, `@tutumuch/listings`, `@tutumuch/catalog`, `@tutumuch/orders`, `@tutumuch/api`)
 
-- **`EditListingPage`** — `@tutumuch/listings` `src/lib/edit-listing/`, routed at `/items/:reference/edit`. Its header shows the listing title as a link back to the listing, the heading "Edit listing" and `tm-status`. It hosts the local `ListingFormComponent` with actions "Cancel" (back to the listing) and "Save changes". A `Draft` opens the sell form at `/sell/{reference}` instead. States:
+- **`EditListingPage`** — `@tutumuch/listings` `src/lib/edit-listing/`, routed at `/items/:reference/edit`. Its header shows the listing title as a link back to the listing, the heading "Edit listing" and `tl-status`. It hosts the local `ListingFormComponent` with actions "Cancel" (back to the listing) and "Save changes". A `Draft` opens the sell form at `/sell/{reference}` instead. States:
   - `loading` — skeleton for 3 photo tiles and 4 fields, `aria-busy="true"`.
   - `error` — "Couldn't load this listing", "Your listing is safe. Try again in a moment.", the correlation reference, "Try again" and "Your listings" (`L2-068`).
   - `default` — every field prefilled, including flaws for `Used - Fair`, photos and the ticked size confirmation.
@@ -40,7 +40,7 @@ Screens, states and copy come from `docs/mocks/pages/edit-listing/` (default, lo
 - **`RelistDialog`** — `@tutumuch/orders`, built by cancel-order. This feature adds "Edit first", a link that closes the dialog and opens `/items/:reference/edit`.
 - **`ListingsApi`** (`@tutumuch/api`) — adds `getForEdit(reference)` and `updateListing(reference, details, etag)`, which return the listing with the `ETag` response header and send it as `If-Match`, and `withdraw(reference)`. `MyListing` gains `removalReason`.
 
-### API (`TutuMuch.Api`)
+### API (`TuTuMuch.Api`)
 
 Every action is on `ListingsController` under the `CanSell` policy (`L2-003`, `L2-010`). A listing owned by another member returns `404`.
 
@@ -50,7 +50,7 @@ Every action is on `ListingsController` under the `CanSell` policy (`L2-003`, `L
 - `POST /api/listings/{reference}/relist` — unchanged from cancel-order: `204`, `404`, or `409` `LISTING_NOT_RELISTABLE`, which now includes a withdrawn listing.
 - **Mass assignment** (`L2-049`) — `ListingDetailsRequest` holds only editable fields (`category`, `subcategory`, `size`, `title`, `description`, `brand`, `condition`, `flaws`, `price`, `shippingCost`, `photoIds`, `sizeConfirmed`). Unknown members such as `"sellerId"` or `"status": "Sold"` are ignored by `System.Text.Json` and cannot reach the entity.
 
-### Application and domain (`TutuMuch.Application`, `TutuMuch.Domain`)
+### Application and domain (`TuTuMuch.Application`, `TuTuMuch.Domain`)
 
 - **`GetMyListingQuery`** — returns `MyListingDto` (with `removalReason`) and its `Version`, which the controller writes as the ETag and leaves out of the body.
 - **`UpdateListingCommand`** (`ListingCommandHandlers`) — loads the caller's listing. A draft takes the draft path of create-listing. Otherwise it refuses through `ListingRefusals` (`409`), compares `ExpectedVersion` with `Version` (`428`, `412`), attaches photos with `ListingPhotoAttacher`, calls `Listing.Edit` and saves with `Version` as the concurrency token.
@@ -71,7 +71,7 @@ Every action is on `ListingsController` under the `CanSell` policy (`L2-003`, `L
 | `Active` | `Removed` (`Withdrawn`) | Withdraw | None beyond status |
 | `Reserved`, `Sold`, `Removed` (`Withdrawn`) | — | Update or withdraw | Refused with `409` (a repeat withdraw answers `200`) |
 
-### Infrastructure and data (`TutuMuch.Infrastructure`)
+### Infrastructure and data (`TuTuMuch.Infrastructure`)
 
 - **`Listings` table** — migration `EditAndWithdrawListing` adds `Version int not null default 0`, the EF Core concurrency token for edit and withdraw. `RemovalReason` (`nvarchar(24)`) gains the value `Withdrawn`.
 - **Reservation** — the checkout's conditional `ExecuteUpdate` that reserves a listing also sets `Version = Version + 1`, so a checkout and an edit racing on the same listing cannot both succeed (`L2-029`).
@@ -106,13 +106,13 @@ The feature realises the following level-2 (L2) requirements. Each refines the l
 
 ### System context
 
-The seller edits, withdraws and relists listings in Tutu Much. A buyer in checkout can hold the same listing, which is why edits are refused while it is reserved.
+The seller edits, withdraws and relists listings in TuTuMuch. A buyer in checkout can hold the same listing, which is why edits are refused while it is reserved.
 
 ![C4 system context for editing and withdrawing a listing](diagrams/c4-context.png)
 
 ### Containers
 
-`Tutu Much Web` calls `Tutu Much API`, which writes `Listings` in `Tutu Much database` under optimistic concurrency.
+`TuTuMuch Web` calls `TuTuMuch API`, which writes `Listings` in `TuTuMuch database` under optimistic concurrency.
 
 ![C4 container view for editing and withdrawing a listing](diagrams/c4-container.png)
 
@@ -148,10 +148,10 @@ From a cancelled sale, the seller either edits first or relists at once. Only a 
 
 ## Testing
 
-- `tests/TutuMuch.Api.Tests/EditListingTests.cs` — xUnit acceptance tests through `TutuMuchApiFactory` with the SQLite in-memory database and fakes: the ETag on read, a save with the current ETag reaching the catalog, `412` for a stale ETag, `428` without `If-Match`, `409` for a reserved and a sold listing, the publish rules, the size confirmation, `SIZE_NOT_ACCEPTED`, the size set from a new category, ignored protected fields and `404` for another member.
-- `tests/TutuMuch.Api.Tests/WithdrawListingTests.cs` — withdraw removes the listing from the catalog and the detail page, a repeat answers `200`, a withdrawn listing cannot be edited or relisted, and reserved, sold, draft and foreign listings are refused.
-- `tests/TutuMuch.Domain.Tests/EditAndWithdrawListingTests.cs` — `Listing.Edit`, `Withdraw`, `EditRefusal` and the `Version` bump.
-- `src/frontend/e2e/tests/edit-and-withdraw-listing.spec.ts` with `e2e/pages/edit-listing.page.ts` — Playwright (Chromium) with every `Tutu Much API` call served by `page.route` fixtures: the prefilled form, saving with `If-Match`, the stale save and Reload, client checks, the locked, sold, withdrawn and error states, the Withdraw dialog with its busy and failed states, and "Edit first" in the Relist dialog.
+- `tests/TuTuMuch.Api.Tests/EditListingTests.cs` — xUnit acceptance tests through `TuTuMuchApiFactory` with the SQLite in-memory database and fakes: the ETag on read, a save with the current ETag reaching the catalog, `412` for a stale ETag, `428` without `If-Match`, `409` for a reserved and a sold listing, the publish rules, the size confirmation, `SIZE_NOT_ACCEPTED`, the size set from a new category, ignored protected fields and `404` for another member.
+- `tests/TuTuMuch.Api.Tests/WithdrawListingTests.cs` — withdraw removes the listing from the catalog and the detail page, a repeat answers `200`, a withdrawn listing cannot be edited or relisted, and reserved, sold, draft and foreign listings are refused.
+- `tests/TuTuMuch.Domain.Tests/EditAndWithdrawListingTests.cs` — `Listing.Edit`, `Withdraw`, `EditRefusal` and the `Version` bump.
+- `src/frontend/e2e/tests/edit-and-withdraw-listing.spec.ts` with `e2e/pages/edit-listing.page.ts` — Playwright (Chromium) with every `TuTuMuch API` call served by `page.route` fixtures: the prefilled form, saving with `If-Match`, the stale save and Reload, client checks, the locked, sold, withdrawn and error states, the Withdraw dialog with its busy and failed states, and "Edit first" in the Relist dialog.
 
 ## Open questions
 

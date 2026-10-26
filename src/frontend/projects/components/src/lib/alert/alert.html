@@ -1,5 +1,5 @@
 <div [class]="'alert alert--' + tone()" [class.banner]="banner()" [attr.role]="ariaRole()">
-  <tm-icon [name]="iconName()" />
+  <tl-icon [name]="iconName()" />
   <div class="alert__body">
     @if (heading()) {
       <div class="alert__title">{{ heading() }}</div>
@@ -9,7 +9,7 @@
   </div>
   @if (dismissible()) {
     <button class="close" type="button" aria-label="Dismiss" (click)="dismissed.emit()">
-      <tm-icon name="close" />
+      <tl-icon name="close" />
     </button>
   }
 </div>

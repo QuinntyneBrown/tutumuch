@@ -20,7 +20,7 @@ export interface VerifyEmailPromptData {
  * Opened through DialogService from the unverified state of the sell page.
  */
 @Component({
-  selector: 'tm-verify-email-prompt',
+  selector: 'tl-verify-email-prompt',
   imports: [AlertComponent, ButtonDirective, DialogComponent],
   templateUrl: './verify-email-prompt.html',
   styleUrl: './verify-email-prompt.css',

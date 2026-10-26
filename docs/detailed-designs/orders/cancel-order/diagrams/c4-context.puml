@@ -5,7 +5,7 @@ title System Context — Cancel an order
 
 Person(seller, "Seller", "Cancels or answers a cancellation request")
 Person(buyer, "Buyer", "Asks the seller to cancel")
-System(tutumuch, "Tutu Much", "Girls' clothing marketplace")
+System(tutumuch, "TuTuMuch", "Girls' clothing marketplace")
 System_Ext(pay, "Payment provider", "Refunds")
 System_Ext(email, "Email provider", "Transactional email")
 Rel(seller, tutumuch, "Cancels and responds to requests using")

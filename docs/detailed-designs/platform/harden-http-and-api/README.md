@@ -2,12 +2,12 @@
 
 ## Overview
 
-Tutu Much is a marketplace for new and used girls' clothing. Members
-sign in, list items, pay for them and leave reviews through the `Tutu Much Web`
-single-page application, which calls the `Tutu Much API` over HTTPS. Every one of those
+TuTuMuch is a marketplace for new and used girls' clothing. Members
+sign in, list items, pay for them and leave reviews through the `TuTuMuch Web`
+single-page application, which calls the `TuTuMuch API` over HTTPS. Every one of those
 calls carries a session cookie and, for writes, changes money or personal data.
 This feature is the protective layer that sits in front of every endpoint in the
-`Tutu Much API` and around every page the `Tutu Much Web` serves.
+`TuTuMuch API` and around every page the `TuTuMuch Web` serves.
 
 The feature belongs to the `platform` subsystem, which holds the cross-cutting
 capabilities that no single business area owns. It does not add a page or a
@@ -19,7 +19,7 @@ The feature covers four concerns, each set by one level-2 requirement:
 - **transport security** — the guarantee that traffic travels only over TLS 1.2 or later and that browsers receive headers that stop downgrade, sniffing, framing and inline-script injection (`L2-048`)
 - **input validation** — server-side checking of every request field for type, length, range and format, independent of any check in the browser (`L2-049`)
 - **mass assignment** — attack in which a client adds fields such as `sellerId` or `status` to a request body to change data it does not own
-- **cross-site request forgery (CSRF)** — attack in which another site makes a signed-in member's browser send a state-changing request to Tutu Much (`L2-050`)
+- **cross-site request forgery (CSRF)** — attack in which another site makes a signed-in member's browser send a state-changing request to TuTuMuch (`L2-050`)
 - **cross-origin resource sharing (CORS)** — browser mechanism by which the API declares which other origins may read its responses (`L2-050`)
 - **rate limit** — maximum number of requests one caller may make in a fixed time window before the API refuses further requests with HTTP 429 (`L2-051`)
 
@@ -35,7 +35,7 @@ The slice runs from the browser through the load balancer into the ASP.NET Core
 middleware pipeline, the MediatR pipeline and EF Core. It ends in CI, where
 static checks stop regressions.
 
-### Frontend (`Tutu Much Web`, `src/frontend/src/app/core/http`)
+### Frontend (`TuTuMuch Web`, `src/frontend/src/app/core/http`)
 
 - **`index.html` and build settings** — the production build emits no inline
   script. `angular.json` sets `optimization.styles.inlineCritical` to `false`,
@@ -43,7 +43,7 @@ static checks stop regressions.
   Content Security Policy (CSP) would block. No `<script>` element in
   `index.html` carries inline code.
 - **`deploy/security-headers.json`** — single source of the response headers
-  for the static host that serves `Tutu Much Web`. The hosting platform is
+  for the static host that serves `TuTuMuch Web`. The hosting platform is
   `<TO SUPPLY>`; its header rule set is generated from this file at deploy time.
   The headers are:
   - `Strict-Transport-Security: max-age=31536000; includeSubDomains`
@@ -71,7 +71,7 @@ static checks stop regressions.
   to `DomSanitizer.bypassSecurityTrust*` through `no-restricted-syntax` rules
   for TypeScript and templates.
 
-### API (`TutuMuch.Api`)
+### API (`TuTuMuch.Api`)
 
 Middleware order in `Program.cs`: `UseForwardedHeaders` →
 `UseHttpsRedirection` → `UseHsts` → `SecurityHeadersMiddleware` →
@@ -106,7 +106,7 @@ Middleware order in `Program.cs`: `UseForwardedHeaders` →
   `malformed_json`; the problem details body never contains a stack trace
   (report-errors-and-observe).
 - **Request DTOs** — every endpoint binds a dedicated `record` request type in
-  `TutuMuch.Application` holding only the fields the caller may set, for example
+  `TuTuMuch.Application` holding only the fields the caller may set, for example
   `UpdateListingRequest(Title, Description, Condition, PriceCents,
   ShippingCents, PhotoIds)`. Protected fields (`SellerId`, `Status`,
   `PricePaid`, `OwnerId`) are never members of a request type, so a body
@@ -131,7 +131,7 @@ Middleware order in `Program.cs`: `UseForwardedHeaders` →
   `rate_limited`, and `Retry-After` set to the seconds left in the window.
   Health endpoints and the payment webhook are exempt.
 
-### Application and domain (`TutuMuch.Application`)
+### Application and domain (`TuTuMuch.Application`)
 
 - **`ValidationBehavior<TRequest, TResponse>`** — MediatR pipeline behaviour.
   It runs every `IValidator<TRequest>` and throws `RequestValidationException`
@@ -154,12 +154,12 @@ Middleware order in `Program.cs`: `UseForwardedHeaders` →
   `register` applies in addition to the default policy. The listing creation limit of
   `L2-051` (20 published listings per member per UTC day; drafts are not limited) is not a
   policy here: create-listing enforces it in `PublishListingCommandHandler` by counting the
-  member's listings with `PublishedAt` since 00:00 UTC in `Tutu Much database`, and answers 429
+  member's listings with `PublishedAt` since 00:00 UTC in `TuTuMuch database`, and answers 429
   `RATE_LIMITED` with `Retry-After` set to the seconds until midnight UTC
   ([ADR platform-0006](../../../adr/platform/0006-daily-publish-limit-counted-in-database.md)).
   The default policies still apply to the publish endpoint.
 
-### Infrastructure (`TutuMuch.Infrastructure`)
+### Infrastructure (`TuTuMuch.Infrastructure`)
 
 - **`RedisFixedWindowRateLimitStore : IRateLimitStore`** — runs one Lua script
   per request: `INCR key`; on the first increment `EXPIRE key window`; returns
@@ -199,14 +199,14 @@ Middleware order in `Program.cs`: `UseForwardedHeaders` →
 |-------|--------------|-------------|
 | `L2-048` | `L1-013` | All traffic shall use HTTPS with TLS 1.2 or later. HTTP requests shall redirect to HTTPS. Responses shall include `Strict-Transport-Security` (max-age of at least one year), a `Content-Security-Policy` that disallows inline scripts, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin` and `frame-ancestors 'none'`. |
 | `L2-049` | `L1-013` | The API shall validate every input on the server for type, length, range and format, whatever the client checks. Database access shall use parameterised queries only. User content shall be encoded on output. Unknown fields in a request body shall be ignored and shall never change protected fields such as owner, status or price paid (mass assignment). |
-| `L2-050` | `L1-013` | All state-changing requests shall be protected against cross-site request forgery with an anti-forgery token in addition to `SameSite` cookies. The API shall allow cross-origin requests only from the Tutu Much frontend origins listed in configuration. |
+| `L2-050` | `L1-013` | All state-changing requests shall be protected against cross-site request forgery with an anti-forgery token in addition to `SameSite` cookies. The API shall allow cross-origin requests only from the TuTuMuch frontend origins listed in configuration. |
 | `L2-051` | `L1-013` | The API shall limit requests to 120 per minute per IP address for anonymous callers and 300 per minute per member, with stricter limits for sign-in (L2-007), registration (5 per hour per IP) and listing creation (20 published listings per member per UTC day; saving drafts is not limited). Callers over a limit shall receive HTTP 429 with a `Retry-After` header. |
 
 ## Diagrams
 
 ### System context
 
-Visitors and members reach Tutu Much only over HTTPS. Requests from other websites can
+Visitors and members reach TuTuMuch only over HTTPS. Requests from other websites can
 reach the API, but CSRF and CORS controls stop them from acting on a member's
 behalf.
 
@@ -215,14 +215,14 @@ behalf.
 ### Containers
 
 The load balancer terminates TLS and redirects HTTP. The static host serves
-`Tutu Much Web` with the header set, `Tutu Much API` enforces the remaining controls, and the
+`TuTuMuch Web` with the header set, `TuTuMuch API` enforces the remaining controls, and the
 `Distributed cache` holds the shared rate-limit counters.
 
 ![C4 container view for HTTP and API hardening](diagrams/c4-container.png)
 
 ### Components
 
-Inside `Tutu Much API`, requests pass the security-header, CORS, rate-limit and
+Inside `TuTuMuch API`, requests pass the security-header, CORS, rate-limit and
 antiforgery middleware before the controller. The MediatR validation behaviour
 runs before each handler, and EF Core issues only parameterised SQL.
 

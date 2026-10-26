@@ -17,4 +17,4 @@ This project uses GitHub Issues to track bugs and feature requests. Please searc
 
 ## Support policy
 
-Tutu Much is maintained on a best-effort basis through the channels above. There is no guaranteed response time.
+TuTuMuch is maintained on a best-effort basis through the channels above. There is no guaranteed response time.

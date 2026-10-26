@@ -16,7 +16,7 @@ docs/videos/NN-kebab-topic/
   NN-kebab-topic.mp4   slides rendered to PNG + audio + captions      (generated)
 ```
 
-Paths above are the default. If the repo already has a videos/lessons folder or tooling, follow it instead. Large media should go through Git LFS if `.gitattributes` configures it; `.cache/` folders are never committed.
+Paths above are the default. If the repo already has a videos/lessons folder or tooling, follow it instead. Large media should go through Git LFS if `.gitattributes` configures it (here only the `.mp4` is committed; the `.mp3` is a gitignored build output); `.cache/` folders are never committed.
 
 Before writing, read any existing video in the repo (tone, length, structure) and the code/docs the video covers. Every file path, name, number and quote on screen or in the script must be verified against the repository, never recalled.
 
@@ -28,11 +28,11 @@ Before writing, read any existing video in the repo (tone, length, structure) an
 4. **Write `README.md`** (outline below).
 5. **Write `slides.html`** (structure below), cueing each slide to a verbatim phrase in the script.
 6. **Validate offline** with the repo's audio tool in dry-run mode (script format, word count and estimated duration; edge-tts has no synthesis charge). If no tool exists yet, create the two small tools described under "Tooling" before continuing.
-7. **Synthesize audio** with free `edge-tts` (Microsoft Edge online read-aloud). It needs Python, the `edge-tts` package and internet access; no API key, Azure subscription or paid Speech service. Install with `python -m pip install edge-tts` using the same interpreter as the audio tool (`PYTHON` tells the generator which one). Edge is the generator's default engine; the others are offline Piper (`--engine piper`) and paid Azure Speech (`--engine azure`), which voices only the brand video (`44-meet-saturdaze`, Jenny, cheerful, -5%, ADR-018) and needs `AZURE_SPEECH_KEY` and `AZURE_SPEECH_REGION`. Use Edge for every other video. Synthesis also writes a timing manifest (per-section and per-paragraph start/end, in `.cache/`) that the video is synced to. Keep acronyms and code identifiers in a pronunciation lexicon (`pronunciations.json`) as plain-text spoken replacements and check them with a pronunciation test.
+7. **Synthesize audio** with free `edge-tts` (Microsoft Edge online read-aloud). It needs Python, the `edge-tts` package and internet access; no API key, Azure subscription or paid Speech service. Install with `python -m pip install edge-tts` using the same interpreter as the audio tool (`PYTHON` tells the generator which one). Edge is the generator's default engine; this repository's videos use the offline Kokoro voice (`--engine kokoro`, voice `af_heart`, speed 0.8 - model files in `.cache/kokoro/`, never committed), and offline Piper (`--engine piper`) is also available. There is no Azure engine. Synthesis also writes a timing manifest (per-section and per-paragraph start/end, in `.cache/`) that the video is synced to. Keep acronyms and code identifiers in a pronunciation lexicon (`pronunciations.json`) as plain-text spoken replacements and check them with a pronunciation test.
 8. **Build the video** (needs Chrome/Edge - `EDGE_PATH` overrides - and ffmpeg with libx264 - `FFMPEG_PATH` overrides):
    - `--check`: every `data-cue` is found; prints the schedule.
    - `--slides-only`: renders PNGs to `.cache/<folder>/`. View them before encoding; overflowing code, clipped tables and unreadable text are the common failures.
-   - full build: encodes the 1920x1080 MP4 with burned-in captions. `--music <file>` (opt-in; the brand video only) mixes a background track under the narration with a 3 s music-only tail; see "Background music" in `docs/videos/README.md`.
+   - full build: encodes the 1920x1080 MP4 with burned-in captions.
 9. **Verify:** `ffprobe -v error -show_entries format=duration:stream=codec_name,width,height <mp4>` gives 1920x1080, h264 + audio, duration about equal to the MP3. Spot-check frames at cue times with `ffmpeg -ss <t> -i <mp4> -frames:v 1 <scratch>.png`.
 10. **Register** the video in the folder's index README, if one exists.
 11. **Commit** only the text files and media; no secrets, no `.cache/`.
@@ -126,7 +126,7 @@ Prefer an existing equivalent if the repo already has one. In this repository, r
 $env:PYTHON = "python"
 python -m pip install edge-tts
 node tools/video-audio/generate-audio.mjs docs/videos/NN-kebab-topic --dry-run
-node tools/video-audio/generate-audio.mjs --say "Saturdaze" --out .cache/pronunciation-test.wav
+node tools/video-audio/generate-audio.mjs --say "Sweet Hand" --out .cache/pronunciation-test.wav
 node tools/video-audio/generate-audio.mjs docs/videos/NN-kebab-topic
 ```
 

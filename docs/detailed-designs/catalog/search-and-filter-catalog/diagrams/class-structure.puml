@@ -77,7 +77,7 @@ class GetCatalogBrandsQueryHandler {
   +Handle(q: GetCatalogBrandsQuery): Task<IReadOnlyList<CatalogBrandDto>>
 }
 
-interface ITutuMuchDbContext {
+interface ITuTuMuchDbContext {
   +Listings: DbSet<Listing>
   +ListingPhotos: DbSet<ListingPhoto>
 }
@@ -98,8 +98,8 @@ CountCatalogListingsQueryHandler ..> CountCatalogListingsQuery : handles
 GetCatalogBrandsQueryHandler ..> GetCatalogBrandsQuery : handles
 BrowseCatalogQueryHandler ..> CatalogCriteria
 CountCatalogListingsQueryHandler ..> CatalogCriteria
-BrowseCatalogQueryHandler --> ITutuMuchDbContext
-CountCatalogListingsQueryHandler --> ITutuMuchDbContext
-GetCatalogBrandsQueryHandler --> ITutuMuchDbContext
+BrowseCatalogQueryHandler --> ITuTuMuchDbContext
+CountCatalogListingsQueryHandler --> ITuTuMuchDbContext
+GetCatalogBrandsQueryHandler --> ITuTuMuchDbContext
 GetCatalogBrandsQueryHandler ..> CatalogBrandDto : returns
 @enduml

@@ -22,15 +22,15 @@ box "Frontend — @tutumuch/orders and @tutumuch/api" #E0F2FE
   participant "ConfirmReceiptDialog" as dlg
   participant "OrdersApi" as client
 end box
-box "Backend — Tutu Much API application (TutuMuch.Api)" #D1FADF
+box "Backend — TuTuMuch API application (TuTuMuch.Api)" #D1FADF
   participant "OrdersController" as ctrl
 end box
-box "Backend — TutuMuch.Application and TutuMuch.Domain" #ECFDF3
+box "Backend — TuTuMuch.Application and TuTuMuch.Domain" #ECFDF3
   participant "ConfirmReceiptCommandHandler" as h
   participant "Order" as order
 end box
-box "Backend — TutuMuch.Infrastructure" #FFF4E5
-  database "Tutu Much database" as db
+box "Backend — TuTuMuch.Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
 end box
 actor -> page : Choose "I received it" (Shipped or Delivered)
 page -> dlg : Open "Got it and all good?"

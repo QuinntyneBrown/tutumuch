@@ -18,7 +18,7 @@ export interface Toast extends ToastOptions {
 export const TOAST_DURATION_MS = 8000;
 
 /**
- * Shows short, transient messages in the shell's `tm-toast-region` (design system: Toast). Focus
+ * Shows short, transient messages in the shell's `tl-toast-region` (design system: Toast). Focus
  * never moves to a toast. Danger toasts carry role="alert" and stay until dismissed; the others
  * leave after 8 seconds.
  */

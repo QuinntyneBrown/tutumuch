@@ -32,7 +32,7 @@ import {
  * are deleted (mocks notifications/toast info, L2-019).
  */
 @Component({
-  selector: 'tm-my-listings-page',
+  selector: 'tl-my-listings-page',
   imports: [
     RouterLink,
     ButtonDirective,

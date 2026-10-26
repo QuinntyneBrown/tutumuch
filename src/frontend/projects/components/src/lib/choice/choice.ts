@@ -5,7 +5,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
  * Project the native input first, then the label content.
  */
 @Component({
-  selector: 'tm-choice',
+  selector: 'tl-choice',
   templateUrl: './choice.html',
   styleUrl: './choice.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

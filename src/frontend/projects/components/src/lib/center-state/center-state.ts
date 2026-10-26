@@ -7,7 +7,7 @@ import { IconComponent, IconName } from '../icon/icon';
  * (design system: Center state). Project the actions with the `actions` attribute.
  */
 @Component({
-  selector: 'tm-center-state',
+  selector: 'tl-center-state',
   imports: [IconComponent],
   templateUrl: './center-state.html',
   styleUrl: './center-state.css',

@@ -15,15 +15,15 @@ skinparam package {
   BackgroundColor #F9FAFB
 }
 actor "Visitor or member" as actor
-box "Frontend — Tutu Much Web application" #E0F2FE
+box "Frontend — TuTuMuch Web application" #E0F2FE
   participant "Feature page" as page
   participant "RateLimitInterceptor" as rli
 end box
-box "Backend — Tutu Much API application" #D1FADF
+box "Backend — TuTuMuch API application" #D1FADF
   participant "RedisRateLimitingMiddleware" as mw
   participant "Feature controller" as ctrl
 end box
-box "Backend — Tutu Much Infrastructure" #FFF4E5
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
   participant "RedisFixedWindowRateLimitStore" as store
   database "Distributed cache (Redis)" as redis
 end box

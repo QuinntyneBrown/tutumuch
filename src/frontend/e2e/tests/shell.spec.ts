@@ -1,7 +1,7 @@
 // Acceptance Test
 // Traces to: L2-071, L2-065
 // Description: The built app serves the empty guest shell at / with a skip link, main#main,
-// guest top bar and footer, without horizontal scroll at 320px and calling Tutu Much API only for the catalog.
+// guest top bar and footer, without horizontal scroll at 320px and calling TuTuMuch API only for the catalog.
 
 import { expect, serveCatalog, test } from '../fixtures';
 import { ShellPage } from '../pages/shell.page';
@@ -34,7 +34,7 @@ test.describe('empty guest shell', () => {
       await expect(shell.footerLink(name)).toBeVisible();
     }
     await expect(shell.footer.getByRole('button', { name: 'Cookie settings' })).toBeVisible();
-    await expect(shell.footer).toContainText(`© ${new Date().getFullYear()} Tutu Much`);
+    await expect(shell.footer).toContainText(`© ${new Date().getFullYear()} TuTuMuch`);
     expect(await shell.hasHorizontalScroll()).toBe(false);
     expect(unfixturedApiCalls).toEqual([]);
   });

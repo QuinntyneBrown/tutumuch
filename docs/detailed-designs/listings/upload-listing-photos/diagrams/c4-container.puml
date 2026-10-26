@@ -4,10 +4,10 @@ LAYOUT_WITH_LEGEND()
 title Containers — Upload listing photos
 
 Person(seller, "Seller", "Adds photos to a listing")
-System_Boundary(tutumuch, "Tutu Much") {
-  Container(web, "Tutu Much Web", "Angular", "@tutumuch/listings SellPage with tm-photo-uploader; @tutumuch/api PhotosApi")
-  Container(api, "Tutu Much API", "ASP.NET Core", "Validates, strips and re-encodes uploads; attaches photos to listings; serves versions")
-  ContainerDb(db, "Tutu Much database", "SQL Server", "ListingPhotos, ListingPhotoVersions")
+System_Boundary(tutumuch, "TuTuMuch") {
+  Container(web, "TuTuMuch Web", "Angular", "@tutumuch/listings SellPage with tl-photo-uploader; @tutumuch/api PhotosApi")
+  Container(api, "TuTuMuch API", "ASP.NET Core", "Validates, strips and re-encodes uploads; attaches photos to listings; serves versions")
+  ContainerDb(db, "TuTuMuch database", "SQL Server", "ListingPhotos, ListingPhotoVersions")
   ContainerDb(storage, "Photo storage", "IPhotoStorage (file system now, object storage later)", "Private originals; public content-addressed versions")
 }
 

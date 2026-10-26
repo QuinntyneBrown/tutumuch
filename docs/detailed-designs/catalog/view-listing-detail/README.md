@@ -2,7 +2,7 @@
 
 ## Overview
 
-Every item for sale on Tutu Much has its own *listing detail page*, reached from a catalog card, a member profile, an email or a shared link. The page gives a would-be buyer everything needed to decide: photos, title, price, shipping cost, total, size, category, brand, condition, description, date listed and the seller's reputation (`L2-025`). It is also where the purchase starts, through the "Buy now" action that leads to checkout.
+Every item for sale on TuTuMuch has its own *listing detail page*, reached from a catalog card, a member profile, an email or a shared link. The page gives a would-be buyer everything needed to decide: photos, title, price, shipping cost, total, size, category, brand, condition, description, date listed and the seller's reputation (`L2-025`). It is also where the purchase starts, through the "Buy now" action that leads to checkout.
 
 Each listing has a stable, shareable URL of the form `/items/{reference}`, where the *listing reference* is the short public identifier the listings subsystem assigns at creation (for example `L-20931`). The URL keeps working for the life of the listing, including after the item is sold.
 
@@ -27,15 +27,15 @@ The `Listing` entity, editing and withdrawing belong to the [listings](../../lis
 
 Screens and copy come from `docs/mocks/pages/listing-detail/` (states `default`, `guest`, `own`, `new-seller`, `reserved`, `sold`, `loading`, `error`, `unavailable`). The guest return flow ends on `docs/mocks/pages/sign-in/return.html`.
 
-### Frontend — `Tutu Much Web`, feature library `@tutumuch/catalog` (`src/frontend/projects/catalog/src/lib/listing-detail/`)
+### Frontend — `TuTuMuch Web`, feature library `@tutumuch/catalog` (`src/frontend/projects/catalog/src/lib/listing-detail/`)
 
 - **Route** — `items/:reference` in the catalog library's `routes`, no guard, component `ListingDetailPage`. The reference arrives as a component input (router input binding), so the skeleton paints at once.
-- **`ListingDetailPage`** — calls `ListingDetailStore.load(reference)`, sets the document title to "{title} · {brand} · Tutu Much" and renders one view:
+- **`ListingDetailPage`** — calls `ListingDetailStore.load(reference)`, sets the document title to "{title} · {brand} · TuTuMuch" and renders one view:
   - `loading` — skeleton matching the gallery and info columns (`aria-busy="true"`, label "Loading listing", visually hidden heading "Loading listing").
-  - `loaded` — breadcrumb "Shop / {category} / {subcategory}", `tm-gallery`, the info column, and for a Sold listing the section "More girls' clothing" with up to 4 cards in `tm-listing-grid`.
-  - `unavailable` — API returned 404: `tm-center-state` with code "404", heading "This item isn’t available", text "It may have been sold or taken down.", primary action "Shop similar items" to `/`.
+  - `loaded` — breadcrumb "Shop / {category} / {subcategory}", `tl-gallery`, the info column, and for a Sold listing the section "More girls' clothing" with up to 4 cards in `tl-listing-grid`.
+  - `unavailable` — API returned 404: `tl-center-state` with code "404", heading "This item isn’t available", text "It may have been sold or taken down.", primary action "Shop similar items" to `/`.
   - `error` — any other failure: heading "Couldn’t load this item", text "It’s us, not you. Try again in a moment.", "Ref {correlationId}", actions "Try again" and "Back to shop".
-- **Info column** (local markup on the kit classes) — "Reserved" or "Sold" stamp; brand eyebrow; title as `<h1>`; `tm-size-tag` and condition; price "$85.00" and the line "{shipping} · {total} total before tax", where shipping reads "$9.00 shipping" or "Free shipping" when 0 (`L2-018`); the buy bar; for Reserved the warning `tm-alert` "In someone’s checkout" with "If they don’t finish within 10 minutes, it’s back on sale."; the flaws block "Flaws: {flaws}" for Used - Fair; the description; the facts "Size" ("Girls'"), "Category" ("Dresses · Tutus"), "Condition", "Listed" (relative time inside `<time datetime>`); and `tm-seller-summary`. All listing text is bound as text and never as HTML (`L2-015`).
+- **Info column** (local markup on the kit classes) — "Reserved" or "Sold" stamp; brand eyebrow; title as `<h1>`; `tl-size-tag` and condition; price "$85.00" and the line "{shipping} · {total} total before tax", where shipping reads "$9.00 shipping" or "Free shipping" when 0 (`L2-018`); the buy bar; for Reserved the warning `tl-alert` "In someone’s checkout" with "If they don’t finish within 10 minutes, it’s back on sale."; the flaws block "Flaws: {flaws}" for Used - Fair; the description; the facts "Size" ("Girls'"), "Category" ("Dresses · Tutus"), "Condition", "Listed" (relative time inside `<time datetime>`); and `tl-seller-summary`. All listing text is bound as text and never as HTML (`L2-015`).
 - **`ListingDetailStore`** — signal store: `listing`, `view`, `errorRef`, `similar`, and the computed `primaryAction: 'buy' | 'sign-in-to-buy' | 'manage' | 'none'`:
 
   | `status` | `viewer.relation` | `primaryAction` |
@@ -46,9 +46,9 @@ Screens and copy come from `docs/mocks/pages/listing-detail/` (states `default`,
   | `Reserved`, `Sold`, `Draft`, `Removed` | any | `none` |
 
   For a Sold listing it calls `CatalogApi.listings(1, category)` and keeps up to 4 cards other than the listing itself.
-- **`tm-gallery`** (`@tutumuch/components`) — a horizontal CSS scroll-snap track holding every photo (WebP and JPEG `srcset`, `sizes="(min-width: 992px) 50vw, 100vw"`, the first eager with `fetchpriority="high"`), dots below 992 px, and thumbnail buttons labelled "Show photo {i} of {n}" with `aria-current` on the selected one. Selecting a thumbnail scrolls the track to that photo (`L2-025` acceptance criterion 4); a swipe updates the selection from the scroll position (`L2-063`). Left and Right arrows move between thumbnails. Thumbnails are at least 44 × 44 px.
-- **`tm-seller-summary`** (`@tutumuch/components`) — avatar with initials, display name linking to `/members/{displayName}`, "{n} sales" and the rating "4.9 (128 reviews)", or the badge "New seller" when `completedSalesCount` is 0 (`L2-025` acceptance criterion 5).
-- **`tm-buy-bar`** (`@tutumuch/components`) — the total with caption "incl. shipping" and the projected actions:
+- **`tl-gallery`** (`@tutumuch/components`) — a horizontal CSS scroll-snap track holding every photo (WebP and JPEG `srcset`, `sizes="(min-width: 992px) 50vw, 100vw"`, the first eager with `fetchpriority="high"`), dots below 992 px, and thumbnail buttons labelled "Show photo {i} of {n}" with `aria-current` on the selected one. Selecting a thumbnail scrolls the track to that photo (`L2-025` acceptance criterion 4); a swipe updates the selection from the scroll position (`L2-063`). Left and Right arrows move between thumbnails. Thumbnails are at least 44 × 44 px.
+- **`tl-seller-summary`** (`@tutumuch/components`) — avatar with initials, display name linking to `/members/{displayName}`, "{n} sales" and the rating "4.9 (128 reviews)", or the badge "New seller" when `completedSalesCount` is 0 (`L2-025` acceptance criterion 5).
+- **`tl-buy-bar`** (`@tutumuch/components`) — the total with caption "incl. shipping" and the projected actions:
   - `buy` — primary "Buy now" linking to `/checkout/{reference}` (orders subsystem).
   - `sign-in-to-buy` — primary "Buy now" linking to `/sign-in?returnUrl=%2Fitems%2F{reference}`. The accounts sign-in page shows "Sign in to buy" with "You’ll go straight back to the item." and, after sign-in, navigates to the validated relative `returnUrl` (`L2-026` acceptance criterion 3).
   - `manage` — primary "Edit listing" linking to `/items/{reference}/edit`. "Withdraw" and its dialog are added by `listings/edit-and-withdraw-listing`, which also builds the edit route.
@@ -57,7 +57,7 @@ Screens and copy come from `docs/mocks/pages/listing-detail/` (states `default`,
 - **`CatalogApi.listing(reference)`** (`@tutumuch/api`) — `GET /api/catalog/listings/{reference}`; the session interceptor sends credentials, so a signed-in viewer is recognised.
 - **Layout** — `.detail` uses one column below 992 px (gallery above the info) and two columns from 992 px with the gallery on the left (`L2-063`).
 
-### API — `TutuMuch.Api`
+### API — `TuTuMuch.Api`
 
 - `GET /api/catalog/listings/{reference}` on `CatalogController`, `[AllowAnonymous]`. The JWT bearer scheme authenticates the access-token cookie when present, so the handler knows the viewer; a missing or expired token means a visitor rather than 401.
   - `200 OK` `ListingDetailDto` with `Cache-Control: private, no-store` (the body depends on the viewer).
@@ -65,16 +65,16 @@ Screens and copy come from `docs/mocks/pages/listing-detail/` (states `default`,
   - `500` problem details with correlation ID (`L2-068`).
 - The SPA document for `/items/{reference}` is served by the static host with status 200; returning HTTP 404 on the document itself needs server-side rendering and is not built.
 
-### Application and domain — `TutuMuch.Application`, `TutuMuch.Domain`
+### Application and domain — `TuTuMuch.Application`, `TuTuMuch.Domain`
 
 - **`GetListingDetailQuery`** — record `(string Reference, Guid? ViewerId)`; the controller fills `ViewerId` from the authenticated member, or null.
-- **`GetListingDetailQueryHandler`** — reads through `ITutuMuchDbContext` with `AsNoTracking()` (as browse-catalog, [ADR catalog/0001](../../../adr/catalog/0001-catalog-reads-through-the-db-context-port.md)): the listing by its unique `Reference`, applies `ListingDetailVisibility`, then the seller's display name and the photos in position order; computes the viewer relation and `total = price + shippingCost` in `decimal`; maps photos with `CatalogPhotos.ToDto`, shared with browse-catalog.
+- **`GetListingDetailQueryHandler`** — reads through `ITuTuMuchDbContext` with `AsNoTracking()` (as browse-catalog, [ADR catalog/0001](../../../adr/catalog/0001-catalog-reads-through-the-db-context-port.md)): the listing by its unique `Reference`, applies `ListingDetailVisibility`, then the seller's display name and the photos in position order; computes the viewer relation and `total = price + shippingCost` in `decimal`; maps photos with `CatalogPhotos.ToDto`, shared with browse-catalog.
 - **`ListingDetailVisibility`** (domain) — `CanView(status, sellerId, viewerId)`: true for Active, Reserved and Sold; true for Draft and Removed only when `viewerId == sellerId`.
 - **`ListingDetailDto`** — `{ id, reference, title, brand, category, subcategory, sizeLabel, condition, flaws, description, price, shippingCost, total, status, publishedAt, photos: CardPhotoDto[] (cover first), seller: SellerSummaryDto, viewer: { relation: "Anonymous" | "Seller" | "OtherMember" } }`. Money values are decimal strings (`"85.00"`, `"9.00"`, `"94.00"`). No email address, phone number, real name or street address is present (`L2-054`).
 - **`SellerSummaryDto`** — `{ displayName, completedSalesCount, ratingAverage?, publishedReviewCount }`. Completed sales are recorded by `orders/complete-order` and ratings by reviews, neither built yet, so the handler returns 0, null and 0 and every seller shows "New seller" ([ADR catalog/0002](../../../adr/catalog/0002-seller-reputation-defaults-until-orders-and-reviews.md)). The public location and avatar are added with `reviews/view-member-profile`.
 - **Purchase guard** — refusing a member's checkout of their own listing with HTTP 422 `CANNOT_BUY_OWN_LISTING` (`L2-026` acceptance criterion 2) is built by `orders/checkout-and-pay`, the first feature with a checkout request to refuse. This feature only keeps "Buy now" away from the seller. The Reserved conflict (HTTP 409, `L2-028`) and reservation expiry are designed there too; until then a Reserved listing shows as Reserved.
 
-### Infrastructure and data — `TutuMuch.Infrastructure`, `Tutu Much database`
+### Infrastructure and data — `TuTuMuch.Infrastructure`, `TuTuMuch database`
 
 - No new tables, columns, indexes or migrations. The read uses the unique index on `Listings (Reference)` from `listings/create-listing` and the existing `ListingPhotos` and `Members` tables.
 
@@ -108,25 +108,25 @@ This feature realizes the display side of `L2-028` (the "Reserved" label and the
 
 ### System context
 
-Visitors and members view listings in Tutu Much and load the photos from the CDN. Buying leaves this feature for checkout, which talks to the payment provider.
+Visitors and members view listings in TuTuMuch and load the photos from the CDN. Buying leaves this feature for checkout, which talks to the payment provider.
 
 ![C4 system context for viewing a listing's detail](diagrams/c4-context.png)
 
 ### Containers
 
-`Tutu Much Web` requests the listing from `Tutu Much API`, sending the session cookie when one exists. `Tutu Much API` reads the listing, photos and seller reputation from the `Tutu Much database`.
+`TuTuMuch Web` requests the listing from `TuTuMuch API`, sending the session cookie when one exists. `TuTuMuch API` reads the listing, photos and seller reputation from the `TuTuMuch database`.
 
 ![C4 container view for viewing a listing's detail](diagrams/c4-container.png)
 
 ### Components
 
-`ListingDetailPage` in `@tutumuch/catalog` composes `tm-gallery`, `tm-seller-summary` and `tm-buy-bar` from `@tutumuch/components` with `ListingDetailStore`, which calls `CatalogApi` in `@tutumuch/api`. `GetListingDetailQueryHandler` applies `ListingDetailVisibility` and the viewer relation, reading through `ITutuMuchDbContext`.
+`ListingDetailPage` in `@tutumuch/catalog` composes `tl-gallery`, `tl-seller-summary` and `tl-buy-bar` from `@tutumuch/components` with `ListingDetailStore`, which calls `CatalogApi` in `@tutumuch/api`. `GetListingDetailQueryHandler` applies `ListingDetailVisibility` and the viewer relation, reading through `ITuTuMuchDbContext`.
 
 ![C4 component view for viewing a listing's detail](diagrams/c4-component.png)
 
 ### Class structure
 
-`ListingDetailDto` composes the photos, `SellerSummaryDto` and `ViewerDto`; `GetListingDetailQueryHandler` depends on `ITutuMuchDbContext`, `ListingDetailVisibility` and `CatalogPhotos`.
+`ListingDetailDto` composes the photos, `SellerSummaryDto` and `ViewerDto`; `GetListingDetailQueryHandler` depends on `ITuTuMuchDbContext`, `ListingDetailVisibility` and `CatalogPhotos`.
 
 ![Class diagram for viewing a listing's detail](diagrams/class-structure.png)
 

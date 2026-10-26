@@ -15,15 +15,15 @@ skinparam package {
   BackgroundColor #F9FAFB
 }
 actor "Member" as actor
-box "Frontend — Tutu Much Web application" #E0F2FE
+box "Frontend — TuTuMuch Web application" #E0F2FE
   participant "ConnectivityService" as conn
   participant "SystemBannerService" as banner
   participant "Feature page" as page
   participant "ApiErrorInterceptor" as int
   participant "Router" as router
 end box
-box "Backend — Tutu Much API application" #D1FADF
-  participant "Tutu Much API" as api
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "TuTuMuch API" as api
 end box
 conn -> conn : window 'offline' event
 conn -> banner : Show warning "You’re offline. We’ll retry when you’re back." (no dismiss)

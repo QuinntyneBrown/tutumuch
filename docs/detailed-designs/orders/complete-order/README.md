@@ -2,10 +2,10 @@
 
 ## Overview
 
-Tutu Much is a marketplace for new and used girls' clothing. An order
+TuTuMuch is a marketplace for new and used girls' clothing. An order
 is *complete* when the buyer has the item and the sale is final: the seller is paid
 and both parties may review each other. This feature moves an order into the
-`Completed` status in two ways. The buyer can confirm receipt, or Tutu Much can complete
+`Completed` status in two ways. The buyer can confirm receipt, or TuTuMuch can complete
 the order automatically 3 days after delivery when the buyer has not reported a
 problem.
 
@@ -32,10 +32,10 @@ Terms used in this design:
   - `delivered` — "Completes automatically on {date} unless you report a problem.", from `autoCompletesAt`.
   - `completed` — heading "Completed", the full timeline and no actions. Review authoring is deferred ([ADR 0001](../../../adr/general/0001-defer-moderation-reviews-and-data-export.md)), so no review panel is shown.
   - "Report a problem" sits beside "I received it" while `canReportProblem`; resolve-order-problems builds its dialog.
-- **`ConfirmReceiptDialog`** (`confirm-receipt/`, mock `docs/mocks/dialogs/confirm-receipt/`) — `tm-dialog` with `size="sm"`, titled "Got it and all good?", showing the item in `tm-item-row`. The description reads "This completes the order and pays {seller}. You can't report a problem afterwards." Buttons are "Not yet" and primary "Yes, complete order". States: `default`; `busy` (primary `aria-busy`, "Not yet" disabled); `failed` ("That didn't go through", primary becomes "Try again"). It has no `invalid` state because it has no inputs. It closes with the completed order, which the page then shows.
+- **`ConfirmReceiptDialog`** (`confirm-receipt/`, mock `docs/mocks/dialogs/confirm-receipt/`) — `tl-dialog` with `size="sm"`, titled "Got it and all good?", showing the item in `tl-item-row`. The description reads "This completes the order and pays {seller}. You can't report a problem afterwards." Buttons are "Not yet" and primary "Yes, complete order". States: `default`; `busy` (primary `aria-busy`, "Not yet" disabled); `failed` ("That didn't go through", primary becomes "Try again"). It has no `invalid` state because it has no inputs. It closes with the completed order, which the page then shows.
 - **`OrdersApi`** (`@tutumuch/api`, `src/lib/orders/orders-api.ts`) — `confirmReceipt(orderId)` returns `Purchase`. `Purchase` gains `autoCompletesAt`.
 
-### API (`TutuMuch.Api`)
+### API (`TuTuMuch.Api`)
 
 - **`OrdersController`**
   - `POST /api/orders/{id}/receipt` — no body. Policy `VerifiedMember`. Responses: `200` `PurchaseDto` with `status: "Completed"`; `401`; `404` `ORDER_NOT_FOUND` when the caller is not the buyer (`L2-010`); `409` `ORDER_INVALID_TRANSITION` when the order is not Shipped or Delivered, or its status changed between the read and the write.
@@ -52,7 +52,7 @@ Terms used in this design:
 - The open-problem guard (`L2-034` criterion 3): the completion job skips Delivered orders with an open `OrderProblem`, and confirming receipt answers `409` `ORDER_PROBLEM_OPEN` (resolve-order-problems).
 - No completion email is sent: `L2-042` does not list one.
 
-### Worker (`TutuMuch.Worker`)
+### Worker (`TuTuMuch.Worker`)
 
 - **`OrderCompletionJob`** — runs every `Orders:CompletionJobInterval` (5 minutes) and sends `CompleteDeliveredOrdersCommand` in its own scope. The mocks count calendar days: delivered Sat 24 Oct gives completion Tue 27 Oct.
 
@@ -69,9 +69,9 @@ One migration (`AddCompleteOrder`) adds the nullable `Orders.CompletedAt` column
 
 ### Testing
 
-- `tests/TutuMuch.Domain.Tests/OrderTests.cs` — confirm receipt from Shipped and Delivered, refusal otherwise, and the 3-day window.
-- `tests/TutuMuch.Api.Tests/CompleteOrderTests.cs` — the endpoint, `autoCompletesAt` and the completion command on SQLite in memory with a fake clock; a recording `OrderCompleted` handler stands in for seller-payouts.
-- `tests/TutuMuch.Worker.Tests/OrderCompletionJobTests.cs` — each pass sends the command.
+- `tests/TuTuMuch.Domain.Tests/OrderTests.cs` — confirm receipt from Shipped and Delivered, refusal otherwise, and the 3-day window.
+- `tests/TuTuMuch.Api.Tests/CompleteOrderTests.cs` — the endpoint, `autoCompletesAt` and the completion command on SQLite in memory with a fake clock; a recording `OrderCompleted` handler stands in for seller-payouts.
+- `tests/TuTuMuch.Worker.Tests/OrderCompletionJobTests.cs` — each pass sends the command.
 - `src/frontend/e2e/tests/complete-order.spec.ts` — the page and the dialog against `page.route` fixtures.
 
 ## Requirements
@@ -84,14 +84,14 @@ One migration (`AddCompleteOrder`) adds the nullable `Orders.CompletedAt` column
 
 ### System context
 
-The buyer confirms receipt through Tutu Much. Completion makes the seller's payout
+The buyer confirms receipt through TuTuMuch. Completion makes the seller's payout
 releasable; the release itself belongs to seller-payouts.
 
 ![C4 system context for completing an order](diagrams/c4-context.png)
 
 ### Containers
 
-`Tutu Much API` handles the buyer's confirmation. `Tutu Much Worker` runs auto-completion.
+`TuTuMuch API` handles the buyer's confirmation. `TuTuMuch Worker` runs auto-completion.
 
 ![C4 container view for completing an order](diagrams/c4-container.png)
 

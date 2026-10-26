@@ -3,7 +3,7 @@
 ## Basis
 
 The hours assume an intermediate ASP.NET Core/C# developer who does not yet know
-the Tutu Much codebase. They cover implementation, automated tests and review fixes, and
+the TuTuMuch codebase. They cover implementation, automated tests and review fixes, and
 exclude requirements, design and mock work. They assume the rate-limit store of
 harden-http-and-api and the token store of accounts exist. Tuning queries is
 counted in the owning feature's estimate. No load or scale tests

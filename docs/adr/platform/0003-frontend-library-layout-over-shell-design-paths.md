@@ -17,7 +17,7 @@ per area (`api`, `components` and six feature libraries).
 The `AGENTS.md` layout wins. Shell components, routes and `AppComponent` live in
 `projects/tutumuch/src/app/`. Reusable design-system pieces, including the skip link, top
 bar, footer, toast region, sheets, dialogs and form fields, live in
-`projects/components/` as `tm-*` components. HTTP access, auth state and interceptors live
+`projects/components/` as `tl-*` components. HTTP access, auth state and interceptors live
 in `projects/api/`. A path in an older design is read as the matching library; the shell
 design and the designs README were updated to say so.
 

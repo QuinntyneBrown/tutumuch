@@ -2,7 +2,7 @@
 
 ## Overview
 
-When something fails in Tutu Much, two audiences need to know. A visitor needs a
+When something fails in TuTuMuch, two audiences need to know. A visitor needs a
 plain message, a way to retry and a reference to quote to support. An operator
 needs to find every log line for that failure, see whether it is one request or a
 trend, and be alerted before members notice. This feature, part of the `platform`
@@ -10,7 +10,7 @@ subsystem, provides both.
 
 Terms used below:
 
-- **problem details** — standard JSON error body defined by RFC 9457, with `type`, `title`, `status`, `detail` and `instance`, which Tutu Much extends with `code`, `correlationId` and, for validation failures, `errors` (`L2-068`)
+- **problem details** — standard JSON error body defined by RFC 9457, with `type`, `title`, `status`, `detail` and `instance`, which TuTuMuch extends with `code`, `correlationId` and, for validation failures, `errors` (`L2-068`)
 - **error code** — stable, lower-snake-case identifier of an error condition that clients may branch on, for example `validation_failed`; it does not change when the message wording changes
 - **correlation ID** — identifier assigned to each incoming request, returned in the `X-Correlation-ID` header and the problem details body, attached to every log entry the request causes, and shown to the visitor as "Ref …" (`L2-068`, `L2-069`)
 - **structured log** — log entry written as JSON properties rather than free text, so it can be searched by field
@@ -18,7 +18,7 @@ Terms used below:
 - **liveness** — whether the API process is running and able to answer; a failing liveness check causes a restart (`L2-070`)
 - **readiness** — whether the API can serve traffic, which requires the database and photo storage to be reachable; a failing readiness check removes the instance from the load balancer (`L2-070`)
 
-Every feature in Tutu Much raises errors through the types defined here, and every
+Every feature in TuTuMuch raises errors through the types defined here, and every
 frontend page renders failures through the components defined here. The
 load balancer of [keep-available-and-recoverable](../keep-available-and-recoverable/README.md)
 consumes the readiness endpoint.
@@ -86,7 +86,7 @@ Source mocks: `docs/mocks/pages/server-error/`, `docs/mocks/pages/not-found/`,
   reference. Whether client exceptions are also reported to the API is
   `<TO SUPPLY>`.
 
-### API (`TutuMuch.Api`)
+### API (`TuTuMuch.Api`)
 
 - **`CorrelationIdMiddleware`** — first middleware after forwarded headers. It
   accepts an incoming `X-Correlation-ID` that matches `^[a-f0-9-]{1,64}$`,
@@ -100,7 +100,7 @@ Source mocks: `docs/mocks/pages/server-error/`, `docs/mocks/pages/not-found/`,
   payment, email, breached-password and photo storage clients; forwards
   `X-Correlation-ID` and logs the outbound call inside the scope.
 - **Outbox propagation** — `OutboxMessages.CorrelationId nvarchar(64)` is
-  written with each message. `Tutu Much Worker` opens a logging scope with that ID
+  written with each message. `TuTuMuch Worker` opens a logging scope with that ID
   before dispatching, so email and payout logs join the originating request.
 - **`ProblemDetailsExceptionHandler : IExceptionHandler`** with
   `AddProblemDetails(o => o.CustomizeProblemDetails = …)` — every error
@@ -122,13 +122,13 @@ Source mocks: `docs/mocks/pages/server-error/`, `docs/mocks/pages/not-found/`,
   | Body over limit | 413 | `request_too_large` | "The request is too large." |
   | `DomainRuleException(code, message)` | 422 | rule code from the feature | rule message, plus `errors` when tied to a field |
   | Rate limit | 429 | `rate_limited` | "Too many requests. Try again later." |
-  | Maintenance mode | 503 | `maintenance` | "Tutu Much is down for planned maintenance." |
+  | Maintenance mode | 503 | `maintenance` | "TuTuMuch is down for planned maintenance." |
   | Any other exception | 500 | `internal_error` | "Something went wrong." |
 
   `errors` is an object of field name (camelCase JSON path) → array of
   messages. 5xx responses log at `Error` with the exception; 4xx log at
   `Information` without it.
-- **`ErrorCodes`** — static catalogue in `TutuMuch.Application/Errors` of every
+- **`ErrorCodes`** — static catalogue in `TuTuMuch.Application/Errors` of every
   platform code above. Feature codes are added by their features; an
   architecture test asserts codes are unique and lower snake case.
 - **Health endpoints** — `MapHealthChecks("/health/live", Predicate = _ =>
@@ -144,7 +144,7 @@ Source mocks: `docs/mocks/pages/server-error/`, `docs/mocks/pages/not-found/`,
   Redis is not a readiness dependency; its failure is visible through metrics
   and alerts.
 
-### Logging (`TutuMuch.Api`, `TutuMuch.Worker`)
+### Logging (`TuTuMuch.Api`, `TuTuMuch.Worker`)
 
 - **Serilog** — `UseSerilog` with `RenderedCompactJsonFormatter` to stdout,
   shipped by the hosting platform to the log store (`<TO SUPPLY>`, retention
@@ -175,8 +175,8 @@ Source mocks: `docs/mocks/pages/server-error/`, `docs/mocks/pages/not-found/`,
   `HttpClient`, runtime and EF Core instrumentation, exported through the
   Prometheus exporter at `GET /metrics` on a separate management port
   (`Management:Port`, `<TO SUPPLY>`) that the load balancer does not expose.
-  `Tutu Much Worker` exposes the same on its own port.
-- **Metric set** (`Meter("TutuMuch")` plus built-ins):
+  `TuTuMuch Worker` exposes the same on its own port.
+- **Metric set** (`Meter("TuTuMuch")` plus built-ins):
 
   | Metric | Type | Tags | Covers |
   |--------|------|------|--------|
@@ -189,7 +189,7 @@ Source mocks: `docs/mocks/pages/server-error/`, `docs/mocks/pages/not-found/`,
 
   `tutumuch.endpoint_kind` comes from `EndpointKindAttribute`
   (meet-performance-and-scale). Orders handlers increment the checkout and
-  webhook counters; `Tutu Much Worker` jobs increment the job counters through
+  webhook counters; `TuTuMuch Worker` jobs increment the job counters through
   `JobMetrics`.
 - **Alert rules** (`deploy/monitoring/alerts.yml`, Prometheus rule format; the
   monitoring product is `<TO SUPPLY>`), routed to the on-call channel
@@ -219,21 +219,21 @@ Source mocks: `docs/mocks/pages/server-error/`, `docs/mocks/pages/not-found/`,
 ### System context
 
 Visitors see friendly errors with a reference. Operators search logs, watch
-metrics and receive alerts from the monitoring system, which scrapes Tutu Much.
+metrics and receive alerts from the monitoring system, which scrapes TuTuMuch.
 
 ![C4 system context for error reporting and observability](diagrams/c4-context.png)
 
 ### Containers
 
-`Tutu Much API` and `Tutu Much Worker` write JSON logs to stdout and expose metrics on a
+`TuTuMuch API` and `TuTuMuch Worker` write JSON logs to stdout and expose metrics on a
 management port. The load balancer probes the health endpoints.
 
 ![C4 container view for error reporting and observability](diagrams/c4-container.png)
 
 ### Components
 
-In `Tutu Much Web`, the error interceptor feeds the error pages, toasts and the
-offline banner. In `Tutu Much API`, the correlation ID middleware, the problem details
+In `TuTuMuch Web`, the error interceptor feeds the error pages, toasts and the
+offline banner. In `TuTuMuch API`, the correlation ID middleware, the problem details
 handler, the redacting logger, the metrics meter and the health checks work
 together.
 
@@ -242,7 +242,7 @@ together.
 ### Class structure
 
 `ApiErrorInterceptor` produces `AppError`. `ProblemDetailsExceptionHandler`
-maps application exceptions to `TutuMuchProblemDetails`, and the health checks
+maps application exceptions to `TuTuMuchProblemDetails`, and the health checks
 implement `IHealthCheck`.
 
 ![Class diagram for error reporting and observability](diagrams/class-structure.png)
@@ -271,7 +271,7 @@ connection returns, rather than a generic error.
 ### Behaviour — correlated logging across a request
 
 One correlation ID follows the request through the controller, handler,
-database, payment provider call and outbox message into `Tutu Much Worker`, and
+database, payment provider call and outbox message into `TuTuMuch Worker`, and
 redaction removes sensitive values.
 
 ![Sequence diagram for correlated logging](diagrams/sequence-correlated-logging.png)

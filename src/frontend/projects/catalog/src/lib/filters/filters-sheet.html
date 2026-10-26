@@ -1,10 +1,10 @@
-<tm-sheet heading="Filters" closeLabel="Close filters" [side]="true">
-  <tm-error-summary heading="Check the price range" [errors]="summary()" />
-  <tm-filter-form idPrefix="sheet" [query]="draft()" [brands]="data.brands" (changed)="edit($event)" />
-  <button footer tmButton type="button" (click)="clear()">Clear</button>
+<tl-sheet heading="Filters" closeLabel="Close filters" [side]="true">
+  <tl-error-summary heading="Check the price range" [errors]="summary()" />
+  <tl-filter-form idPrefix="sheet" [query]="draft()" [brands]="data.brands" (changed)="edit($event)" />
+  <button footer tlButton type="button" (click)="clear()">Clear</button>
   <button
     footer
-    tmButton="primary"
+    tlButton="primary"
     type="button"
     data-autofocus
     [disabled]="!!error()"
@@ -13,4 +13,4 @@
   >
     {{ label() }}
   </button>
-</tm-sheet>
+</tl-sheet>

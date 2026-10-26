@@ -14,7 +14,7 @@ export interface WithdrawListingData {
  * live and offers another try. Closes with true once withdrawn.
  */
 @Component({
-  selector: 'tm-withdraw-listing-dialog',
+  selector: 'tl-withdraw-listing-dialog',
   imports: [AlertComponent, ButtonDirective, DialogComponent],
   templateUrl: './withdraw-listing-dialog.html',
   styleUrl: './withdraw-listing-dialog.css',

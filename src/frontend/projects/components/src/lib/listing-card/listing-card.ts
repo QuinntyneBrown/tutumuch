@@ -31,7 +31,7 @@ export interface ListingCardView {
  * as text, never as HTML.
  */
 @Component({
-  selector: 'tm-listing-card',
+  selector: 'tl-listing-card',
   imports: [RouterLink, SizeTagComponent],
   templateUrl: './listing-card.html',
   styleUrl: './listing-card.css',

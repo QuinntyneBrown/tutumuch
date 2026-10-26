@@ -26,7 +26,7 @@ const COUNT_DELAY_MS = 300;
  * draft without closing, and apply closes with the draft. The keyword and sort are kept.
  */
 @Component({
-  selector: 'tm-filters-sheet',
+  selector: 'tl-filters-sheet',
   imports: [ButtonDirective, ErrorSummaryComponent, FilterForm, SheetComponent],
   templateUrl: './filters-sheet.html',
   styleUrl: './filters-sheet.css',

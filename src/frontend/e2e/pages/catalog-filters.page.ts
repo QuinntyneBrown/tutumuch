@@ -43,7 +43,7 @@ export class CatalogFilters {
   readonly clearSearch: Locator;
 
   constructor(private readonly page: Page) {
-    this.searchBox = page.getByRole('searchbox', { name: 'Search Tutu Much' });
+    this.searchBox = page.getByRole('searchbox', { name: 'Search TuTuMuch' });
     this.eyebrow = page.locator('main .eyebrow');
     this.sidebarRoot = page.getByRole('complementary', { name: 'Filters' });
     this.sidebar = new FilterForm(this.sidebarRoot);

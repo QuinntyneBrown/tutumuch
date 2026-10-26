@@ -17,22 +17,22 @@ skinparam package {
 skinparam sequenceMessageAlign left
 skinparam maxMessageSize 260
 actor "Seller" as actor
-box "Frontend — Tutu Much Web application" #E0F2FE
+box "Frontend — TuTuMuch Web application" #E0F2FE
   participant "SaleDetailPage" as page
   participant "CancelOrderDialog" as dlg
   participant "OrdersApi (@tutumuch/api)" as client
 end box
-box "Backend — Tutu Much API application (TutuMuch.Api)" #D1FADF
+box "Backend — TuTuMuch API application (TuTuMuch.Api)" #D1FADF
   participant "OrdersController" as ctrl
 end box
-box "Backend — TutuMuch.Application and TutuMuch.Domain" #ECFDF3
+box "Backend — TuTuMuch.Application and TuTuMuch.Domain" #ECFDF3
   participant "CancelOrderCommandHandler" as h
   participant "Order" as order
   participant "OrderCancellation" as rr
   participant "IPaymentProvider" as pay
 end box
-box "Backend — TutuMuch.Infrastructure" #FFF4E5
-  database "Tutu Much database" as db
+box "Backend — TuTuMuch.Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
 end box
 actor -> page : Choose "Cancel order"
 page -> dlg : Open "Cancel this sale?" with refund amount

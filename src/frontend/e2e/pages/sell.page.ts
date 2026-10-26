@@ -35,7 +35,7 @@ export class SellPage {
     this.photoTiles = page.locator('.uploader__tile');
     this.rejectedTiles = page.locator('.uploader__rejected');
     this.photoError = page.locator('#photos-error');
-    this.photoAnnouncement = page.locator('tm-photo-uploader [aria-live="polite"]');
+    this.photoAnnouncement = page.locator('tl-photo-uploader [aria-live="polite"]');
     this.category = page.getByLabel('Category');
     this.type = page.getByLabel('Type');
     this.fixedSize = page.locator('#size');

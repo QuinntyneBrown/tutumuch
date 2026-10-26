@@ -29,7 +29,7 @@ export interface AddTrackingData {
  * inputs and offers "Try again". Closes with the shipped sale.
  */
 @Component({
-  selector: 'tm-add-tracking-dialog',
+  selector: 'tl-add-tracking-dialog',
   imports: [AlertComponent, ButtonDirective, DialogComponent, FormFieldComponent],
   templateUrl: './add-tracking-dialog.html',
   styleUrl: './add-tracking-dialog.css',

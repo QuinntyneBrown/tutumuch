@@ -13,7 +13,7 @@ export interface CurrentMember {
 
 /**
  * Session state of the app (L2-008). The session lives in HttpOnly cookies, so the app only
- * knows who is signed in by asking Tutu Much API; nothing is kept in web storage.
+ * knows who is signed in by asking TuTuMuch API; nothing is kept in web storage.
  */
 @Injectable({ providedIn: 'root' })
 export class AuthState {
@@ -38,7 +38,7 @@ export class AuthState {
     return this.loading;
   }
 
-  /** Asks Tutu Much API again, for example after the member verified their email. */
+  /** Asks TuTuMuch API again, for example after the member verified their email. */
   reload(): Promise<void> {
     this.loading = null;
     return this.load();

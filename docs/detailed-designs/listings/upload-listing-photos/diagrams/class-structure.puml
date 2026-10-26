@@ -11,7 +11,7 @@ skinparam class {
 }
 title Class structure — Upload listing photos
 
-package "TutuMuch.Domain" {
+package "TuTuMuch.Domain" {
   enum PhotoFormat {
     WebP
     Jpeg
@@ -45,7 +45,7 @@ package "TutuMuch.Domain" {
   }
 }
 
-package "TutuMuch.Application" {
+package "TuTuMuch.Application" {
   class UploadListingPhotoCommand <<record>> {
     +Guid OwnerId
     +byte[] Content
@@ -85,7 +85,7 @@ package "TutuMuch.Application" {
   }
 }
 
-package "TutuMuch.Infrastructure" {
+package "TuTuMuch.Infrastructure" {
   class SkiaImageInspector
   class SkiaPhotoProcessor
   class FileSystemPhotoStorage

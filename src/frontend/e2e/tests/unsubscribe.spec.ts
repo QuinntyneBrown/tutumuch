@@ -1,7 +1,7 @@
 // Acceptance Test
 // Traces to: L2-043
 // Description: The unsubscribe link in a marketing email opens /emails/unsubscribe, which posts
-// the token once from script, without signing in, and confirms that news from Tutu Much stopped while
+// the token once from script, without signing in, and confirms that news from TuTuMuch stopped while
 // security and order emails continue. An invalid link says so and points to the email settings;
 // a failure shows the reference and "Try again".
 
@@ -24,7 +24,7 @@ test.describe('one-click unsubscribe', () => {
 
     await expect(unsubscribe.heading).toHaveText('You’re unsubscribed');
     await expect(unsubscribe.lead).toHaveText(
-      'You won’t get news from Tutu Much any more. Account security and order emails still arrive.',
+      'You won’t get news from TuTuMuch any more. Account security and order emails still arrive.',
     );
     await expect(unsubscribe.manageEmails).toHaveAttribute('href', '/account/emails');
     expect(posts).toHaveLength(1);
@@ -42,7 +42,7 @@ test.describe('one-click unsubscribe', () => {
 
     await expect(unsubscribe.heading).toHaveText('This link doesn’t work');
     await expect(unsubscribe.lead).toHaveText(
-      'It may be incomplete. You can turn off news from Tutu Much in your email settings.',
+      'It may be incomplete. You can turn off news from TuTuMuch in your email settings.',
     );
     await expect(unsubscribe.manageEmails).toBeVisible();
   });

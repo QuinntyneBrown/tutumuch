@@ -11,7 +11,7 @@ export interface TimelineStep {
  * The last dated step is current; the dated steps before it are done.
  */
 @Component({
-  selector: 'tm-order-timeline',
+  selector: 'tl-order-timeline',
   templateUrl: './order-timeline.html',
   styleUrl: './order-timeline.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

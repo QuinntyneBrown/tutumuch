@@ -12,7 +12,7 @@ const ICONS: Record<ToastTone, IconName> = {
 
 /** Polite live region that renders the toasts of `ToastService`, newest at the bottom (design system: Toast). */
 @Component({
-  selector: 'tm-toast-region',
+  selector: 'tl-toast-region',
   imports: [IconComponent],
   templateUrl: './toast-region.html',
   styleUrl: './toast-region.css',

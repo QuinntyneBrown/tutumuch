@@ -1,6 +1,6 @@
 import { Locator, Page } from '@playwright/test';
 
-/** "Report a problem" (mocks dialogs/report-problem): what's wrong, description, photos, Cancel and Send to Tutu Much. */
+/** "Report a problem" (mocks dialogs/report-problem): what's wrong, description, photos, Cancel and Send to TuTuMuch. */
 export class ReportProblemDialog {
   readonly root: Locator;
   readonly reasons: Locator;

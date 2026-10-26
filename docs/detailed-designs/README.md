@@ -1,6 +1,6 @@
-# Tutu Much detailed designs
+# TuTuMuch detailed designs
 
-This folder holds the detailed design of every Tutu Much feature. Each design refines the
+This folder holds the detailed design of every TuTuMuch feature. Each design refines the
 level-2 (L2) requirements in [`docs/specs/L2.md`](../specs/L2.md) and draws its screens
 and states from the HTML mocks in [`docs/mocks/`](../mocks/README.md). Each feature
 folder holds a `README.md` with four sections (Overview, Description, Requirements,
@@ -16,10 +16,10 @@ designs.
 
 | Container | Technology | Responsibility |
 |-----------|------------|----------------|
-| `Tutu Much Web` | Angular (TypeScript), standalone components, signals, lazy-loaded routes, in `src/frontend` | Responsive single-page application for visitors, members and administrators |
-| `Tutu Much API` | ASP.NET Core Web API (C#), in `src/backend` | REST API over HTTPS; source of truth for every business rule, including the size rules |
-| `Tutu Much Worker` | .NET worker service, in `src/backend` | Background jobs: outbox email dispatch, reservation expiry, order auto-completion, payouts, photo processing and erasure |
-| `Tutu Much database` | SQL Server through EF Core | Members, listings, orders, reviews, outbox |
+| `TuTuMuch Web` | Angular (TypeScript), standalone components, signals, lazy-loaded routes, in `src/frontend` | Responsive single-page application for visitors, members and administrators |
+| `TuTuMuch API` | ASP.NET Core Web API (C#), in `src/backend` | REST API over HTTPS; source of truth for every business rule, including the size rules |
+| `TuTuMuch Worker` | .NET worker service, in `src/backend` | Background jobs: outbox email dispatch, reservation expiry, order auto-completion, payouts, photo processing and erasure |
+| `TuTuMuch database` | SQL Server through EF Core | Members, listings, orders, reviews, outbox |
 | `Distributed cache` | Redis | Rate-limit counters, refresh-token families and other state shared across API instances (`L2-060`) |
 | `Photo storage` | Object storage behind a CDN | Original uploads (private) and processed, content-addressed photo versions (public through the CDN) |
 
@@ -35,15 +35,15 @@ The specific payment provider, email provider and hosting platform are `<TO SUPP
 
 ### Backend solution layout
 
-The C# namespace prefix is `TutuMuch`, because a C# identifier cannot start with a digit.
+The C# namespace prefix is `TuTuMuch`, because a C# identifier cannot start with a digit.
 
 | Project | Layer | Holds |
 |---------|-------|-------|
-| `TutuMuch.Api` | API | Controllers, endpoint policies, middleware (problem details, correlation ID, security headers, rate limiting, anti-forgery) |
-| `TutuMuch.Application` | Application | MediatR commands, queries and handlers; FluentValidation validators; DTOs; interfaces for infrastructure ports |
-| `TutuMuch.Domain` | Domain | Entities, value objects, enumerations, domain events and state machines (`Member`, `Listing`, `Order`, `Review`) |
-| `TutuMuch.Infrastructure` | Infrastructure | `TutuMuchDbContext` (EF Core), repositories, outbox, adapters for the payment provider, email provider, photo storage and cache |
-| `TutuMuch.Worker` | Worker | Hosted background services that run the jobs listed above |
+| `TuTuMuch.Api` | API | Controllers, endpoint policies, middleware (problem details, correlation ID, security headers, rate limiting, anti-forgery) |
+| `TuTuMuch.Application` | Application | MediatR commands, queries and handlers; FluentValidation validators; DTOs; interfaces for infrastructure ports |
+| `TuTuMuch.Domain` | Domain | Entities, value objects, enumerations, domain events and state machines (`Member`, `Listing`, `Order`, `Review`) |
+| `TuTuMuch.Infrastructure` | Infrastructure | `TuTuMuchDbContext` (EF Core), repositories, outbox, adapters for the payment provider, email provider, photo storage and cache |
+| `TuTuMuch.Worker` | Worker | Hosted background services that run the jobs listed above |
 
 ### Frontend layout
 
@@ -53,15 +53,15 @@ the application `projects/tutumuch/` (shell and routes only) and one library per
 (design-system components and styles) and the lazy-loaded feature libraries `accounts`,
 `catalog`, `listings`, `orders`, `reviews` and `privacy`. Each feature library exports its
 route table from `public-api.ts`, holds its pages and dialogs under `src/lib/`, and calls
-`Tutu Much API` only through `@tutumuch/api`. Where an older design names `src/frontend/src/app/...`,
+`TuTuMuch API` only through `@tutumuch/api`. Where an older design names `src/frontend/src/app/...`,
 read it as the matching library.
 
 ### Cross-cutting conventions
 
-- **Sessions.** `Tutu Much API` issues a 15-minute access token and a rotating 14-day refresh token in `HttpOnly`, `Secure`, `SameSite=Strict` cookies (`L2-008`). The frontend never stores a token in web storage.
+- **Sessions.** `TuTuMuch API` issues a 15-minute access token and a rotating 14-day refresh token in `HttpOnly`, `Secure`, `SameSite=Strict` cookies (`L2-008`). The frontend never stores a token in web storage.
 - **Authorisation.** Every endpoint applies a policy; resources the caller may not see return HTTP 404 (`L2-010`).
 - **Errors.** Every API error is an RFC 9457 problem details response with a stable error code and a correlation ID (`L2-068`).
-- **Outbox.** Handlers that must send email or call an external system write an outbox message in the same database transaction as the state change; `Tutu Much Worker` dispatches it with retry and back-off (`L2-042`).
+- **Outbox.** Handlers that must send email or call an external system write an outbox message in the same database transaction as the state change; `TuTuMuch Worker` dispatches it with retry and back-off (`L2-042`).
 
 ## Subsystems
 

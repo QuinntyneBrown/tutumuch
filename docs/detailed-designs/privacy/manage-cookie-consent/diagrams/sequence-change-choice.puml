@@ -15,8 +15,8 @@ skinparam package {
   BackgroundColor #F9FAFB
 }
 actor "Visitor" as actor
-box "Frontend — Tutu Much Web application" #E0F2FE
-  participant "tm-footer Cookie settings" as entry
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "tl-footer Cookie settings" as entry
   participant "CookieSettingsDialog" as dialog
   participant "CookieConsentService" as consent
   participant "AnalyticsService" as analytics

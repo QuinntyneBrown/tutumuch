@@ -15,22 +15,22 @@ skinparam package {
   BackgroundColor #F9FAFB
 }
 actor "Member" as actor
-box "Frontend — Tutu Much Web application" #E0F2FE
+box "Frontend — TuTuMuch Web application" #E0F2FE
   participant "Feature page" as page
   participant "AntiforgeryTokenService" as tokens
   participant "AntiforgeryInterceptor" as afi
 end box
-box "Backend — Tutu Much API application" #D1FADF
+box "Backend — TuTuMuch API application" #D1FADF
   participant "CORS policy Frontend" as cors
   participant "AntiforgeryValidationMiddleware" as afm
   participant "AntiforgeryController" as afc
   participant "Feature controller" as ctrl
 end box
-box "Backend — Tutu Much Application and Domain" #ECFDF3
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
   participant "Feature handler" as handler
 end box
 page -> tokens : ensureToken()
-tokens -> cors : GET /api/antiforgery/token (Origin: Tutu Much Web)
+tokens -> cors : GET /api/antiforgery/token (Origin: TuTuMuch Web)
 cors -> afc : Origin allowed
 afc --> tokens : 200 { token } + Set-Cookie __Host-tm-af (SameSite=Strict)
 actor -> page : Submit a change

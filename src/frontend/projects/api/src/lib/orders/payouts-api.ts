@@ -37,7 +37,7 @@ export interface PayoutSummary {
   history: PayoutRow[];
 }
 
-/** The payout panel of a sale: item and shipping, the Tutu Much fee, the payout and where it is. */
+/** The payout panel of a sale: item and shipping, the TuTuMuch fee, the payout and where it is. */
 export interface SalePayout {
   gross: string;
   feePercent: number;

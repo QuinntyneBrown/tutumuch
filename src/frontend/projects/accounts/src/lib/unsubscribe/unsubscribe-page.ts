@@ -10,7 +10,7 @@ type State = 'working' | 'unsubscribed' | 'invalid' | 'error';
  * token is posted once from script on load, because mail scanners prefetch links with GET.
  */
 @Component({
-  selector: 'tm-unsubscribe-page',
+  selector: 'tl-unsubscribe-page',
   imports: [RouterLink, ButtonDirective, IconComponent, SpinnerComponent],
   templateUrl: './unsubscribe-page.html',
   styleUrl: './unsubscribe-page.css',

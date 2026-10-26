@@ -10,11 +10,11 @@ System_Boundary(ci, "GitHub Actions CI") {
   Container(depscan, "dependency-scan job", "Trivy fs", "Fails on HIGH/CRITICAL with a fix in lock files")
   Container(sast, "static-analysis job", "CodeQL, .NET analyzers, ESLint", "Fails on security findings")
 }
-System_Boundary(tutumuch, "Tutu Much") {
-  Container(web, "Tutu Much Web", "Angular", "Public configuration only")
-  Container(api, "Tutu Much API", "ASP.NET Core", "Hashes passwords; loads secrets at start")
-  Container(worker, "Tutu Much Worker", ".NET worker", "Loads secrets at start")
-  ContainerDb(db, "Tutu Much database", "SQL Server", "Members.PasswordHash holds encoded hashes")
+System_Boundary(tutumuch, "TuTuMuch") {
+  Container(web, "TuTuMuch Web", "Angular", "Public configuration only")
+  Container(api, "TuTuMuch API", "ASP.NET Core", "Hashes passwords; loads secrets at start")
+  Container(worker, "TuTuMuch Worker", ".NET worker", "Loads secrets at start")
+  ContainerDb(db, "TuTuMuch database", "SQL Server", "Members.PasswordHash holds encoded hashes")
 }
 Rel(dev, secretscan, "Triggers on pull request")
 Rel(dev, depscan, "Triggers on pull request")

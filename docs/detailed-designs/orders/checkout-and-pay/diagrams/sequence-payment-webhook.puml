@@ -17,16 +17,16 @@ skinparam package {
 skinparam sequenceMessageAlign left
 skinparam maxMessageSize 260
 participant "Payment provider" as pay
-box "Backend — Tutu Much API application (TutuMuch.Api)" #D1FADF
+box "Backend — TuTuMuch API application (TuTuMuch.Api)" #D1FADF
   participant "PaymentWebhookController" as wh
 end box
-box "Backend — TutuMuch.Application and TutuMuch.Domain" #ECFDF3
+box "Backend — TuTuMuch.Application and TuTuMuch.Domain" #ECFDF3
   participant "PaymentWebhookHandler" as h
   participant "Order" as order
 end box
-box "Backend — TutuMuch.Infrastructure" #FFF4E5
+box "Backend — TuTuMuch.Infrastructure" #FFF4E5
   participant "IPaymentProvider" as ppa
-  database "Tutu Much database" as db
+  database "TuTuMuch database" as db
 end box
 pay -> wh : POST /api/payments/webhook (raw body + Payment-Signature)
 wh -> h : Send HandlePaymentWebhookCommand(body, signature)
@@ -37,7 +37,7 @@ alt invalid signature (L2-030 criterion 4)
   wh -> wh : Log security event payment.webhook.invalid_signature
   wh --> pay : 400
 else valid
-  ppa --> h : PaymentEvent (event id, Tutu Much payment id, card brand, last four)
+  ppa --> h : PaymentEvent (event id, TuTuMuch payment id, card brand, last four)
   h -> db : Event id already in PaymentWebhookEvents?
   alt duplicate event id (L2-030 criterion 5)
     h --> wh : Duplicate

@@ -7,10 +7,10 @@
 
 ## Context
 
-The upload-listing-photos design processed photos in `Tutu Much Worker`: the upload stored the
+The upload-listing-photos design processed photos in `TuTuMuch Worker`: the upload stored the
 original, saved the photo as `Processing` and queued a `ProcessListingPhoto` outbox message,
 and the client polled until the photo was `Ready`. Neither the outbox nor any worker job
-exists yet; `TutuMuch.Worker` is an empty host. Building both for one feature is more scope
+exists yet; `TuTuMuch.Worker` is an empty host. Building both for one feature is more scope
 than the feature needs. A 10 MB photo re-encodes to 6 versions in well under a second.
 
 ## Decision
@@ -19,7 +19,7 @@ than the feature needs. A 10 MB photo re-encodes to 6 versions in well under a s
 then strips metadata and stores the 6 versions and the original in the same request before
 it saves the `ListingPhoto` row. A saved photo is therefore always ready: there is no
 `Processing` or `Failed` status, no polling and no `PHOTOS_PROCESSING` publish rule. The
-public versions are served by `GET /photos/{hash}/{size}.{ext}` on `Tutu Much API` with
+public versions are served by `GET /photos/{hash}/{size}.{ext}` on `TuTuMuch API` with
 `Cache-Control: public, max-age=31536000, immutable` until a CDN fronts them.
 
 Deferred, each behind the existing ports: the outbox and `PhotoProcessingJob`, the

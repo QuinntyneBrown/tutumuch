@@ -3,8 +3,8 @@
 LAYOUT_WITH_LEGEND()
 title Components — Resolve order problems
 
-Container(web, "Tutu Much Web", "Angular", "ReportProblemDialog, ProblemThread, ProblemDetailPage, ResolveProblemDialog")
-Container_Boundary(api, "Tutu Much API") {
+Container(web, "TuTuMuch Web", "Angular", "ReportProblemDialog, ProblemThread, ProblemDetailPage, ResolveProblemDialog")
+Container_Boundary(api, "TuTuMuch API") {
   Component(oc, "OrderProblemsController", "ASP.NET Core controller", "/api/orders/{id}/problem endpoints")
   Component(ac, "AdminProblemsController", "ASP.NET Core controller", "/api/admin/problems endpoints, Administrator policy")
   Component(rep, "ReportProblemCommandHandler", "MediatR handler", "Opens the problem, holds the payout")
@@ -13,7 +13,7 @@ Container_Boundary(api, "Tutu Much API") {
   Component(dom, "OrderProblem, Order, Payout", "Domain", "Problem and order state")
   Component(img, "IImageInspector, IPhotoStorage", "Ports (listings)", "Photo checks and private storage")
 }
-ContainerDb(db, "Tutu Much database", "SQL Server", "Problems")
+ContainerDb(db, "TuTuMuch database", "SQL Server", "Problems")
 Rel(web, oc, "Calls", "JSON/HTTPS")
 Rel(web, ac, "Calls", "JSON/HTTPS")
 Rel(oc, rep, "Sends ReportProblemCommand")

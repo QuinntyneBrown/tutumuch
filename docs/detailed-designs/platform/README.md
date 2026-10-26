@@ -1,6 +1,6 @@
 # Platform subsystem
 
-The platform subsystem holds the cross-cutting capabilities that every Tutu Much
+The platform subsystem holds the cross-cutting capabilities that every TuTuMuch
 feature inherits: HTTP and API hardening, credential and supply-chain
 protection, stateless scaling, the responsive and
 accessible application shell, error reporting and observability,

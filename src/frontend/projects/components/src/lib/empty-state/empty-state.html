@@ -1,5 +1,5 @@
 <div class="empty" [class.empty--error]="tone() === 'error'" [class.empty--compact]="compact() || tone() === 'error'">
-  <div class="empty__icon"><tm-icon [name]="icon()" size="lg" /></div>
+  <div class="empty__icon"><tl-icon [name]="icon()" size="lg" /></div>
   <h2 class="empty__title">{{ heading() }}</h2>
   <p class="empty__text"><ng-content /></p>
   <div class="empty__actions"><ng-content select="[actions]" /></div>

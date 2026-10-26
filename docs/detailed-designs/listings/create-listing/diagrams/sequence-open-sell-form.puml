@@ -20,10 +20,10 @@ box "Frontend — @tutumuch/listings and @tutumuch/api" #E0F2FE
   participant "AuthState" as auth
   participant "SellingApi" as opts
 end box
-box "Backend — Tutu Much API application" #D1FADF
+box "Backend — TuTuMuch API application" #D1FADF
   participant "CategoriesController" as ctrl
 end box
-box "Backend — TutuMuch Application and Domain" #ECFDF3
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
   participant "CategoryCatalog" as catalog
 end box
 actor -> page : Open /sell
@@ -42,7 +42,7 @@ else verified member may sell (L2-003)
     opts --> page : Categories and options (cached for the session)
     page --> actor : Blank form with no size input (L2-012)
     actor -> page : Choose category "Dresses"
-    page --> actor : tm-fixed-size "Size: Girls'" and the Dresses types
+    page --> actor : tl-fixed-size "Size: Girls'" and the Dresses types
     actor -> page : Enter price and shipping
     page --> actor : "You earn after the 10% fee" estimate (L2-031)
   else 5xx or network failure

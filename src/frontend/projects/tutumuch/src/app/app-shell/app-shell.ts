@@ -23,7 +23,7 @@ function shellOf(route: ActivatedRouteSnapshot): Shell {
  * Routes with data.shell 'admin' render in the admin shell: the admin top bar and no footer.
  */
 @Component({
-  selector: 'tm-app-shell',
+  selector: 'tl-app-shell',
   imports: [RouterOutlet, TopBarComponent, FooterComponent, LogoComponent, PayoutBannerComponent],
   templateUrl: './app-shell.html',
   styleUrl: './app-shell.css',

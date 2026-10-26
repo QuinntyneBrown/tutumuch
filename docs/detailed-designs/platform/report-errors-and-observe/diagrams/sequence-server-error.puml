@@ -15,17 +15,17 @@ skinparam package {
   BackgroundColor #F9FAFB
 }
 actor "Member" as actor
-box "Frontend — Tutu Much Web application" #E0F2FE
+box "Frontend — TuTuMuch Web application" #E0F2FE
   participant "Feature page" as page
   participant "ApiErrorInterceptor" as int
   participant "ToastService / Router" as ui
 end box
-box "Backend — Tutu Much API application" #D1FADF
+box "Backend — TuTuMuch API application" #D1FADF
   participant "CorrelationIdMiddleware" as corr
   participant "ProblemDetailsExceptionHandler" as pd
   participant "Feature controller" as ctrl
 end box
-box "Backend — Tutu Much Application and Domain" #ECFDF3
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
   participant "Feature handler" as handler
 end box
 actor -> page : Act or open a page

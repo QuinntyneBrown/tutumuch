@@ -21,7 +21,7 @@ export interface ConfirmReceiptData {
  * order". A failure offers "Try again". Closes with the completed order.
  */
 @Component({
-  selector: 'tm-confirm-receipt-dialog',
+  selector: 'tl-confirm-receipt-dialog',
   imports: [AlertComponent, ButtonDirective, DialogComponent, ItemRowComponent],
   templateUrl: './confirm-receipt-dialog.html',
   styleUrl: './confirm-receipt-dialog.css',

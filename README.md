@@ -1,11 +1,11 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/design-system/assets/logo-dark.svg">
-    <img src="docs/design-system/assets/logo.svg" alt="Tutu Much" width="240">
+    <img src="docs/design-system/assets/logo.svg" alt="TuTuMuch" width="240">
   </picture>
 </p>
 
-# Tutu Much
+# TuTuMuch
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Frontend: Angular](https://img.shields.io/badge/Frontend-Angular-dd0031.svg)](https://angular.dev)
@@ -13,12 +13,12 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
 
-Tutu Much is an open marketplace for new and used **girls' (children's) clothing**: dresses, tops, outerwear and bottoms. Parents and families join, set up a profile, list what their daughters have outgrown and buy what they will wear next.
+TuTuMuch is an open marketplace for new and used **girls' (children's) clothing**: dresses, tops, outerwear and bottoms. Parents and families join, set up a profile, list what their daughters have outgrown and buy what they will wear next.
 
-Tutu Much is a responsive web application built with [Angular](https://angular.dev) and [ASP.NET Core](https://dotnet.microsoft.com).
+TuTuMuch is a responsive web application built with [Angular](https://angular.dev) and [ASP.NET Core](https://dotnet.microsoft.com).
 
 > [!NOTE]
-> Tutu Much is in active development. Every journey in `docs/journeys.md` is built end to end; payment, payout, carrier, email and analytics providers are still placeholders. See [Project status](#project-status).
+> TuTuMuch is in active development. Every journey in `docs/journeys.md` is built end to end; payment, payout, carrier, email and analytics providers are still placeholders. See [Project status](#project-status).
 
 ## Contents
 
@@ -39,7 +39,7 @@ Tutu Much is a responsive web application built with [Angular](https://angular.d
 
 ## Overview
 
-General marketplaces bury girls' clothes among everything else. On Tutu Much every listing is girls' clothing, so parents only browse what their daughter can wear. The API enforces the size rules whatever the client sends. Tutu Much's owner also sells on the marketplace as a regular member, with the same rules as everyone else.
+General marketplaces bury girls' clothes among everything else. On TuTuMuch every listing is girls' clothing, so parents only browse what their daughter can wear. The API enforces the size rules whatever the client sends. TuTuMuch's owner also sells on the marketplace as a regular member, with the same rules as everyone else.
 
 | Category                                  | Accepted size | Condition   |
 | ----------------------------------------- | ------------- | ----------- |
@@ -87,22 +87,22 @@ npm run verify
 
 ### Run locally
 
-1. Set the connection string. The API and the migrator read `ConnectionStrings__TutuMuch`.
+1. Set the connection string. The API and the migrator read `ConnectionStrings__TuTuMuch`.
 
    ```powershell
-   $env:ConnectionStrings__TutuMuch = 'Server=(localdb)\MSSQLLocalDB;Database=TutuMuch;Trusted_Connection=True;TrustServerCertificate=True'
+   $env:ConnectionStrings__TuTuMuch = 'Server=(localdb)\MSSQLLocalDB;Database=TuTuMuch;Trusted_Connection=True;TrustServerCertificate=True'
    ```
 
 2. Apply the database migrations.
 
    ```powershell
-   dotnet run --project src/backend/TutuMuch.Migrator
+   dotnet run --project src/backend/TuTuMuch.Migrator
    ```
 
 3. Start the API on `http://localhost:5045`.
 
    ```powershell
-   dotnet run --project src/backend/TutuMuch.Api --launch-profile http
+   dotnet run --project src/backend/TuTuMuch.Api --launch-profile http
    ```
 
 4. In a second terminal, start the Angular app.
@@ -120,31 +120,31 @@ To check that the API is up, send `GET http://localhost:5045/api/health`. It ret
 > **Windows on Arm:** LocalDB ships only as x64, so an arm64 process can't load its client and fails with SQL error 193. Build with your usual SDK, then run the built assemblies with the x64 host:
 >
 > ```powershell
-> dotnet build src/backend/TutuMuch.sln
-> & "C:\Program Files\dotnet\x64\dotnet.exe" src/backend/TutuMuch.Migrator/bin/Debug/net10.0/TutuMuch.Migrator.dll
-> & "C:\Program Files\dotnet\x64\dotnet.exe" src/backend/TutuMuch.Api/bin/Debug/net10.0/TutuMuch.Api.dll --urls http://localhost:5045
+> dotnet build src/backend/TuTuMuch.sln
+> & "C:\Program Files\dotnet\x64\dotnet.exe" src/backend/TuTuMuch.Migrator/bin/Debug/net10.0/TuTuMuch.Migrator.dll
+> & "C:\Program Files\dotnet\x64\dotnet.exe" src/backend/TuTuMuch.Api/bin/Debug/net10.0/TuTuMuch.Api.dll --urls http://localhost:5045
 > ```
 >
 > This requires the x64 .NET 10 runtime under `C:\Program Files\dotnet\x64`.
 
 ### Load demo data
 
-`TutuMuch.Cli` resets a local database and fills it with 8 demo members and 48 listings with
+`TuTuMuch.Cli` resets a local database and fills it with 8 demo members and 48 listings with
 real product photos in every category, so `/`, `/dresses`, `/tops`, `/outerwear`, `/bottoms`
 and the listing pages look real. It is for your own machine only; see
-[its README](src/backend/TutuMuch.Cli/README.md) for the demo accounts and password.
+[its README](src/backend/TuTuMuch.Cli/README.md) for the demo accounts and password.
 
 ```bash
 # from src/backend, with SQL Server LocalDB (or any SQL Server you own)
-export ConnectionStrings__TutuMuch="Server=(localdb)\MSSQLLocalDB;Database=TutuMuch;Trusted_Connection=True;TrustServerCertificate=True"
+export ConnectionStrings__TuTuMuch="Server=(localdb)\MSSQLLocalDB;Database=TuTuMuch;Trusted_Connection=True;TrustServerCertificate=True"
 export DOTNET_ENVIRONMENT=Development   # reset refuses to run otherwise, unless --force
-dotnet build TutuMuch.Cli
-dotnet TutuMuch.Cli/bin/Debug/net10.0/TutuMuch.Cli.dll seed --reset
+dotnet build TuTuMuch.Cli
+dotnet TuTuMuch.Cli/bin/Debug/net10.0/TuTuMuch.Cli.dll seed --reset
 ```
 
-Start the API with the same `ConnectionStrings__TutuMuch` so it reads the seeded database.
+Start the API with the same `ConnectionStrings__TuTuMuch` so it reads the seeded database.
 On Windows on Arm, LocalDB is x64 only: build with the normal SDK, then run the built DLL
-with the x64 host, `"C:\Program Files\dotnet\x64\dotnet.exe" TutuMuch.Cli\bin\Debug\net10.0\TutuMuch.Cli.dll seed --reset`
+with the x64 host, `"C:\Program Files\dotnet\x64\dotnet.exe" TuTuMuch.Cli\bin\Debug\net10.0\TuTuMuch.Cli.dll seed --reset`
 (the arm64 host fails with error 193). Run the API the same way.
 
 ## Configuration
@@ -153,7 +153,7 @@ The API reads standard ASP.NET Core configuration: `appsettings.json`, `appsetti
 
 | Setting                      | Environment variable          | Description                                                                                                  |
 | ---------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `ConnectionStrings:TutuMuch`  | `ConnectionStrings__TutuMuch`  | SQL Server connection string. Required to run the API and the migrator.                                      |
+| `ConnectionStrings:TuTuMuch`  | `ConnectionStrings__TuTuMuch`  | SQL Server connection string. Required to run the API and the migrator.                                      |
 | `Auth:SigningKey`            | `Auth__SigningKey`            | Key that signs access tokens. The development value in `appsettings.Development.json` is for local use only. |
 | `App:BaseUrl`                | `App__BaseUrl`                | Public URL of the frontend, used in links such as email verification.                                        |
 | `Selling:PlatformFeePercent` | `Selling__PlatformFeePercent` | Fee shown to sellers when they price an item.                                                                |
@@ -258,6 +258,6 @@ See [SUPPORT.md](SUPPORT.md) for how to file issues and get help.
 
 ## License
 
-Tutu Much is licensed under the [MIT License](LICENSE). The demo photos in
-`src/backend/TutuMuch.Cli/SeedPhotos/` are not: they keep their CC BY 2.0 licence, with authors
-and sources in [ATTRIBUTION.md](src/backend/TutuMuch.Cli/SeedPhotos/ATTRIBUTION.md).
+TuTuMuch is licensed under the [MIT License](LICENSE). The demo photos in
+`src/backend/TuTuMuch.Cli/SeedPhotos/` are not: they keep their CC BY 2.0 licence, with authors
+and sources in [ATTRIBUTION.md](src/backend/TuTuMuch.Cli/SeedPhotos/ATTRIBUTION.md).

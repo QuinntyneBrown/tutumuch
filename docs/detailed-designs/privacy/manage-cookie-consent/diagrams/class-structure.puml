@@ -11,7 +11,7 @@ skinparam class {
 }
 title Class structure — Manage cookie consent
 
-package "Tutu Much Web (@tutumuch/privacy, @tutumuch/components)" {
+package "TuTuMuch Web (@tutumuch/privacy, @tutumuch/components)" {
   enum ConsentState {
     unknown
     necessary
@@ -44,7 +44,7 @@ package "Tutu Much Web (@tutumuch/privacy, @tutumuch/components)" {
   class CookieSettingsDialogService {
     +open(): DialogRef<boolean>
   }
-  class ConsentBannerComponent <<tm-consent-banner>> {
+  class ConsentBannerComponent <<tl-consent-banner>> {
     +accepted: OutputRef
     +declined: OutputRef
     +settings: OutputRef
@@ -53,7 +53,7 @@ package "Tutu Much Web (@tutumuch/privacy, @tutumuch/components)" {
     +show(options: ToastOptions): number
   }
 }
-package "TutuMuch.Api" {
+package "TuTuMuch.Api" {
   class StrictlyNecessaryCookieOptions {
     +string[] StrictlyNecessary
   }

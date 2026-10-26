@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 /** A member's own words in curly quotes with their display name below, such as a seller's note (design system: Quote). */
 @Component({
-  selector: 'tm-quote',
+  selector: 'tl-quote',
   templateUrl: './quote.html',
   styleUrl: './quote.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

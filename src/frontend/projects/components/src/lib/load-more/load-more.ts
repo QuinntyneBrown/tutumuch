@@ -8,7 +8,7 @@ import { ButtonDirective } from '../button/button';
  * and hidden once everything is shown (design system: Load more).
  */
 @Component({
-  selector: 'tm-load-more',
+  selector: 'tl-load-more',
   imports: [ButtonDirective, DecimalPipe],
   templateUrl: './load-more.html',
   styleUrl: './load-more.css',

@@ -37,7 +37,7 @@ import { COUNTRIES, US_STATES } from './us-states';
  * provider's hosted card fields, and the order summary. Two columns from 992 px (L2-063).
  */
 @Component({
-  selector: 'tm-checkout-page',
+  selector: 'tl-checkout-page',
   imports: [
     ReactiveFormsModule,
     RouterLink,

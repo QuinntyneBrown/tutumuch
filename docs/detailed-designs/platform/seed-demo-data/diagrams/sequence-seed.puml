@@ -6,7 +6,7 @@ skinparam roundcorner 12
 skinparam defaultFontName Arial
 skinparam ArrowColor #344054
 actor "Developer" as dev
-box "TutuMuch.Cli" #FFF4E5
+box "TuTuMuch.Cli" #FFF4E5
   participant "CliApp" as cli
   participant "DemoSeeder" as seeder
   participant "SeedClock" as clock
@@ -16,7 +16,7 @@ box "Application (MediatR)" #E0F2FE
 end box
 box "Infrastructure" #D1FADF
   participant "Photo pipeline + store" as photos
-  database "Tutu Much database" as sql
+  database "TuTuMuch database" as sql
 end box
 dev -> cli : seed [--reset]
 opt seed with the reset flag

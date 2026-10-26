@@ -2,7 +2,7 @@
 
 ## Overview
 
-Tutu Much sends email about events that affect a member's account, listings and orders (see
+TuTuMuch sends email about events that affect a member's account, listings and orders (see
 [send-email-notifications](../send-email-notifications/README.md)). Some of those emails
 are essential, and some are optional. This feature lets a member choose which optional
 emails they receive. It also lets anyone holding a marketing email leave the marketing
@@ -24,8 +24,8 @@ preferences at send time, so a change applies to every email not yet sent.
 
 ## Description
 
-The slice runs from the "Emails" page and the unsubscribe page of `Tutu Much Web`, through
-`Tutu Much API`, to the `NotificationPreferences` table in `Tutu Much database`. Screens, states and
+The slice runs from the "Emails" page and the unsubscribe page of `TuTuMuch Web`, through
+`TuTuMuch API`, to the `NotificationPreferences` table in `TuTuMuch database`. Screens, states and
 copy come from `docs/mocks/pages/notification-settings/` (states *default*, *loading*,
 *error*, *submitting* and *success*). The unsubscribe page is not mocked
 (`docs/mocks/README.md`); its copy was written with the implementation and is listed below.
@@ -39,23 +39,23 @@ account area next to "Profile" and "Settings". Composition follows
 - **Route** `account/emails` (app shell) → **`NotificationSettingsPage`**
   (`notification-settings/`) — heading "Emails" with the lead "Security and order emails are
   always on." A form holds a `.settings-list` of 4 rows. Each row has a title, a description and
-  a `tm-switch`:
+  a `tl-switch`:
 
   | Row | Description | Switch |
   |-----|-------------|--------|
   | Account security | Sign-in alerts, password resets | on, disabled, labelled "Account security emails, always on" |
   | Orders | Sales, shipping, delivery, refunds | on, disabled, labelled "Order emails, always on" |
   | Reviews | When someone reviews you | bound to `reviewEmails`, labelled "Review emails" |
-  | News from Tutu Much | New arrivals in your size, now and then | bound to `marketingEmails`, labelled "Marketing emails" |
+  | News from TuTuMuch | New arrivals in your size, now and then | bound to `marketingEmails`, labelled "Marketing emails" |
 
   A primary "Save" button submits the form. States:
   - *loading* — 4 skeleton rows in a `.settings-list` with `aria-busy="true"`.
   - *default* — values from the API.
   - *submitting* — "Save" carries `aria-busy="true"` and both optional switches are
     disabled.
-  - *success* — `tm-alert` success "Email settings saved" above the list, announced through
+  - *success* — `tl-alert` success "Email settings saved" above the list, announced through
     `role="status"`.
-  - *error* — `tm-empty-state` (error tone) "Couldn’t load email settings" with "Something went
+  - *error* — `tl-empty-state` (error tone) "Couldn’t load email settings" with "Something went
     wrong on our side.", the reference "Ref {correlationId}" and a "Try again" button
     (`L2-068`).
   - *save failed* — not mocked. A danger toast from `ToastService` shows "Something went wrong"
@@ -70,16 +70,16 @@ account area next to "Profile" and "Settings". Composition follows
   On load it reads `token` from the query string and calls `POST /api/notifications/unsubscribe`
   once. The call runs from script on page load because mail scanners prefetch links with `GET`;
   a `GET` alone never changes state. States:
-  - *working* — "Unsubscribing" with the spinner "Turning off news from Tutu Much…".
-  - *unsubscribed* — "You’re unsubscribed", "You won’t get news from Tutu Much any more. Account
+  - *working* — "Unsubscribing" with the spinner "Turning off news from TuTuMuch…".
+  - *unsubscribed* — "You’re unsubscribed", "You won’t get news from TuTuMuch any more. Account
     security and order emails still arrive.", "Back to shop" and "Manage your emails"
     (`/account/emails`, to opt back in after signing in).
   - *invalid link* — "This link doesn’t work", "It may be incomplete. You can turn off news
-    from Tutu Much in your email settings." and "Manage your emails".
+    from TuTuMuch in your email settings." and "Manage your emails".
   - *error* — "Couldn’t unsubscribe you", "Something went wrong on our side.", the reference
     and "Try again".
 
-### API (`TutuMuch.Api`)
+### API (`TuTuMuch.Api`)
 
 `NotificationPreferencesController` handles the signed-in endpoints and
 `UnsubscribeController` handles the anonymous one. Errors are RFC 9457 problem details
@@ -106,7 +106,7 @@ with a correlation ID (`L2-068`).
   token, even when the member was already unsubscribed or no longer exists, so the call is
   idempotent. The response never names the member or the email address.
 
-### Application and domain (`TutuMuch.Application`, `TutuMuch.Domain`)
+### Application and domain (`TuTuMuch.Application`, `TuTuMuch.Domain`)
 
 - **`NotificationCategory`** (`AccountSecurity`, `Orders`, `Reviews`, `Marketing`) and
   **`NotificationCategories.Of(NotificationType)`**: `EmailVerification` is account security,
@@ -153,16 +153,16 @@ with a correlation ID (`L2-068`).
   queues it until marketing campaigns are built (deferred). For every `Marketing` email the
   dispatcher in [send-email-notifications](../send-email-notifications/README.md) issues a
   token and:
-  - appends "Unsubscribe from news from Tutu Much in one click:
+  - appends "Unsubscribe from news from TuTuMuch in one click:
     `{App:BaseUrl}/emails/unsubscribe?token=…`" to the body;
   - sets `List-Unsubscribe: <{App:BaseUrl}/api/notifications/unsubscribe?token=…>` and
     `List-Unsubscribe-Post: List-Unsubscribe=One-Click` through `EmailMessage.Headers`
-    (`L2-043`). Tutu Much Web serves `Tutu Much API` under the same origin.
+    (`L2-043`). TuTuMuch Web serves `TuTuMuch API` under the same origin.
 - **Dispatcher check.** Before rendering, the dispatcher asks
   `INotificationPreferenceReader` about the message's category. When the member turned it off,
   the outbox message is `Suppressed` with the reason `preference_off` and nothing is sent.
 
-### Infrastructure and data (`TutuMuch.Infrastructure`)
+### Infrastructure and data (`TuTuMuch.Infrastructure`)
 
 - Table **`NotificationPreferences`** (migration `NotificationPreferences`):
   - Primary key `MemberId`, also a foreign key to `Members` with cascade delete.
@@ -182,9 +182,9 @@ with a correlation ID (`L2-068`).
 
 ### Tests
 
-- `tests/TutuMuch.Domain.Tests/NotificationPreferencesTests.cs` — defaults, `IsAllowed`,
+- `tests/TuTuMuch.Domain.Tests/NotificationPreferencesTests.cs` — defaults, `IsAllowed`,
   opt-in and unsubscribe, and the category of every notification type.
-- `tests/TutuMuch.Api.Tests/NotificationPreferencesTests.cs` — the endpoints, If-Match, the
+- `tests/TuTuMuch.Api.Tests/NotificationPreferencesTests.cs` — the endpoints, If-Match, the
   dispatcher check, the unsubscribe link and headers, and the anonymous unsubscribe through
   JSON and the RFC 8058 form POST, on SQLite in-memory with the captured email sender.
 - `src/frontend/e2e/tests/manage-notification-preferences.spec.ts` and
@@ -211,7 +211,7 @@ requirement, cited by identifier.
 
 ### System context
 
-Members change email settings in Tutu Much. A recipient of a marketing email can unsubscribe
+Members change email settings in TuTuMuch. A recipient of a marketing email can unsubscribe
 from the link, or the mail client can send the RFC 8058 one-click request, with no
 sign-in. Marketing emails reach the member through the email provider.
 
@@ -219,8 +219,8 @@ sign-in. Marketing emails reach the member through the email provider.
 
 ### Containers
 
-`Tutu Much Web` hosts the settings page and the unsubscribe page, and `Tutu Much API` stores the
-preferences. `Tutu Much Worker` reads them before each send.
+`TuTuMuch Web` hosts the settings page and the unsubscribe page, and `TuTuMuch API` stores the
+preferences. `TuTuMuch Worker` reads them before each send.
 
 ![C4 container view for managing notification preferences](diagrams/c4-container.png)
 

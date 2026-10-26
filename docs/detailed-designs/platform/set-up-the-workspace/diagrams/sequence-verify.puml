@@ -20,7 +20,7 @@ box "Verify command — src/frontend/package.json" #FFF4E5
 end box
 box "Backend — src/backend, tests/" #D1FADF
   participant "dotnet" as dotnet
-  participant "TutuMuch.Api (WebApplicationFactory)" as api
+  participant "TuTuMuch.Api (WebApplicationFactory)" as api
 end box
 box "Frontend — src/frontend" #E0F2FE
   participant "prettier + eslint" as lint
@@ -28,7 +28,7 @@ box "Frontend — src/frontend" #E0F2FE
   participant "Playwright (Chromium)" as pw
 end box
 actor -> verify : npm run verify
-verify -> dotnet : restore TutuMuch.sln
+verify -> dotnet : restore TuTuMuch.sln
 verify -> dotnet : format --verify-no-changes
 alt formatting differs
   dotnet --> verify : exit 2 (names the file, L2-071 criterion 2)

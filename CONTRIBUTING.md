@@ -1,4 +1,4 @@
-# Contributing to Tutu Much
+# Contributing to TuTuMuch
 
 Thank you for your interest in contributing. This document explains how to propose changes and what is expected of a pull request.
 
@@ -16,7 +16,7 @@ Thank you for your interest in contributing. This document explains how to propo
 
 ## Before you start
 
-Tutu Much is a marketplace for new and used **girls' (children's) clothing**: dresses, tops, outerwear and bottoms. Changes should serve that focus. Features that widen the marketplace to other sizes (boys' or adult) or categories are out of scope unless an issue agrees otherwise.
+TuTuMuch is a marketplace for new and used **girls' (children's) clothing**: dresses, tops, outerwear and bottoms. Changes should serve that focus. Features that widen the marketplace to other sizes (boys' or adult) or categories are out of scope unless an issue agrees otherwise.
 
 For anything beyond a small fix, open an issue first so the scope can be agreed before work begins.
 
@@ -42,7 +42,7 @@ git clone https://github.com/QuinntyneBrown/tutumuch.git
 cd tutumuch
 ```
 
-Tutu Much is a full-stack web application: an Angular frontend in `src/frontend` and a .NET (ASP.NET Core) backend in `src/backend`. See the [README](README.md#prerequisites) for prerequisites. Run instructions will be added as the code is introduced.
+TuTuMuch is a full-stack web application: an Angular frontend in `src/frontend` and a .NET (ASP.NET Core) backend in `src/backend`. See the [README](README.md#prerequisites) for prerequisites. Run instructions will be added as the code is introduced.
 
 ## Making changes
 

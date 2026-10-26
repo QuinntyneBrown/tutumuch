@@ -15,15 +15,15 @@
           [class.dialog__icon--danger]="tone() === 'danger'"
           aria-hidden="true"
         >
-          <tm-icon [name]="icon" />
+          <tl-icon [name]="icon" />
         </div>
       }
       <div class="dialog__heading">
         <h2 class="dialog__title" [id]="id + '-title'">{{ heading() }}</h2>
         <p class="text-muted dialog__description" [id]="id + '-desc'"><ng-content select="[description]" /></p>
       </div>
-      <button tmButton="ghost" class="btn--icon" type="button" aria-label="Close" (click)="close()">
-        <tm-icon name="close" />
+      <button tlButton="ghost" class="btn--icon" type="button" aria-label="Close" (click)="close()">
+        <tl-icon name="close" />
       </button>
     </div>
     <div class="dialog__top"><ng-content select="[top]" /></div>

@@ -7,7 +7,7 @@ import { LogoComponent } from '../logo/logo';
  * and the copyright year (design system: Footer).
  */
 @Component({
-  selector: 'tm-footer',
+  selector: 'tl-footer',
   imports: [RouterLink, LogoComponent],
   templateUrl: './footer.html',
   styleUrl: './footer.css',

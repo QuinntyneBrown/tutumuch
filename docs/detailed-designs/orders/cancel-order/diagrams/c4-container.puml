@@ -5,11 +5,11 @@ title Containers — Cancel an order
 
 Person(seller, "Seller", "Member")
 Person(buyer, "Buyer", "Member")
-System_Boundary(tutumuch, "Tutu Much") {
-  Container(web, "Tutu Much Web", "Angular", "Sale and order pages, cancellation and relist dialogs")
-  Container(api, "Tutu Much API", "ASP.NET Core", "Cancellation, request, response and relist endpoints; issues refunds")
-  Container(worker, "Tutu Much Worker", ".NET worker service", "Ship deadline job; outbox dispatch of email")
-  ContainerDb(db, "Tutu Much database", "SQL Server", "Orders, refunds, listings, outbox")
+System_Boundary(tutumuch, "TuTuMuch") {
+  Container(web, "TuTuMuch Web", "Angular", "Sale and order pages, cancellation and relist dialogs")
+  Container(api, "TuTuMuch API", "ASP.NET Core", "Cancellation, request, response and relist endpoints; issues refunds")
+  Container(worker, "TuTuMuch Worker", ".NET worker service", "Ship deadline job; outbox dispatch of email")
+  ContainerDb(db, "TuTuMuch database", "SQL Server", "Orders, refunds, listings, outbox")
 }
 System_Ext(pay, "Payment provider", "Refunds")
 System_Ext(email, "Email provider", "Email")

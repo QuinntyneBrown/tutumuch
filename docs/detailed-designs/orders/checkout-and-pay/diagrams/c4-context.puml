@@ -5,7 +5,7 @@ title System Context — Check out and pay
 
 Person(buyer, "Buyer", "Verified member buying one listing")
 Person(seller, "Seller", "Member who owns the listing")
-System(tutumuch, "Tutu Much", "Girls' clothing marketplace")
+System(tutumuch, "TuTuMuch", "Girls' clothing marketplace")
 System_Ext(pay, "Payment provider", "PCI DSS hosted card fields, payments, refunds, tax rates, signed webhooks")
 System_Ext(email, "Email provider", "Transactional email")
 

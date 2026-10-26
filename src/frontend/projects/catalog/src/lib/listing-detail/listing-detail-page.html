@@ -20,20 +20,20 @@
     </div>
   }
   @case ('unavailable') {
-    <tm-center-state code="404" heading="This item isn’t available">
+    <tl-center-state code="404" heading="This item isn’t available">
       <p class="text-muted">It may have been sold or taken down.</p>
-      <a actions tmButton="primary" routerLink="/">Shop similar items</a>
-    </tm-center-state>
+      <a actions tlButton="primary" routerLink="/">Shop similar items</a>
+    </tl-center-state>
   }
   @case ('error') {
-    <tm-center-state heading="Couldn’t load this item">
+    <tl-center-state heading="Couldn’t load this item">
       <p class="text-muted">It’s us, not you. Try again in a moment.</p>
       <span class="ref">{{ store.errorRef() }}</span>
-      <button actions tmButton="primary" type="button" (click)="store.retry()">
-        <tm-icon name="refresh" />Try again
+      <button actions tlButton="primary" type="button" (click)="store.retry()">
+        <tl-icon name="refresh" />Try again
       </button>
-      <a actions tmButton routerLink="/">Back to shop</a>
-    </tm-center-state>
+      <a actions tlButton routerLink="/">Back to shop</a>
+    </tl-center-state>
   }
   @default {
     @if (store.listing(); as listing) {
@@ -49,7 +49,7 @@
         </ol>
       </nav>
       <div class="detail">
-        <tm-gallery [photos]="listing.photos" />
+        <tl-gallery [photos]="listing.photos" />
         <div class="detail__info">
           <div class="stack stack--sm">
             @if (listing.status === 'Reserved') {
@@ -60,7 +60,7 @@
             <span class="eyebrow">{{ listing.brand }}</span>
             <h1 class="detail__title">{{ listing.title }}</h1>
             <div class="cluster listing-detail__size">
-              <tm-size-tag [label]="listing.sizeLabel" [large]="true" />
+              <tl-size-tag [label]="listing.sizeLabel" [large]="true" />
               <span class="text-muted">{{ listing.condition }}</span>
             </div>
           </div>
@@ -73,33 +73,33 @@
           </div>
           @switch (store.primaryAction()) {
             @case ('buy') {
-              <tm-buy-bar [total]="money(listing.total)">
-                <a tmButton="primary" size="lg" [routerLink]="['/checkout', listing.reference]">Buy now</a>
-              </tm-buy-bar>
+              <tl-buy-bar [total]="money(listing.total)">
+                <a tlButton="primary" size="lg" [routerLink]="['/checkout', listing.reference]">Buy now</a>
+              </tl-buy-bar>
             }
             @case ('sign-in-to-buy') {
-              <tm-buy-bar [total]="money(listing.total)">
+              <tl-buy-bar [total]="money(listing.total)">
                 <a
-                  tmButton="primary"
+                  tlButton="primary"
                   size="lg"
                   routerLink="/sign-in"
                   [queryParams]="{ returnUrl: '/items/' + listing.reference }"
                   >Buy now</a
                 >
-              </tm-buy-bar>
+              </tl-buy-bar>
             }
             @case ('manage') {
-              <tm-buy-bar [total]="money(listing.total)">
-                <a tmButton="primary" size="lg" [routerLink]="['/items', listing.reference, 'edit']"
-                  ><tm-icon name="edit" />Edit listing</a
+              <tl-buy-bar [total]="money(listing.total)">
+                <a tlButton="primary" size="lg" [routerLink]="['/items', listing.reference, 'edit']"
+                  ><tl-icon name="edit" />Edit listing</a
                 >
-                <button tmButton size="lg" type="button" (click)="withdraw()">Withdraw</button>
-              </tm-buy-bar>
+                <button tlButton size="lg" type="button" (click)="withdraw()">Withdraw</button>
+              </tl-buy-bar>
             }
           }
           @if (listing.status === 'Reserved') {
-            <tm-alert tone="warning" icon="clock" heading="In someone’s checkout"
-              >If they don’t finish within 10 minutes, it’s back on sale.</tm-alert
+            <tl-alert tone="warning" icon="clock" heading="In someone’s checkout"
+              >If they don’t finish within 10 minutes, it’s back on sale.</tl-alert
             >
           }
           @if (listing.flaws) {
@@ -118,7 +118,7 @@
               <time [attr.datetime]="listing.publishedAt">{{ listed() }}</time>
             </dd>
           </dl>
-          <tm-seller-summary [seller]="listing.seller" />
+          <tl-seller-summary [seller]="listing.seller" />
         </div>
       </div>
       @if (similarCards().length > 0) {
@@ -126,7 +126,7 @@
           <div class="section-head">
             <h2 id="similar-title">More girls’ clothing</h2>
           </div>
-          <tm-listing-grid [cards]="similarCards()" />
+          <tl-listing-grid [cards]="similarCards()" />
         </section>
       }
     }

@@ -4,10 +4,10 @@ import { IconComponent } from '../icon/icon';
 
 /**
  * "{carrier} tracking" and the number, grouped in fours, linking to the carrier's tracking page
- * in a new tab (design system: Tracking link, L2-033). The URL comes from Tutu Much API.
+ * in a new tab (design system: Tracking link, L2-033). The URL comes from TuTuMuch API.
  */
 @Component({
-  selector: 'tm-tracking-link',
+  selector: 'tl-tracking-link',
   imports: [IconComponent],
   templateUrl: './tracking-link.html',
   styleUrl: './tracking-link.css',

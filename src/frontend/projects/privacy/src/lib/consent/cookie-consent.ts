@@ -10,7 +10,7 @@ import { CookieConsentService } from './cookie-consent.service';
  * settings" opens the dialog, and saving there closes the banner too.
  */
 @Component({
-  selector: 'tm-cookie-consent',
+  selector: 'tl-cookie-consent',
   imports: [ConsentBannerComponent],
   templateUrl: './cookie-consent.html',
   styleUrl: './cookie-consent.css',

@@ -20,19 +20,19 @@ box "Frontend — @tutumuch/accounts and @tutumuch/api" #E0F2FE
   participant "VerifyEmailPage" as verify
   participant "AccountsApi" as client
 end box
-box "Backend — Tutu Much API application" #D1FADF
+box "Backend — TuTuMuch API application" #D1FADF
   participant "AuthController" as ctrl
 end box
-box "Backend — TutuMuch Application and Domain" #ECFDF3
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
   participant "RegisterMemberCommandHandler" as reg
   participant "VerificationEmails" as mails
   participant "VerifyEmailCommandHandler" as ver
 end box
-box "Backend — TutuMuch Infrastructure" #FFF4E5
-  database "Tutu Much database" as db
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
   participant "IEmailSender" as email
 end box
-actor -> join : Fill in the form, choose "Join Tutu Much"
+actor -> join : Fill in the form, choose "Join TuTuMuch"
 join -> join : Client checks; on failure error summary, focused
 join -> client : register(displayName, email, password, ageConfirmed, termsAccepted)
 client -> ctrl : POST /api/auth/register

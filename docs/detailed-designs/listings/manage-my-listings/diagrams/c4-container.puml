@@ -4,11 +4,11 @@ LAYOUT_WITH_LEGEND()
 title Containers — Manage my listings
 
 Person(seller, "Seller", "Reviews own listings")
-System_Boundary(tutumuch, "Tutu Much") {
-  Container(web, "Tutu Much Web", "Angular", "MyListingsPage")
-  Container(api, "Tutu Much API", "ASP.NET Core", "GET /api/me/listings")
-  Container(worker, "Tutu Much Worker", ".NET worker service", "DraftCleanupJob, outbox dispatch")
-  ContainerDb(db, "Tutu Much database", "SQL Server", "Listings, ListingPhotos, OutboxMessages")
+System_Boundary(tutumuch, "TuTuMuch") {
+  Container(web, "TuTuMuch Web", "Angular", "MyListingsPage")
+  Container(api, "TuTuMuch API", "ASP.NET Core", "GET /api/me/listings")
+  Container(worker, "TuTuMuch Worker", ".NET worker service", "DraftCleanupJob, outbox dispatch")
+  ContainerDb(db, "TuTuMuch database", "SQL Server", "Listings, ListingPhotos, OutboxMessages")
 }
 System_Ext(email, "Email provider", "Transactional email")
 

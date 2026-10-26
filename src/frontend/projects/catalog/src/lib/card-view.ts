@@ -8,7 +8,7 @@ export function formatPrice(price: string): string {
   return `$${value.toLocaleString('en-US', { minimumFractionDigits: cents ? 2 : 0, maximumFractionDigits: cents ? 2 : 0 })}`;
 }
 
-/** A catalog card as tm-listing-card shows it, linking to the listing detail. */
+/** A catalog card as tl-listing-card shows it, linking to the listing detail. */
 export function toCardView(card: ListingCard): ListingCardView {
   return {
     href: `/items/${card.reference}`,

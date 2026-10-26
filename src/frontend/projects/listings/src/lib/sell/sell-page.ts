@@ -29,12 +29,12 @@ interface Published {
 
 /**
  * Sell an item at /sell and continue a draft at /sell/{reference} (create-listing, mocks
- * pages/sell). There is no size input: the size shown comes from the category and Tutu Much API sets
+ * pages/sell). There is no size input: the size shown comes from the category and TuTuMuch API sets
  * the stored size (L2-012, L2-013). Photos upload one file per request as soon as they are chosen;
  * a save sends the uploaded IDs in display order (upload-listing-photos, L2-017).
  */
 @Component({
-  selector: 'tm-sell-page',
+  selector: 'tl-sell-page',
   imports: [
     ReactiveFormsModule,
     RouterLink,

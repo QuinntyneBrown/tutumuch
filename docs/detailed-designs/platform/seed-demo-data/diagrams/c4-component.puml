@@ -1,10 +1,10 @@
 @startuml
 !include <C4/C4_Component>
 LAYOUT_WITH_LEGEND()
-title Components — Seed demo data (TutuMuch.Cli)
+title Components — Seed demo data (TuTuMuch.Cli)
 
 Person(dev, "Developer", "Runs reset and seed on their own machine")
-System_Boundary(cli, "TutuMuch.Cli (src/backend/TutuMuch.Cli)") {
+System_Boundary(cli, "TuTuMuch.Cli (src/backend/TuTuMuch.Cli)") {
   Component(program, "Program / CliApp", "Console entry point", "Reads configuration and DOTNET_ENVIRONMENT, parses arguments, maps failures to exit codes")
   Component(args, "CliArguments", "Plain argument parsing", "help | reset [~--force] | seed [~--reset] [~--force]")
   Component(guard, "ResetGuard", "Safety check", "Development or ~--force; prints server and database, never credentials")
@@ -15,18 +15,18 @@ System_Boundary(cli, "TutuMuch.Cli (src/backend/TutuMuch.Cli)") {
   Component(clock, "SeedClock", "TimeProvider", "Moved back in time per listing so publishes spread over 30 days")
   Component(photos, "SeedPhotos/{category}/", "24 JPEG files + ATTRIBUTION.md", "CC BY 2.0, copied to the output folder")
 }
-System_Boundary(app, "TutuMuch.Application + TutuMuch.Domain") {
+System_Boundary(app, "TuTuMuch.Application + TuTuMuch.Domain") {
   Component(cmds, "MediatR handlers", "Commands", "RegisterMember, VerifyEmail, UploadListingPhoto, CreateListingDraft, PublishListing")
   Component(domain, "Member, Listing, ListingPhoto, OutboxMessage", "Domain", "Size lock, category, publish and photo rules")
 }
-System_Boundary(infra, "TutuMuch.Infrastructure + TutuMuch.Migrator") {
-  Component(db, "TutuMuchDbContext", "EF Core SQL Server", "ConnectionStrings__TutuMuch")
+System_Boundary(infra, "TuTuMuch.Infrastructure + TuTuMuch.Migrator") {
+  Component(db, "TuTuMuchDbContext", "EF Core SQL Server", "ConnectionStrings__TuTuMuch")
   Component(pipeline, "SkiaPhotoProcessor + SkiaImageInspector", "SkiaSharp", "Strips metadata, WebP + JPEG at 400/800/1600")
   Component(store, "FileSystemPhotoStorage", "IPhotoStorage", "PhotoStorage:RootPath (public/, private/)")
-  Component(migrator, "MigratorApp.ApplyMigrations", "Shared migration code", "Also used by TutuMuch.Migrator")
+  Component(migrator, "MigratorApp.ApplyMigrations", "Shared migration code", "Also used by TuTuMuch.Migrator")
 }
-ContainerDb(sql, "Tutu Much database", "SQL Server / LocalDB")
-Rel(dev, program, "dotnet TutuMuch.Cli.dll seed --reset")
+ContainerDb(sql, "TuTuMuch database", "SQL Server / LocalDB")
+Rel(dev, program, "dotnet TuTuMuch.Cli.dll seed --reset")
 Rel(program, args, "Parses")
 Rel(program, guard, "Before reset")
 Rel(program, reset, "reset")

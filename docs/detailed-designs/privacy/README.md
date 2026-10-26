@@ -1,6 +1,6 @@
 # Privacy subsystem
 
-The privacy subsystem realizes `L1-014`: Tutu Much collects only the personal data it needs,
+The privacy subsystem realizes `L1-014`: TuTuMuch collects only the personal data it needs,
 keeps it private, and protects it at rest and in transit. It supplies the public DTO
 allow-list and field-level encryption that other subsystems build on, and the cookie
 consent banner and dialog. Data export is deferred; see

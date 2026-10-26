@@ -17,7 +17,7 @@ export interface SellerSummaryView {
  * when the seller has no completed sales (design system: Seller summary, L2-025).
  */
 @Component({
-  selector: 'tm-seller-summary',
+  selector: 'tl-seller-summary',
   imports: [DecimalPipe, RouterLink, IconComponent],
   templateUrl: './seller-summary.html',
   styleUrl: './seller-summary.css',

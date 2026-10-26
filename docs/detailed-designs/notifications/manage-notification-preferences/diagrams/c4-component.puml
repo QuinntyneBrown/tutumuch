@@ -3,9 +3,9 @@
 LAYOUT_WITH_LEGEND()
 title Components — Manage notification preferences
 
-Container(web, "Tutu Much Web", "Angular", "NotificationSettingsPage and UnsubscribePage (@tutumuch/accounts), NotificationPreferencesApi (@tutumuch/api)")
+Container(web, "TuTuMuch Web", "Angular", "NotificationSettingsPage and UnsubscribePage (@tutumuch/accounts), NotificationPreferencesApi (@tutumuch/api)")
 
-Container_Boundary(api, "Tutu Much API") {
+Container_Boundary(api, "TuTuMuch API") {
   Component(ctrl, "NotificationPreferencesController", "ASP.NET Core controller", "GET and PUT /api/me/notification-preferences for any signed-in member")
   Component(uctrl, "UnsubscribeController", "ASP.NET Core controller", "Anonymous POST /api/notifications/unsubscribe")
   Component(get, "GetNotificationPreferencesQueryHandler", "MediatR handler", "Returns 4 categories, 2 locked on")
@@ -14,10 +14,10 @@ Container_Boundary(api, "Tutu Much API") {
   Component(tokens, "UnsubscribeTokens", "Application service", "HMAC-SHA256 signed tokens, key from secret store")
   Component(entity, "NotificationPreferences", "Domain entity", "Optional flags and IsAllowed rule")
 }
-Container_Boundary(worker, "Tutu Much Worker") {
+Container_Boundary(worker, "TuTuMuch Worker") {
   Component(reader, "INotificationPreferenceReader", "Read port", "Used by DispatchEmailsHandler; a missing row is the defaults")
 }
-ContainerDb(db, "Tutu Much database", "SQL Server", "NotificationPreferences")
+ContainerDb(db, "TuTuMuch database", "SQL Server", "NotificationPreferences")
 
 Rel(web, ctrl, "Calls", "JSON/HTTPS")
 Rel(web, uctrl, "Calls", "JSON/HTTPS")

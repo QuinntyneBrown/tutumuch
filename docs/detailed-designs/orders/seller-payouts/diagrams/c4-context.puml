@@ -4,7 +4,7 @@ LAYOUT_WITH_LEGEND()
 title System Context — Seller payouts
 
 Person(seller, "Seller", "Member who sells items")
-System(tutumuch, "Tutu Much", "Girls' clothing marketplace")
+System(tutumuch, "TuTuMuch", "Girls' clothing marketplace")
 System_Ext(pay, "Payment provider", "Hosted payout onboarding, connected accounts, payouts, signed webhooks")
 Rel(seller, tutumuch, "Views earnings, fees and payouts using")
 Rel(seller, pay, "Completes payout onboarding on", "Provider-hosted page")

@@ -22,7 +22,7 @@ limit is `Selling:PublishesPerDay` in configuration (20).
 
 ## Options Considered
 
-### Option 1: Count published listings in Tutu Much database (chosen)
+### Option 1: Count published listings in TuTuMuch database (chosen)
 - **Pros:** Exact, stateless, survives restarts, no new infrastructure, testable on SQLite in memory.
 - **Cons:** One indexed count per publish.
 

@@ -20,7 +20,7 @@ import { PayoutBannerState } from './payout-banner-state';
  * seller to set up payouts and sends them to the provider-hosted onboarding.
  */
 @Component({
-  selector: 'tm-payouts-page',
+  selector: 'tl-payouts-page',
   imports: [
     RouterLink,
     AlertComponent,
@@ -59,7 +59,7 @@ export class PayoutsPage {
     return this.load();
   }
 
-  /** Requests the onboarding link and leaves Tutu Much for the provider's hosted pages. */
+  /** Requests the onboarding link and leaves TuTuMuch for the provider's hosted pages. */
   async setUp(): Promise<void> {
     this.settingUp.set(true);
     this.setupError.set(null);

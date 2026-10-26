@@ -20,7 +20,7 @@ box "Build — GitHub Actions CI" #FFF4E5
   participant "Playwright runner (pinned image)" as pw
   participant "axe-core" as axe
 end box
-box "Frontend — Tutu Much Web application (production build)" #E0F2FE
+box "Frontend — TuTuMuch Web application (production build)" #E0F2FE
   participant "Page or dialog under test" as page
 end box
 dev -> pr : Push change

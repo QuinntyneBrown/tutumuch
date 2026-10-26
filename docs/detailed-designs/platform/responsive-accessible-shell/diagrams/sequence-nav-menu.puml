@@ -15,7 +15,7 @@ skinparam package {
   BackgroundColor #F9FAFB
 }
 actor "Keyboard user on a phone" as actor
-box "Frontend — Tutu Much Web application" #E0F2FE
+box "Frontend — TuTuMuch Web application" #E0F2FE
   participant "TopbarComponent" as topbar
   participant "BreakpointService" as bp
   participant "SheetService (CDK overlay + FocusTrap)" as sheet

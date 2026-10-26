@@ -34,7 +34,7 @@ export interface CancelOrderData {
  * API; a failure keeps the choices and offers "Try again". Closes with the cancelled sale.
  */
 @Component({
-  selector: 'tm-cancel-order-dialog',
+  selector: 'tl-cancel-order-dialog',
   imports: [AlertComponent, ButtonDirective, ChoiceComponent, DialogComponent, FormFieldComponent, RadioGroupComponent],
   templateUrl: './cancel-order-dialog.html',
   styleUrl: './cancel-order-dialog.css',

@@ -1,6 +1,6 @@
 <header class="topbar">
   @if (variant() === 'admin') {
-    <tm-logo />
+    <tl-logo />
     <span class="topbar__admin">Admin</span>
     <span class="topbar__spacer"></span>
     @if (member(); as member) {
@@ -20,7 +20,7 @@
         <path d="M4 7h16M4 12h16M4 17h16" />
       </svg>
     </button>
-    <tm-logo />
+    <tl-logo />
     <nav class="topbar__nav" aria-label="Primary">
       @for (item of categories; track item.path) {
         <a
@@ -35,7 +35,7 @@
     </nav>
     <span class="topbar__spacer"></span>
     <form class="search" [class.search--open]="searchOpen()" role="search" (submit)="submit($event, term.value)">
-      <label class="visually-hidden" for="q">Search Tutu Much</label>
+      <label class="visually-hidden" for="q">Search TuTuMuch</label>
       <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
         <circle cx="11" cy="11" r="7" />
         <path d="m20 20-3.5-3.5" />
@@ -52,7 +52,7 @@
     </form>
     <div class="topbar__actions">
       <button
-        tmButton="ghost"
+        tlButton="ghost"
         class="btn--icon topbar__search-btn"
         type="button"
         aria-label="Search"
@@ -72,7 +72,7 @@
           routerLinkActive
           #sell="routerLinkActive"
           [attr.aria-current]="sell.isActive ? 'page' : null"
-          ><tm-icon name="plus" />Sell</a
+          ><tl-icon name="plus" />Sell</a
         >
         <a
           class="avatar avatar--sm topbar__avatar"

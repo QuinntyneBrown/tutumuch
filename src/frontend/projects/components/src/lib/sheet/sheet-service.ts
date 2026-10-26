@@ -4,7 +4,7 @@ import { DialogRef } from '../dialog/dialog-ref';
 import { DialogService } from '../dialog/dialog-service';
 
 /**
- * Opens a component whose template is a tm-sheet (design system: Sheet). Sheets behave as modal
+ * Opens a component whose template is a tl-sheet (design system: Sheet). Sheets behave as modal
  * dialogs: the page becomes inert, Escape closes and focus returns to the opener on close.
  */
 @Injectable({ providedIn: 'root' })

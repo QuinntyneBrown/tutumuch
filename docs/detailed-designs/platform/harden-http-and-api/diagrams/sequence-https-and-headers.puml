@@ -15,14 +15,14 @@ skinparam package {
   BackgroundColor #F9FAFB
 }
 actor "Visitor" as actor
-box "Frontend — Tutu Much Web application" #E0F2FE
+box "Frontend — TuTuMuch Web application" #E0F2FE
   participant "Browser" as browser
   participant "Static host" as host
 end box
 box "Backend — Load balancer" #FFF4E5
   participant "Load balancer" as lb
 end box
-box "Backend — Tutu Much API application" #D1FADF
+box "Backend — TuTuMuch API application" #D1FADF
   participant "SecurityHeadersMiddleware" as sh
   participant "Controller" as ctrl
 end box

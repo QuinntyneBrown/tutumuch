@@ -3,9 +3,9 @@
 ## Basis
 
 The hours assume an intermediate Angular/TypeScript and ASP.NET Core/C# developer
-who does not yet know the Tutu Much codebase. They cover implementation, automated
+who does not yet know the TuTuMuch codebase. They cover implementation, automated
 tests and review fixes, and exclude requirements, design and mock work. The
-estimate assumes the `Tutu Much API` project skeleton, the `Distributed cache` (Redis)
+estimate assumes the `TuTuMuch API` project skeleton, the `Distributed cache` (Redis)
 and the problem details middleware of report-errors-and-observe already exist.
 The hosting platform, its load balancer TLS policy and the static host header
 mechanism are `<TO SUPPLY>`; the hours assume the platform accepts a declarative

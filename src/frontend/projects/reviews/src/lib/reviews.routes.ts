@@ -5,6 +5,6 @@ export const routes: Routes = [
   {
     path: ':displayName',
     loadComponent: () => import('./member-profile/member-profile-page').then((m) => m.MemberProfilePage),
-    title: 'Member · Tutu Much',
+    title: 'Member · TuTuMuch',
   },
 ];

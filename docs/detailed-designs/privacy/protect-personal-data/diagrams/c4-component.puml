@@ -3,8 +3,8 @@
 LAYOUT_WITH_LEGEND()
 title Components — Protect personal data
 
-Container(web, "Tutu Much Web", "Angular", "Public pages and checkout")
-Container_Boundary(api, "Tutu Much API") {
+Container(web, "TuTuMuch Web", "Angular", "Public pages and checkout")
+Container_Boundary(api, "TuTuMuch API") {
   Component(publicCtrl, "Public endpoints", "ASP.NET Core controllers", "Catalog, listing, profile and review reads tagged PublicResponseAttribute")
   Component(guard, "PublicResponseGuardFilter", "Result filter", "Refuses any result that is not IPublicDto")
   Component(publicQueries, "Public query handlers", "MediatR", "Map entities to public DTOs")
@@ -16,7 +16,7 @@ Container_Boundary(api, "Tutu Much API") {
   Component(dbHealth, "DatabaseEncryptionHealthCheck", "Health check", "Reads TDE state")
   Component(photoHealth, "PhotoStorageEncryptionHealthCheck", "Health check", "Reads bucket encryption")
 }
-ContainerDb(db, "Tutu Much database", "SQL Server", "Orders, SavedAddresses")
+ContainerDb(db, "TuTuMuch database", "SQL Server", "Orders, SavedAddresses")
 ContainerDb(photos, "Photo storage", "Object storage", "Photos")
 System_Ext(secrets, "Secret store", "Key ring")
 

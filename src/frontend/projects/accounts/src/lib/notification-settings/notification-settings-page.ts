@@ -16,7 +16,7 @@ import {
  * saved with the ETag they were read with. A visitor is sent to sign in.
  */
 @Component({
-  selector: 'tm-notification-settings-page',
+  selector: 'tl-notification-settings-page',
   imports: [AlertComponent, ButtonDirective, EmptyStateComponent, IconComponent, SwitchComponent],
   templateUrl: './notification-settings-page.html',
   styleUrl: './notification-settings-page.css',

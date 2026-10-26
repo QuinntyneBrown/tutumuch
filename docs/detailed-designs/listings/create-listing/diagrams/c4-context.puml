@@ -3,8 +3,8 @@
 LAYOUT_WITH_LEGEND()
 title System Context — Create a listing
 
-Person(seller, "Seller", "Verified Tutu Much member listing an item")
-System(tutumuch, "Tutu Much", "Marketplace for girls' clothing")
+Person(seller, "Seller", "Verified TuTuMuch member listing an item")
+System(tutumuch, "TuTuMuch", "Marketplace for girls' clothing")
 System_Ext(payments, "Payment provider", "Holds seller payout onboarding status")
 
 Rel(seller, tutumuch, "Saves drafts and publishes listings using", "HTTPS")

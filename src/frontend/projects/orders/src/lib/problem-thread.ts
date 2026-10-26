@@ -4,7 +4,7 @@ import { ThreadEntry } from '@tutumuch/components';
 import { formatDay } from './order-dates';
 
 /**
- * The buyer's claim, with its photos, and the seller's reply as `tm-thread` entries. The captions
+ * The buyer's claim, with its photos, and the seller's reply as `tl-thread` entries. The captions
  * name the buyer and the seller as the viewer knows them, for example "You" for the buyer's own
  * claim, or "marcus_12 · buyer" on the administrator's page.
  */

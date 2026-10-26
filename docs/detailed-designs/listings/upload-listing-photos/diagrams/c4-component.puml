@@ -3,8 +3,8 @@
 LAYOUT_WITH_LEGEND()
 title Components — Upload listing photos
 
-Container(web, "Tutu Much Web", "Angular", "SellPage, tm-photo-uploader, PhotosApi, ListingsApi")
-Container_Boundary(api, "Tutu Much API") {
+Container(web, "TuTuMuch Web", "Angular", "SellPage, tl-photo-uploader, PhotosApi, ListingsApi")
+Container_Boundary(api, "TuTuMuch API") {
   Component(ctrl, "PhotoUploadsController", "ASP.NET Core controller", "POST /api/photo-uploads, GET /api/photo-uploads/{id}")
   Component(photos, "PhotosController", "ASP.NET Core controller", "GET /photos/{hash}/{file}, one-year immutable cache")
   Component(listings, "ListingsController", "ASP.NET Core controller", "POST and PUT /api/listings with photoIds")
@@ -14,7 +14,7 @@ Container_Boundary(api, "Tutu Much API") {
   Component(proc, "SkiaPhotoProcessor", "IListingPhotoProcessor", "Orients, strips metadata, re-encodes 400, 800, 1600 px in WebP and JPEG")
   Component(store, "FileSystemPhotoStorage", "IPhotoStorage", "private/ originals, public/ versions")
 }
-ComponentDb(db, "Tutu Much database", "SQL Server", "ListingPhotos, ListingPhotoVersions")
+ComponentDb(db, "TuTuMuch database", "SQL Server", "ListingPhotos, ListingPhotoVersions")
 
 Rel(web, ctrl, "Uploads one file per request", "multipart/form-data")
 Rel(web, listings, "Saves photoIds in display order", "JSON")

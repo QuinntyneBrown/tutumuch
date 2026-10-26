@@ -8,7 +8,7 @@
       (focusin)="service.pause(toast.id)"
       (focusout)="service.resume(toast.id)"
     >
-      <tm-icon [name]="icons[toast.tone]" />
+      <tl-icon [name]="icons[toast.tone]" />
       <div class="toast__body">
         <span class="toast__title">{{ toast.title }}</span>
         @if (toast.text) {
@@ -19,7 +19,7 @@
         }
       </div>
       <button class="close" type="button" aria-label="Dismiss" (click)="service.dismiss(toast.id)">
-        <tm-icon name="close" />
+        <tl-icon name="close" />
       </button>
     </div>
   }

@@ -16,7 +16,7 @@ Linux CI. Separate per-stack commands drift: CI runs one set, developers another
 `npm run verify` in `src/frontend` is the single verify command. It runs, in order and
 stopping at the first failure: `dotnet restore`, `dotnet format --verify-no-changes`,
 `dotnet build --no-restore -warnaserror` and `dotnet test --no-build` on
-`../backend/TutuMuch.sln`, then `lint` (Prettier and ESLint), `build:all` (every library,
+`../backend/TuTuMuch.sln`, then `lint` (Prettier and ESLint), `build:all` (every library,
 then the application) and `test:e2e` (Playwright, Chromium, against the built app with
 fixture API responses). CI runs exactly this command.
 

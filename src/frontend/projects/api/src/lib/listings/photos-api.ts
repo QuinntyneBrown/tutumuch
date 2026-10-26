@@ -28,7 +28,7 @@ export class PhotosApi {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = inject(API_BASE_URL);
 
-  /** Uploads one file; Tutu Much API answers 413, 415 or 422 with the message to show. */
+  /** Uploads one file; TuTuMuch API answers 413, 415 or 422 with the message to show. */
   upload(file: File): Promise<ApiResult<Photo>> {
     const body = new FormData();
     body.append('file', file, file.name);

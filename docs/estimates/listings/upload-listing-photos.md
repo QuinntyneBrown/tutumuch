@@ -2,7 +2,7 @@
 
 ## Basis
 
-The estimate assumes an intermediate Angular/TypeScript and ASP.NET Core/C# developer who is productive in both stacks but new to this codebase and to image processing in .NET. It assumes the baseline outbox, `Tutu Much Worker` host, object storage account, CDN and `Listings` table exist, and that SixLabors ImageSharp is approved (`<TO SUPPLY>`; a different library could add hours). The open configuration values (retention, schedule, quality, pixel limit) do not change the hours. Hours cover implementation, unit and acceptance tests, and review fixes. [Detailed design](../../detailed-designs/listings/upload-listing-photos/README.md)
+The estimate assumes an intermediate Angular/TypeScript and ASP.NET Core/C# developer who is productive in both stacks but new to this codebase and to image processing in .NET. It assumes the baseline outbox, `TuTuMuch Worker` host, object storage account, CDN and `Listings` table exist, and that SixLabors ImageSharp is approved (`<TO SUPPLY>`; a different library could add hours). The open configuration values (retention, schedule, quality, pixel limit) do not change the hours. Hours cover implementation, unit and acceptance tests, and review fixes. [Detailed design](../../detailed-designs/listings/upload-listing-photos/README.md)
 
 ## Full design
 
@@ -25,7 +25,7 @@ The estimate assumes an intermediate Angular/TypeScript and ASP.NET Core/C# deve
 
 ## Minimal scope
 
-The minimal version processes photos synchronously in `Tutu Much API` instead of the worker. It includes content sniffing, the size and dimension checks, metadata stripping, 3 widths in WebP and JPEG under content-addressed keys with the one-year cache header, the attacher with the 8-photo limit and ordering, and an uploader with add, remove and drag reordering. It leaves out `PhotoProcessingJob` and the outbox, status polling, the keyboard reorder alternative and `PhotoCleanupJob`. It still satisfies `L2-017` and the content-addressing and caching parts of `L2-059`. It weakens keyboard access to reordering (`L2-065`) and leaves orphaned uploads in storage. Minimal scope totals **44** hours.
+The minimal version processes photos synchronously in `TuTuMuch API` instead of the worker. It includes content sniffing, the size and dimension checks, metadata stripping, 3 widths in WebP and JPEG under content-addressed keys with the one-year cache header, the attacher with the 8-photo limit and ordering, and an uploader with add, remove and drag reordering. It leaves out `PhotoProcessingJob` and the outbox, status polling, the keyboard reorder alternative and `PhotoCleanupJob`. It still satisfies `L2-017` and the content-addressing and caching parts of `L2-059`. It weakens keyboard access to reordering (`L2-065`) and leaves orphaned uploads in storage. Minimal scope totals **44** hours.
 
 ## Partial descoping
 

@@ -44,7 +44,7 @@ const HEADINGS: Record<string, string> = {
  * Paid order offers "Ask to cancel" once (L2-035).
  */
 @Component({
-  selector: 'tm-order-detail-page',
+  selector: 'tl-order-detail-page',
   imports: [
     RouterLink,
     AlertComponent,
@@ -73,9 +73,9 @@ export class OrderDetailPage {
   readonly view = signal<'loading' | 'loaded' | 'error'>('loading');
   readonly errorRef = signal('');
 
-  /** A problem waiting for Tutu Much (mocks order-detail/problem). */
+  /** A problem waiting for TuTuMuch (mocks order-detail/problem). */
   readonly problemOpen = computed(() => this.order()?.problem?.status === 'Open');
-  /** Refunded because Tutu Much decided the problem for the buyer (mocks order-detail/refunded). */
+  /** Refunded because TuTuMuch decided the problem for the buyer (mocks order-detail/refunded). */
   readonly refundedOnProblem = computed(
     () => this.order()?.status === 'Refunded' && this.order()?.problem?.outcome === 'FullRefund',
   );

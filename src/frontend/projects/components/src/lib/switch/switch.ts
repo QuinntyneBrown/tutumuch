@@ -6,7 +6,7 @@ import { ChangeDetectionStrategy, Component, booleanAttribute, input, model } fr
  * label and hint are shown beside the switch. A locked setting is checked and disabled.
  */
 @Component({
-  selector: 'tm-switch',
+  selector: 'tl-switch',
   templateUrl: './switch.html',
   styleUrl: './switch.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

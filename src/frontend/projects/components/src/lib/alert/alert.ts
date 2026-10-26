@@ -17,7 +17,7 @@ const ICONS: Record<AlertTone, IconName> = {
  * Project links or buttons with the `actions` attribute; a dismissible alert has a Dismiss button.
  */
 @Component({
-  selector: 'tm-alert',
+  selector: 'tl-alert',
   imports: [IconComponent],
   templateUrl: './alert.html',
   styleUrl: './alert.css',

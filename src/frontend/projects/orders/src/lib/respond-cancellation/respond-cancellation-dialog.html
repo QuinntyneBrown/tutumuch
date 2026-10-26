@@ -1,19 +1,19 @@
-<tm-dialog [heading]="data.buyerDisplayName + ' asked to cancel'">
+<tl-dialog [heading]="data.buyerDisplayName + ' asked to cancel'">
   <span description
     >Accepting refunds {{ money(data.total) }} in full. Declining keeps the order — you still ship by
     {{ day(data.shipBy) }}.</span
   >
   @if (state() === 'failed') {
-    <tm-alert top tone="danger" heading="That didn’t go through"
-      >Nothing changed. Check your connection and try again.</tm-alert
+    <tl-alert top tone="danger" heading="That didn’t go through"
+      >Nothing changed. Check your connection and try again.</tl-alert
     >
   }
   @if (data.message) {
-    <tm-quote [text]="data.message" [cite]="data.buyerDisplayName" />
+    <tl-quote [text]="data.message" [cite]="data.buyerDisplayName" />
   }
   <ng-container ngProjectAs="[footer]">
     <button
-      tmButton
+      tlButton
       type="button"
       [disabled]="pending() === 'Accept'"
       [busy]="pending() === 'Decline'"
@@ -22,7 +22,7 @@
       Decline
     </button>
     <button
-      tmButton="primary"
+      tlButton="primary"
       type="button"
       data-autofocus
       [disabled]="pending() === 'Decline'"
@@ -32,4 +32,4 @@
       Accept and refund
     </button>
   </ng-container>
-</tm-dialog>
+</tl-dialog>

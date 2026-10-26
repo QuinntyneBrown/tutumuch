@@ -15,7 +15,7 @@ upload-listing-photos, which was never built, and `IPhotoStorage` had no delete 
 
 ## Decision
 
-- **One job, one command.** `DraftCleanupJob` in `TutuMuch.Worker` sends `CleanUpDraftsCommand`
+- **One job, one command.** `DraftCleanupJob` in `TuTuMuch.Worker` sends `CleanUpDraftsCommand`
   once a day (`Listings:DraftCleanup:Interval`). The command first reminds about drafts 83 days
   old, then deletes drafts 90 days old whose reminder is at least 7 days old, so a missed run
   never deletes without notice. 90 and 7 are domain constants on `Listing`.

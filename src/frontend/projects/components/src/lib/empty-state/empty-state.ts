@@ -8,7 +8,7 @@ import { IconComponent, IconName } from '../icon/icon';
  * for an empty section inside a page. Project the actions with `actions`.
  */
 @Component({
-  selector: 'tm-empty-state',
+  selector: 'tl-empty-state',
   imports: [IconComponent],
   templateUrl: './empty-state.html',
   styleUrl: './empty-state.css',

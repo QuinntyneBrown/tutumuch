@@ -18,33 +18,33 @@
     </div>
   }
   @case ('error') {
-    <tm-center-state icon="refresh" heading="Couldn’t load this listing">
+    <tl-center-state icon="refresh" heading="Couldn’t load this listing">
       <p class="text-muted">Your listing is safe. Try again in a moment.</p>
       @if (loadRef()) {
         <span class="ref">{{ loadRef() }}</span>
       }
-      <button actions tmButton="primary" type="button" (click)="open()"><tm-icon name="refresh" />Try again</button>
-      <a actions tmButton routerLink="/account/listings">Your listings</a>
-    </tm-center-state>
+      <button actions tlButton="primary" type="button" (click)="open()"><tl-icon name="refresh" />Try again</button>
+      <a actions tlButton routerLink="/account/listings">Your listings</a>
+    </tl-center-state>
   }
   @case ('locked') {
-    <tm-center-state icon="clock" heading="This item is in someone’s checkout">
+    <tl-center-state icon="clock" heading="This item is in someone’s checkout">
       <p class="text-muted">You can edit it again if they don’t finish within 10 minutes.</p>
-      <a actions tmButton="primary" [routerLink]="['/items', reference()]">Back to listing</a>
-    </tm-center-state>
+      <a actions tlButton="primary" [routerLink]="['/items', reference()]">Back to listing</a>
+    </tl-center-state>
   }
   @case ('sold') {
-    <tm-center-state icon="check" heading="This item has sold">
+    <tl-center-state icon="check" heading="This item has sold">
       <p class="text-muted">Sold listings can’t be edited.</p>
-      <a actions tmButton="primary" routerLink="/account/sales">Your sales</a>
-      <a actions tmButton routerLink="/account/listings">Your listings</a>
-    </tm-center-state>
+      <a actions tlButton="primary" routerLink="/account/sales">Your sales</a>
+      <a actions tlButton routerLink="/account/listings">Your listings</a>
+    </tl-center-state>
   }
   @case ('withdrawn') {
-    <tm-center-state icon="trash" heading="This listing was withdrawn">
+    <tl-center-state icon="trash" heading="This listing was withdrawn">
       <p class="text-muted">Withdrawn listings can’t be edited or relisted.</p>
-      <a actions tmButton="primary" routerLink="/account/listings">Your listings</a>
-    </tm-center-state>
+      <a actions tlButton="primary" routerLink="/account/listings">Your listings</a>
+    </tl-center-state>
   }
   @case ('form') {
     <div class="sell">
@@ -53,37 +53,37 @@
           <a class="text-sm text-muted" [routerLink]="['/items', reference()]">{{ title() }}</a>
           <h1>Edit listing</h1>
         </div>
-        <tm-status [tone]="tone()">{{ listing()?.status }}</tm-status>
+        <tl-status [tone]="tone()">{{ listing()?.status }}</tl-status>
       </div>
       <form class="sell-form" novalidate [formGroup]="model.form" (ngSubmit)="save()">
-        <tm-error-summary [errors]="model.summary()" />
+        <tl-error-summary [errors]="model.summary()" />
         @if (saved()) {
-          <tm-alert tone="success" heading="Changes saved" live="polite"
-            ><a [routerLink]="['/items', reference()]">View listing</a></tm-alert
+          <tl-alert tone="success" heading="Changes saved" live="polite"
+            ><a [routerLink]="['/items', reference()]">View listing</a></tl-alert
           >
         }
         @if (changed()) {
-          <tm-alert tone="warning" heading="This listing changed since you opened it" live="polite"
+          <tl-alert tone="warning" heading="This listing changed since you opened it" live="polite"
             >Reload to see the latest version, then make your changes again.
-            <button actions tmButton size="sm" type="button" (click)="reload()">
-              <tm-icon name="refresh" />Reload
-            </button></tm-alert
+            <button actions tlButton size="sm" type="button" (click)="reload()">
+              <tl-icon name="refresh" />Reload
+            </button></tl-alert
           >
         }
         @if (failure(); as failure) {
-          <tm-alert tone="danger" heading="Couldn’t save your changes"
+          <tl-alert tone="danger" heading="Couldn’t save your changes"
             >{{ failure.text }}
             @if (failure.ref) {
               <span class="ref">{{ failure.ref }}</span>
             }
-          </tm-alert>
+          </tl-alert>
         }
 
-        <tm-listing-form [model]="model" />
+        <tl-listing-form [model]="model" />
 
         <div class="form-actions form-actions--sticky form-actions--split">
-          <a tmButton="ghost" [routerLink]="['/items', reference()]">Cancel</a>
-          <button tmButton="primary" type="submit" [busy]="busy()">Save changes</button>
+          <a tlButton="ghost" [routerLink]="['/items', reference()]">Cancel</a>
+          <button tlButton="primary" type="submit" [busy]="busy()">Save changes</button>
         </div>
       </form>
     </div>

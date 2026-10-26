@@ -2,7 +2,7 @@
 
 ## Overview
 
-Tutu Much is a marketplace of new and used girls' clothing in which every
+TuTuMuch is a marketplace of new and used girls' clothing in which every
 member can both buy and sell. Before buying, a member wants to know whom they are dealing
 with. The *public profile* answers that question. Anyone, signed in or not, can open it at
 `/members/{displayName}`.
@@ -31,8 +31,8 @@ so until they return every profile shows "No reviews yet".
 
 ## Description
 
-The slice runs from the profile route of `Tutu Much Web` through two anonymous read endpoints of
-`Tutu Much API` to `Tutu Much database`. Screens, states and copy come from `docs/mocks/pages/profile/`
+The slice runs from the profile route of `TuTuMuch Web` through two anonymous read endpoints of
+`TuTuMuch API` to `TuTuMuch database`. Screens, states and copy come from `docs/mocks/pages/profile/`
 (states *default*, *own*, *empty*, *loading*, *error*, *unavailable* and *long*). What is
 built now, and what waits for review authoring and edit-profile, is recorded in
 [ADR reviews/0001](../../../adr/reviews/0001-public-profile-without-a-reputation-projection.md).
@@ -41,7 +41,7 @@ built now, and what waits for review authoring and edit-profile, is recorded in
 
 - **Route** `members/:displayName` in `@tutumuch/reviews` (`reviews.routes.ts`), lazy-loaded under
   `/members` by the application and reachable without sign-in. The route parameter binds to
-  the page's `displayName` input; the page title becomes "{displayName} · Tutu Much".
+  the page's `displayName` input; the page title becomes "{displayName} · TuTuMuch".
 - **`MemberProfileStore`**: signal state. It requests the profile and the first page of
   listings in parallel. A 404 gives the *unavailable* view, any other failure the *error* view
   with the short correlation reference. `loadMore()` appends the next page and drops any card
@@ -49,30 +49,30 @@ built now, and what waits for review authoring and edit-profile, is recorded in
 - **`MemberProfilePage`**: composes the page from `@tutumuch/components` as listed in
   `docs/screen-composition.md`:
   - *loading*: skeleton `.profile-head` with an `avatar--xl` placeholder, the hidden heading
-    "Loading profile" and the `tm-listing-grid` skeleton.
+    "Loading profile" and the `tl-listing-grid` skeleton.
   - *default*: `.profile-head` with the initials avatar (or the photo when `avatarUrl` is
     set), the display name as the `h1`, the `map-pin` location and the bio when present, and
-    `tm-rating-summary`; a `.stats` row of two `tm-stat` ("Sales", and "Member since" as
-    "Jan 2025"); the "For sale" section with the Active listing total and `tm-listing-grid`;
+    `tl-rating-summary`; a `.stats` row of two `tl-stat` ("Sales", and "Member since" as
+    "Jan 2025"); the "For sale" section with the Active listing total and `tl-listing-grid`;
     the "Reviews" section with the count and "No reviews yet".
-  - *empty*: "For sale" shows the compact `tm-empty-state` "No items for sale" with
+  - *empty*: "For sale" shows the compact `tl-empty-state` "No items for sale" with
     "{displayName} hasn’t listed anything yet."
-  - *long*: 24 cards per page (`L2-041`); `tm-load-more` reads "Showing {loaded} of {total}".
-    A failed next page shows the danger `tm-alert` "Couldn’t load more items" with "Try again".
-  - *unavailable*: `tm-center-state` with code "404", "This member isn’t available", "The
+  - *long*: 24 cards per page (`L2-041`); `tl-load-more` reads "Showing {loaded} of {total}".
+    A failed next page shows the danger `tl-alert` "Couldn’t load more items" with "Try again".
+  - *unavailable*: `tl-center-state` with code "404", "This member isn’t available", "The
     account may have been closed." and "Back to shop" (to `/`).
-  - *error*: `tm-center-state` "Couldn’t load this profile", "It’s us, not you." with the
+  - *error*: `tl-center-state` "Couldn’t load this profile", "It’s us, not you." with the
     reference, "Try again" and "Back to shop" (`L2-068`).
   - *own*: the same as *default*; "Edit profile" waits for edit-profile.
-- **`tm-rating-summary`** (`@tutumuch/components`): `role="img"` named "Rated {average} out of 5
+- **`tl-rating-summary`** (`@tutumuch/components`): `role="img"` named "Rated {average} out of 5
   from {count} reviews" with the stars, the average to one decimal place and "({count}
   reviews)" ("review" for 1). With a count of 0 it renders the muted "No reviews yet"
   (`L2-040`).
 - **`MembersApi`** (`@tutumuch/api`, `src/lib/reviews/members-api.ts`): `profile(displayName)`
   and `listings(displayName, page)`, returning `ApiResult`.
-- The seller link of `tm-seller-summary` on the listing detail page opens this profile.
+- The seller link of `tl-seller-summary` on the listing detail page opens this profile.
 
-### API (`TutuMuch.Api`)
+### API (`TuTuMuch.Api`)
 
 `MembersController` exposes two anonymous endpoints. `displayName` matches ignoring case.
 
@@ -98,7 +98,7 @@ correlation ID (`L2-068`).
 email is set, fails when it contains an `@` or the password hash, and checks every property
 name against the allow-list above, so adding a field such as `email` fails the build.
 
-### Application and domain (`TutuMuch.Application/Profiles/`, `TutuMuch.Domain`)
+### Application and domain (`TuTuMuch.Application/Profiles/`, `TuTuMuch.Domain`)
 
 - **`PublicMembers.FindAsync`**: the member by `NormalizedDisplayName` with `ClosedAt`
   null; otherwise `PublicMembers.Unavailable` (404 `MEMBER_UNAVAILABLE`).
@@ -112,7 +112,7 @@ name against the allow-list above, so adding a field such as `email` fails the b
 - **`GetListingDetailQueryHandler`** fills `SellerSummaryDto.CompletedSalesCount` with the same
   count, so the listing page and the profile agree.
 
-### Infrastructure and data (`TutuMuch.Infrastructure`)
+### Infrastructure and data (`TuTuMuch.Infrastructure`)
 
 - Migration **`MemberClosedAt`** adds the nullable `Members.ClosedAt`.
 - Index **`UX_Members_NormalizedDisplayName`** (owned by `accounts`) serves the profile lookup.
@@ -120,7 +120,7 @@ name against the allow-list above, so adding a field such as `email` fails the b
 
 ### Tests
 
-- xUnit `tests/TutuMuch.Api.Tests/MemberProfileTests.cs` against the in-memory test host:
+- xUnit `tests/TuTuMuch.Api.Tests/MemberProfileTests.cs` against the in-memory test host:
   public profile, completed sales, the allow-list, the uniform 404 for unknown and closed
   members, paging 24 at a time and a refused page 0.
 - Playwright `src/frontend/e2e/tests/view-member-profile.spec.ts` with the
@@ -149,14 +149,14 @@ one of the public responses it governs.
 
 ### System context
 
-Visitors and members read public profiles in Tutu Much. Profile photos come from photo storage
+Visitors and members read public profiles in TuTuMuch. Profile photos come from photo storage
 through the CDN. No external system takes part in building a profile.
 
 ![C4 system context for viewing a member profile](diagrams/c4-context.png)
 
 ### Containers
 
-`Tutu Much Web` calls two anonymous endpoints on `Tutu Much API`, which reads `Tutu Much database`. The
+`TuTuMuch Web` calls two anonymous endpoints on `TuTuMuch API`, which reads `TuTuMuch database`. The
 browser loads the listing photos from `Photo storage`.
 
 ![C4 container view for viewing a member profile](diagrams/c4-container.png)

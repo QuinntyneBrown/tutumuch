@@ -14,7 +14,7 @@ export interface RatingSummaryView {
  * "No reviews yet" when there are none (design system: Rating summary, L2-040).
  */
 @Component({
-  selector: 'tm-rating-summary',
+  selector: 'tl-rating-summary',
   imports: [DecimalPipe, IconComponent],
   templateUrl: './rating-summary.html',
   styleUrl: './rating-summary.css',

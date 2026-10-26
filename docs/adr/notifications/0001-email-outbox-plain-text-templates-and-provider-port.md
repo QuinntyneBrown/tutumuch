@@ -11,7 +11,7 @@ Accepted
 The send-email-notifications design
 ([notifications/send-email-notifications](../../detailed-designs/notifications/send-email-notifications/README.md))
 writes each email request to an outbox in the same transaction as the change that caused it,
-and has `Tutu Much Worker` send it with retry and back-off for 24 hours (L2-042). When it was built,
+and has `TuTuMuch Worker` send it with retry and back-off for 24 hours (L2-042). When it was built,
 the features that raise email events were email verification, checkout (a new sale), ship-order
 (tracking, delivery, the ship deadline cancellation and refund, and the 3-day reminder that
 ADR orders/0003 deferred) and complete-order. Domain events are in-process MediatR
@@ -61,6 +61,6 @@ email copy is not supplied, and the backend tests run on SQLite in memory, never
 
 - One migration adds `OutboxMessages` with `IX_OutboxMessages_Due`, and the two reminder
   columns with `IX_Orders_Status_ShipReminderDue` on `Orders`.
-- Tests that read an email run one dispatcher pass first (`TutuMuchApiFactory.DispatchEmailsAsync`).
+- Tests that read an email run one dispatcher pass first (`TuTuMuchApiFactory.DispatchEmailsAsync`).
 - Each later feature adds its notification type, model and template, and calls `IEmailOutbox`.
 - `OutboxMessages` grows until the retention job is built.

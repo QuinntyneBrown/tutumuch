@@ -1,7 +1,7 @@
 // Acceptance Test
 // Traces to: L2-001, L2-002, L2-006, L2-008
 // Description: A visitor joins, opens the verification link and signs in; the top bar then shows
-// the member. Errors from Tutu Much API appear in the error summary, inline and in alerts.
+// the member. Errors from TuTuMuch API appear in the error summary, inline and in alerts.
 
 import { expect, marcus, problem, signInAs, test } from '../fixtures';
 import { JoinPage } from '../pages/join.page';

@@ -2,7 +2,7 @@
 
 ## Overview
 
-Every Tutu Much listing shows between 1 and 8 photos of the actual item (`L2-015`, `L2-017`). Buyers judge used girls' clothing almost entirely from photos, and phone cameras embed location and device data in every file. This feature lets a seller add, remove and reorder photos on the listing form. It also makes every stored photo safe to publish and fast to deliver.
+Every TuTuMuch listing shows between 1 and 8 photos of the actual item (`L2-015`, `L2-017`). Buyers judge used girls' clothing almost entirely from photos, and phone cameras embed location and device data in every file. This feature lets a seller add, remove and reorder photos on the listing form. It also makes every stored photo safe to publish and fast to deliver.
 
 The feature sits in the listings subsystem (`L1-004`). The listing form that hosts the uploader belongs to [create-listing](../create-listing/README.md) and [edit-and-withdraw-listing](../edit-and-withdraw-listing/README.md). Catalog pages consume the processed versions through `srcset`; that delivery markup belongs to the catalog subsystem, and this feature produces the versions it needs (`L2-059`).
 
@@ -22,9 +22,9 @@ Photos upload independently of the listing. The seller can therefore add photos 
 
 Screens, states and copy come from `docs/mocks/pages/sell/` (`default`, `filled`, `invalid`) and `docs/mocks/pages/edit-listing/`. Photos are processed in the upload request ([ADR listings/0001](../../../adr/listings/0001-process-photos-in-the-upload-request.md)) with SkiaSharp ([ADR platform/0009](../../../adr/platform/0009-skiasharp-for-photo-processing.md)), so a stored photo is always ready and there is no status to poll.
 
-### Frontend (`Tutu Much Web`)
+### Frontend (`TuTuMuch Web`)
 
-- **`tm-photo-uploader`** (`@tutumuch/components`, `src/lib/photo-uploader/`) — presentational. Inputs `tiles` (`key`, `state` uploading, ready or rejected, `src`, `name`, `size`), `max` (8), `error`, `inputId` (`photos`); outputs `filesSelected`, `removed`, `moved { from, to }`. It renders:
+- **`tl-photo-uploader`** (`@tutumuch/components`, `src/lib/photo-uploader/`) — presentational. Inputs `tiles` (`key`, `state` uploading, ready or rejected, `src`, `name`, `size`), `max` (8), `error`, `inputId` (`photos`); outputs `filesSelected`, `removed`, `moved { from, to }`. It renders:
   - a tile per photo with the 400 px WebP thumbnail, alt text "Photo {n}", and a remove button "Remove photo {n}";
   - the "Cover" badge on the first tile;
   - a spinner tile, announced as "Uploading {file name}", while a file uploads; it counts towards the limit;
@@ -35,7 +35,7 @@ Screens, states and copy come from `docs/mocks/pages/sell/` (`default`, `filled`
 - **`SellPage`** (`@tutumuch/listings`, `src/lib/sell/`) — owns the tiles. Chosen files fill only the free slots; a file over 10 MB becomes a rejected tile with "Photos must be 10 MB or smaller" and is not sent. Each other file uploads at once, one request per file. A `413`, `415` or `422` shows the problem title for a rejected tile; other failures show "Couldn’t upload {file name}. Try again.". Saves send `photoIds` of ready photos in display order; while a file is uploading, saving shows "Wait for your photos to finish uploading". Publishing with no photo shows "Add at least one photo" in the summary and inline; the inline error appends the last rejection reason ("Add at least one photo. Photos must be 10 MB or smaller."). A draft opened at `/sell/{reference}` shows its photos.
 - **`PhotosApi`** (`@tutumuch/api`, `src/lib/listings/photos-api.ts`) — `upload(file)` posts `multipart/form-data` and returns `ApiResult<Photo>`. `ListingDetails` carries `photoIds`; `MyListing` carries `photos`, cover first.
 
-### API (`TutuMuch.Api`)
+### API (`TuTuMuch.Api`)
 
 - **`PhotoUploadsController`** — requires the `CanSell` policy (`L2-010`).
   - `POST /api/photo-uploads` — one `file` part. The body limit is 16 MB, above the 10 MB photo limit, so an oversized photo reaches the handler and gets a problem body; this endpoint is the exception to the 1 MB JSON body limit of `L2-049`. Returns `201 Created` with `PhotoDto { id, url, width, height, versions[] }` and `Location: /api/photo-uploads/{id}`; `413` `PHOTO_TOO_LARGE`; `415` `PHOTO_TYPE_UNSUPPORTED` (also when no file is sent); `422` `PHOTO_TOO_SMALL` or `PHOTO_TOO_MANY_PIXELS`; `401`; `403`.
@@ -43,7 +43,7 @@ Screens, states and copy come from `docs/mocks/pages/sell/` (`default`, `filled`
 - **`PhotosController`** — anonymous `GET /photos/{hash}/{size}.{ext}`; the key must be 64 hex characters, a size and `webp` or `jpg`. Served from `IPhotoStorage` with `Cache-Control: public, max-age=31536000, immutable` and the format's content type (`L2-059`). A CDN can front this origin later without change.
 - **Attaching** — `POST /api/listings` and `PUT /api/listings/{reference}` accept `photoIds` in display order; leaving it out keeps the current photos. `MyListingDto` returns `photos`, cover first.
 
-### Application and domain (`TutuMuch.Application`, `TutuMuch.Domain`)
+### Application and domain (`TuTuMuch.Application`, `TuTuMuch.Domain`)
 
 - **`UploadListingPhotoCommand`** / **`ListingPhotoHandlers`** — in order:
   1. rejects content longer than `Photos:MaxBytes` with `PHOTO_TOO_LARGE`;
@@ -60,7 +60,7 @@ Screens, states and copy come from `docs/mocks/pages/sell/` (`default`, `filled`
 - **`ListingPhotoVersion`** value — `Size` (target width 400, 800 or 1600), `Format` (`WebP`, `Jpeg`), `Width`, `Height` (actual, never upscaled), `Key`, `Bytes`.
 - **Ports** — `IImageInspector`, `IListingPhotoProcessor`, `IPhotoStorage` (`SaveOriginalAsync`, `SavePublicAsync`, `ReadPublicAsync`).
 
-### Infrastructure (`TutuMuch.Infrastructure`)
+### Infrastructure (`TuTuMuch.Infrastructure`)
 
 - **`SkiaImageInspector`** — magic bytes (`FF D8 FF` JPEG, `89 50 4E 47 0D 0A 1A 0A` PNG, `RIFF....WEBP` WebP), then `SKCodec` for the header dimensions; axes swap for rotated EXIF orientations.
 - **`SkiaPhotoProcessor`** — decodes to sRGB, applies the EXIF orientation to the pixels, and for each size scales (never upscaling) onto an opaque white bitmap without a colour space, encoding WebP at quality 80 and JPEG at quality 82. Only pixels are encoded, so no EXIF, XMP, IPTC, GPS or ICC block survives (`L2-017`). Settings are fixed, so the same original always gives the same bytes under the same key.
@@ -72,7 +72,7 @@ Screens, states and copy come from `docs/mocks/pages/sell/` (`default`, `filled`
 
 ### Testing
 
-- xUnit (`tests/TutuMuch.Api.Tests/PhotoUploadTests.cs`, `ListingPhotoAttachTests.cs`) hosts the API with SQLite in-memory and `FakePhotoStorage` in place of `IPhotoStorage`; test images are made in memory, including a JPEG carrying Exif GPS and XMP blocks.
+- xUnit (`tests/TuTuMuch.Api.Tests/PhotoUploadTests.cs`, `ListingPhotoAttachTests.cs`) hosts the API with SQLite in-memory and `FakePhotoStorage` in place of `IPhotoStorage`; test images are made in memory, including a JPEG carrying Exif GPS and XMP blocks.
 - Playwright (`src/frontend/e2e/tests/upload-listing-photos.spec.ts`) serves `POST /api/photo-uploads` and `/photos/**` through `page.route` fixtures.
 
 ### Error codes
@@ -102,7 +102,7 @@ Screens, states and copy come from `docs/mocks/pages/sell/` (`default`, `filled`
 
 - The outbox, `PhotoProcessingJob` and the `PhotoCleanupJob` that deletes unattached photos and unreferenced versions (ADR listings/0001).
 - Real object storage, its credentials (`PhotoStorage:ConnectionString`) and the CDN.
-- Editing an active listing's photos belongs to edit-and-withdraw-listing; it reuses `tm-photo-uploader` and `ListingPhotoAttacher`.
+- Editing an active listing's photos belongs to edit-and-withdraw-listing; it reuses `tl-photo-uploader` and `ListingPhotoAttacher`.
 
 ## Requirements
 
@@ -119,13 +119,13 @@ The feature realises the following level-2 (L2) requirements. Each refines the l
 
 ### System context
 
-Sellers upload photos to Tutu Much. Visitors load the processed versions, cached for one year.
+Sellers upload photos to TuTuMuch. Visitors load the processed versions, cached for one year.
 
 ![C4 system context for uploading listing photos](diagrams/c4-context.png)
 
 ### Containers
 
-`Tutu Much API` validates each upload, produces the versions and stores them with the original behind `IPhotoStorage`; it also serves the versions.
+`TuTuMuch API` validates each upload, produces the versions and stores them with the original behind `IPhotoStorage`; it also serves the versions.
 
 ![C4 container view for uploading listing photos](diagrams/c4-container.png)
 

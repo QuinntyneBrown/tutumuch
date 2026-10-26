@@ -12,7 +12,7 @@ The view-member-profile design keeps a `MemberReputation` table (published-revie
 
 ## Decision
 
-- `GetPublicProfileQueryHandler` and `GetMemberListingsQueryHandler` read through `ITutuMuchDbContext`, as the catalog does. Completed sales are counted from `Orders` where the member is the seller and the status is `Completed`; Active listings are counted and paged (24 per page, newest first) from `Listings`. `GetListingDetailQueryHandler` uses the same count for `SellerSummaryDto.CompletedSalesCount`.
+- `GetPublicProfileQueryHandler` and `GetMemberListingsQueryHandler` read through `ITuTuMuchDbContext`, as the catalog does. Completed sales are counted from `Orders` where the member is the seller and the status is `Completed`; Active listings are counted and paged (24 per page, newest first) from `Listings`. `GetListingDetailQueryHandler` uses the same count for `SellerSummaryDto.CompletedSalesCount`.
 - The rating is always `{ average: null, count: 0 }`, so every profile and the Reviews section read "No reviews yet". There is no `MemberReputation` table, no reputation handlers, no rebuild command, no reviews endpoint and no `IRatingSummaryReader`.
 - `PublicProfileDto` keeps `avatarUrl`, `bio` and `publicLocation` in its shape, always `null` for now; the page shows each only when present.
 - `Member` gains a nullable `ClosedAt` and `Close(now)`, with a migration. An unknown or closed display name answers the same 404 `MEMBER_UNAVAILABLE` with `Cache-Control: no-store`. Closing an account from a screen stays with the privacy work.
@@ -22,6 +22,6 @@ The view-member-profile design keeps a `MemberReputation` table (published-revie
 ## Consequences
 
 - No projection to keep consistent and no concurrency retries; two counts per profile request, served by the existing seller indexes.
-- When review authoring returns, it adds the projection (or a count over published reviews), the reviews endpoint and the rating in `SellerSummaryDto`; the DTO shapes and `tm-rating-summary` do not change.
+- When review authoring returns, it adds the projection (or a count over published reviews), the reviews endpoint and the rating in `SellerSummaryDto`; the DTO shapes and `tl-rating-summary` do not change.
 - When edit-profile arrives it fills avatar, bio and location and adds the own-profile action.
 - A profile can be up to 60 seconds stale in shared caches.

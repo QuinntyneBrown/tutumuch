@@ -6,7 +6,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
  * system: Segmented control). Works as a form control; the value is the chosen option.
  */
 @Component({
-  selector: 'tm-segmented',
+  selector: 'tl-segmented',
   templateUrl: './segmented.html',
   styleUrl: './segmented.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

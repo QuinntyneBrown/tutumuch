@@ -10,7 +10,7 @@ import { formatMoney } from '../money';
  * paid, with the card brand and last four, and the next steps of the order (L2-030).
  */
 @Component({
-  selector: 'tm-order-confirmation-page',
+  selector: 'tl-order-confirmation-page',
   imports: [RouterLink, ButtonDirective, CenterStateComponent, IconComponent, ItemRowComponent],
   templateUrl: './order-confirmation-page.html',
   styleUrl: './order-confirmation-page.css',

@@ -34,13 +34,13 @@ review or marketing email. Backend tests run on SQLite in memory (AGENTS.md).
   signed with `Notifications:UnsubscribeSigningKey` by the `UnsubscribeTokens` application
   service. Nothing is stored per email. Tokens do not expire and carry no key ID yet; a
   lifetime and rotation stay open questions.
-- **`List-Unsubscribe` points at `{App:BaseUrl}/api/notifications/unsubscribe`**: Tutu Much Web serves
-  Tutu Much API under the same origin, so no second public URL setting is added. The endpoint takes
+- **`List-Unsubscribe` points at `{App:BaseUrl}/api/notifications/unsubscribe`**: TuTuMuch Web serves
+  TuTuMuch API under the same origin, so no second public URL setting is added. The endpoint takes
   the token from the query string (RFC 8058 form POST) or a JSON body (the unsubscribe page).
 - **`NotificationType.Marketing` exists without a sender.** The dispatcher honours the setting,
   adds the link and headers, and tests queue it directly; marketing campaigns are deferred. No
   review notification type exists, because review authoring is deferred (ADR general/0001).
-- **The error toast is built now.** `ToastService` and the rendering `tm-toast-region` are added
+- **The error toast is built now.** `ToastService` and the rendering `tl-toast-region` are added
   to `@tutumuch/components` for the failed-save and changed-elsewhere states.
 - **Not built:** anti-forgery on the PUT and the unsubscribe rate limit (L2-050, L2-051) wait for
   the shared platform work, as for every other endpoint.

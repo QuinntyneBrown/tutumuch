@@ -17,21 +17,21 @@ skinparam package {
 skinparam sequenceMessageAlign left
 skinparam maxMessageSize 260
 actor "Buyer" as actor
-box "Frontend — Tutu Much Web application" #E0F2FE
+box "Frontend — TuTuMuch Web application" #E0F2FE
   participant "CheckoutPage" as page
   participant "HostedCardFields" as hf
   participant "CheckoutApi (@tutumuch/api)" as client
 end box
 participant "Payment provider" as pay
-box "Backend — Tutu Much API application (TutuMuch.Api)" #D1FADF
+box "Backend — TuTuMuch API application (TuTuMuch.Api)" #D1FADF
   participant "CheckoutsController" as ctrl
 end box
-box "Backend — TutuMuch.Application and TutuMuch.Domain" #ECFDF3
+box "Backend — TuTuMuch.Application and TuTuMuch.Domain" #ECFDF3
   participant "SetCheckoutAddressCommandHandler" as qh
   participant "SubmitPaymentCommandHandler" as ph
 end box
-box "Backend — TutuMuch.Infrastructure" #FFF4E5
-  database "Tutu Much database" as db
+box "Backend — TuTuMuch.Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
 end box
 actor -> page : Pick saved address or enter a new one
 page -> client : setAddress(checkoutId, address)
@@ -42,7 +42,7 @@ alt missing street, city, state or ZIP (L2-027)
   ctrl --> page : Error summary and inline errors (invalid state)
 else country is not United States
   qh --> ctrl : 422 "NON_US_ADDRESS"
-  ctrl --> page : "Tutu Much ships within the United States only" (non-us state)
+  ctrl --> page : "TuTuMuch ships within the United States only" (non-us state)
 else valid US address
   qh -> pay : QuoteTaxAsync(address, item + shipping)
   pay --> qh : Sales tax
@@ -51,7 +51,7 @@ else valid US address
   ctrl --> page : 200; Pay button reads "Pay $102.34"
 end
 actor -> hf : Enter card into provider iframe
-hf -> pay : Tokenize card (card data never reaches Tutu Much, L2-030)
+hf -> pay : Tokenize card (card data never reaches TuTuMuch, L2-030)
 pay --> hf : Payment method token
 actor -> page : Choose "Pay $102.34"
 page -> page : Disable Pay, reuse one Idempotency-Key per attempt (submitting state)

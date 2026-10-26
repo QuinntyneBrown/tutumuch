@@ -33,7 +33,7 @@ test.describe('ship order: seller', () => {
     await salePage.goto();
 
     await expect(salePage.heading).toHaveText('You made a sale');
-    await expect(page).toHaveTitle('Sale · Tutu Much');
+    await expect(page).toHaveTitle('Sale · TuTuMuch');
     await expect(salePage.eyebrow).toHaveText('Order TM-48302 · Sat 24 Oct');
     await expect(salePage.shipBy).toHaveText('Ship by Fri 30 Oct.');
     await expect(salePage.shipTo).toHaveText('Tom Reyes1450 Larimer St, Apt 6BDenver, CO 80202');
@@ -232,7 +232,7 @@ test.describe('ship order: buyer', () => {
     const orderPage = await openOrder(page, buyerOrder());
 
     await expect(orderPage.heading).toHaveText('Waiting to ship');
-    await expect(page).toHaveTitle('Order · Tutu Much');
+    await expect(page).toHaveTitle('Order · TuTuMuch');
     await expect(orderPage.eyebrow).toHaveText('Order TM-48377 · Sat 24 Oct');
     await expect(orderPage.currentStep).toHaveText('PaidSat 24 Oct');
     await expect(orderPage.shipNote).toHaveText(

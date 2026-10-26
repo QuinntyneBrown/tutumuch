@@ -1,4 +1,4 @@
-/** The 50 states and the District of Columbia, by name, with the code Tutu Much API takes. */
+/** The 50 states and the District of Columbia, by name, with the code TuTuMuch API takes. */
 export const US_STATES: readonly { code: string; name: string }[] = [
   { code: 'AL', name: 'Alabama' },
   { code: 'AK', name: 'Alaska' },
@@ -53,7 +53,7 @@ export const US_STATES: readonly { code: string; name: string }[] = [
   { code: 'WY', name: 'Wyoming' },
 ];
 
-/** Countries offered so a buyer abroad learns Tutu Much ships within the US only (L2-027 AC2). */
+/** Countries offered so a buyer abroad learns TuTuMuch ships within the US only (L2-027 AC2). */
 export const COUNTRIES: readonly { code: string; name: string }[] = [
   { code: 'US', name: 'United States' },
   { code: 'CA', name: 'Canada' },

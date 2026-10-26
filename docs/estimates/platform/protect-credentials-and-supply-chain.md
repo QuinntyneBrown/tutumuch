@@ -3,7 +3,7 @@
 ## Basis
 
 The hours assume an intermediate Angular/TypeScript and ASP.NET Core/C# developer
-with working knowledge of GitHub Actions, who does not yet know the Tutu Much
+with working knowledge of GitHub Actions, who does not yet know the TuTuMuch
 codebase. They cover implementation, automated tests and review fixes, and
 exclude requirements, design and mock work. The secret store product and its
 .NET configuration provider are `<TO SUPPLY>`; the hours assume a provider
@@ -19,7 +19,7 @@ counted in the accounts estimates.
 | `IPasswordHasher`, `PasswordVerification`, `EncodedPasswordHash` | 2 |
 | `Pbkdf2PasswordHasher` with constant-time verify and `NeedsRehash`; `PasswordHashingOptions` with start validation | 4 |
 | Hasher unit tests (format, salt uniqueness, iteration floor, rehash) and database-record acceptance test | 3 |
-| `AddTutuMuchSecretStore` with workload identity and `Development` user-secrets fallback | 4 |
+| `AddTuTuMuchSecretStore` with workload identity and `Development` user-secrets fallback | 4 |
 | `SecretKeys` catalogue and `SecretGuard` provider-source check with tests | 5 |
 | Remove secret keys from `appsettings*.json`; deployed-configuration inspection test | 2 |
 | `secret-scan` job with `.gitleaks.toml` and fixture allow-list | 3 |

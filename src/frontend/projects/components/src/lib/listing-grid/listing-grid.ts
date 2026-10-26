@@ -7,7 +7,7 @@ import { ListingCardComponent, ListingCardView } from '../listing-card/listing-c
  * (L2-061, design system: Listing card). While loading it shows 8 skeleton cards in the same shape.
  */
 @Component({
-  selector: 'tm-listing-grid',
+  selector: 'tl-listing-grid',
   imports: [ListingCardComponent],
   templateUrl: './listing-grid.html',
   styleUrl: './listing-grid.css',

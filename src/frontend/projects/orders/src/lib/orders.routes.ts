@@ -5,44 +5,44 @@ export const routes: Routes = [
   {
     path: 'checkout/:reference',
     loadComponent: () => import('./checkout/checkout-page').then((m) => m.CheckoutPage),
-    title: 'Checkout · Tutu Much',
+    title: 'Checkout · TuTuMuch',
   },
   {
     path: 'orders/:id/confirmed',
     loadComponent: () => import('./order-confirmation/order-confirmation-page').then((m) => m.OrderConfirmationPage),
-    title: 'Order confirmed · Tutu Much',
+    title: 'Order confirmed · TuTuMuch',
   },
   {
     path: 'orders/:id',
     loadComponent: () => import('./order-detail/order-detail-page').then((m) => m.OrderDetailPage),
-    title: 'Order · Tutu Much',
+    title: 'Order · TuTuMuch',
   },
   {
     path: 'sales/:id',
     loadComponent: () => import('./sale-detail/sale-detail-page').then((m) => m.SaleDetailPage),
-    title: 'Sale · Tutu Much',
+    title: 'Sale · TuTuMuch',
   },
   {
     path: 'account/purchases',
     loadComponent: () => import('./order-history/order-history-page').then((m) => m.OrderHistoryPage),
-    title: 'Purchases · Tutu Much',
+    title: 'Purchases · TuTuMuch',
     data: { list: 'purchases' },
   },
   {
     path: 'account/sales',
     loadComponent: () => import('./order-history/order-history-page').then((m) => m.OrderHistoryPage),
-    title: 'Sales · Tutu Much',
+    title: 'Sales · TuTuMuch',
     data: { list: 'sales' },
   },
   {
     path: 'account/payouts',
     loadComponent: () => import('./payouts/payouts-page').then((m) => m.PayoutsPage),
-    title: 'Payouts · Tutu Much',
+    title: 'Payouts · TuTuMuch',
   },
   {
     path: 'admin/problems/:reference',
     loadComponent: () => import('./problem-detail/problem-detail-page').then((m) => m.ProblemDetailPage),
-    title: 'Order problem · Tutu Much admin',
+    title: 'Order problem · TuTuMuch admin',
     data: { shell: 'admin' },
   },
 ];

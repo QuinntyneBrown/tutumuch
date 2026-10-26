@@ -42,7 +42,7 @@ class GetListingDetailQueryHandler {
   +Handle(q: GetListingDetailQuery): Task<Result<ListingDetailDto>>
 }
 
-interface ITutuMuchDbContext {
+interface ITuTuMuchDbContext {
   +Listings
   +ListingPhotos
   +Members
@@ -96,14 +96,14 @@ class CatalogController {
 
 CatalogController ..> GetListingDetailQuery : sends
 GetListingDetailQueryHandler ..> GetListingDetailQuery : handles
-GetListingDetailQueryHandler --> ITutuMuchDbContext
+GetListingDetailQueryHandler --> ITuTuMuchDbContext
 GetListingDetailQueryHandler --> ListingDetailVisibility
 GetListingDetailQueryHandler --> CatalogPhotos
 GetListingDetailQueryHandler ..> ListingDetailDto : returns
 ListingDetailDto "1" *-- "1..8" CardPhotoDto
 ListingDetailDto *-- SellerSummaryDto
 ListingDetailDto *-- ViewerDto
-ITutuMuchDbContext ..> Listing
+ITuTuMuchDbContext ..> Listing
 ListingDetailVisibility ..> ListingStatus
 Listing --> ListingStatus
 @enduml

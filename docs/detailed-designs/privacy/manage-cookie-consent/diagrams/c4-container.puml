@@ -4,9 +4,9 @@ LAYOUT_WITH_LEGEND()
 title Containers — Manage cookie consent
 
 Person(visitor, "Visitor", "Browser user")
-System_Boundary(tutumuch, "Tutu Much") {
-  Container(web, "Tutu Much Web", "Angular", "Consent banner, Cookie settings dialog, consent cookie, analytics loader")
-  Container(api, "Tutu Much API", "ASP.NET Core", "Sets only strictly necessary cookies")
+System_Boundary(tutumuch, "TuTuMuch") {
+  Container(web, "TuTuMuch Web", "Angular", "Consent banner, Cookie settings dialog, consent cookie, analytics loader")
+  Container(api, "TuTuMuch API", "ASP.NET Core", "Sets only strictly necessary cookies")
 }
 System_Ext(analytics, "Analytics provider", "Script and collection endpoint")
 

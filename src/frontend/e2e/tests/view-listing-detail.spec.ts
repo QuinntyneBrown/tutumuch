@@ -17,7 +17,7 @@ test.describe('view listing detail', () => {
     await detail.goto();
 
     await expect(detail.heading).toHaveText('Floral party dress, pink');
-    await expect(page).toHaveTitle('Floral party dress, pink · Gymboree · Tutu Much');
+    await expect(page).toHaveTitle('Floral party dress, pink · Gymboree · TuTuMuch');
     await expect(detail.breadcrumb.getByRole('link', { name: 'Dresses' })).toHaveAttribute('href', '/dresses');
     await expect(detail.breadcrumb).toContainText('Dresses');
     await expect(detail.info).toContainText('Gymboree');

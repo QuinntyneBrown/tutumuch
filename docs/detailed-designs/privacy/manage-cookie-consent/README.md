@@ -2,13 +2,13 @@
 
 ## Overview
 
-Tutu Much is a marketplace for new and used girls' clothing. Like most web
+TuTuMuch is a marketplace for new and used girls' clothing. Like most web
 applications it uses cookies: some keep a member signed in and protect forms, and others
-could measure which pages are slow. This feature makes sure that only the cookies Tutu Much
+could measure which pages are slow. This feature makes sure that only the cookies TuTuMuch
 cannot run without are set until the visitor decides about the rest, and that the
 visitor can change that decision at any time.
 
-On a first visit, `Tutu Much Web` shows a consent banner at the bottom of the page. The
+On a first visit, `TuTuMuch Web` shows a consent banner at the bottom of the page. The
 visitor accepts analytics or keeps necessary cookies only. Until a choice is made, and
 for as long as the choice is "necessary only", no analytics script loads, no analytics
 cookie is set and no analytics request leaves the browser. A "Cookie settings" dialog,
@@ -29,17 +29,17 @@ Terms used below:
 > **analytics provider** — external service that receives page-view events; the product is not chosen yet (deferred)
 
 The feature belongs to the `privacy` subsystem (`L1-014`). It is mostly frontend: the
-choice is stored in the browser with no request to `Tutu Much API`. The API's part is to set
+choice is stored in the browser with no request to `TuTuMuch API`. The API's part is to set
 only strictly necessary cookies on every response.
 
 ## Description
 
-### Frontend (`Tutu Much Web`, `@tutumuch/privacy` and `@tutumuch/components`)
+### Frontend (`TuTuMuch Web`, `@tutumuch/privacy` and `@tutumuch/components`)
 
 The consent code lives in the `privacy` feature library
 (`src/frontend/projects/privacy/src/lib/consent/` and `.../cookie-settings/`). It is exported
 to the application shell and loaded with it, not with a lazy route, because the banner appears
-on the first page a visitor opens. It makes no call to `Tutu Much API`, so `@tutumuch/api` is not involved.
+on the first page a visitor opens. It makes no call to `TuTuMuch API`, so `@tutumuch/api` is not involved.
 Decisions are recorded in [ADR privacy/0001](../../../adr/privacy/0001-cookie-consent-in-the-browser-and-a-placeholder-analytics-provider.md).
 
 - **`CookieConsentService`** (`consent/cookie-consent.service.ts`) — root service holding the
@@ -52,22 +52,22 @@ Decisions are recorded in [ADR privacy/0001](../../../adr/privacy/0001-cookie-co
   `Path=/`, `Max-Age=15552000` (180 days), `Secure`, `SameSite=Strict`. It is readable by script
   (not `HttpOnly`) because the frontend reads it. An unknown or malformed value counts as
   `unknown`, so the banner returns.
-- **`tm-consent-banner`** (`@tutumuch/components`, design system: Consent banner) — a `section`
-  labelled by the heading "Cookies", with the text "We use necessary cookies to run Tutu Much.
+- **`tl-consent-banner`** (`@tutumuch/components`, design system: Consent banner) — a `section`
+  labelled by the heading "Cookies", with the text "We use necessary cookies to run TuTuMuch.
   Analytics only if you say yes.", a primary "Accept analytics" button, a secondary "Necessary
   only" button and a link-styled "Cookie settings" button. It emits `accepted`, `declined` and
   `settings`. It is fixed to the bottom of the page, does not block the page and does not trap
   focus.
-- **`CookieConsentComponent`** (`tm-cookie-consent`, `consent/cookie-consent.ts`) — placed in
+- **`CookieConsentComponent`** (`tl-cookie-consent`, `consent/cookie-consent.ts`) — placed in
   the root component next to the toast region, so it shows in every shell. It renders
-  `tm-consent-banner` while the state is `unknown`
+  `tl-consent-banner` while the state is `unknown`
   (`docs/mocks/notifications/cookie-consent/info.html`) and disappears once a choice is saved.
 - **Saved toast** — after either banner button, `ToastService` shows a success toast titled
   "Cookie choice saved" (`docs/mocks/notifications/cookie-consent/success.html`). The body is
   "Necessary only. Change it any time in the footer." or "Analytics on. Change it any time in
   the footer."
-- **`CookieSettingsDialog`** (`cookie-settings/cookie-settings-dialog.ts`) — small `tm-dialog`
-  titled "Cookie settings" (`docs/mocks/dialogs/cookie-settings/`) with two `tm-switch`es that
+- **`CookieSettingsDialog`** (`cookie-settings/cookie-settings-dialog.ts`) — small `tl-dialog`
+  titled "Cookie settings" (`docs/mocks/dialogs/cookie-settings/`) with two `tl-switch`es that
   show their label and hint:
   - "Strictly necessary" with the hint "Sign-in and checkout. Always on.", checked and
     disabled.
@@ -78,7 +78,7 @@ Decisions are recorded in [ADR privacy/0001](../../../adr/privacy/0001-cookie-co
   Saving from the dialog also counts as a first choice, so the banner closes. The dialog has
   no `busy` or `invalid` state. Focus returns to the control that opened it.
 - **`CookieSettingsDialogService`** — `open()` opens the dialog through `DialogService`.
-- **Entry points** — the footer button "Cookie settings" in the app shell (`tm-footer` emits
+- **Entry points** — the footer button "Cookie settings" in the app shell (`tl-footer` emits
   `cookieSettings`, the shell calls `open()`) and the banner's "Cookie settings". The
   "Cookie settings" link on the Privacy page (`docs/mocks/pages/privacy/`) and the "Cookies" row
   on Settings (`docs/mocks/pages/settings/default.html`) are deferred until those pages exist;
@@ -97,11 +97,11 @@ Decisions are recorded in [ADR privacy/0001](../../../adr/privacy/0001-cookie-co
 - **Consent effect** — an Angular `effect` in the `AnalyticsService` constructor that reacts to
   the consent signal, as above.
 
-### API (`TutuMuch.Api`)
+### API (`TuTuMuch.Api`)
 
-- **`StrictlyNecessaryCookieOptions`** (`TutuMuch.Api/Privacy/`) — bound from
+- **`StrictlyNecessaryCookieOptions`** (`TuTuMuch.Api/Privacy/`) — bound from
   `Privacy:Cookies:StrictlyNecessary`, the list of cookie names the API may set: the session
-  cookies `tm_access` and `tm_refresh`. The anti-forgery cookie joins the list when the platform
+  cookies `tl_access` and `tl_refresh`. The anti-forgery cookie joins the list when the platform
   subsystem adds it.
 - **`CookieAllowListMiddleware`** — first in the pipeline. Before headers are sent it reads
   each `Set-Cookie` header and removes any whose name is not in the list, logging a warning with
@@ -120,10 +120,10 @@ member account; each browser holds its own choice.
 
 | Key | Where | Value |
 |-----|-------|-------|
-| `environment.analytics.scriptUrl` | `Tutu Much Web` environment | `https://analytics.tutumuch.invalid/script.js` until a provider is chosen; empty turns analytics off |
-| `environment.analytics.cookieNames` | `Tutu Much Web` environment | `['_tma']` until a provider is chosen |
+| `environment.analytics.scriptUrl` | `TuTuMuch Web` environment | `https://analytics.tutumuch.invalid/script.js` until a provider is chosen; empty turns analytics off |
+| `environment.analytics.cookieNames` | `TuTuMuch Web` environment | `['_tma']` until a provider is chosen |
 | consent cookie lifetime | `CONSENT_MAX_AGE_SECONDS` in `@tutumuch/privacy` | 180 days |
-| `Privacy:Cookies:StrictlyNecessary` | `Tutu Much API` `appsettings.json` | `tm_access`, `tm_refresh` |
+| `Privacy:Cookies:StrictlyNecessary` | `TuTuMuch API` `appsettings.json` | `tl_access`, `tl_refresh` |
 
 ### Tests
 
@@ -143,7 +143,7 @@ whose script sets the `_tma` cookie. The `consent` fixture option starts every o
   - withdraw: with analytics accepted, footer "Cookie settings", analytics off, Save, and the
     analytics cookie is gone and focus is back on the footer button (criterion 3); Cancel
     changes nothing.
-- **xUnit, `tests/TutuMuch.Api.Tests/CookieConsentTests.cs`** — calls a sample of endpoints,
+- **xUnit, `tests/TuTuMuch.Api.Tests/CookieConsentTests.cs`** — calls a sample of endpoints,
   signed out and signed in, and asserts every `Set-Cookie` name is strictly necessary; a stray
   cookie set by a test-only endpoint is removed.
 
@@ -157,14 +157,14 @@ whose script sets the `_tma` cookie. The `consent` fixture option starts every o
 
 ### System context
 
-A visitor uses Tutu Much, and Tutu Much's frontend sends page views to the analytics provider only
+A visitor uses TuTuMuch, and TuTuMuch's frontend sends page views to the analytics provider only
 after the visitor accepts analytics.
 
 ![C4 system context for cookie consent](diagrams/c4-context.png)
 
 ### Containers
 
-The consent state lives in `Tutu Much Web` and the browser's consent cookie. `Tutu Much API` sets
+The consent state lives in `TuTuMuch Web` and the browser's consent cookie. `TuTuMuch API` sets
 only strictly necessary cookies. The analytics provider is reached only from the
 browser.
 
@@ -173,7 +173,7 @@ browser.
 ### Components
 
 The banner, dialog and footer entry point all go through `CookieConsentService`, which drives
-`AnalyticsService`. In `Tutu Much API`, `CookieAllowListMiddleware` filters `Set-Cookie`
+`AnalyticsService`. In `TuTuMuch API`, `CookieAllowListMiddleware` filters `Set-Cookie`
 headers.
 
 ![C4 component view for cookie consent](diagrams/c4-component.png)

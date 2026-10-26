@@ -7,7 +7,7 @@ import { ApiResult, toResult } from '../api-result';
 import { CardPhoto } from '../catalog/catalog-api';
 import type { Cancellation, CancellationRequest, OrderTimelineStep, Tracking } from './orders-api';
 
-/** A US shipping address. country is the two-letter code; Tutu Much ships within the US only (L2-027). */
+/** A US shipping address. country is the two-letter code; TuTuMuch ships within the US only (L2-027). */
 export interface ShippingAddress {
   fullName: string;
   line1: string;

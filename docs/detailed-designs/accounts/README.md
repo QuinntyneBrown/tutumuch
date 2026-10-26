@@ -1,6 +1,6 @@
 # Accounts subsystem
 
-The accounts subsystem covers how a visitor becomes a member, proves their email, signs in and stays signed in, and how `Tutu Much API` decides what a caller may do (`L1-001`, `L1-002`). Pages live in the `@tutumuch/accounts` library (`src/frontend/projects/accounts/`); session state, the session interceptor and the typed clients live in `@tutumuch/api`. The slices are built on the [architecture baseline](../README.md).
+The accounts subsystem covers how a visitor becomes a member, proves their email, signs in and stays signed in, and how `TuTuMuch API` decides what a caller may do (`L1-001`, `L1-002`). Pages live in the `@tutumuch/accounts` library (`src/frontend/projects/accounts/`); session state, the session interceptor and the typed clients live in `@tutumuch/api`. The slices are built on the [architecture baseline](../README.md).
 
 | Feature | Design | Estimate | L2 requirements |
 |---------|--------|----------|-----------------|

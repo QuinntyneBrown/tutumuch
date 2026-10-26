@@ -42,7 +42,7 @@ import { FiltersSidebar } from '../filters/filters-sidebar';
  * sheet below it (L2-062).
  */
 @Component({
-  selector: 'tm-catalog-page',
+  selector: 'tl-catalog-page',
   imports: [
     DecimalPipe,
     RouterLink,

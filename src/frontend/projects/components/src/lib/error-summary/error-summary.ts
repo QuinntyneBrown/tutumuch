@@ -13,7 +13,7 @@ export interface SummaryError {
  * Error summary, L2-065). It takes focus whenever a new list is shown and is announced as an alert.
  */
 @Component({
-  selector: 'tm-error-summary',
+  selector: 'tl-error-summary',
   imports: [IconComponent],
   templateUrl: './error-summary.html',
   styleUrl: './error-summary.css',

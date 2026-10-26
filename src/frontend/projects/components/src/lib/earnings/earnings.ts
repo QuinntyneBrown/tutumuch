@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 /** "You earn after the {fee}% fee" with the amount, or a dash while there is none (design system: Earnings, L2-031). */
 @Component({
-  selector: 'tm-earnings',
+  selector: 'tl-earnings',
   templateUrl: './earnings.html',
   styleUrl: './earnings.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

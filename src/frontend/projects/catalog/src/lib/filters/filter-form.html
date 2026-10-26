@@ -1,24 +1,24 @@
 <form class="stack stack--lg" (submit)="$event.preventDefault()">
   <fieldset class="filters__group">
     <legend>Category</legend>
-    <tm-choice [inputId]="idPrefix() + '-cat-all'">
+    <tl-choice [inputId]="idPrefix() + '-cat-all'">
       <input
         type="radio"
         [id]="idPrefix() + '-cat-all'"
         [name]="idPrefix() + '-cat'"
         [checked]="!query().category"
         (change)="setCategory(null)"
-      />All</tm-choice
+      />All</tl-choice
     >
     @for (option of categories; track option.slug) {
-      <tm-choice [inputId]="idPrefix() + '-cat-' + option.slug">
+      <tl-choice [inputId]="idPrefix() + '-cat-' + option.slug">
         <input
           type="radio"
           [id]="idPrefix() + '-cat-' + option.slug"
           [name]="idPrefix() + '-cat'"
           [checked]="query().category === option.slug"
           (change)="setCategory(option.slug)"
-        />{{ option.label }}</tm-choice
+        />{{ option.label }}</tl-choice
       >
     }
   </fieldset>
@@ -26,14 +26,14 @@
     <fieldset class="filters__group">
       <legend>{{ category.label }}</legend>
       @for (option of category.subcategories; track option.slug) {
-        <tm-choice [inputId]="idPrefix() + '-sub-' + option.slug">
+        <tl-choice [inputId]="idPrefix() + '-sub-' + option.slug">
           <input
             #box
             type="checkbox"
             [id]="idPrefix() + '-sub-' + option.slug"
             [checked]="query().subcategories.includes(option.slug)"
             (change)="toggle('subcategories', option.slug, box.checked)"
-          />{{ option.label }}</tm-choice
+          />{{ option.label }}</tl-choice
         >
       }
     </fieldset>
@@ -42,18 +42,18 @@
     <fieldset class="filters__group">
       <legend>Brand</legend>
       @for (brand of shownBrands(); track brand; let i = $index) {
-        <tm-choice [inputId]="idPrefix() + '-brand-' + i">
+        <tl-choice [inputId]="idPrefix() + '-brand-' + i">
           <input
             #box
             type="checkbox"
             [id]="idPrefix() + '-brand-' + i"
             [checked]="query().brands.includes(brand)"
             (change)="toggle('brands', brand, box.checked)"
-          />{{ brand }}</tm-choice
+          />{{ brand }}</tl-choice
         >
       }
       @if (moreBrands()) {
-        <button tmButton="link" class="filters__more" type="button" (click)="allBrands.set(true)">
+        <button tlButton="link" class="filters__more" type="button" (click)="allBrands.set(true)">
           All {{ brands().length }} brands
         </button>
       }
@@ -62,14 +62,14 @@
   <fieldset class="filters__group">
     <legend>Condition</legend>
     @for (option of conditions; track option.slug) {
-      <tm-choice [inputId]="idPrefix() + '-cond-' + option.slug">
+      <tl-choice [inputId]="idPrefix() + '-cond-' + option.slug">
         <input
           #box
           type="checkbox"
           [id]="idPrefix() + '-cond-' + option.slug"
           [checked]="query().conditions.includes(option.slug)"
           (change)="toggle('conditions', option.slug, box.checked)"
-        />{{ option.label }}</tm-choice
+        />{{ option.label }}</tl-choice
       >
     }
   </fieldset>
@@ -77,7 +77,7 @@
     <legend>Price</legend>
     <div class="filters__range">
       <label class="visually-hidden" [for]="idPrefix() + '-min'">Minimum price in dollars</label>
-      <tm-input-group addon="$">
+      <tl-input-group addon="$">
         <input
           #min
           class="input"
@@ -89,10 +89,10 @@
           [attr.aria-describedby]="error() ? idPrefix() + '-price-error' : null"
           (input)="setPrice('min', min.value)"
         />
-      </tm-input-group>
+      </tl-input-group>
       <span class="text-muted" aria-hidden="true">–</span>
       <label class="visually-hidden" [for]="idPrefix() + '-max'">Maximum price in dollars</label>
-      <tm-input-group addon="$">
+      <tl-input-group addon="$">
         <input
           #max
           class="input"
@@ -104,7 +104,7 @@
           [attr.aria-describedby]="error() ? idPrefix() + '-price-error' : null"
           (input)="setPrice('max', max.value)"
         />
-      </tm-input-group>
+      </tl-input-group>
     </div>
     @if (error(); as error) {
       <span class="field__error" [id]="idPrefix() + '-price-error'">{{ error }}</span>

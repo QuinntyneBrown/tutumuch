@@ -17,16 +17,16 @@ skinparam package {
 skinparam sequenceMessageAlign left
 skinparam maxMessageSize 260
 participant "Carrier tracking service" as carrier
-box "Backend — Tutu Much API application (TutuMuch.Api)" #D1FADF
+box "Backend — TuTuMuch API application (TuTuMuch.Api)" #D1FADF
   participant "CarrierWebhookController" as cwh
 end box
-box "Backend — TutuMuch.Application and TutuMuch.Domain" #ECFDF3
+box "Backend — TuTuMuch.Application and TuTuMuch.Domain" #ECFDF3
   participant "CarrierWebhookHandler" as h
   participant "ICarrierTracking" as port
   participant "Order" as order
 end box
-box "Backend — TutuMuch.Infrastructure" #FFF4E5
-  database "Tutu Much database" as db
+box "Backend — TuTuMuch.Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
 end box
 carrier -> cwh : POST /api/carriers/webhook (Carrier-Signature)
 cwh -> h : Send HandleCarrierWebhookCommand(body, signature)

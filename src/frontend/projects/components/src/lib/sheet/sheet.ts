@@ -12,7 +12,7 @@ let nextId = 0;
  * the body and `[footer]` content.
  */
 @Component({
-  selector: 'tm-sheet',
+  selector: 'tl-sheet',
   imports: [ButtonDirective, IconComponent],
   templateUrl: './sheet.html',
   styleUrl: './sheet.css',
@@ -26,7 +26,7 @@ export class SheetComponent {
   /** A side panel from 768px instead of full screen (the filter sheet). */
   readonly side = input(false);
 
-  readonly id = `tm-sheet-${nextId++}`;
+  readonly id = `tl-sheet-${nextId++}`;
 
   close(): void {
     this.ref?.close();

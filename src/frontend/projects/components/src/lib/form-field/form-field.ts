@@ -6,7 +6,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
  * read with it.
  */
 @Component({
-  selector: 'tm-form-field',
+  selector: 'tl-form-field',
   templateUrl: './form-field.html',
   styleUrl: './form-field.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

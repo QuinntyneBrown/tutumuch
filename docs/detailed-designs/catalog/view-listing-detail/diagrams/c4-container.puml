@@ -4,11 +4,11 @@ LAYOUT_WITH_LEGEND()
 title Containers — View a listing's detail
 
 Person(viewer, "Visitor or member", "Views one listing")
-System_Boundary(tutumuch, "Tutu Much") {
-  Container(web, "Tutu Much Web", "Angular", "Listing detail page, gallery, buy bar")
-  Container(api, "Tutu Much API", "ASP.NET Core", "GET /api/catalog/listings/{reference}; checkout start (orders)")
-  Container(worker, "Tutu Much Worker", ".NET worker service", "Returns expired reservations to Active")
-  ContainerDb(db, "Tutu Much database", "SQL Server", "Listings, photos, members, reputation figures")
+System_Boundary(tutumuch, "TuTuMuch") {
+  Container(web, "TuTuMuch Web", "Angular", "Listing detail page, gallery, buy bar")
+  Container(api, "TuTuMuch API", "ASP.NET Core", "GET /api/catalog/listings/{reference}; checkout start (orders)")
+  Container(worker, "TuTuMuch Worker", ".NET worker service", "Returns expired reservations to Active")
+  ContainerDb(db, "TuTuMuch database", "SQL Server", "Listings, photos, members, reputation figures")
   ContainerDb(photos, "Photo storage", "Object storage behind a CDN", "Gallery photo versions")
 }
 Rel(viewer, web, "Uses", "HTTPS")

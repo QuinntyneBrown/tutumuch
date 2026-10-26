@@ -33,7 +33,7 @@ const STATUS_TONES: Record<string, StatusTone> = {
  * decision instead. Members without the Administrator role get the load error (the API answers 403).
  */
 @Component({
-  selector: 'tm-problem-detail-page',
+  selector: 'tl-problem-detail-page',
   imports: [
     AlertComponent,
     ButtonDirective,

@@ -2,7 +2,7 @@
 
 ## Overview
 
-Tutu Much is a marketplace for new and used girls' clothing. Before any
+TuTuMuch is a marketplace for new and used girls' clothing. Before any
 feature can be built, a developer needs a repository that builds, lints and tests on the
 first day. This feature, part of the `platform` subsystem, creates that starting point:
 the backend solution, the frontend workspace, the empty application shell, the test
@@ -12,7 +12,7 @@ journey in `docs/journeys.md`.
 Terms used below:
 
 - **workspace** — the Angular monorepo under `src/frontend` with one application project and one library per area, as `AGENTS.md` mandates
-- **solution** — the .NET solution under `src/backend` with the six `TutuMuch.*` projects
+- **solution** — the .NET solution under `src/backend` with the six `TuTuMuch.*` projects
 - **verify command** — the single command that restores, builds, lints and tests both stacks and exits non-zero on any failure (`L2-071`)
 - **empty shell** — the application frame of [responsive-accessible-shell](../responsive-accessible-shell/README.md) in its guest state, with a placeholder home page and no feature screens
 - **architecture test** — a unit test that inspects the compiled assemblies for forbidden registrations (`L2-060`)
@@ -26,48 +26,48 @@ snapshots and axe runs over every route are deferred to their own features.
 
 ## Description
 
-### Backend solution (`src/backend/TutuMuch.sln`)
+### Backend solution (`src/backend/TuTuMuch.sln`)
 
 Target framework `net10.0` (.NET 10 LTS SDK, pinned in `global.json`), nullable and
 implicit usings on, warnings as errors.
 
-- **`TutuMuch.Domain`** — class library; no package references. Empty apart from the
-  `TutuMuch.Domain` namespace marker.
-- **`TutuMuch.Application`** — class library referencing `Domain`. Empty apart from the
+- **`TuTuMuch.Domain`** — class library; no package references. Empty apart from the
+  `TuTuMuch.Domain` namespace marker.
+- **`TuTuMuch.Application`** — class library referencing `Domain`. Empty apart from the
   namespace marker; MediatR and FluentValidation arrive with the first command.
-- **`TutuMuch.Infrastructure`** — class library referencing `Application`. Empty apart
+- **`TuTuMuch.Infrastructure`** — class library referencing `Application`. Empty apart
   from the namespace marker; EF Core arrives with the first entity.
-- **`TutuMuch.Api`** — ASP.NET Core Web API referencing `Application` and
+- **`TuTuMuch.Api`** — ASP.NET Core Web API referencing `Application` and
   `Infrastructure`. `Program.cs` registers controllers and maps them; `partial class
   Program` exposes the entry point to `WebApplicationFactory`. **`HealthController`**
   answers `GET /api/health` with `200` and the body `{ "status": "ok" }`; it touches no
   dependency, so it succeeds with no database (`L2-071` criterion 4). Tests run it in-process through `WebApplicationFactory`; no test uses SQL Server, LocalDB or a connection string ([ADR-0004](../../../adr/platform/0004-health-check-without-database.md)). The liveness and
   readiness endpoints of `L2-070` belong to
   [report-errors-and-observe](../report-errors-and-observe/README.md).
-- **`TutuMuch.Worker`** — worker service referencing `Application` and `Infrastructure`,
+- **`TuTuMuch.Worker`** — worker service referencing `Application` and `Infrastructure`,
   with an empty `Worker` hosted service.
-- **`TutuMuch.Migrator`** — console app referencing `Infrastructure`; prints that no
+- **`TuTuMuch.Migrator`** — console app referencing `Infrastructure`; prints that no
   migrations exist yet and exits 0.
 - **`Directory.Build.props`** — shared `TargetFramework`, `Nullable`, `ImplicitUsings`,
-  `TreatWarningsAsErrors` and the `TutuMuch` root namespace.
+  `TreatWarningsAsErrors` and the `TuTuMuch` root namespace.
 - **`.editorconfig`** at `src/backend` — the `dotnet format` rules the verify command
   checks with `--verify-no-changes`.
 
 ### Backend tests (`tests/`)
 
-One xUnit project per backend project, named `tests/TutuMuch.<Project>.Tests`, each
+One xUnit project per backend project, named `tests/TuTuMuch.<Project>.Tests`, each
 referencing its project:
 
-- **`TutuMuch.Api.Tests`** — `HealthEndpointTests` uses `WebApplicationFactory<Program>`
+- **`TuTuMuch.Api.Tests`** — `HealthEndpointTests` uses `WebApplicationFactory<Program>`
   to call `GET /api/health` and asserts `200`, `application/json`, and that the body
   contains neither a version number, the machine name nor the text `ConnectionString`.
-  **`StatelessApiTests`** (NetArchTest) loads `TutuMuch.Api` and `TutuMuch.Application`
+  **`StatelessApiTests`** (NetArchTest) loads `TuTuMuch.Api` and `TuTuMuch.Application`
   and fails when any type depends on the `Microsoft.Extensions.Caching.Memory` or
   `Microsoft.AspNetCore.Session` namespaces (`L2-060` criterion 1). A deliberate
   `IMemoryCache` dependency was used to confirm the test fails. It is the one architecture test of this feature.
-- **`TutuMuch.Application.Tests`**, **`TutuMuch.Domain.Tests`**,
-  **`TutuMuch.Infrastructure.Tests`**, **`TutuMuch.Worker.Tests`**,
-  **`TutuMuch.Migrator.Tests`** — each holds one smoke test that the project's marker
+- **`TuTuMuch.Application.Tests`**, **`TuTuMuch.Domain.Tests`**,
+  **`TuTuMuch.Infrastructure.Tests`**, **`TuTuMuch.Worker.Tests`**,
+  **`TuTuMuch.Migrator.Tests`** — each holds one smoke test that the project's marker
   type loads, so every test project runs in CI from day one.
 
 ### Frontend workspace (`src/frontend`)
@@ -80,20 +80,20 @@ maps `@tutumuch/<library>` to each `projects/<library>/src/public-api.ts`.
   `src/styles.css` (imports the tokens and component styles of `@tutumuch/components`),
   `src/app/app.config.ts` (router with the feature routes, `provideApi()` from
   `@tutumuch/api`), `src/app/app.routes.ts` (`''` renders `HomePlaceholderPage`; each feature library's empty routes are attached with `loadChildren` under a provisional path that the feature's own design confirms),
-  **`AppComponent`** (renders `tm-skip-link`, the shell for the active route and
-  `tm-toast-region`), **`AppShellComponent`** (`tm-top-bar`, `<main id="main"
-  tabindex="-1"><router-outlet>`, `tm-footer`) and **`HomePlaceholderPage`** (an `h1`
+  **`AppComponent`** (renders `tl-skip-link`, the shell for the active route and
+  `tl-toast-region`), **`AppShellComponent`** (`tl-top-bar`, `<main id="main"
+  tabindex="-1"><router-outlet>`, `tl-footer`) and **`HomePlaceholderPage`** (an `h1`
   "Everything in your size." and one paragraph). Auth, admin and bare shells are
   `<TO SUPPLY>` by the features that first use them.
 - **`projects/components/`** (`@tutumuch/components`, prefix `tl`) — `src/styles/tokens.css`
   and `src/styles/components.css` copied from `docs/design-system/tokens/tokens.css` and
   `docs/design-system/assets/components.css`, with the `L2-061` breakpoint values.
-  Components, each with `.ts`, `.html` and `.css`: **`tm-skip-link`**, **`tm-logo`**,
-  **`tm-top-bar`** (guest state only: menu button with `aria-expanded="false"`, logo,
-  primary navigation, search form, "Sell" and "Sign in" links), **`tm-footer`**
-  (Marketplace rules, Privacy, Terms, Cookie settings, "© {year} Tutu Much" from `Date`; Cookie
+  Components, each with `.ts`, `.html` and `.css`: **`tl-skip-link`**, **`tl-logo`**,
+  **`tl-top-bar`** (guest state only: menu button with `aria-expanded="false"`, logo,
+  primary navigation, search form, "Sell" and "Sign in" links), **`tl-footer`**
+  (Marketplace rules, Privacy, Terms, Cookie settings, "© {year} TuTuMuch" from `Date`; Cookie
   settings links to `/privacy#cookie-settings` until the cookie-settings dialog exists),
-  **`tm-toast-region`** (`role="status"`, `aria-live="polite"`, empty until
+  **`tl-toast-region`** (`role="status"`, `aria-live="polite"`, empty until
   `ToastService` is implemented). Exported from `public-api.ts`.
 - **`projects/api/`** (`@tutumuch/api`) — `provideApi(baseUrl)` registers `HttpClient` (fetch
   backend) and the `API_BASE_URL` injection token; no services yet.
@@ -110,13 +110,13 @@ maps `@tutumuch/<library>` to each `projects/<library>/src/public-api.ts`.
   application; `lint` runs Prettier and ESLint; `test:e2e` runs Playwright; **`verify`**
   is the verify command and runs, in order, `dotnet restore`, `dotnet format
   --verify-no-changes`, `dotnet build --no-restore -warnaserror`, `dotnet test
-  --no-build` on `../backend/TutuMuch.sln`, then `lint`, `build:all` and `test:e2e`. It
+  --no-build` on `../backend/TuTuMuch.sln`, then `lint`, `build:all` and `test:e2e`. It
   assumes `npm ci` has run once. Any non-zero exit stops the chain. Each step is also a
   script of its own (`backend:verify`, `lint`, `build:all`, `test:e2e`).
 
 ### End-to-end tests (`src/frontend/e2e`)
 
-Playwright, Chromium only. Per the `AGENTS.md` testing rules the backend never runs: `webServer` serves the production build of `projects/tutumuch` (`dist/tutumuch/browser`) as static files on port 4200 with SPA fallback, and every test installs a catch-all `page.route('**/api/**')` fixture so no request can reach `Tutu Much API`.
+Playwright, Chromium only. Per the `AGENTS.md` testing rules the backend never runs: `webServer` serves the production build of `projects/tutumuch` (`dist/tutumuch/browser`) as static files on port 4200 with SPA fallback, and every test installs a catch-all `page.route('**/api/**')` fixture so no request can reach `TuTuMuch API`.
 
 - **`e2e/pages/shell.page.ts`** — page object with locators for the skip link,
   `main#main`, the top bar, the footer links and a `goto()`.
@@ -157,8 +157,8 @@ focus order). `L2-053` is deferred.
 
 ### Containers
 
-The developer's machine and the CI runner hold the same two containers, `Tutu Much Web` and
-`Tutu Much API`, plus the test projects. No database, cache or external system is needed to
+The developer's machine and the CI runner hold the same two containers, `TuTuMuch Web` and
+`TuTuMuch API`, plus the test projects. No database, cache or external system is needed to
 verify the workspace.
 
 ![C4 container view for setting up the workspace](diagrams/c4-container.png)

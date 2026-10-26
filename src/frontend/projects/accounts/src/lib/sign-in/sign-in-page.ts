@@ -6,7 +6,7 @@ import { AlertComponent, ButtonDirective, FormFieldComponent } from '@tutumuch/c
 
 /** Sign in at /sign-in, returning to returnUrl afterwards (L2-006, mocks pages/sign-in). */
 @Component({
-  selector: 'tm-sign-in-page',
+  selector: 'tl-sign-in-page',
   imports: [ReactiveFormsModule, RouterLink, AlertComponent, ButtonDirective, FormFieldComponent],
   templateUrl: './sign-in-page.html',
   styleUrl: './sign-in-page.css',

@@ -5,7 +5,7 @@ export type TokenizeResult = { ok: true; token: string } | { ok: false; message:
 
 /**
  * The payment provider's hosted card fields (L2-030). Card numbers and security codes are typed
- * into the provider's frame and go to the provider only; Tutu Much receives the payment method token.
+ * into the provider's frame and go to the provider only; TuTuMuch receives the payment method token.
  */
 export interface PaymentFields {
   /** Puts the card fields inside host. */
@@ -22,7 +22,7 @@ export const TEST_CARDS = [
 
 /**
  * Test-mode stand-in for the provider's hosted fields until a provider is chosen (ADR
- * orders/0001). It offers test cards to pick from, so no card number is ever typed into Tutu Much.
+ * orders/0001). It offers test cards to pick from, so no card number is ever typed into TuTuMuch.
  */
 export class TestModePaymentFields implements PaymentFields {
   private select: HTMLSelectElement | null = null;

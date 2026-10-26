@@ -15,16 +15,16 @@ skinparam package {
   BackgroundColor #F9FAFB
 }
 actor "Member" as actor
-box "Frontend — Tutu Much Web application" #E0F2FE
+box "Frontend — TuTuMuch Web application" #E0F2FE
   participant "Feature form" as page
   participant "ApiErrorInterceptor" as int
   participant "FormErrorsDirective" as fe
 end box
-box "Backend — Tutu Much API application" #D1FADF
+box "Backend — TuTuMuch API application" #D1FADF
   participant "Feature controller" as ctrl
   participant "ProblemDetailsExceptionHandler" as pd
 end box
-box "Backend — Tutu Much Application and Domain" #ECFDF3
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
   participant "ValidationBehavior" as vb
   participant "Feature handler" as handler
 end box

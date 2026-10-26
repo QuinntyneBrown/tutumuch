@@ -24,7 +24,7 @@ function formatPrice(price: string): string {
   return `$${value.toLocaleString('en-US', { minimumFractionDigits: cents ? 2 : 0, maximumFractionDigits: cents ? 2 : 0 })}`;
 }
 
-/** A listing card as tm-listing-card shows it, linking to the listing detail. */
+/** A listing card as tl-listing-card shows it, linking to the listing detail. */
 function toCardView(card: ListingCard): ListingCardView {
   return {
     href: `/items/${card.reference}`,
@@ -50,7 +50,7 @@ export function memberSince(iso: string): string {
  * fields only (L2-041, L2-054); all member text is bound as text, never as HTML.
  */
 @Component({
-  selector: 'tm-member-profile-page',
+  selector: 'tl-member-profile-page',
   imports: [
     RouterLink,
     AlertComponent,
@@ -94,7 +94,7 @@ export class MemberProfilePage {
     });
     effect(() => {
       const profile = this.store.profile();
-      if (profile) this.title.setTitle(`${profile.displayName} · Tutu Much`);
+      if (profile) this.title.setTitle(`${profile.displayName} · TuTuMuch`);
     });
   }
 }

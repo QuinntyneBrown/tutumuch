@@ -4,11 +4,11 @@ LAYOUT_WITH_LEGEND()
 title Containers — Harden HTTP and the API
 
 Person(visitor, "Visitor or member", "Browser")
-System_Boundary(tutumuch, "Tutu Much") {
+System_Boundary(tutumuch, "TuTuMuch") {
   Container(lb, "Load balancer", "Hosting platform <TO SUPPLY>", "Terminates TLS 1.2+, redirects HTTP with 301")
-  Container(web, "Tutu Much Web", "Angular SPA on a static host", "Served with HSTS, CSP, nosniff, Referrer-Policy; adds X-XSRF-TOKEN to writes")
-  Container(api, "Tutu Much API", "ASP.NET Core", "Security headers, CORS, rate limits, antiforgery, validation")
-  ContainerDb(db, "Tutu Much database", "SQL Server", "Accessed with parameterised EF Core queries only")
+  Container(web, "TuTuMuch Web", "Angular SPA on a static host", "Served with HSTS, CSP, nosniff, Referrer-Policy; adds X-XSRF-TOKEN to writes")
+  Container(api, "TuTuMuch API", "ASP.NET Core", "Security headers, CORS, rate limits, antiforgery, validation")
+  ContainerDb(db, "TuTuMuch database", "SQL Server", "Accessed with parameterised EF Core queries only")
   ContainerDb(cache, "Distributed cache", "Redis", "Fixed-window rate-limit counters shared by all API instances")
 }
 Rel(visitor, lb, "Requests pages and API calls", "HTTPS")

@@ -11,7 +11,7 @@ skinparam class {
 }
 title Class structure — Create a listing
 
-package "TutuMuch.Domain" {
+package "TuTuMuch.Domain" {
   enum ListingStatus {
     Draft
     Active
@@ -82,7 +82,7 @@ package "TutuMuch.Domain" {
   }
 }
 
-package "TutuMuch.Application" {
+package "TuTuMuch.Application" {
   class CreateListingDraftCommand {
     +Guid SellerId
     +ListingDetails Details
@@ -113,7 +113,7 @@ package "TutuMuch.Application" {
     +T? Value
     +Error? Error
   }
-  interface ITutuMuchDbContext {
+  interface ITuTuMuchDbContext {
     +DbSet<Listing> Listings
   }
   interface ISellerPayoutAccountReader {
@@ -121,7 +121,7 @@ package "TutuMuch.Application" {
   }
 }
 
-package "TutuMuch.Api" {
+package "TuTuMuch.Api" {
   class ListingsController {
     +Create(body: ListingDetailsRequest)
     +Update(reference, body: ListingDetailsRequest)
@@ -142,7 +142,7 @@ ListingCommandHandlers ..> Result : returns
 ListingCommandHandlers ..> PublishListingResult : returns
 ListingCommandHandlers ..> MyListingDto : returns
 ListingCommandHandlers --> Listing : creates / mutates
-ListingCommandHandlers ..> ITutuMuchDbContext : uses
+ListingCommandHandlers ..> ITuTuMuchDbContext : uses
 ListingCommandHandlers ..> ISellerPayoutAccountReader : uses
 Listing ..> ListingDetails : takes
 Listing ..> RuleViolation : reports

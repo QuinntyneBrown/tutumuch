@@ -2,7 +2,7 @@
 
 ## Overview
 
-Tutu Much is a marketplace for new and used girls' clothing, where every
+TuTuMuch is a marketplace for new and used girls' clothing, where every
 member can both buy and sell with one account (`L2-003`). This feature gives each member
 two lists of their orders, "Purchases" and "Sales", and the two detail pages behind
 them: the buyer's order page and the seller's sale page. The detail pages show the
@@ -29,7 +29,7 @@ Terms used in this design:
 ### Frontend (`@tutumuch/orders`, `src/frontend/projects/orders/src/lib/`)
 
 - **`OrderHistoryPage`** (`order-history/`) serves both lists below, chosen by route data `list`.
-- **Purchases** (route `/account/purchases`, account area, mock `docs/mocks/pages/purchases/`) — heading "Purchases" with a subtitle from counts, for example "1 on the way · 1 to confirm" (Shipped and Delivered counts). Each `tm-item-row` row links to `/orders/:id`. A row shows thumbnail, title, "from {seller} · {date}", total and `tm-status`. States: `loading` (3 skeleton rows); `empty` ("Nothing bought yet", "Everything in the catalog is girls' clothing.", "Browse the catalog"); `error` ("Couldn't load purchases", reference code, "Try again", account navigation kept).
+- **Purchases** (route `/account/purchases`, account area, mock `docs/mocks/pages/purchases/`) — heading "Purchases" with a subtitle from counts, for example "1 on the way · 1 to confirm" (Shipped and Delivered counts). Each `tl-item-row` row links to `/orders/:id`. A row shows thumbnail, title, "from {seller} · {date}", total and `tl-status`. States: `loading` (3 skeleton rows); `empty` ("Nothing bought yet", "Everything in the catalog is girls' clothing.", "Browse the catalog"); `error` ("Couldn't load purchases", reference code, "Try again", account navigation kept).
 - **Sales** (route `/account/sales`, mock `docs/mocks/pages/sales/`) — heading "Sales", subtitle "{n} to ship" (Paid count). Rows read "to {buyer} · ship by {date}" for Paid orders and link to `/sales/:id`. States: `loading`; `empty` ("No sales yet", "Sold items show up here with what to do next.", "Sell an item"); `error` ("Couldn't load sales").
 - **`OrderDetailPage`** (route `/orders/:id`, mock `docs/mocks/pages/order-detail/`) — breadcrumb "Purchases › {number}", eyebrow "Order {number} · {date}", `OrderTimelineComponent`, and a side `OrderSummaryPanelComponent` with the seller. One state per status, each reading the `actions` flags:
   - `paid` — "Waiting to ship", "{seller} ships by {date}. If not, you're refunded automatically.", "Ask to cancel" (cancel-order);
@@ -39,10 +39,10 @@ Terms used in this design:
   - `cancelled`, `refunded`, `problem` — described in cancel-order and resolve-order-problems;
   - `loading` and `error` ("Couldn't load this order", "Back to purchases").
 - **`SaleDetailPage`** (route `/sales/:id`, mock `docs/mocks/pages/sale-detail/`) — same layout with the buyer in the side panel, breadcrumb "Sales". It shows the "Ship to" block while the address is visible. The `address-hidden` state shows "Removed 30 days after the order ended." with an eye-off icon. Status-specific states are designed in ship-order (`default`, `shipped`), cancel-order (`cancel-requested`, `cancelled`), resolve-order-problems (`problem`) and seller-payouts (`completed`).
-- **`tm-status`** (`@tutumuch/components`) — the status name after a coloured square: info while open, active when Completed, removed when Cancelled or Refunded.
+- **`tl-status`** (`@tutumuch/components`) — the status name after a coloured square: info while open, active when Completed, removed when Cancelled or Refunded.
 - **`OrdersApi`** (`@tutumuch/api`, `src/lib/orders/orders-api.ts`) — `purchases()`, `sales()` and `sale(id)`; the buyer's order is read through `CheckoutApi`.
 
-### API (`TutuMuch.Api`)
+### API (`TuTuMuch.Api`)
 
 All endpoints require a signed-in member. An order the caller is not party to returns `404` (`L2-010` criterion 2).
 
@@ -85,14 +85,14 @@ No new tables. The queries use `IX_Orders_BuyerId_PaidAt` and `IX_Orders_SellerI
 
 ### System context
 
-The context is a single member reading their own orders from Tutu Much. No external system
+The context is a single member reading their own orders from TuTuMuch. No external system
 takes part in this slice.
 
 ![C4 system context for order history](diagrams/c4-context.png)
 
 ### Containers
 
-`Tutu Much Web` calls read-only endpoints on `Tutu Much API`, which projects from `Tutu Much database`.
+`TuTuMuch Web` calls read-only endpoints on `TuTuMuch API`, which projects from `TuTuMuch database`.
 
 ![C4 container view for order history](diagrams/c4-container.png)
 
@@ -126,7 +126,7 @@ after the order ends, and the "Removed" note afterwards.
 
 ## Testing
 
-- `tests/TutuMuch.Api.Tests/OrderHistoryTests.cs` (xUnit, in-memory database, fake clock): newest
+- `tests/TuTuMuch.Api.Tests/OrderHistoryTests.cs` (xUnit, in-memory database, fake clock): newest
   first, the other party, counts, sales separate from purchases, 401 for visitors, and the address
   shown 30 days and hidden 31 days after the order ended.
 - `src/frontend/e2e/tests/order-history.spec.ts` (Playwright, `page.route` fixtures only): both

@@ -112,12 +112,12 @@ export async function servePhotoUploads(page: Page): Promise<string[]> {
   return uploaded;
 }
 
-/** A small file the uploader accepts; the fixtures decide what Tutu Much API says about it. */
+/** A small file the uploader accepts; the fixtures decide what TuTuMuch API says about it. */
 export function imageFile(name: string, bytes = 2048): { name: string; mimeType: string; buffer: Buffer } {
   return { name, mimeType: name.endsWith('.png') ? 'image/png' : 'image/jpeg', buffer: Buffer.alloc(bytes, 1) };
 }
 
-/** An RFC 9457 problem body as Tutu Much API writes it (L2-068). */
+/** An RFC 9457 problem body as TuTuMuch API writes it (L2-068). */
 export function problem(
   status: number,
   code: string,
@@ -145,7 +145,7 @@ export async function signInAs(page: Page, member: MemberFixture): Promise<void>
 }
 
 /**
- * Every test gets a page whose calls to Tutu Much API are answered by fixtures (an auto fixture, so it
+ * Every test gets a page whose calls to TuTuMuch API are answered by fixtures (an auto fixture, so it
  * is in place before any beforeEach hook adds its own routes). The session endpoints
  * answer 401 (a visitor) unless a test signs a member in. Other unfixtured API calls are answered
  * 501 and recorded so a test can assert none happened.
@@ -319,7 +319,7 @@ export async function serveListing(page: Page, body: Record<string, unknown>): P
   await page.route('**/photos/**', (route) => route.fulfill({ contentType: 'image/png', body: PIXEL }));
 }
 
-/** The saved address of marcus_12 as Tutu Much API returns it. */
+/** The saved address of marcus_12 as TuTuMuch API returns it. */
 export const brooklyn = {
   fullName: 'Marcus Bell',
   line1: '214 Kent Ave',

@@ -29,9 +29,9 @@ export type IconName =
   | 'trash'
   | 'map-pin';
 
-/** One decorative inline SVG icon from the Tutu Much set, hidden from assistive technology (design system: Icon). */
+/** One decorative inline SVG icon from the TuTuMuch set, hidden from assistive technology (design system: Icon). */
 @Component({
-  selector: 'tm-icon',
+  selector: 'tl-icon',
   templateUrl: './icon.html',
   styleUrl: './icon.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -15,12 +15,12 @@ skinparam package {
   BackgroundColor #F9FAFB
 }
 participant "restore-test.yml (schedule)" as wf
-box "Backend — Tutu Much Infrastructure" #FFF4E5
-  database "Tutu Much database (PITR, 35 days)" as db
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  database "TuTuMuch database (PITR, 35 days)" as db
   database "Restored copy" as copy
 end box
 box "Backend — Operations tooling" #ECFDF3
-  participant "TutuMuch.RestoreVerifier" as ver
+  participant "TuTuMuch.RestoreVerifier" as ver
 end box
 participant "On-call channel" as oncall
 wf -> wf : Record start time T

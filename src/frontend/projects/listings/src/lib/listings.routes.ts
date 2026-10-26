@@ -5,21 +5,21 @@ export const routes: Routes = [
   {
     path: 'sell',
     loadComponent: () => import('./sell/sell-page').then((m) => m.SellPage),
-    title: 'Sell an item · Tutu Much',
+    title: 'Sell an item · TuTuMuch',
   },
   {
     path: 'sell/:reference',
     loadComponent: () => import('./sell/sell-page').then((m) => m.SellPage),
-    title: 'Sell an item · Tutu Much',
+    title: 'Sell an item · TuTuMuch',
   },
   {
     path: 'items/:reference/edit',
     loadComponent: () => import('./edit-listing/edit-listing-page').then((m) => m.EditListingPage),
-    title: 'Edit listing · Tutu Much',
+    title: 'Edit listing · TuTuMuch',
   },
   {
     path: 'account/listings',
     loadComponent: () => import('./my-listings/my-listings-page').then((m) => m.MyListingsPage),
-    title: 'Your listings · Tutu Much',
+    title: 'Your listings · TuTuMuch',
   },
 ];

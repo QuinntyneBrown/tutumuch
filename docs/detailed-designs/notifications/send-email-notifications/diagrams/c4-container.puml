@@ -4,11 +4,11 @@ LAYOUT_WITH_LEGEND()
 title Containers — Send email notifications
 
 Person(member, "Member", "Receives email")
-System_Boundary(tutumuch, "Tutu Much") {
-  Container(web, "Tutu Much Web", "Angular", "Pages that deep links open")
-  Container(api, "Tutu Much API", "ASP.NET Core", "Handlers enqueue EmailNotificationRequested with each state change")
-  Container(worker, "Tutu Much Worker", ".NET worker service", "OutboxEmailDispatcher: render, guard, send, retry")
-  ContainerDb(db, "Tutu Much database", "SQL Server", "OutboxMessages, Members, NotificationPreferences")
+System_Boundary(tutumuch, "TuTuMuch") {
+  Container(web, "TuTuMuch Web", "Angular", "Pages that deep links open")
+  Container(api, "TuTuMuch API", "ASP.NET Core", "Handlers enqueue EmailNotificationRequested with each state change")
+  Container(worker, "TuTuMuch Worker", ".NET worker service", "OutboxEmailDispatcher: render, guard, send, retry")
+  ContainerDb(db, "TuTuMuch database", "SQL Server", "OutboxMessages, Members, NotificationPreferences")
 }
 System_Ext(email, "Email provider", "Delivers email")
 

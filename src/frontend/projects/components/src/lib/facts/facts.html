@@ -3,7 +3,7 @@
     <dt>{{ fact.label }}</dt>
     <dd [class.num]="fact.numeric">
       @if (fact.status) {
-        <tm-status [tone]="fact.status">{{ fact.value }}</tm-status>
+        <tl-status [tone]="fact.status">{{ fact.value }}</tl-status>
       } @else {
         {{ fact.value }}
       }

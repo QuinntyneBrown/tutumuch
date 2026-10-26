@@ -49,7 +49,7 @@ test.describe('checkout and pay', () => {
     await page.clock.resume();
 
     await expect(checkoutPage.heading).toHaveText('Checkout');
-    await expect(page).toHaveTitle('Checkout · Tutu Much');
+    await expect(page).toHaveTitle('Checkout · TuTuMuch');
     await expect(checkoutPage.savedAddress).toBeChecked();
     await expect(checkoutPage.summary).toContainText('Floral party dress, pink');
     await expect(checkoutPage.summary).toContainText("Gymboree · Girls' · Used - Excellent");
@@ -58,7 +58,7 @@ test.describe('checkout and pay', () => {
     await expect(checkoutPage.summary.locator('dl')).toContainText('Sales tax$8.34');
     await expect(checkoutPage.summary.locator('dl')).toContainText('Total$102.34');
     await expect(checkoutPage.secureNote).toHaveText(
-      'Card details go straight to our payment provider. Tutu Much never sees them.',
+      'Card details go straight to our payment provider. TuTuMuch never sees them.',
     );
     await expect(checkoutPage.pay).toHaveText('Pay $102.34');
 
@@ -80,7 +80,7 @@ test.describe('checkout and pay', () => {
     const payments = sent.filter((r) => r.url.endsWith('/payments'));
     expect(payments).toHaveLength(1);
     expect(payments[0].headers['idempotency-key']).toMatch(UUID);
-    // Only the provider's token and the shown total reach Tutu Much: no card number or security code (L2-030 AC1).
+    // Only the provider's token and the shown total reach TuTuMuch: no card number or security code (L2-030 AC1).
     expect(payments[0].body).toEqual({ paymentMethodToken: 'tok_visa', expectedTotal: 102.34 });
     expect(unfixturedApiCalls).toEqual([]);
   });
@@ -132,7 +132,7 @@ test.describe('checkout and pay', () => {
 
   test('an address outside the United States is refused', async ({ page }) => {
     const sent = await serveCheckout(page, {
-      address: problem(422, 'NON_US_ADDRESS', 'Tutu Much ships within the United States only', {
+      address: problem(422, 'NON_US_ADDRESS', 'TuTuMuch ships within the United States only', {
         country: { code: 'NON_US_ADDRESS', message: 'Choose a US address to continue.' },
       }),
     });
@@ -146,7 +146,7 @@ test.describe('checkout and pay', () => {
     await checkoutPage.country.selectOption('CA');
     await checkoutPage.pay.click();
 
-    await expect(checkoutPage.formAlert).toContainText('Tutu Much ships within the United States only');
+    await expect(checkoutPage.formAlert).toContainText('TuTuMuch ships within the United States only');
     await expect(checkoutPage.formAlert).toContainText('Choose a US address to continue.');
     await expect(checkoutPage.country).toHaveAttribute('aria-invalid', 'true');
     expect(sent.filter((r) => r.url.endsWith('/payments'))).toHaveLength(0);
@@ -369,7 +369,7 @@ test.describe('order confirmation', () => {
     await expect(confirmation.centerState).toContainText('This usually takes a few seconds. Don’t close this page.');
     release();
     await expect(confirmation.heading).toHaveText('It’s yours.');
-    await expect(page).toHaveTitle('Order confirmed · Tutu Much');
+    await expect(page).toHaveTitle('Order confirmed · TuTuMuch');
   });
 
   test('a failure says the order is in Purchases', async ({ page }) => {

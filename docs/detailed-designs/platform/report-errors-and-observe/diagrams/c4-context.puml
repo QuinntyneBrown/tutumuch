@@ -5,7 +5,7 @@ title System Context — Report errors and observe the system
 
 Person(visitor, "Visitor or member", "Sees friendly errors with a reference")
 Person(operator, "Operator on call", "Investigates incidents")
-System(tutumuch, "Tutu Much", "Marketplace")
+System(tutumuch, "TuTuMuch", "Marketplace")
 System_Ext(monitor, "Monitoring and log platform", "Log store, metrics scraper, alert manager <TO SUPPLY>")
 System_Ext(oncall, "On-call channel", "Receives alerts <TO SUPPLY>")
 System_Ext(payments, "Payment provider", "Calls carry the correlation ID")

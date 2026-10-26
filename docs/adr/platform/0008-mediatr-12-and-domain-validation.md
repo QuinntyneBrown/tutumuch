@@ -8,7 +8,7 @@
 ## Context
 
 The architecture baseline names MediatR commands and FluentValidation validators in
-`TutuMuch.Application`. MediatR moved to a commercial licence from version 13. The listing
+`TuTuMuch.Application`. MediatR moved to a commercial licence from version 13. The listing
 rules (draft rules, publish rules, the size rule) must report every failing field at once
 with stable codes and the exact messages the form shows (`L2-015`, `L2-068`).
 

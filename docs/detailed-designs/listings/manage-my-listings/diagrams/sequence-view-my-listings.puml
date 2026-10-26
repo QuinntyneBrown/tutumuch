@@ -15,18 +15,18 @@ skinparam package {
   BackgroundColor #F9FAFB
 }
 actor "Seller" as actor
-box "Frontend — Tutu Much Web application" #E0F2FE
+box "Frontend — TuTuMuch Web application" #E0F2FE
   participant "MyListingsPage (@tutumuch/listings)" as page
   participant "ListingsApi (@tutumuch/api)" as client
 end box
-box "Backend — Tutu Much API application" #D1FADF
+box "Backend — TuTuMuch API application" #D1FADF
   participant "ListingsController" as controller
 end box
-box "Backend — TutuMuch Application and Domain" #ECFDF3
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
   participant "GetMyListingsQueryHandler" as handler
 end box
-box "Backend — TutuMuch Infrastructure" #FFF4E5
-  database "Tutu Much database" as db
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
 end box
 actor -> page : Open /account/listings (optionally ?status=sold)
 page --> actor : Loading state: skeleton rows

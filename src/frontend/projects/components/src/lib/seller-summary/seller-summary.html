@@ -14,7 +14,7 @@
         >
           <span class="rating__stars">
             @for (star of stars; track star) {
-              <tm-icon name="star" [class.rating__off]="star > rating + 0.5" />
+              <tl-icon name="star" [class.rating__off]="star > rating + 0.5" />
             }
           </span>
           <span class="rating__value">{{ rating | number: '1.1-1' }}</span>

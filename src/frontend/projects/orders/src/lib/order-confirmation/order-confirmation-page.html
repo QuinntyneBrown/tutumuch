@@ -7,21 +7,21 @@
     </div>
   }
   @case ('error') {
-    <tm-center-state heading="We couldn’t show your order">
+    <tl-center-state heading="We couldn’t show your order">
       <p class="text-muted">If you were charged, the order is in Purchases.</p>
       <span class="ref">{{ errorRef() }}</span>
-      <button actions tmButton="primary" type="button" (click)="retry()"><tm-icon name="refresh" />Try again</button>
-      <a actions tmButton routerLink="/account/purchases">Go to purchases</a>
-    </tm-center-state>
+      <button actions tlButton="primary" type="button" (click)="retry()"><tl-icon name="refresh" />Try again</button>
+      <a actions tlButton routerLink="/account/purchases">Go to purchases</a>
+    </tl-center-state>
   }
   @default {
     @if (order(); as order) {
       <div class="confirm">
-        <div class="confirm__mark" aria-hidden="true"><tm-icon name="check" /></div>
+        <div class="confirm__mark" aria-hidden="true"><tl-icon name="check" /></div>
         <p class="eyebrow">Order {{ order.reference }}</p>
         <h1>It’s yours.</h1>
         <div class="confirm__item">
-          <tm-item-row [title]="order.item.title" [meta]="paid()">
+          <tl-item-row [title]="order.item.title" [meta]="paid()">
             <div thumb class="thumb">
               <div class="photo photo--6">
                 @if (order.item.photo; as photo) {
@@ -32,7 +32,7 @@
                 }
               </div>
             </div>
-          </tm-item-row>
+          </tl-item-row>
         </div>
         <ol class="next-steps">
           <li>
@@ -42,8 +42,8 @@
           <li><b>Confirm it arrived</b><span>The order completes and the seller is paid.</span></li>
         </ol>
         <div class="cluster">
-          <a tmButton="primary" [routerLink]="['/orders', order.id]">View order</a>
-          <a tmButton routerLink="/">Keep shopping</a>
+          <a tlButton="primary" [routerLink]="['/orders', order.id]">View order</a>
+          <a tlButton routerLink="/">Keep shopping</a>
         </div>
       </div>
     }

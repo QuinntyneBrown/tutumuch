@@ -10,7 +10,7 @@ let nextId = 0;
  * (design system: Consent banner). It does not trap focus; the owner hides it once a choice is saved.
  */
 @Component({
-  selector: 'tm-consent-banner',
+  selector: 'tl-consent-banner',
   imports: [ButtonDirective],
   templateUrl: './consent-banner.html',
   styleUrl: './consent-banner.css',
@@ -21,5 +21,5 @@ export class ConsentBannerComponent {
   readonly declined = output();
   readonly settings = output();
 
-  readonly id = `tm-consent-${nextId++}`;
+  readonly id = `tl-consent-${nextId++}`;
 }

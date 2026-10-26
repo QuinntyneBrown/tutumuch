@@ -12,7 +12,7 @@ const PRICE_DELAY_MS = 400;
  * the last keystroke and only when the range is valid (L2-024).
  */
 @Component({
-  selector: 'tm-filters-sidebar',
+  selector: 'tl-filters-sidebar',
   imports: [FilterForm],
   templateUrl: './filters-sidebar.html',
   styleUrl: './filters-sidebar.css',

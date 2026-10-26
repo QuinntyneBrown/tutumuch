@@ -8,7 +8,7 @@ import { ListingCardPhoto } from '../listing-card/listing-card';
  * priority. Arrow keys move between thumbnails (L2-025, L2-063).
  */
 @Component({
-  selector: 'tm-gallery',
+  selector: 'tl-gallery',
   templateUrl: './gallery.html',
   styleUrl: './gallery.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

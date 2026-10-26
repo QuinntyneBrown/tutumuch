@@ -16,20 +16,20 @@ skinparam package {
 }
 actor "Seller" as actor
 box "Frontend — @tutumuch/listings, @tutumuch/components, @tutumuch/api" #E0F2FE
-  participant "SellPage + tm-photo-uploader" as up
+  participant "SellPage + tl-photo-uploader" as up
   participant "PhotosApi" as client
 end box
-box "Backend — Tutu Much API application" #D1FADF
+box "Backend — TuTuMuch API application" #D1FADF
   participant "PhotoUploadsController" as controller
 end box
-box "Backend — TutuMuch Application" #ECFDF3
+box "Backend — TuTuMuch Application" #ECFDF3
   participant "ListingPhotoHandlers" as handler
 end box
-box "Backend — TutuMuch Infrastructure" #FFF4E5
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
   participant "SkiaImageInspector" as inspector
   participant "SkiaPhotoProcessor" as processor
   database "Photo storage" as storage
-  database "Tutu Much database" as db
+  database "TuTuMuch database" as db
 end box
 actor -> up : Choose files ("Add photos", n of 8)
 up -> up : Take only the free slots; disable "Add photos" at 8 (L2-017)

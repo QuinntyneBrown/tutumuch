@@ -12,7 +12,7 @@ The view-listing-detail design read the seller's rating, review count, completed
 
 ## Decision
 
-`GetListingDetailQueryHandler` reads through `ITutuMuchDbContext`, as browse-catalog does ([ADR catalog/0001](0001-catalog-reads-through-the-db-context-port.md)), and returns `SellerSummaryDto` with the display name, 0 completed sales, no rating and 0 reviews. The page therefore shows "New seller" for every seller. No view, read-store port, location or avatar field is added. `tm-seller-summary` already renders sales and a rating when they are present. The own-listing purchase guard (HTTP 422 `CANNOT_BUY_OWN_LISTING`) is built with checkout; this feature only keeps "Buy now" away from the seller.
+`GetListingDetailQueryHandler` reads through `ITuTuMuchDbContext`, as browse-catalog does ([ADR catalog/0001](0001-catalog-reads-through-the-db-context-port.md)), and returns `SellerSummaryDto` with the display name, 0 completed sales, no rating and 0 reviews. The page therefore shows "New seller" for every seller. No view, read-store port, location or avatar field is added. `tl-seller-summary` already renders sales and a rating when they are present. The own-listing purchase guard (HTTP 422 `CANNOT_BUY_OWN_LISTING`) is built with checkout; this feature only keeps "Buy now" away from the seller.
 
 ## Consequences
 

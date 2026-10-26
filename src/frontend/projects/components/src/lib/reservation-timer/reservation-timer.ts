@@ -24,14 +24,14 @@ const WARNING_SECONDS = 60;
  * are each announced once through a polite status. Emits the phase whenever it changes.
  */
 @Component({
-  selector: 'tm-reservation-timer',
+  selector: 'tl-reservation-timer',
   imports: [IconComponent],
   templateUrl: './reservation-timer.html',
   styleUrl: './reservation-timer.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReservationTimerComponent {
-  /** ISO time when the reservation ends, from Tutu Much API. */
+  /** ISO time when the reservation ends, from TuTuMuch API. */
   readonly expiresAt = input.required<string>();
   readonly phaseChange = output<ReservationPhase>();
 

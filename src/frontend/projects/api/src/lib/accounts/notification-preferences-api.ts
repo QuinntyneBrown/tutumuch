@@ -19,7 +19,7 @@ export interface NotificationPreferences {
   categories: NotificationCategory[];
 }
 
-/** The settings with the ETag Tutu Much API sent, to send back in If-Match when saving. */
+/** The settings with the ETag TuTuMuch API sent, to send back in If-Match when saving. */
 export interface VersionedNotificationPreferences {
   preferences: NotificationPreferences;
   etag: string;

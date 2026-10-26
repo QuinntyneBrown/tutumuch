@@ -2,8 +2,8 @@
 
 ## Overview
 
-Tutu Much is a marketplace for new and used girls' clothing. An
-*order* is the record Tutu Much creates when a buyer's payment for a listing is confirmed;
+TuTuMuch is a marketplace for new and used girls' clothing. An
+*order* is the record TuTuMuch creates when a buyer's payment for a listing is confirmed;
 it ties together one listing, one buyer, one seller, the amounts paid and the
 shipping address. This feature covers the stretch of an order's life between payment
 and delivery: the seller ships the item, enters a carrier and tracking number, and
@@ -23,7 +23,7 @@ Terms used in this design:
 - **ship-by date** — instant 5 US business days after payment by which the seller shall add tracking
 - **reminder date** — instant 3 US business days after payment at which an unshipped seller is reminded
 - **business day** — Monday to Friday; US holidays are not skipped until their list is supplied ([ADR orders/0003](../../../adr/orders/0003-ship-order-status-token-weekday-deadline-and-carrier-port.md))
-- **actor** — party recorded against a transition: buyer, seller, administrator, system (a Tutu Much job) or carrier
+- **actor** — party recorded against a transition: buyer, seller, administrator, system (a TuTuMuch job) or carrier
 
 A Paid order has a ship-by date. The seller adds tracking before it, the order becomes
 Shipped and the buyer sees the tracking link on their order page. Without tracking by the
@@ -37,7 +37,7 @@ cancellation and refund emails, and the reminder job that only sends email, are 
 
 ### Order state machine (shared by every orders feature)
 
-`OrderStateMachine` in `TutuMuch.Domain` (`Orders/OrderStateMachine.cs`) holds the allowed
+`OrderStateMachine` in `TuTuMuch.Domain` (`Orders/OrderStateMachine.cs`) holds the allowed
 transitions as a static set of `(from, to, actor)` triples. `Order.TransitionTo` is the only
 code path that changes `Order.Status`; it calls `OrderStateMachine.EnsureAllowed`, appends an
 `OrderStatusChange` and sets `EndedAt` on a terminal status. Any other `(from, to, actor)`
@@ -76,14 +76,14 @@ refund to the buyer. Refunds still go to the payment provider directly, as check
 
 ### Frontend (`@tutumuch/orders`, `@tutumuch/api`, `@tutumuch/components`)
 
-- **`SaleDetailPage`** (`projects/orders/src/lib/sale-detail/`, route `/sales/:id`, mock `pages/sale-detail`) — the seller's view of one order from `GET /api/sales/{id}`. Paid (`default`): eyebrow "Order TM-48302 · Sat 24 Oct", "You made a sale", "Ship by **Fri 30 Oct**.", the buyer's address under "Ship to" with "Visible until 30 days after the order ends.", and the primary "Add tracking" button. Shipped, Delivered and Completed (`shipped`): the heading of the status, `tm-order-timeline`, `tm-tracking-link` and the address. Cancelled: the info alert "Cancelled · Buyer refunded in full". `loading` (two-column skeleton) and `error` ("Couldn’t load this sale", reference, "Try again", "Back to sales"). "Cancel order", the cancel-requested state and "Relist item" are added by [cancel-order](../cancel-order/README.md).
+- **`SaleDetailPage`** (`projects/orders/src/lib/sale-detail/`, route `/sales/:id`, mock `pages/sale-detail`) — the seller's view of one order from `GET /api/sales/{id}`. Paid (`default`): eyebrow "Order TM-48302 · Sat 24 Oct", "You made a sale", "Ship by **Fri 30 Oct**.", the buyer's address under "Ship to" with "Visible until 30 days after the order ends.", and the primary "Add tracking" button. Shipped, Delivered and Completed (`shipped`): the heading of the status, `tl-order-timeline`, `tl-tracking-link` and the address. Cancelled: the info alert "Cancelled · Buyer refunded in full". `loading` (two-column skeleton) and `error` ("Couldn’t load this sale", reference, "Try again", "Back to sales"). "Cancel order", the cancel-requested state and "Relist item" are added by [cancel-order](../cancel-order/README.md).
 - **`AddTrackingDialog`** (`projects/orders/src/lib/add-tracking/`, mock `dialogs/add-tracking`), opened through `DialogService` — "Add tracking", "We’ll email {buyer} the tracking link.", a "Carrier" select (USPS, UPS, FedEx, DHL; focused on open) and "Tracking number". An empty number shows "Enter the tracking number." without a request. `invalid`: the API's field message under the field, the input kept and focused. `busy`: primary `aria-busy`, Cancel disabled. `failed`: "That didn’t go through" alert, inputs kept, primary "Try again". It closes with the shipped sale, which replaces the page's sale.
 - **`OrderDetailPage`** (`projects/orders/src/lib/order-detail/`, route `/orders/:id`, mock `pages/order-detail`) — the buyer's order from `GET /api/purchases/{id}`: Paid "Waiting to ship" with the timeline and "{seller} ships by {date}. If not, you’re refunded automatically."; Shipped "On its way" with the tracking link; Delivered; Cancelled "Refunded in full" with "$X back to {card}. Allow 5–10 days."; `loading` and `error` ("Couldn’t load this order", "Back to purchases"). The buyer's actions belong to cancel-order, complete-order and resolve-order-problems.
-- **`OrderPartyComponent`** (local, `order-party/`) — avatar, "Buyer" or "Seller" and the profile link, projected into `tm-order-summary` (shown without a visible heading on these pages).
-- **`tm-order-timeline`** and **`tm-tracking-link`** in `@tutumuch/components` (design system: Order timeline, Tracking link). Dates read "Sat 24 Oct" in UTC (`order-dates.ts`).
+- **`OrderPartyComponent`** (local, `order-party/`) — avatar, "Buyer" or "Seller" and the profile link, projected into `tl-order-summary` (shown without a visible heading on these pages).
+- **`tl-order-timeline`** and **`tl-tracking-link`** in `@tutumuch/components` (design system: Order timeline, Tracking link). Dates read "Sat 24 Oct" in UTC (`order-dates.ts`).
 - **`OrdersApi`** in `@tutumuch/api` (`lib/orders/orders-api.ts`) — `sale(id)` and `addTracking(id, carrier, trackingNumber)`, both returning `Sale`; `CheckoutApi.purchase(id)` returns the extended `Purchase`.
 
-### API (`TutuMuch.Api`)
+### API (`TuTuMuch.Api`)
 
 - **`OrdersController`** (policy `VerifiedMember`)
   - `GET /api/sales/{id}` — `200` `SaleDto`; `404 ORDER_NOT_FOUND` when the caller is not the order's seller (`L2-010`).
@@ -91,7 +91,7 @@ refund to the buyer. Refunds still go to the payment provider directly, as check
 - **`CheckoutsController`** — `GET /api/purchases/{id}` now also returns `itemPrice`, `shippingCost`, `salesTax`, `shipBy`, `timeline` and `tracking`.
 - **`CarrierWebhookController`** — `POST /api/carriers/webhook`, anonymous; the `Carrier-Signature` header is verified by `ICarrierTracking`. `200` for a delivery, a repeat or an unrelated event; `400 WEBHOOK_SIGNATURE_INVALID` and a security log entry on an invalid signature. Polling is not built: the carrier tracking service is still to be chosen.
 
-### Application and domain (`TutuMuch.Application/Orders`, `TutuMuch.Domain/Orders`)
+### Application and domain (`TuTuMuch.Application/Orders`, `TuTuMuch.Domain/Orders`)
 
 - **`Order`** — adds `ShipBy`, `ShippedAt`, `DeliveredAt`, `EndedAt`, `Carrier`, `TrackingNumber` and the `StatusChanges` history to the checkout-and-pay aggregate; methods as in the state machine table. `ShipBy = BusinessDays.Add(PaidAt, 5)`: the same time of day 5 weekdays later (paid Sat 24 Oct gives Fri 30 Oct; paid Thu 22 Oct gives Thu 29 Oct).
 - **`OrderStatusChange`** — `Id`, `OrderId`, `From` (null at creation), `To`, `OccurredAt`, `Actor` (`OrderActor`: Buyer, Seller, Administrator, System, Carrier). The actor's member is the order's buyer or seller, so no actor ID is stored.
@@ -101,13 +101,13 @@ refund to the buyer. Refunds still go to the payment provider directly, as check
 - **`CancelUnshippedOrdersCommand`** — selects Paid orders with `ShipBy <= now`; for each it calls `OrderCancellation.CancelAsync(ShipDeadlinePassed, System)` from [cancel-order](../cancel-order/README.md), which cancels the order, removes the listing until the seller relists it, adds the full refund (reason `ShipDeadlinePassed`) and queues the emails in one save; it then refunds through `IPaymentProvider.RefundAsync` with the refund ID as idempotency key. A refund the provider does not accept stays Pending for the outbox; an order shipped meanwhile loses the concurrency check and is skipped.
 - **`ICarrierTracking`** — `ReadWebhook(body, signature)`; `UnconfiguredCarrierTracking` in Infrastructure accepts nothing until a service is chosen; tests use `FakeCarrierTracking`.
 
-### Worker jobs (`TutuMuch.Worker`)
+### Worker jobs (`TuTuMuch.Worker`)
 
 - **`ShipDeadlineJob`** — every `Orders:DeadlineJobInterval` (5 minutes) sends `CancelUnshippedOrdersCommand` in its own scope (`L2-033` criterion 2).
 - **`ShipReminderJob`** — built with send-email-notifications: every `Notifications:ShipReminderJobInterval` (15 minutes) sends `SendShipRemindersCommand`, which emails the seller of each Paid order 3 business days after payment once, recorded in `ShipReminderDue` and `ShipReminderSentAt` (`L2-033` criterion 3).
 - **Deferred:** `DeliveryPollingJob` waits for the carrier tracking service.
 
-### Data (`TutuMuch.Infrastructure`, migration `AddShipOrder`)
+### Data (`TuTuMuch.Infrastructure`, migration `AddShipOrder`)
 
 - **`Orders`** — adds `ShipBy` (existing rows backfilled to 7 days after payment), `ShippedAt`, `DeliveredAt`, `EndedAt`, `Carrier` (`nvarchar(8)`), `TrackingNumber` (`nvarchar(34)`); `Status` is the concurrency token; indexes `IX_Orders_Status_ShipBy` (deadline job) and `IX_Orders_Carrier_TrackingNumber` (carrier events). cancel-order filters `UX_Orders_ListingId` to orders that are not Cancelled, so a relisted listing can sell again.
 - **`OrderStatusChanges`** — append-only, cascade from `Orders`; index `IX_OrderStatusChanges_OrderId_OccurredAt`. No update or delete path exists.
@@ -125,9 +125,9 @@ refund to the buyer. Refunds still go to the payment provider directly, as check
 
 ### Tests
 
-- `tests/TutuMuch.Domain.Tests/OrderTests.cs` — transitions, actors, terminal states, ship-by dates and tracking formats.
-- `tests/TutuMuch.Api.Tests/ShipOrderTests.cs` — the endpoints, webhook and deadline command on SQLite in memory with `FakePaymentProvider` and `FakeCarrierTracking`.
-- `tests/TutuMuch.Worker.Tests/ShipDeadlineJobTests.cs` — one command per pass.
+- `tests/TuTuMuch.Domain.Tests/OrderTests.cs` — transitions, actors, terminal states, ship-by dates and tracking formats.
+- `tests/TuTuMuch.Api.Tests/ShipOrderTests.cs` — the endpoints, webhook and deadline command on SQLite in memory with `FakePaymentProvider` and `FakeCarrierTracking`.
+- `tests/TuTuMuch.Worker.Tests/ShipDeadlineJobTests.cs` — one command per pass.
 - `src/frontend/e2e/tests/ship-order.spec.ts` with `pages/sale-detail.page.ts` and `pages/order-detail.page.ts` — every page and dialog state against `page.route` fixtures.
 
 ## Requirements
@@ -148,7 +148,7 @@ accepts; each label names the trigger and the actor recorded in `OrderStatusChan
 
 ### System context
 
-The seller ships through Tutu Much. Tutu Much learns of delivery from a carrier tracking service
+The seller ships through TuTuMuch. TuTuMuch learns of delivery from a carrier tracking service
 (`<TO SUPPLY>`) and refunds missed deadlines through the payment provider; email to the
 buyer arrives with send-email-notifications.
 
@@ -156,7 +156,7 @@ buyer arrives with send-email-notifications.
 
 ### Containers
 
-`Tutu Much Web` calls `Tutu Much API` to read the sale and add tracking. `Tutu Much Worker` runs the ship
+`TuTuMuch Web` calls `TuTuMuch API` to read the sale and add tracking. `TuTuMuch Worker` runs the ship
 deadline job, which cancels and refunds.
 
 ![C4 container view for shipping an order](diagrams/c4-container.png)

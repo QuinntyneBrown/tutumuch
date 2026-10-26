@@ -1,7 +1,7 @@
 // Acceptance Test
 // Traces to: L2-017, L2-065
 // Description: A seller adds up to 8 photos to a listing, reorders them by dragging or with the
-// arrow keys, and removes them; the first is the cover. Files over 10 MB and files Tutu Much API
+// arrow keys, and removes them; the first is the cover. Files over 10 MB and files TuTuMuch API
 // refuses show a rejected tile and a clear message. A save sends the photo IDs in order.
 
 import { Page, Request } from '@playwright/test';
@@ -76,7 +76,7 @@ test.describe('upload listing photos', () => {
     await expect(sell.photoError).toHaveCount(0);
   });
 
-  test('a file Tutu Much API refuses shows the reason it gives', async ({ page }) => {
+  test('a file TuTuMuch API refuses shows the reason it gives', async ({ page }) => {
     await page.route('**/api/photo-uploads', (route) =>
       route.fulfill(problem(415, 'PHOTO_TYPE_UNSUPPORTED', 'Use a JPEG, PNG or WebP photo')),
     );

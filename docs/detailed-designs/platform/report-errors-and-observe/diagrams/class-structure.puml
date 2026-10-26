@@ -11,7 +11,7 @@ skinparam class {
 }
 title Class structure — Report errors and observe the system
 
-package "Tutu Much Web" {
+package "TuTuMuch Web" {
   enum AppErrorKind {
     offline
     validation
@@ -42,8 +42,8 @@ package "Tutu Much Web" {
     +tryAgain(): void
   }
 }
-package "Tutu Much API" {
-  class TutuMuchProblemDetails {
+package "TuTuMuch API" {
+  class TuTuMuchProblemDetails {
     +string Type
     +string Title
     +int Status
@@ -55,7 +55,7 @@ package "Tutu Much API" {
   }
   class ProblemDetailsExceptionHandler {
     +TryHandleAsync(context, exception, ct): ValueTask<bool>
-    -Map(exception): TutuMuchProblemDetails
+    -Map(exception): TuTuMuchProblemDetails
   }
   class DomainRuleException {
     +string Code
@@ -85,11 +85,11 @@ ApiErrorInterceptor ..> AppError : produces
 AppError --> AppErrorKind
 ApiErrorInterceptor ..> ConnectivityService : reads
 ServerErrorPageComponent ..> AppError : shows
-ProblemDetailsExceptionHandler ..> TutuMuchProblemDetails : writes
+ProblemDetailsExceptionHandler ..> TuTuMuchProblemDetails : writes
 ProblemDetailsExceptionHandler ..> DomainRuleException : maps 422
 ProblemDetailsExceptionHandler ..> NotFoundException : maps 404
 ProblemDetailsExceptionHandler ..> ConcurrencyConflictException : maps 409
 DatabaseHealthCheck ..|> IHealthCheck
 PhotoStorageHealthCheck ..|> IHealthCheck
-ApiErrorInterceptor ..> TutuMuchProblemDetails : parses
+ApiErrorInterceptor ..> TuTuMuchProblemDetails : parses
 @enduml

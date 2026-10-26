@@ -3,8 +3,8 @@
 LAYOUT_WITH_LEGEND()
 title Components — Create a listing
 
-Container(web, "Tutu Much Web", "Angular", "SellPage, VerifyEmailPromptComponent, SellingApi, ListingsApi")
-Container_Boundary(api, "Tutu Much API") {
+Container(web, "TuTuMuch Web", "Angular", "SellPage, VerifyEmailPromptComponent, SellingApi, ListingsApi")
+Container_Boundary(api, "TuTuMuch API") {
   Component(catCtrl, "CategoriesController", "ASP.NET Core controller", "GET /api/categories, GET /api/selling/options")
   Component(ctrl, "ListingsController", "ASP.NET Core controller", "POST /api/listings, PUT /api/listings/{reference}, POST /api/listings/{reference}/publish, GET /api/me/listings/{reference}")
   Component(policy, "CanSell policy", "ASP.NET Core authorization", "401 for visitors, 403 EMAIL_NOT_VERIFIED for unverified members")
@@ -12,7 +12,7 @@ Container_Boundary(api, "Tutu Much API") {
   Component(rules, "CategoryCatalog", "Domain", "Accepted categories, subcategories and sizes (L2-011)")
   Component(entity, "Listing", "Domain aggregate", "Server-set size, draft and publish rules, status transitions")
   Component(payout, "ISellerPayoutAccountReader", "Application port", "Reports whether payout onboarding is complete")
-  ComponentDb(db, "TutuMuchDbContext", "EF Core", "Members and Listings tables")
+  ComponentDb(db, "TuTuMuchDbContext", "EF Core", "Members and Listings tables")
 }
 
 Rel(web, catCtrl, "Loads categories and options", "JSON/HTTPS")

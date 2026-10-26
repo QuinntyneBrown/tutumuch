@@ -18,7 +18,7 @@ import { ListingFormModel } from './listing-form-model';
  * page owns the error summary, the alerts and the actions.
  */
 @Component({
-  selector: 'tm-listing-form',
+  selector: 'tl-listing-form',
   imports: [
     ReactiveFormsModule,
     ChoiceComponent,
