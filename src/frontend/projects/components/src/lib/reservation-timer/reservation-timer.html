@@ -1,0 +1,12 @@
+<p
+  class="timer"
+  [class.timer--warning]="phase() === 'warning'"
+  [class.timer--danger]="phase() === 'danger'"
+  role="timer"
+  aria-live="off"
+>
+  <tl-icon name="clock" /><span
+    >Reserved for you · <span class="num">{{ text() }}</span> left</span
+  >
+</p>
+<span class="visually-hidden" role="status">{{ announcement() }}</span>

@@ -1,0 +1,18 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — View a member profile
+
+Person(visitor, "Visitor or member", "Reads a public profile")
+System_Boundary(tutumuch, "TuTuMuch") {
+  Container(web, "TuTuMuch Web", "Angular", "@tutumuch/reviews MemberProfilePage at /members/:displayName")
+  Container(api, "TuTuMuch API", "ASP.NET Core", "Anonymous profile and listings endpoints")
+  ContainerDb(db, "TuTuMuch database", "SQL Server", "Members, Orders, Listings, ListingPhotos")
+  Container(photos, "Photo storage", "Object storage behind a CDN", "Processed listing photos")
+}
+
+Rel(visitor, web, "Uses", "HTTPS")
+Rel(web, api, "GET /api/members/{displayName} and /listings", "JSON/HTTPS")
+Rel(api, db, "Reads public columns and counts", "EF Core")
+Rel(web, photos, "Loads listing photos", "HTTPS")
+@enduml

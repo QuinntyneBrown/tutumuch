@@ -1,0 +1,24 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Manage my listings
+
+Container(web, "TuTuMuch Web", "Angular", "@tutumuch/listings MyListingsPage with tl-filter-chips; @tutumuch/api ListingsApi")
+Container_Boundary(api, "TuTuMuch API") {
+  Component(ctrl, "ListingsController", "ASP.NET Core controller", "GET /api/me/listings")
+  Component(query, "GetMyListingsQueryHandler", "MediatR handler", "Seller's listings, newest first, with status counts")
+  ComponentDb(db, "TuTuMuchDbContext", "EF Core", "Listings, ListingPhotos, ListingPhotoVersions, Orders, OutboxMessages")
+}
+Container_Boundary(worker, "TuTuMuch Worker") {
+  Component(job, "DraftCleanupJob", "Hosted service (deferred)", "Reminds at day 83, deletes at day 90")
+  Component(outbox, "OutboxDispatcher", "Hosted service", "Sends DraftExpiryReminderEmail through the email adapter")
+}
+System_Ext(email, "Email provider", "Transactional email")
+
+Rel(web, ctrl, "GET with status filter", "JSON/HTTPS")
+Rel(ctrl, query, "Sends GetMyListingsQuery")
+Rel(query, db, "Projects rows and counts")
+Rel(job, db, "Selects stale drafts, writes outbox, deletes")
+Rel(outbox, db, "Claims messages")
+Rel(outbox, email, "Sends", "HTTPS")
+@enduml

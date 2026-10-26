@@ -1,0 +1,49 @@
+@startuml
+title UML sequence behaviour — Correlated logging across a request
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "Checkout page" as page
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "CorrelationIdMiddleware" as corr
+  participant "CheckoutController" as ctrl
+end box
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
+  participant "PayOrderCommandHandler" as handler
+end box
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  participant "Serilog + redaction" as log
+  participant "Payment adapter + CorrelationIdDelegatingHandler" as pay
+  database "TuTuMuch database" as db
+end box
+box "Backend — TuTuMuch Worker application" #ECFDF3
+  participant "OutboxDispatcher" as worker
+end box
+page -> corr : POST /api/checkout/{id}/pay
+corr -> log : BeginScope CorrelationId=3c8e-1d42-a7f0 (L2-069)
+corr -> ctrl : Continue
+ctrl -> handler : Send command
+handler -> db : Load order (EF Core log entry in scope)
+handler -> pay : Charge (X-Correlation-ID forwarded)
+pay -> log : Log outbound call; card fields redacted to *** (L2-069)
+handler -> db : Save order + OutboxMessage(CorrelationId)
+handler -> log : tutumuch_checkout_attempts_total{outcome}
+ctrl --> page : 200 with X-Correlation-ID
+worker -> db : Read OutboxMessage
+worker -> log : BeginScope CorrelationId from message
+worker -> log : Log email dispatch (address redacted)
+note over log : Searching the log store for 3c8e-1d42-a7f0 returns every entry above (L2-069 AC1)
+@enduml

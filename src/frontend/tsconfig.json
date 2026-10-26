@@ -1,0 +1,65 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "paths": {
+      "@tutumuch/api": ["./projects/api/src/public-api.ts"],
+      "@tutumuch/components": ["./projects/components/src/public-api.ts"],
+      "@tutumuch/accounts": ["./projects/accounts/src/public-api.ts"],
+      "@tutumuch/catalog": ["./projects/catalog/src/public-api.ts"],
+      "@tutumuch/listings": ["./projects/listings/src/public-api.ts"],
+      "@tutumuch/orders": ["./projects/orders/src/public-api.ts"],
+      "@tutumuch/reviews": ["./projects/reviews/src/public-api.ts"],
+      "@tutumuch/privacy": ["./projects/privacy/src/public-api.ts"],
+      "@tutumuch/marketing": ["./projects/marketing/src/public-api.ts"]
+    },
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "preserve",
+    "strict": true
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true
+  },
+  "files": [],
+  "references": [
+    {
+      "path": "./projects/tutumuch/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/api/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/components/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/accounts/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/catalog/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/listings/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/orders/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/reviews/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/privacy/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/marketing/tsconfig.lib.json"
+    }
+  ]
+}

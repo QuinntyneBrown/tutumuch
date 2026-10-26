@@ -1,0 +1,27 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Complete an order
+
+Container(web, "TuTuMuch Web", "Angular", "@tutumuch/orders: OrderDetailPage, ConfirmReceiptDialog; @tutumuch/api: OrdersApi")
+Container_Boundary(api, "TuTuMuch API") {
+  Component(ctrl, "OrdersController", "ASP.NET Core controller", "POST /api/orders/{id}/receipt")
+  Component(h, "ConfirmReceiptCommandHandler", "MediatR handler", "Buyer completes the order")
+  Component(ch, "CompleteDeliveredOrdersHandler", "MediatR handler", "System completes due orders")
+  Component(order, "Order", "Domain aggregate", "State machine from ship-order")
+  Component(evt, "OrderCompleted", "MediatR notification", "Handled by seller-payouts")
+}
+Container_Boundary(worker, "TuTuMuch Worker") {
+  Component(job, "OrderCompletionJob", "Hosted service", "Delivered + 3 days")
+}
+ContainerDb(db, "TuTuMuch database", "SQL Server", "Orders, OrderStatusChanges")
+Rel(web, ctrl, "Calls", "JSON/HTTPS")
+Rel(ctrl, h, "Sends ConfirmReceiptCommand")
+Rel(job, ch, "Sends CompleteDeliveredOrdersCommand")
+Rel(h, order, "ConfirmReceipt")
+Rel(ch, order, "Complete(System)")
+Rel(h, evt, "Publishes after save")
+Rel(ch, evt, "Publishes after save")
+Rel(h, db, "Saves", "EF Core")
+Rel(ch, db, "Selects due orders and saves", "EF Core")
+@enduml

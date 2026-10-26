@@ -1,0 +1,25 @@
+:host {
+  display: block;
+}
+.gallery__track {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.gallery__track > .photo {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+}
+picture {
+  display: contents;
+}
+.gallery .photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.gallery__thumbs button {
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+}

@@ -1,0 +1,18 @@
+<div class="field">
+  <label class="field__label" [for]="fieldId()"
+    >{{ label() }}
+    @if (optional()) {
+      <span class="optional">(optional)</span>
+    }
+  </label>
+  <ng-content />
+  @if (help()) {
+    <span class="field__help" [id]="fieldId() + '-help'">{{ help() }}</span>
+  }
+  @if (error()) {
+    <span class="field__error" [id]="fieldId() + '-error'">{{ error() }}</span>
+  }
+  @if (counter()) {
+    <span class="field__counter">{{ counter() }}</span>
+  }
+</div>

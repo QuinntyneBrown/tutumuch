@@ -1,0 +1,20 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Manage my listings
+
+Person(seller, "Seller", "Reviews own listings")
+System_Boundary(tutumuch, "TuTuMuch") {
+  Container(web, "TuTuMuch Web", "Angular", "MyListingsPage")
+  Container(api, "TuTuMuch API", "ASP.NET Core", "GET /api/me/listings")
+  Container(worker, "TuTuMuch Worker", ".NET worker service", "DraftCleanupJob, outbox dispatch")
+  ContainerDb(db, "TuTuMuch database", "SQL Server", "Listings, ListingPhotos, OutboxMessages")
+}
+System_Ext(email, "Email provider", "Transactional email")
+
+Rel(seller, web, "Uses", "HTTPS")
+Rel(web, api, "Calls", "JSON/HTTPS")
+Rel(api, db, "Reads", "EF Core")
+Rel(worker, db, "Finds stale drafts, writes outbox, deletes drafts", "EF Core")
+Rel(worker, email, "Dispatches reminder email", "HTTPS")
+@enduml

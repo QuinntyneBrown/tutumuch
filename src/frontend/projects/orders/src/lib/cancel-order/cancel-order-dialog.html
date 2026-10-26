@@ -1,0 +1,43 @@
+<tl-dialog heading="Cancel this sale?" icon="alert" tone="danger">
+  <span description
+    >{{ data.buyerDisplayName }} is refunded {{ money(data.total) }} in full. The listing stays off the catalog until
+    you relist.</span
+  >
+  @if (state() === 'failed') {
+    <tl-alert top tone="danger" heading="That didn’t go through"
+      >Nothing changed. Check your connection and try again.</tl-alert
+    >
+  }
+  <tl-radio-group legend="Reason" [error]="reasonError()">
+    @for (option of reasons; track option.value; let i = $index) {
+      <tl-choice [inputId]="'cancel-reason-' + i">
+        <input
+          type="radio"
+          name="cancel-reason"
+          [id]="'cancel-reason-' + i"
+          [attr.data-autofocus]="i === 0 ? '' : null"
+          [checked]="reason() === option.value"
+          [attr.aria-invalid]="reasonError() ? 'true' : null"
+          (change)="choose(option.value)"
+        />{{ option.label }}</tl-choice
+      >
+    }
+  </tl-radio-group>
+  <tl-form-field #nf fieldId="cancel-note" label="Note to buyer" [optional]="true" [error]="noteError()">
+    <textarea
+      class="textarea"
+      id="cancel-note"
+      rows="2"
+      [value]="note()"
+      [attr.aria-describedby]="nf.describedBy()"
+      [attr.aria-invalid]="nf.invalid()"
+      (input)="note.set($any($event.target).value)"
+    ></textarea>
+  </tl-form-field>
+  <ng-container ngProjectAs="[footer]">
+    <button tlButton type="button" [disabled]="state() === 'busy'" (click)="ref.close()">Keep sale</button>
+    <button tlButton="danger" type="submit" [busy]="state() === 'busy'" (click)="submit()">
+      {{ state() === 'failed' ? 'Try again' : 'Cancel sale' }}
+    </button>
+  </ng-container>
+</tl-dialog>

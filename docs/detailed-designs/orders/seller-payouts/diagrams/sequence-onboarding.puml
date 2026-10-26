@@ -1,0 +1,69 @@
+@startuml
+title UML sequence behaviour — Payout onboarding
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+skinparam sequenceMessageAlign left
+skinparam maxMessageSize 260
+actor "Seller" as actor
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "PayoutsPage" as page
+  participant "PayoutsApi (@tutumuch/api)" as client
+end box
+participant "Payment provider" as pay
+box "Backend — TuTuMuch API application (TuTuMuch.Api)" #D1FADF
+  participant "PayoutsController" as ctrl
+  participant "PayoutWebhookController" as wh
+end box
+box "Backend — TuTuMuch.Application and TuTuMuch.Domain" #ECFDF3
+  participant "CreateOnboardingLinkHandler" as h
+  participant "SellerPayoutAccount" as acct
+end box
+box "Backend — TuTuMuch.Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
+end box
+actor -> page : Open /account/payouts
+page -> client : summary()
+client -> ctrl : GET /api/payouts
+ctrl --> client : 200 PayoutSummaryDto (onboarding NotStarted, pending 40.50)
+page --> actor : not-onboarded state: "Set up payouts to get paid" / "Set up payouts"
+actor -> page : Choose "Set up payouts"
+page -> client : onboardingLink()
+client -> ctrl : POST /api/payouts/onboarding-link
+ctrl -> h : Send CreateOnboardingLinkCommand
+h -> db : Load SellerPayoutAccount
+opt no provider account yet
+  h -> pay : CreateConnectedAccountAsync(memberId, email)
+  pay --> h : ProviderAccountId
+  h -> db : Save account (Pending)
+end
+h -> pay : CreateOnboardingLinkAsync(accountId, returnUrl /account/payouts?onboarding=return)
+pay --> h : Hosted onboarding URL
+h --> ctrl : URL
+ctrl --> client : 200 { url }, or 502 PAYOUT_PROVIDER_UNAVAILABLE
+client --> page : window.location.assign(url)
+page --> actor : Browser leaves for provider onboarding
+actor -> pay : Completes identity and bank details
+pay -> wh : account.updated (Payout-Signature)
+wh -> wh : Verify signature, deduplicate by event id (PaymentWebhookEvents)
+wh -> acct : Status Complete, BankName, BankLast4
+wh -> db : Save; payouts held with OnboardingIncomplete (order already Completed) become Releasable
+actor -> page : Returns to /account/payouts?onboarding=return
+page -> client : summary()
+alt onboarding Complete (webhook arrived)
+  page --> actor : success banner "Payouts are set up. You'll be paid when orders complete."
+else still Pending
+  page --> actor : not-onboarded state until a later visit
+end
+@enduml

@@ -1,0 +1,94 @@
+<div class="page-header"><h1>Payouts</h1></div>
+@switch (view()) {
+  @case ('loading') {
+    <div class="stats payouts__stats" aria-busy="true">
+      @for (stat of [1, 2]; track stat) {
+        <div class="stat">
+          <span class="skeleton skeleton--text payouts__skeleton-label"></span>
+          <span class="skeleton skeleton--title payouts__skeleton-value"></span>
+        </div>
+      }
+    </div>
+    <span class="skeleton skeleton--rect payouts__skeleton-row"></span>
+  }
+  @case ('error') {
+    <tl-empty-state icon="alert" heading="Couldn’t load payouts" tone="error">
+      Try again in a moment. <span class="ref">{{ errorRef() }}</span>
+      <button actions tlButton type="button" (click)="retry()"><tl-icon name="refresh" />Try again</button>
+    </tl-empty-state>
+  }
+  @default {
+    @if (summary(); as summary) {
+      @if (empty()) {
+        <tl-empty-state icon="tag" heading="No payouts yet">
+          Your earnings show up here after your first sale.
+          <a actions tlButton="primary" routerLink="/sell">Sell an item</a>
+        </tl-empty-state>
+      } @else {
+        @if (setupError(); as error) {
+          <div class="payouts__alert">
+            <tl-alert tone="danger">{{ error }}</tl-alert>
+          </div>
+        }
+        @if (onboarded()) {
+          <div class="stats payouts__stats">
+            <tl-stat label="Paid out" [value]="money(summary.paidOut)" />
+            <tl-stat label="Pending" [value]="money(summary.pending)" />
+          </div>
+          <ul class="settings-list payouts__method" role="list">
+            <li>
+              <div class="settings-list__body">
+                <span class="settings-list__title">{{ summary.bankDisplay }}</span>
+                <span class="settings-list__meta">Managed by our payment provider</span>
+              </div>
+              <button tlButton type="button" [disabled]="settingUp()" (click)="setUp()">
+                Change<tl-icon name="external" />
+              </button>
+            </li>
+          </ul>
+        } @else {
+          <tl-alert tone="warning" heading="Set up payouts to get paid">
+            {{ money(summary.pending) }} is waiting for you.
+            <button actions tlButton="primary" class="btn--sm" type="button" [disabled]="settingUp()" (click)="setUp()">
+              Set up payouts<tl-icon name="external" />
+            </button>
+          </tl-alert>
+        }
+        <div class="section-head" [class.payouts__held]="!onboarded()">
+          <h2>{{ onboarded() ? 'History' : 'Held' }}</h2>
+        </div>
+        <ul class="order-list" role="list">
+          @for (row of summary.history; track row.orderId) {
+            <li>
+              <a [routerLink]="['/sales', row.orderId]">
+                <tl-item-row [title]="row.item.title" [meta]="meta(row)">
+                  <div thumb class="thumb">
+                    <div class="photo photo--6">
+                      @if (row.item.photo; as photo) {
+                        <picture>
+                          <source type="image/webp" [attr.srcset]="photo.webp" sizes="64px" />
+                          <img
+                            [src]="photo.src"
+                            [attr.srcset]="photo.jpeg"
+                            sizes="64px"
+                            alt=""
+                            width="160"
+                            height="160"
+                          />
+                        </picture>
+                      }
+                    </div>
+                  </div>
+                </tl-item-row>
+                <div class="order-list__end">
+                  <span class="price">{{ money(row.amount) }}</span>
+                  <span class="text-caption">{{ caption(row) }}</span>
+                </div>
+              </a>
+            </li>
+          }
+        </ul>
+      }
+    }
+  }
+}

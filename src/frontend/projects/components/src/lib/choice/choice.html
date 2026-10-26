@@ -1,0 +1,8 @@
+<div class="field">
+  <label class="choice" [for]="inputId()"
+    ><ng-content select="input" /><span><ng-content /></span
+  ></label>
+  @if (error()) {
+    <span class="field__error" [id]="inputId() + '-error'">{{ error() }}</span>
+  }
+</div>

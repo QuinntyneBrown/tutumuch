@@ -1,0 +1,6 @@
+:host {
+  display: block;
+}
+.filters__more {
+  align-self: flex-start;
+}

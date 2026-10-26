@@ -1,0 +1,46 @@
+@startuml
+title UML sequence behaviour — Validation failure
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Member" as actor
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "Feature form" as page
+  participant "ApiErrorInterceptor" as int
+  participant "FormErrorsDirective" as fe
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "Feature controller" as ctrl
+  participant "ProblemDetailsExceptionHandler" as pd
+end box
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
+  participant "ValidationBehavior" as vb
+  participant "Feature handler" as handler
+end box
+actor -> page : Submit
+page -> int : POST
+int -> ctrl : Request
+ctrl -> vb : Send command
+alt Field rules fail
+  vb --> pd : RequestValidationException
+  pd --> int : 400 code validation_failed, errors { field: [message] } (L2-068)
+else Business rule fails
+  vb -> handler : Handle
+  handler --> pd : DomainRuleException(code, field)
+  pd --> int : 422 with feature code and errors (L2-068)
+end
+int --> fe : AppError kind validation with fieldErrors
+fe -> page : Show each message under its field; summary; focus first invalid
+page --> actor : Errors announced (L2-065)
+@enduml

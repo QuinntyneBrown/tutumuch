@@ -1,0 +1,12 @@
+@startuml
+!include <C4/C4_Context>
+LAYOUT_WITH_LEGEND()
+title System Context — Meet performance and scale targets
+
+Person(shopper, "Visitor or member", "Mid-range phone on 4G, or desktop")
+System(tutumuch, "TuTuMuch", "Marketplace running as several stateless API instances")
+System_Ext(payments, "Payment provider", "External dependency of checkout")
+
+Rel(shopper, tutumuch, "Browses and buys on", "HTTPS")
+Rel(tutumuch, payments, "Charges cards via", "HTTPS")
+@enduml

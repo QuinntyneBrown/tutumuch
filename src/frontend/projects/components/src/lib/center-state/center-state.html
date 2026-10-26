@@ -1,0 +1,13 @@
+<div class="center-state">
+  @if (code(); as code) {
+    <span class="code" aria-hidden="true"
+      >{{ code[0] }}<em>{{ code.slice(1, -1) }}</em
+      >{{ code.slice(-1) }}</span
+    >
+  } @else if (icon(); as icon) {
+    <div class="empty__icon"><tl-icon [name]="icon" size="lg" /></div>
+  }
+  <h1>{{ heading() }}</h1>
+  <ng-content />
+  <div class="actions"><ng-content select="[actions]" /></div>
+</div>

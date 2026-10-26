@@ -1,0 +1,18 @@
+@startuml
+!include <C4/C4_Context>
+LAYOUT_WITH_LEGEND()
+title System Context — Ship an order
+
+Person(seller, "Seller", "Verified member who sold an item")
+Person(buyer, "Buyer", "Verified member who bought the item")
+System(tutumuch, "TuTuMuch", "Girls' clothing marketplace")
+System_Ext(email, "Email provider", "Sends transactional email")
+System_Ext(carrier, "Carrier tracking service", "<TO SUPPLY>: reports delivery for USPS, UPS, FedEx and DHL")
+System_Ext(pay, "Payment provider", "Issues the full refund when the ship deadline passes")
+
+Rel(seller, tutumuch, "Adds carrier and tracking number using")
+Rel(buyer, tutumuch, "Follows shipping progress using")
+Rel(tutumuch, email, "Sends tracking, reminder, delivery and cancellation emails via", "HTTPS API")
+Rel(carrier, tutumuch, "Reports delivery events to", "Signed webhook")
+Rel(tutumuch, pay, "Refunds the buyer in full via", "HTTPS API")
+@enduml

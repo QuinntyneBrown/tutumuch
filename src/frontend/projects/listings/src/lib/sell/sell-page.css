@@ -1,0 +1,10 @@
+:host {
+  display: block;
+}
+.sell {
+  max-width: 44rem;
+  margin-inline: auto;
+}
+.sell__panel {
+  width: 100%;
+}

@@ -1,0 +1,22 @@
+@if (loading()) {
+  <ul class="listing-grid" role="list" aria-busy="true" aria-label="Loading listings">
+    @for (i of skeletons; track i) {
+      <li>
+        <div class="listing-card" aria-hidden="true">
+          <span class="skeleton skeleton--photo"></span>
+          <div class="listing-card__meta">
+            <span class="skeleton skeleton--text skeleton--w40"></span>
+            <span class="skeleton skeleton--text skeleton--w85"></span>
+            <span class="skeleton skeleton--text skeleton--w55"></span>
+          </div>
+        </div>
+      </li>
+    }
+  </ul>
+} @else {
+  <ul class="listing-grid" role="list">
+    @for (card of cards(); track card.href; let i = $index) {
+      <li><tl-listing-card [card]="card" [priority]="i < eagerCount()" /></li>
+    }
+  </ul>
+}

@@ -1,0 +1,60 @@
+@startuml
+title UML sequence behaviour — State-changing request with CSRF and CORS checks
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Member" as actor
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "Feature page" as page
+  participant "AntiforgeryTokenService" as tokens
+  participant "AntiforgeryInterceptor" as afi
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "CORS policy Frontend" as cors
+  participant "AntiforgeryValidationMiddleware" as afm
+  participant "AntiforgeryController" as afc
+  participant "Feature controller" as ctrl
+end box
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
+  participant "Feature handler" as handler
+end box
+page -> tokens : ensureToken()
+tokens -> cors : GET /api/antiforgery/token (Origin: TuTuMuch Web)
+cors -> afc : Origin allowed
+afc --> tokens : 200 { token } + Set-Cookie __Host-tm-af (SameSite=Strict)
+actor -> page : Submit a change
+page -> afi : POST request
+afi -> afi : Add X-XSRF-TOKEN header, withCredentials
+afi -> cors : POST /api/... with cookies
+alt Origin not in Cors:AllowedOrigins
+  cors --> afi : Response without Access-Control-Allow-Origin (L2-050)
+  afi --> page : Browser blocks response
+else Origin allowed
+  cors -> afm : Continue
+  afm -> afm : Validate cookie token against header token
+  alt Token missing or invalid
+    afm --> afi : 400 problem details code antiforgery_invalid (L2-050)
+    afi -> tokens : Refresh token once
+    tokens --> afi : New token
+    afi -> cors : Replay POST once
+    cors -> afm : Continue
+  end
+  afm -> ctrl : Token valid
+  ctrl -> handler : Send command
+  handler --> ctrl : Result
+  ctrl --> afi : 2xx response
+  afi --> page : Feature result
+end
+page --> actor : Show outcome
+@enduml

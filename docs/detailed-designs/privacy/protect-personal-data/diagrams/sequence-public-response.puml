@@ -1,0 +1,52 @@
+@startuml
+title UML sequence behaviour — Serve a public response
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Visitor" as actor
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "ProfilePage" as page
+  participant "MembersApiService" as client
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "MembersController" as controller
+  participant "PublicResponseGuardFilter" as guard
+end box
+box "Backend — TuTuMuch.Application and Domain" #ECFDF3
+  participant "GetPublicProfileQueryHandler" as handler
+end box
+box "Backend — TuTuMuch.Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
+end box
+actor -> page : Open /members/tutu_tessa
+page -> client : getProfile("tutu_tessa")
+client -> controller : GET /api/members/tutu_tessa
+controller -> handler : Send GetPublicProfileQuery
+handler -> db : Select public columns only (no email, phone, address)
+db --> handler : Member row
+handler -> handler : Map to PublicMemberProfileDto (allow-list, L2-054)
+handler --> controller : PublicMemberProfileDto
+controller -> guard : Result executing
+alt result implements IPublicDto
+  guard --> controller : Continue
+  controller --> client : 200 OK, JSON without personal data
+  client --> page : PublicMemberProfile
+  page --> actor : Show profile
+else result is not a public DTO
+  guard --> controller : Short-circuit
+  controller --> client : 500 problem details privacy.public_dto_required
+  client --> page : Error
+  page --> actor : Show "Couldn't load" with Ref
+end
+@enduml

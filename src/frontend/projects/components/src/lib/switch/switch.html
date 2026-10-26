@@ -1,0 +1,25 @@
+@if (hint(); as hint) {
+  <label class="switch switch--labelled"
+    ><span class="choice__text"
+      ><span class="switch__label">{{ label() }}</span
+      ><small>{{ hint }}</small></span
+    ><input
+      type="checkbox"
+      role="switch"
+      [checked]="checked()"
+      [disabled]="disabled()"
+      [attr.data-autofocus]="autofocus() ? '' : null"
+      (change)="checked.set($any($event.target).checked)"
+  /></label>
+} @else {
+  <label class="switch"
+    ><input
+      type="checkbox"
+      role="switch"
+      [checked]="checked()"
+      [disabled]="disabled()"
+      [attr.data-autofocus]="autofocus() ? '' : null"
+      (change)="checked.set($any($event.target).checked)"
+    /><span class="visually-hidden">{{ label() }}</span></label
+  >
+}

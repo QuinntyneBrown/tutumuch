@@ -1,0 +1,96 @@
+name: Deploy
+
+# Manual only until TuTuMuch has its own production host and the DEPLOY_SSH_KEY, DEPLOY_HOST and
+# SITE_HOST secrets (docs/deployment.md). Restore the push trigger once they exist.
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ghcr.io/quinntynebrown
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: api
+            file: deploy/backend.Dockerfile
+            context: src/backend
+            target: api
+          - name: worker
+            file: deploy/backend.Dockerfile
+            context: src/backend
+            target: worker
+          - name: migrator
+            file: deploy/backend.Dockerfile
+            context: src/backend
+            target: migrator
+          - name: web
+            file: deploy/web/Dockerfile
+            context: .
+            target: ""
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.file }}
+          target: ${{ matrix.target }}
+          push: true
+          tags: |
+            ${{ env.IMAGE_PREFIX }}/tutumuch-${{ matrix.name }}:${{ github.sha }}
+            ${{ env.IMAGE_PREFIX }}/tutumuch-${{ matrix.name }}:latest
+          cache-from: type=gha,scope=${{ matrix.name }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.name }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts
+      - name: Copy compose file
+        run: scp deploy/docker-compose.yml azureuser@${{ secrets.DEPLOY_HOST }}:/opt/tutumuch/docker-compose.yml
+      - name: Migrate and restart
+        run: |
+          ssh azureuser@${{ secrets.DEPLOY_HOST }} bash -s <<'REMOTE'
+            set -euo pipefail
+            cd /opt/tutumuch
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            sed -i '/^IMAGE_TAG=/d' .env && echo "IMAGE_TAG=${{ github.sha }}" >> .env
+            docker compose pull --quiet
+            docker compose run --rm migrator
+            docker compose up -d --remove-orphans
+            docker image prune -af --filter "until=72h" >/dev/null
+            docker logout ghcr.io
+          REMOTE
+      - name: Smoke test
+        run: |
+          for i in $(seq 1 20); do
+            curl -fsS "https://${{ secrets.SITE_HOST }}/api/health" && exit 0
+            sleep 6
+          done
+          echo "health check failed" && exit 1

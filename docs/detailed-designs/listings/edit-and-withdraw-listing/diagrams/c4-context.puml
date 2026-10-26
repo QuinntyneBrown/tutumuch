@@ -1,0 +1,12 @@
+@startuml
+!include <C4/C4_Context>
+LAYOUT_WITH_LEGEND()
+title System Context — Edit and withdraw a listing
+
+Person(seller, "Seller", "Owner of the listing")
+Person(buyer, "Buyer", "May hold the listing in checkout (Reserved)")
+System(tutumuch, "TuTuMuch", "Marketplace for girls' clothing")
+
+Rel(seller, tutumuch, "Edits, withdraws and relists listings using", "HTTPS")
+Rel(buyer, tutumuch, "Reserves listings during checkout using", "HTTPS")
+@enduml

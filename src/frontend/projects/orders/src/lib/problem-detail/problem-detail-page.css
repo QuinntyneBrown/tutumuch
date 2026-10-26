@@ -1,0 +1,7 @@
+.problem__loading {
+  margin-top: var(--space-10);
+}
+
+.problem__skeleton-block {
+  height: 10rem;
+}

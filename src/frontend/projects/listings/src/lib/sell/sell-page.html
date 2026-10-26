@@ -1,0 +1,72 @@
+@switch (view()) {
+  @case ('form') {
+    <div class="sell">
+      <div class="page-header"><h1>Sell an item</h1></div>
+      <form class="sell-form" novalidate [formGroup]="model.form" (ngSubmit)="publish()">
+        <tl-error-summary [errors]="model.summary()" />
+        @if (draftSaved()) {
+          <tl-alert tone="success" heading="Draft saved" live="polite"
+            >Finish it any time from <a routerLink="/account/listings">your listings</a>.</tl-alert
+          >
+        }
+        @if (failure(); as failure) {
+          <tl-alert tone="danger" [heading]="failure.heading"
+            >{{ failure.text }}
+            @if (failure.ref) {
+              <span class="ref">{{ failure.ref }}</span>
+            }
+          </tl-alert>
+        }
+
+        <tl-listing-form [model]="model" />
+
+        <div class="form-actions form-actions--sticky form-actions--split">
+          <button
+            tlButton
+            type="button"
+            [disabled]="busy() === 'publish'"
+            [busy]="busy() === 'draft'"
+            (click)="saveDraft()"
+          >
+            Save draft
+          </button>
+          <button tlButton="primary" type="submit" [busy]="busy() === 'publish'">Publish</button>
+        </div>
+      </form>
+    </div>
+  }
+  @case ('success') {
+    @if (published(); as item) {
+      <tl-center-state icon="check" heading="It’s live">
+        <div class="panel sell__panel"><tl-item-row [title]="item.title" [meta]="item.meta" /></div>
+        @if (item.payoutOnboardingRequired) {
+          <p class="text-muted"><a routerLink="/account/payouts">Set up payouts</a> so you’re paid when it sells.</p>
+        }
+        <a actions tlButton="primary" [routerLink]="['/items', item.reference]">View listing</a>
+        <a actions tlButton routerLink="/sell" (click)="reset()">Sell another</a>
+      </tl-center-state>
+    }
+  }
+  @case ('unverified') {
+    <tl-center-state icon="mail" heading="Verify your email to sell">
+      <p class="text-muted">We sent a link to {{ email() }}.</p>
+      <button actions tlButton="primary" type="button" (click)="openVerifyPrompt()">Resend link</button>
+      <a actions tlButton routerLink="/">Back to shop</a>
+    </tl-center-state>
+  }
+  @case ('limited') {
+    <tl-center-state icon="clock" heading="That’s 20 listings today">
+      <p class="text-muted">You can list more tomorrow. Drafts still save.</p>
+      <a actions tlButton="primary" routerLink="/account/listings">Your listings</a>
+    </tl-center-state>
+  }
+  @case ('error') {
+    <tl-center-state icon="refresh" heading="Couldn’t open the form">
+      <p class="text-muted">
+        Something went wrong on our side. <span class="ref">{{ loadRef() }}</span>
+      </p>
+      <button actions tlButton="primary" type="button" (click)="open()"><tl-icon name="refresh" />Try again</button>
+      <a actions tlButton routerLink="/">Back to shop</a>
+    </tl-center-state>
+  }
+}

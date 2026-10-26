@@ -11,14 +11,16 @@ description: >-
   "turn these requirements into designs", or "create the detailed designs"
   without naming the format. The skill scaffolds
   docs/detailed-designs/{subsystem}/{feature}/ with a README written in a strict
-  house style, plus rendered C4, class, and sequence diagrams shown inline.
+  house style, plus rendered C4, class, and sequence diagrams shown inline, and
+  writes a matching docs/estimates/{subsystem}/{feature}.md with implementation
+  hours and descoping options for every design.
 ---
 
 # Writing software design documents
 
 This skill turns a set of requirements into a browsable tree of detailed feature
-designs. The output is deterministic in shape, so a reader always knows where to
-look:
+designs, each paired with an implementation estimate. The output is deterministic
+in shape, so a reader always knows where to look:
 
 ```
 docs/detailed-designs/
@@ -28,7 +30,13 @@ docs/detailed-designs/
         └── diagrams/
             ├── *.puml          PlantUML sources
             └── *.png           rendered images the README links to
+docs/estimates/
+└── {subsystem}/
+    └── {feature}.md           hours estimate and descoping options for the design
 ```
+
+`docs/estimates/` sits beside `docs/detailed-designs/` and mirrors its
+subsystem/feature layout one-to-one: one estimate document per detailed design.
 
 The design is written **against requirements** — every feature traces back to
 level-2 (L2) requirements, which in turn refine level-1 (L1) requirements. That
@@ -206,7 +214,65 @@ until the exit is clean. (Equivalent direct call if needed, after `java -jar $PL
 reports "Installation seems OK":
 `java -jar $PLANTUML_JAR -tpng docs/detailed-designs/**/diagrams/*.puml`.)
 
-## Step 7 — Verify before finishing
+## Step 7 — Write each feature's estimate
+
+Every detailed design gets exactly one estimate document at
+`docs/estimates/{subsystem}/{feature}.md`, using the same subsystem and feature
+names as the design folder. Write it after the README and diagrams are done, so
+the estimate reflects the design as actually written.
+
+Estimate for an **intermediate developer in the technology the design
+describes** — someone productive in that stack who still reads documentation for
+the less common parts and does not know this codebase yet. Name the technology
+assumed (for example "intermediate Angular/TypeScript developer", "intermediate
+Next.js developer"). Estimates are in hours and cover implementation, tests, and
+review fixes; they exclude requirements, design, and mock work already done.
+
+Use exactly these headings, in this order, in the house voice:
+
+### Basis
+One short paragraph: the technology assumed, the developer level, and any
+assumptions the hours depend on (existing components reused, services already
+present, `<TO SUPPLY>` items that could move the number). Link the design:
+`[Detailed design](../../detailed-designs/{subsystem}/{feature}/README.md)`.
+
+### Full design
+A table of work items that together deliver the design as written, with hours
+per item and a total row. Derive items from the Description section of the
+design — one row per component, type, endpoint, or behaviour that costs real
+time — not from a generic checklist.
+
+```markdown
+| Work item | Hours |
+|-----------|------:|
+| `DeclineApplicationDialog` component with validation messages | 6 |
+| `POST /applications/{id}/decline` endpoint and handler | 4 |
+| Playwright acceptance tests via page object | 3 |
+| **Total** | **13** |
+```
+
+### Minimal scope
+The smallest version of the feature that still satisfies the core L2
+requirement(s) and is worth shipping. Describe in prose what it includes and
+what it leaves out, then give its total hours. Name which L2 requirements it
+still satisfies and which it defers.
+
+### Partial descoping
+Items that could be cut or deferred individually without going all the way to
+the minimal scope. A table of each descopable item, what is lost by cutting it,
+and the hours saved:
+
+```markdown
+| Descope | What is lost | Hours saved |
+|---------|--------------|------------:|
+| Reason free-text field; keep reason picker only | Ad-hoc reasons are not recorded | 2 |
+```
+
+Every hours figure shall be a single whole number, not a range. Where a design
+contains `<TO SUPPLY>` gaps, state the assumption the number rests on rather than
+widening it.
+
+## Step 8 — Verify before finishing
 
 - **Every `.puml` has a `.png`** — the render step exited clean.
 - **Every image link resolves** — each `![...](diagrams/x.png)` in a README
@@ -217,6 +283,11 @@ reports "Installation seems OK":
   arrows standing in for them.
 - **Requirements are L2-only**, each with its L1 parent and exact text from the
   specs.
+- **Every design has an estimate** — for each
+  `docs/detailed-designs/{subsystem}/{feature}/README.md` there is a
+  `docs/estimates/{subsystem}/{feature}.md` with the Basis, Full design, Minimal
+  scope, and Partial descoping sections, whole-number hours, and a total that
+  matches the sum of its rows.
 - **Prose passes the house-style self-check** in `references/writing-style.md`
   (no `we`/`you`, obligation only via `shall/should/may`, no hype or fillers,
   gaps marked `<TO SUPPLY>` not invented).
@@ -226,4 +297,6 @@ reports "Installation seems OK":
 A finished design tree lets a reader open any feature folder on GitHub and see a
 self-contained page: plain-language background, the concrete parts, the L2
 requirements it satisfies, and diagrams that render inline — all in one steady
-voice, every claim tracing to a requirement or marked as an open question.
+voice, every claim tracing to a requirement or marked as an open question. Beside
+it, the matching estimate tells a planner what the design costs in hours, the
+cheapest version worth shipping, and what can be trimmed in between.

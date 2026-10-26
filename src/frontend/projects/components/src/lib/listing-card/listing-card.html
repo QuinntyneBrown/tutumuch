@@ -1,0 +1,32 @@
+<a class="listing-card" [routerLink]="card().href">
+  <div class="photo">
+    @if (card().photo; as photo) {
+      <picture>
+        <source type="image/webp" [attr.srcset]="photo.webp" [attr.sizes]="sizes" />
+        <img
+          [src]="photo.src"
+          [attr.srcset]="photo.jpeg"
+          [attr.sizes]="sizes"
+          [alt]="photo.alt"
+          [width]="photo.width"
+          [height]="photo.height"
+          [attr.loading]="priority() ? 'eager' : 'lazy'"
+          [attr.fetchpriority]="priority() ? 'high' : null"
+          [attr.decoding]="priority() ? null : 'async'"
+        />
+      </picture>
+    }
+    @if (card().reserved) {
+      <span class="photo__stamp">Reserved</span>
+    }
+    <tl-size-tag [label]="card().sizeLabel" />
+  </div>
+  <div class="listing-card__meta">
+    <span class="listing-card__brand">{{ card().brand }}</span>
+    <span class="listing-card__title">{{ card().title }}</span>
+    <span class="listing-card__foot"
+      ><span class="listing-card__condition">{{ card().condition }}</span
+      ><span class="price">{{ card().price }}</span></span
+    >
+  </div>
+</a>

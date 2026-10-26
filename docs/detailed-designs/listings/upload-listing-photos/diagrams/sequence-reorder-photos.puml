@@ -1,0 +1,56 @@
+@startuml
+title UML sequence behaviour — Reorder and attach photos
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Seller" as actor
+box "Frontend — @tutumuch/listings, @tutumuch/components, @tutumuch/api" #E0F2FE
+  participant "tl-photo-uploader" as up
+  participant "SellPage" as form
+  participant "ListingsApi" as client
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "ListingsController" as controller
+end box
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
+  participant "ListingCommandHandlers" as handler
+  participant "ListingPhotoAttacher" as attacher
+end box
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
+end box
+actor -> up : Drag photo 3 onto photo 1, or press Left on a focused tile
+up -> form : moved { from: 2, to: 0 }
+form -> form : photos = [p3, p1, p2]
+up --> actor : Live region: "Photo moved to position 1 of 3. It is now the cover."
+actor -> form : Save draft or Publish
+form -> client : createDraft / updateDraft(details with photoIds [p3, p1, p2])
+client -> controller : POST /api/listings or PUT /api/listings/{reference}
+controller -> handler : Create or UpdateListingDraftCommand(photoIds)
+handler -> attacher : AttachAsync(sellerId, listingId, photoIds)
+alt more than 8 photo IDs (L2-017)
+  attacher --> handler : PHOTO_LIMIT
+  handler --> controller : 422 photos "A listing can have up to 8 photos"
+else unknown, another member's, on another listing or repeated
+  attacher --> handler : PHOTO_NOT_FOUND
+  handler --> controller : 422 photos "That photo is no longer available. Upload it again."
+else valid
+  attacher -> attacher : Position 0..n-1 in the given order; detach omitted photos
+  handler -> db : SaveChanges (one unit of work)
+  db --> handler : Committed
+  handler --> controller : MyListingDto with photos, cover first
+  controller --> client : 201 or 200
+end
+note over handler : Publish counts attached photos; none gives 422 PHOTOS_REQUIRED
+@enduml

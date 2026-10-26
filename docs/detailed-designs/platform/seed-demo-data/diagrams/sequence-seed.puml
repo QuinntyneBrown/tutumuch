@@ -1,0 +1,55 @@
+@startuml
+title UML sequence behaviour — Seed the demo catalogue (L2-074, L2-075, L2-076)
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+actor "Developer" as dev
+box "TuTuMuch.Cli" #FFF4E5
+  participant "CliApp" as cli
+  participant "DemoSeeder" as seeder
+  participant "SeedClock" as clock
+end box
+box "Application (MediatR)" #E0F2FE
+  participant "ISender" as mediator
+end box
+box "Infrastructure" #D1FADF
+  participant "Photo pipeline + store" as photos
+  database "TuTuMuch database" as sql
+end box
+dev -> cli : seed [--reset]
+opt seed with the reset flag
+  cli -> cli : reset flow (guard, rebuild, empty store)
+end
+cli -> seeder : SeedAsync
+seeder -> seeder : check every SeedPhotos file exists
+alt a file or folder is missing
+  seeder --> dev : "Missing seed photo: ..." exit 4 (L2-077)
+else all present
+  seeder -> sql : first demo member's email registered?
+  alt already seeded
+    seeder --> dev : "Demo data already exists. Run seed --reset for a fresh demo." exit 0 (L2-076)
+  else empty
+    loop each of 8 demo members
+      seeder -> clock : now − 31 days
+      seeder -> mediator : RegisterMemberCommand(name, email, demo password)
+      mediator -> sql : Member + verification token + outbox email
+      seeder -> sql : read the queued verification link
+      seeder -> mediator : VerifyEmailCommand(token)
+      seeder -> sql : claim and suppress the verification email
+    end
+    loop each of 48 listings, oldest first
+      seeder -> clock : now − 30 days + i × spacing
+      loop 1 to 4 photo files
+        seeder -> mediator : UploadListingPhotoCommand(seller, bytes)
+        mediator -> photos : inspect, strip, re-encode, save versions
+      end
+      seeder -> mediator : CreateListingDraftCommand(details, photo IDs)
+      seeder -> mediator : PublishListingCommand(sizeConfirmed: true)
+      mediator -> sql : daily limit check, publish rules, Active
+    end
+    seeder --> dev : "Seeded 8 members and 48 listings." exit 0
+  end
+end
+@enduml

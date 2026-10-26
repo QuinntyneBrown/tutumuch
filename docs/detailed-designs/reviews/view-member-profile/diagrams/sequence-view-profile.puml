@@ -1,0 +1,60 @@
+@startuml
+title UML sequence behaviour — Open a public profile
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+actor "Visitor or member" as actor
+box "Frontend — @tutumuch/reviews and @tutumuch/api" #E0F2FE
+  participant "MemberProfilePage" as page
+  participant "MembersApi" as client
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "MembersController" as controller
+end box
+box "Backend — TuTuMuch Application" #ECFDF3
+  participant "GetPublicProfileQueryHandler" as qprofile
+  participant "GetMemberListingsQueryHandler" as qlist
+end box
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
+end box
+actor -> page : Open /members/{displayName}
+page --> actor : Skeleton "Loading profile"
+par profile and first listings page
+  page -> client : profile(displayName)
+  client -> controller : GET /api/members/{displayName}
+  controller -> qprofile : Send GetPublicProfileQuery
+  qprofile -> db : Member by NormalizedDisplayName with ClosedAt null
+  alt unknown or closed member (L2-041)
+    qprofile --> controller : MEMBER_UNAVAILABLE
+    controller --> client : 404, Cache-Control no-store
+  else open member
+    qprofile -> db : Count Completed orders as seller, count Active listings
+    qprofile --> controller : PublicProfileDto, public fields only (L2-054)
+    controller --> client : 200, Cache-Control public, max-age=60
+  end
+else
+  page -> client : listings(displayName, 1)
+  client -> controller : GET /api/members/{displayName}/listings
+  controller -> qlist : Send GetMemberListingsQuery
+  qlist -> db : Active listings, newest first, 24 per page
+  qlist --> controller : CatalogPageDto
+  controller --> client : 200
+end
+client --> page : Results
+alt a call returned 404
+  page --> actor : "This member isn’t available" with "Back to shop"
+else a call failed otherwise
+  page --> actor : "Couldn’t load this profile" with Ref and "Try again" (L2-068)
+else both succeeded
+  page --> actor : Header with "No reviews yet" (L2-040), Sales and Member since, For sale, Reviews
+  opt more than 24 Active listings
+    actor -> page : "Load more"
+    page -> client : listings(displayName, page + 1)
+    client --> page : Next 24 listings
+    page --> actor : Appended cards, "Showing {loaded} of {total}"
+  end
+end
+@enduml

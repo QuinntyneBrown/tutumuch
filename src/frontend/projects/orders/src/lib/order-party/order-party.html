@@ -1,0 +1,7 @@
+<div class="seller order-party">
+  <span class="avatar" aria-hidden="true">{{ initials() }}</span>
+  <div class="stack order-party__body">
+    <span class="text-caption">{{ role() }}</span>
+    <a class="seller__name" [routerLink]="['/members', displayName()]">{{ displayName() }}</a>
+  </div>
+</div>

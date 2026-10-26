@@ -1,0 +1,53 @@
+@startuml
+title UML sequence behaviour — Verify the workspace with one command
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Developer or CI" as actor
+box "Verify command — src/frontend/package.json" #FFF4E5
+  participant "npm run verify" as verify
+end box
+box "Backend — src/backend, tests/" #D1FADF
+  participant "dotnet" as dotnet
+  participant "TuTuMuch.Api (WebApplicationFactory)" as api
+end box
+box "Frontend — src/frontend" #E0F2FE
+  participant "prettier + eslint" as lint
+  participant "ng build" as build
+  participant "Playwright (Chromium)" as pw
+end box
+actor -> verify : npm run verify
+verify -> dotnet : restore TuTuMuch.sln
+verify -> dotnet : format --verify-no-changes
+alt formatting differs
+  dotnet --> verify : exit 2 (names the file, L2-071 criterion 2)
+  verify --> actor : exit non-zero
+else clean
+  verify -> dotnet : build --no-restore -warnaserror
+  verify -> dotnet : test --no-build
+  dotnet -> api : GET /api/health (HealthEndpointTests)
+  api --> dotnet : 200 { "status": "ok" } (L2-071 criterion 4)
+  dotnet -> dotnet : StatelessApiTests (L2-060)
+  alt a test fails
+    dotnet --> verify : exit 1 (L2-071 criterion 3)
+    verify --> actor : exit non-zero
+  else all pass
+    verify -> lint : prettier --check, eslint
+    verify -> build : build every library, then the application (build:all)
+    verify -> pw : shell.spec.ts at 320 x 640
+    pw --> verify : skip link, main#main, guest top bar, footer, no horizontal scroll (L2-071 criterion 5)
+    verify --> actor : exit 0 (L2-071 criterion 1)
+  end
+end
+@enduml

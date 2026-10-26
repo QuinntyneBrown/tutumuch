@@ -1,0 +1,20 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Harden HTTP and the API
+
+Person(visitor, "Visitor or member", "Browser")
+System_Boundary(tutumuch, "TuTuMuch") {
+  Container(lb, "Load balancer", "Hosting platform <TO SUPPLY>", "Terminates TLS 1.2+, redirects HTTP with 301")
+  Container(web, "TuTuMuch Web", "Angular SPA on a static host", "Served with HSTS, CSP, nosniff, Referrer-Policy; adds X-XSRF-TOKEN to writes")
+  Container(api, "TuTuMuch API", "ASP.NET Core", "Security headers, CORS, rate limits, antiforgery, validation")
+  ContainerDb(db, "TuTuMuch database", "SQL Server", "Accessed with parameterised EF Core queries only")
+  ContainerDb(cache, "Distributed cache", "Redis", "Fixed-window rate-limit counters shared by all API instances")
+}
+Rel(visitor, lb, "Requests pages and API calls", "HTTPS")
+Rel(lb, web, "Forwards page requests", "HTTPS")
+Rel(lb, api, "Forwards API requests", "HTTPS")
+Rel(web, api, "Calls with credentials and antiforgery token", "JSON/HTTPS")
+Rel(api, cache, "Increments counters", "RESP/TLS")
+Rel(api, db, "Reads and writes", "EF Core")
+@enduml

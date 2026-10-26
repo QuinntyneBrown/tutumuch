@@ -1,0 +1,8 @@
+<ol class="timeline" aria-label="Order progress">
+  @for (step of steps(); track step.label; let i = $index) {
+    <li [attr.data-done]="i < current() ? '' : null" [attr.aria-current]="i === current() ? 'step' : null">
+      <b>{{ step.label }}</b
+      ><span>{{ step.date }}</span>
+    </li>
+  }
+</ol>

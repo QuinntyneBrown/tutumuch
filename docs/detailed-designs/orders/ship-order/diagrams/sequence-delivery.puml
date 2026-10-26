@@ -1,0 +1,49 @@
+@startuml
+title UML sequence behaviour — Carrier reports delivery
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+skinparam sequenceMessageAlign left
+skinparam maxMessageSize 260
+participant "Carrier tracking service" as carrier
+box "Backend — TuTuMuch API application (TuTuMuch.Api)" #D1FADF
+  participant "CarrierWebhookController" as cwh
+end box
+box "Backend — TuTuMuch.Application and TuTuMuch.Domain" #ECFDF3
+  participant "CarrierWebhookHandler" as h
+  participant "ICarrierTracking" as port
+  participant "Order" as order
+end box
+box "Backend — TuTuMuch.Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
+end box
+carrier -> cwh : POST /api/carriers/webhook (Carrier-Signature)
+cwh -> h : Send HandleCarrierWebhookCommand(body, signature)
+h -> port : ReadWebhook(body, signature)
+alt invalid signature
+  port --> h : null
+  cwh --> carrier : 400 WEBHOOK_SIGNATURE_INVALID, logged as security event
+else valid
+  port --> h : CarrierEvent(carrier, number, delivered, occurredAt)
+  h -> db : Load the Shipped order with this carrier and number
+  alt not a delivery, or no Shipped order (repeat, unknown number)
+    cwh --> carrier : 200, nothing changes
+  else Shipped
+    h -> order : MarkDelivered(Carrier, occurredAt)
+    order -> order : Append Shipped to Delivered, actor Carrier (L2-033 AC4)
+    h -> db : Save WHERE Status = 'Shipped'
+    cwh --> carrier : 200
+  end
+end
+@enduml

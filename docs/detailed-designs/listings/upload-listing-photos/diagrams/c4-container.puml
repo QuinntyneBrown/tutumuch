@@ -1,0 +1,19 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Upload listing photos
+
+Person(seller, "Seller", "Adds photos to a listing")
+System_Boundary(tutumuch, "TuTuMuch") {
+  Container(web, "TuTuMuch Web", "Angular", "@tutumuch/listings SellPage with tl-photo-uploader; @tutumuch/api PhotosApi")
+  Container(api, "TuTuMuch API", "ASP.NET Core", "Validates, strips and re-encodes uploads; attaches photos to listings; serves versions")
+  ContainerDb(db, "TuTuMuch database", "SQL Server", "ListingPhotos, ListingPhotoVersions")
+  ContainerDb(storage, "Photo storage", "IPhotoStorage (file system now, object storage later)", "Private originals; public content-addressed versions")
+}
+
+Rel(seller, web, "Uses", "HTTPS")
+Rel(web, api, "Uploads one file per request, saves photoIds", "HTTPS multipart / JSON")
+Rel(api, storage, "Writes originals and versions, reads versions")
+Rel(api, db, "Writes photo rows and positions", "EF Core")
+Rel(web, api, "Loads thumbnails from /photos/{hash}/{size}.{ext}", "HTTPS")
+@enduml

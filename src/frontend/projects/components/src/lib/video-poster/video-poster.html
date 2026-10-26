@@ -1,0 +1,7 @@
+<button class="video-poster" type="button" (click)="watch.emit()">
+  <img [src]="poster()" alt="" width="1920" height="1080" />
+  <span class="video-poster__play"><tl-icon name="play" />{{ label() }}</span>
+  @if (duration()) {
+    <span class="video-poster__meta" aria-hidden="true">{{ duration() }}</span>
+  }
+</button>

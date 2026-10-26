@@ -1,0 +1,5 @@
+<span class="chip" aria-pressed="true"
+  >{{ label()
+  }}<button class="remove" type="button" [attr.aria-label]="'Remove filter ' + label()" (click)="remove.emit()">
+    <tl-icon name="close" /></button
+></span>

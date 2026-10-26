@@ -1,0 +1,28 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Browse the catalog
+
+Person(visitor, "Visitor or member", "Browses listings")
+Container_Boundary(web, "TuTuMuch Web") {
+  Component(page, "CatalogPage", "@tutumuch/catalog route component", "Hero or category header, count, grid and view states")
+  Component(store, "CatalogStore", "@tutumuch/catalog signal store", "Pages, appends, de-duplicates and keeps the offline snapshot")
+  Component(grid, "tl-listing-grid / tl-listing-card", "@tutumuch/components", "Responsive grid, picture with srcset, skeletons")
+  Component(states, "tl-load-more, tl-empty-state, tl-alert", "@tutumuch/components", "Load more, empty and error states, offline banner")
+  Component(client, "CatalogApi", "@tutumuch/api typed HTTP client", "GET /api/catalog/listings")
+}
+Container_Boundary(api, "TuTuMuch API") {
+  Component(ctrl, "CatalogController", "ASP.NET Core controller", "GET /api/catalog/listings, anonymous")
+  Component(handler, "BrowseCatalogQueryHandler", "MediatR handler", "Validates, caps page size, applies CatalogVisibility, builds photo URLs")
+}
+ContainerDb(db, "TuTuMuch database", "SQL Server", "Listings, ListingPhotos, ListingPhotoVersions")
+
+Rel(visitor, page, "Opens / or /dresses, /tops...")
+Rel(page, store, "Reads state, calls load, retry and loadMore")
+Rel(page, grid, "Renders cards with")
+Rel(page, states, "Renders states with")
+Rel(store, client, "Requests pages through")
+Rel(client, ctrl, "GET /api/catalog/listings", "JSON/HTTPS")
+Rel(ctrl, handler, "Sends BrowseCatalogQuery")
+Rel(handler, db, "Count and page queries", "EF Core, IX_Listings_Status_PublishedAt")
+@enduml

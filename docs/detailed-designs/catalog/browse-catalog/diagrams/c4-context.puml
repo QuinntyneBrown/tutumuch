@@ -1,0 +1,16 @@
+@startuml
+!include <C4/C4_Context>
+LAYOUT_WITH_LEGEND()
+title System Context — Browse the catalog
+
+Person(visitor, "Visitor", "Anonymous person browsing items for sale")
+Person(member, "Member", "Signed-in buyer or seller")
+System(tutumuch, "TuTuMuch", "Marketplace for girls' clothing")
+System_Ext(cdn, "Photo CDN", "Serves content-addressed listing photos from photo storage")
+
+Rel(visitor, tutumuch, "Browses the catalog using", "HTTPS")
+Rel(member, tutumuch, "Browses the catalog using", "HTTPS")
+Rel(visitor, cdn, "Loads listing photos from", "HTTPS")
+Rel(member, cdn, "Loads listing photos from", "HTTPS")
+Rel(tutumuch, cdn, "Builds photo URLs for")
+@enduml

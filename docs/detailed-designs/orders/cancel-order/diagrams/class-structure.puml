@@ -1,0 +1,90 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+hide empty members
+title Class structure — Cancel an order
+
+enum CancellationReason {
+  ItemDamaged
+  NoLongerHave
+  ListedByMistake
+  BuyerAskedToCancel
+  ShipDeadlinePassed
+}
+enum CancellationRequestStatus {
+  Pending
+  Accepted
+  Declined
+}
+enum ListingRemovalReason {
+  OrderCancelled
+}
+class Order <<see ship-order>> {
+  +OrderStatus Status
+  +CancellationReason? CancellationReason
+  +string? CancellationNote
+  +CancellationRequestStatus? CancellationRequestStatus
+  +string? CancellationRequestMessage
+  +DateTime? CancellationRequestedAt
+  +DateTime? CancellationRespondedAt
+  +Cancel(reason, note, actor, now): void
+  +RequestCancellation(message, now): void
+  +DeclineCancellation(now): void
+}
+class Listing <<listings subsystem>> {
+  +ListingStatus Status
+  +ListingRemovalReason? RemovalReason
+  +bool CanRelist
+  +RemoveAfterCancellation(now): void
+  +Relist(now): void
+}
+class Refund <<see checkout-and-pay>> {
+  +ForCancellation(payment, reason, now): Refund
+}
+class OrderCancellation {
+  +CancelAsync(order, reason, note, actor): (Refund, Payment)
+  +IssueRefundAsync(order, refund, payment): Task
+}
+class CancelOrderCommandHandler {
+  +Handle(CancelOrderCommand): Result<SaleDto>
+}
+class RequestCancellationCommandHandler {
+  +Handle(RequestCancellationCommand): Result<PurchaseDto>
+}
+class RespondToCancellationCommandHandler {
+  +Handle(RespondToCancellationCommand): Result<SaleDto>
+}
+class CancelUnshippedOrdersHandler <<see ship-order>>
+class RelistListingCommandHandler {
+  +Handle(RelistListingCommand): Result<bool>
+}
+interface IEmailOutbox <<notifications subsystem>> {
+  +Enqueue(type, recipientMemberId, model): void
+}
+interface IPaymentProvider {
+  +RefundAsync(providerPaymentId, amount, key): string
+}
+Order --> CancellationReason
+Order --> CancellationRequestStatus
+Listing --> ListingRemovalReason
+CancelOrderCommandHandler ..> OrderCancellation
+RespondToCancellationCommandHandler ..> OrderCancellation : on accept
+RespondToCancellationCommandHandler --> Order : DeclineCancellation
+CancelUnshippedOrdersHandler ..> OrderCancellation
+RequestCancellationCommandHandler --> Order : RequestCancellation
+RequestCancellationCommandHandler ..> IEmailOutbox
+OrderCancellation --> Order : Cancel
+OrderCancellation --> Listing : RemoveAfterCancellation
+OrderCancellation ..> Refund : creates
+OrderCancellation ..> IEmailOutbox
+OrderCancellation ..> IPaymentProvider
+RelistListingCommandHandler --> Listing : Relist
+@enduml

@@ -1,0 +1,26 @@
+<div class="toast-region" role="status" aria-live="polite">
+  @for (toast of service.toasts(); track toast.id) {
+    <div
+      class="toast toast--{{ toast.tone }}"
+      [attr.role]="toast.tone === 'danger' ? 'alert' : null"
+      (mouseenter)="service.pause(toast.id)"
+      (mouseleave)="service.resume(toast.id)"
+      (focusin)="service.pause(toast.id)"
+      (focusout)="service.resume(toast.id)"
+    >
+      <tl-icon [name]="icons[toast.tone]" />
+      <div class="toast__body">
+        <span class="toast__title">{{ toast.title }}</span>
+        @if (toast.text) {
+          <span class="toast__text">{{ toast.text }}</span>
+        }
+        @if (toast.action; as action) {
+          <button class="toast__action" type="button" (click)="act(toast)">{{ action.label }}</button>
+        }
+      </div>
+      <button class="close" type="button" aria-label="Dismiss" (click)="service.dismiss(toast.id)">
+        <tl-icon name="close" />
+      </button>
+    </div>
+  }
+</div>

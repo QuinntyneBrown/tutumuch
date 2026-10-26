@@ -1,0 +1,21 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Set up the workspace
+
+Person(dev, "Developer", "Fresh clone on Windows or Linux")
+System_Ext(ci, "GitHub Actions", "ubuntu-latest runner")
+System_Boundary(repo, "TuTuMuch repository") {
+  Container(verify, "Verify command", "npm script in src/frontend", "dotnet restore, format, build, test; lint; build:all; e2e")
+  Container(web, "TuTuMuch Web", "Angular 22 workspace", "projects/tutumuch + 8 libraries; empty guest shell")
+  Container(api, "TuTuMuch API", "ASP.NET Core, net10.0", "GET /api/health -> 200; no dependencies")
+  Container(tests, "Test projects", "xUnit, NetArchTest, Playwright", "tests/TuTuMuch.*.Tests, src/frontend/e2e")
+}
+Rel(dev, verify, "Runs", "npm run verify")
+Rel(ci, verify, "Runs on pull requests", "ci.yml")
+Rel(verify, api, "Builds and tests")
+Rel(verify, web, "Lints and builds")
+Rel(verify, tests, "Executes")
+Rel(tests, api, "Calls GET /api/health", "WebApplicationFactory")
+Rel(tests, web, "Loads / at 320 px", "Playwright, Chromium")
+@enduml

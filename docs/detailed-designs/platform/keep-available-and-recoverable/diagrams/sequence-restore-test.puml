@@ -1,0 +1,49 @@
+@startuml
+title UML sequence behaviour — Quarterly restore test
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+participant "restore-test.yml (schedule)" as wf
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  database "TuTuMuch database (PITR, 35 days)" as db
+  database "Restored copy" as copy
+end box
+box "Backend — Operations tooling" #ECFDF3
+  participant "TuTuMuch.RestoreVerifier" as ver
+end box
+participant "On-call channel" as oncall
+wf -> wf : Record start time T
+wf -> db : Restore to point T - 15 min into new isolated database (L2-067)
+alt Restore fails
+  db --> wf : Error
+  wf -> oncall : Restore test failed
+else Restore completes
+  db --> copy : Created
+  wf -> ver : Run against copy with restore point
+  ver -> copy : Migrations match deployed set
+  ver -> copy : DBCC CHECKDB
+  ver -> copy : Business invariants (sold listings, order totals, payouts)
+  ver -> copy : Latest order within 15 min of restore point (RPO)
+  copy --> ver : Results
+  ver --> wf : restore-report.json
+  wf -> wf : Elapsed = verified time - T
+  alt Any check fails or elapsed >= 4 h
+    wf -> oncall : Restore test failed with report (L2-067)
+  else All checks pass and elapsed < 4 h
+    wf -> oncall : Restore test passed with elapsed time
+  end
+  wf -> copy : Delete restored database
+end
+wf -> wf : Upload restore-report.json artifact
+@enduml

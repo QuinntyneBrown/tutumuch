@@ -1,0 +1,95 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Report errors and observe the system
+
+package "TuTuMuch Web" {
+  enum AppErrorKind {
+    offline
+    validation
+    not-found
+    forbidden
+    unauthorised
+    conflict
+    rate-limited
+    server
+  }
+  class AppError {
+    +kind: AppErrorKind
+    +code: string
+    +message: string
+    +correlationId?: string
+    +fieldErrors: Record<string, string[]>
+    +retryAfterSeconds?: number
+  }
+  class ApiErrorInterceptor <<function>> {
+    +intercept(req, next): Observable<HttpEvent>
+  }
+  class ConnectivityService {
+    +online: Signal<boolean>
+  }
+  class ServerErrorPageComponent {
+    +correlationId: string
+    +retryUrl: string
+    +tryAgain(): void
+  }
+}
+package "TuTuMuch API" {
+  class TuTuMuchProblemDetails {
+    +string Type
+    +string Title
+    +int Status
+    +string Detail
+    +string Instance
+    +string Code
+    +string CorrelationId
+    +IDictionary<string,string[]> Errors
+  }
+  class ProblemDetailsExceptionHandler {
+    +TryHandleAsync(context, exception, ct): ValueTask<bool>
+    -Map(exception): TuTuMuchProblemDetails
+  }
+  class DomainRuleException {
+    +string Code
+    +string Field
+  }
+  class NotFoundException
+  class ConcurrencyConflictException
+  class CorrelationIdMiddleware {
+    +const string HeaderName = "X-Correlation-ID"
+    +InvokeAsync(context): Task
+    -Generate(): string
+  }
+  class SensitiveDataRedactionPolicy {
+    +TryDestructure(value, factory, out result): bool
+  }
+  class JobMetrics {
+    +RecordRun(job: string, outcome: string): void
+    +RecordFailure(job: string): void
+  }
+  class DatabaseHealthCheck
+  class PhotoStorageHealthCheck
+  interface IHealthCheck {
+    +CheckHealthAsync(context, ct): Task<HealthCheckResult>
+  }
+}
+ApiErrorInterceptor ..> AppError : produces
+AppError --> AppErrorKind
+ApiErrorInterceptor ..> ConnectivityService : reads
+ServerErrorPageComponent ..> AppError : shows
+ProblemDetailsExceptionHandler ..> TuTuMuchProblemDetails : writes
+ProblemDetailsExceptionHandler ..> DomainRuleException : maps 422
+ProblemDetailsExceptionHandler ..> NotFoundException : maps 404
+ProblemDetailsExceptionHandler ..> ConcurrencyConflictException : maps 409
+DatabaseHealthCheck ..|> IHealthCheck
+PhotoStorageHealthCheck ..|> IHealthCheck
+ApiErrorInterceptor ..> TuTuMuchProblemDetails : parses
+@enduml

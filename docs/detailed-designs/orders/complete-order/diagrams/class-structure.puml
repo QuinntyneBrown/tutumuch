@@ -1,0 +1,54 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+hide empty members
+title Class structure — Complete an order
+
+class Order <<see ship-order>> {
+  +OrderStatus Status
+  +DateTime? DeliveredAt
+  +DateTime? CompletedAt
+  +DateTime? AutoCompletesAt
+  +{static} TimeSpan AutoCompleteAfter = 3 days
+  +ConfirmReceipt(now): void
+  +Complete(actor, now): void
+  +IsDueForAutoCompletion(now): bool
+}
+class ConfirmReceiptCommand {
+  +Guid BuyerId
+  +Guid OrderId
+}
+class ConfirmReceiptCommandHandler {
+  +Handle(cmd): Task<Result<PurchaseDto>>
+}
+class CompleteDeliveredOrdersCommand
+class CompleteDeliveredOrdersHandler {
+  +Handle(cmd): Task<int>
+}
+class OrderCompletionJob {
+  +RunOnceAsync(ct): Task<int>
+}
+class OrderCompleted <<MediatR notification>> {
+  +Guid OrderId
+  +Guid BuyerId
+  +Guid SellerId
+  +DateTime CompletedAt
+}
+class "Payout handler" as PayoutHandler <<seller-payouts>>
+ConfirmReceiptCommandHandler ..> ConfirmReceiptCommand : handles
+ConfirmReceiptCommandHandler --> Order : loads / mutates
+CompleteDeliveredOrdersHandler ..> CompleteDeliveredOrdersCommand : handles
+CompleteDeliveredOrdersHandler --> Order : loads / mutates
+OrderCompletionJob ..> CompleteDeliveredOrdersCommand : sends
+ConfirmReceiptCommandHandler ..> OrderCompleted : publishes
+CompleteDeliveredOrdersHandler ..> OrderCompleted : publishes
+PayoutHandler ..> OrderCompleted : handles
+@enduml

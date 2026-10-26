@@ -1,0 +1,16 @@
+@startuml
+!include <C4/C4_Context>
+LAYOUT_WITH_LEGEND()
+title System Context — Protect personal data
+
+Person(visitor, "Visitor", "Browses the catalog, listings and member profiles")
+Person(member, "Member", "Buys and sells; gives an email and shipping address")
+System(tutumuch, "TuTuMuch", "Marketplace for girls' clothing")
+System_Ext(secrets, "Secret store", "Holds the field-encryption key ring (product <TO SUPPLY>)")
+System_Ext(hosting, "Hosting platform", "Encrypts database, backups and object storage at rest (<TO SUPPLY>)")
+
+Rel(visitor, tutumuch, "Reads public pages without personal data", "HTTPS")
+Rel(member, tutumuch, "Enters shipping address at checkout", "HTTPS")
+Rel(tutumuch, secrets, "Reads data encryption keys at start-up", "HTTPS")
+Rel(tutumuch, hosting, "Runs on encrypted storage provided by")
+@enduml

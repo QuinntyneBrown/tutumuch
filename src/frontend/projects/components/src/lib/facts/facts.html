@@ -1,0 +1,12 @@
+<dl class="facts">
+  @for (fact of facts(); track fact.label) {
+    <dt>{{ fact.label }}</dt>
+    <dd [class.num]="fact.numeric">
+      @if (fact.status) {
+        <tl-status [tone]="fact.status">{{ fact.value }}</tl-status>
+      } @else {
+        {{ fact.value }}
+      }
+    </dd>
+  }
+</dl>

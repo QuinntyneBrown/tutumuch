@@ -1,0 +1,61 @@
+@startuml
+title UML sequence behaviour — Save a listing as a draft
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Seller" as actor
+box "Frontend — @tutumuch/listings and @tutumuch/api" #E0F2FE
+  participant "SellPage" as form
+  participant "ListingsApi" as client
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "ListingsController" as controller
+end box
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
+  participant "ListingCommandHandlers" as handler
+  participant "Listing" as entity
+end box
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
+end box
+actor -> form : Choose "Save draft"
+form -> form : checkListing(draft); without a category show "Choose a category"
+form -> client : createDraft(details) the first time, updateDraft(reference, details) after
+client -> controller : POST /api/listings (no size field)
+controller -> controller : CanSell policy (L2-010)
+controller -> handler : Send CreateListingDraftCommand
+handler -> entity : CheckDraft(details)
+alt category or subcategory not accepted
+  entity --> handler : CATEGORY_INVALID
+  handler --> controller : 422
+  controller --> client : 422 problem details (L2-011)
+  client --> form : Error on Category in the summary and inline
+else size sent and not the accepted size
+  entity --> handler : SIZE_NOT_ACCEPTED
+  controller --> client : 422 problem details (L2-013)
+else a present field over its limit
+  entity --> handler : Violations per field
+  controller --> client : 422 problem details with errors (L2-019)
+else valid draft (only a category is required)
+  handler -> db : Highest listing number
+  handler -> entity : CreateDraft(sellerId, number + 1, details) sets Size from category (L2-013)
+  entity --> handler : Listing L-<number> in status Draft
+  handler -> db : Insert Listings row
+  db --> handler : Committed
+  handler --> controller : MyListingDto
+  controller --> client : 201 Created, Location /api/me/listings/{reference}
+  client --> form : Keep the reference; later saves use PUT /api/listings/{reference}
+  form --> actor : "Draft saved" alert with a link to your listings
+end
+@enduml

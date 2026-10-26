@@ -1,0 +1,37 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Check out and pay
+
+Container(web, "TuTuMuch Web", "Angular", "@tutumuch/orders: CheckoutPage, HostedCardFieldsComponent, OrderConfirmationPage; @tutumuch/api: CheckoutApi, PAYMENT_FIELDS; @tutumuch/components: tl-reservation-timer, tl-order-summary")
+Container_Boundary(api, "TuTuMuch API") {
+  Component(cc, "CheckoutsController", "ASP.NET Core controller", "/api/checkouts and /api/purchases/{id}")
+  Component(wh, "PaymentWebhookController", "ASP.NET Core controller", "POST /api/payments/webhook")
+  Component(handlers, "CheckoutCommandHandlers", "MediatR handlers", "Start (reserve), get, set address, submit payment, release")
+  Component(webhook, "PaymentWebhookHandler", "MediatR handler", "Verifies, deduplicates, creates the Paid order or refunds a duplicate")
+  Component(purchase, "GetPurchaseQueryHandler", "MediatR handler", "The confirmation page's order")
+  Component(dom, "Checkout, Listing, Payment, Order, Refund", "Domain", "Reservation and order rules")
+  Component(ppa, "IPaymentProvider", "Port", "UnconfiguredPaymentProvider until a provider is chosen; a fake in tests")
+  Component(ctx, "TuTuMuchDbContext", "EF Core", "Conditional reservation update, unique indexes")
+}
+Container_Boundary(worker, "TuTuMuch Worker") {
+  Component(exp, "ReservationExpiryJob", "Hosted service", "Sends ExpireReservationsCommand every 30 s")
+}
+ContainerDb(db, "TuTuMuch database", "SQL Server", "Checkout state")
+System_Ext(pay, "Payment provider", "Payments")
+
+Rel(web, cc, "Calls", "JSON/HTTPS")
+Rel(pay, wh, "Posts events", "Signed webhook")
+Rel(cc, handlers, "Sends commands")
+Rel(cc, purchase, "Sends GetPurchaseQuery")
+Rel(wh, webhook, "Sends HandlePaymentWebhookCommand")
+Rel(exp, handlers, "ExpireReservationsCommand")
+Rel(handlers, dom, "Reserves, prices, pays, releases")
+Rel(webhook, dom, "Creates Order, marks Listing Sold")
+Rel(handlers, ppa, "QuoteTaxAsync, CreatePaymentAsync")
+Rel(webhook, ppa, "ReadWebhook, RefundAsync")
+Rel(ppa, pay, "Calls", "HTTPS")
+Rel(handlers, ctx, "Saves")
+Rel(webhook, ctx, "Saves")
+Rel(ctx, db, "Persists", "SQL")
+@enduml

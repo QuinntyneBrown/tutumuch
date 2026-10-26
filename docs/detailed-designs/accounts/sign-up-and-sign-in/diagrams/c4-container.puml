@@ -1,0 +1,17 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Sign up and sign in
+
+Person(visitor, "Visitor or member")
+System_Boundary(tutumuch, "TuTuMuch") {
+  Container(web, "TuTuMuch Web", "Angular", "Join, verify-email and sign-in pages in @tutumuch/accounts; AuthState and the session interceptor in @tutumuch/api")
+  Container(api, "TuTuMuch API", "ASP.NET Core", "Registration, verification, sign-in, refresh, sign-out, me; CanSell policy")
+  ContainerDb(db, "TuTuMuch database", "SQL Server", "Members, EmailVerificationTokens, Sessions")
+}
+System_Ext(email, "Email provider")
+Rel(visitor, web, "Uses", "HTTPS")
+Rel(web, api, "Calls with HttpOnly session cookies", "JSON/HTTPS")
+Rel(api, db, "Reads and writes", "EF Core")
+Rel(api, email, "Sends verification links")
+@enduml

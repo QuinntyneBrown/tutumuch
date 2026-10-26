@@ -1,0 +1,46 @@
+@startuml
+title UML sequence behaviour — Catalog filters by breakpoint
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Visitor" as actor
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "CatalogPage" as page
+  participant "BreakpointService" as bp
+  participant "SheetService" as sheet
+  participant "Filter form (catalog)" as form
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "CatalogController" as api
+end box
+page -> bp : breakpoint()
+alt lg or xl (992 px and wider)
+  bp --> page : lg
+  page -> form : Render as permanent sidebar; hide "Filters" button (L2-062)
+else md (768 to 991 px)
+  bp --> page : md
+  actor -> page : Activate "Filters"
+  page -> sheet : open(form, side)
+else xs or sm (below 768 px)
+  bp --> page : xs
+  actor -> page : Activate "Filters"
+  page -> sheet : open(form, full) with "Clear" and "Show 38 items" (L2-062)
+end
+actor -> form : Change a filter
+form -> api : GET /api/catalog/count?…
+api --> form : Result count
+actor -> form : Apply
+form -> sheet : close(); focus returns to "Filters"
+form -> page : Update URL query and results
+@enduml

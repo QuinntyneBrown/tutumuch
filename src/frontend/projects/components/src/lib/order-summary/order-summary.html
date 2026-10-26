@@ -1,0 +1,40 @@
+<aside
+  class="panel stack stack--lg"
+  [attr.aria-labelledby]="heading() ? 'order-summary-title' : null"
+  [attr.aria-label]="heading() ? null : 'Order summary'"
+>
+  @if (heading()) {
+    <h2 id="order-summary-title" class="panel__title">{{ heading() }}</h2>
+  }
+  <tl-item-row [title]="item().title" [meta]="item().meta">
+    <div thumb class="thumb">
+      <div class="photo photo--6">
+        @if (item().photo; as photo) {
+          <picture>
+            <source type="image/webp" [attr.srcset]="photo.webp" sizes="64px" />
+            <img [src]="photo.src" [attr.srcset]="photo.jpeg" sizes="64px" alt="" width="160" height="160" />
+          </picture>
+        }
+      </div>
+    </div>
+  </tl-item-row>
+  <dl class="totals">
+    <div>
+      <dt>Item</dt>
+      <dd>{{ itemPrice() }}</dd>
+    </div>
+    <div>
+      <dt>Shipping</dt>
+      <dd>{{ shipping() }}</dd>
+    </div>
+    <div>
+      <dt>Sales tax</dt>
+      <dd>{{ salesTax() ?? 'With your address' }}</dd>
+    </div>
+    <div class="totals__total">
+      <dt>Total</dt>
+      <dd>{{ total() ?? '—' }}</dd>
+    </div>
+  </dl>
+  <ng-content />
+</aside>

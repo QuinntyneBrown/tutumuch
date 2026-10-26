@@ -1,0 +1,25 @@
+@switch (kind()) {
+  @case ('info') {
+    <tl-alert tone="info" banner live="polite" dismissible (dismissed)="dismiss('info')">
+      {{ sent() }} is on its way to {{ bank() }}.
+      <a actions routerLink="/account/payouts">Payouts</a>
+    </tl-alert>
+  }
+  @case ('success') {
+    <tl-alert tone="success" banner live="polite" dismissible (dismissed)="dismiss('success')">
+      Payouts are set up. You’ll be paid when orders complete.
+    </tl-alert>
+  }
+  @case ('warning') {
+    <tl-alert tone="warning" banner live="polite">
+      Finish payout setup to receive {{ pending() }}.
+      <a actions routerLink="/account/payouts">Set up payouts</a>
+    </tl-alert>
+  }
+  @case ('danger') {
+    <tl-alert tone="danger" banner>
+      Your last payout was returned by the bank.
+      <a actions routerLink="/account/payouts">Update bank details</a>
+    </tl-alert>
+  }
+}

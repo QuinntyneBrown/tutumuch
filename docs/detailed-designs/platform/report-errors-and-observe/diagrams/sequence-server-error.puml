@@ -1,0 +1,51 @@
+@startuml
+title UML sequence behaviour — Unhandled server error
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Member" as actor
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "Feature page" as page
+  participant "ApiErrorInterceptor" as int
+  participant "ToastService / Router" as ui
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "CorrelationIdMiddleware" as corr
+  participant "ProblemDetailsExceptionHandler" as pd
+  participant "Feature controller" as ctrl
+end box
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
+  participant "Feature handler" as handler
+end box
+actor -> page : Act or open a page
+page -> int : HTTP request
+int -> corr : Request
+corr -> corr : Assign 3c8e-1d42-a7f0; header and log scope
+corr -> ctrl : Continue
+ctrl -> handler : Send command or query
+handler --> ctrl : Throws unexpected exception
+ctrl --> pd : Exception
+pd -> pd : Log Error with exception and CorrelationId
+pd --> int : 500 application/problem+json code internal_error, correlationId, no stack trace (L2-068)
+int -> int : AppError kind server
+alt Route load failed
+  int -> ui : Navigate to /error (skipLocationChange) with correlationId, retryUrl
+  ui --> actor : "Something went wrong", "Try again", "Back to shop", "Ref 3c8e-1d42-a7f0"
+else User action failed
+  int -> ui : Danger toast "Something went wrong" / "Ref 3c8e-1d42-a7f0" / "Try again"
+  ui --> actor : Toast stays until dismissed
+end
+actor -> ui : Try again
+ui -> page : Replay navigation or action
+@enduml

@@ -1,0 +1,89 @@
+<header class="topbar">
+  @if (variant() === 'admin') {
+    <tl-logo />
+    <span class="topbar__admin">Admin</span>
+    <span class="topbar__spacer"></span>
+    @if (member(); as member) {
+      <span class="avatar avatar--sm" role="img" [attr.aria-label]="'Signed in as ' + member.displayName">{{
+        initials()
+      }}</span>
+    }
+  } @else {
+    <button
+      class="btn btn--ghost btn--icon topbar__menu"
+      type="button"
+      aria-label="Open menu"
+      aria-expanded="false"
+      aria-controls="menu"
+    >
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M4 7h16M4 12h16M4 17h16" />
+      </svg>
+    </button>
+    <tl-logo />
+    <nav class="topbar__nav" aria-label="Primary">
+      @for (item of categories; track item.path) {
+        <a
+          class="nav-link"
+          [routerLink]="item.path"
+          routerLinkActive
+          #rla="routerLinkActive"
+          [attr.aria-current]="rla.isActive ? 'page' : null"
+          >{{ item.label }}</a
+        >
+      }
+    </nav>
+    <span class="topbar__spacer"></span>
+    <form class="search" [class.search--open]="searchOpen()" role="search" (submit)="submit($event, term.value)">
+      <label class="visually-hidden" for="q">Search TuTuMuch</label>
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <circle cx="11" cy="11" r="7" />
+        <path d="m20 20-3.5-3.5" />
+      </svg>
+      <input
+        #term
+        class="input"
+        id="q"
+        name="q"
+        type="search"
+        placeholder="Search brands and items"
+        [value]="query()"
+      />
+    </form>
+    <div class="topbar__actions">
+      <button
+        tlButton="ghost"
+        class="btn--icon topbar__search-btn"
+        type="button"
+        aria-label="Search"
+        aria-controls="q"
+        [attr.aria-expanded]="searchOpen()"
+        (click)="toggleSearch()"
+      >
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="11" cy="11" r="7" />
+          <path d="m20 20-3.5-3.5" />
+        </svg>
+      </button>
+      @if (member(); as member) {
+        <a
+          class="nav-link topbar__sell"
+          routerLink="/sell"
+          routerLinkActive
+          #sell="routerLinkActive"
+          [attr.aria-current]="sell.isActive ? 'page' : null"
+          ><tl-icon name="plus" />Sell</a
+        >
+        <a
+          class="avatar avatar--sm topbar__avatar"
+          routerLink="/account"
+          [attr.aria-label]="'Your account, ' + member.displayName"
+          >{{ initials() }}</a
+        >
+      } @else {
+        <a class="btn btn--ghost topbar__sell" routerLink="/sell">Sell</a>
+        <a class="btn" routerLink="/sign-in">Sign in</a>
+      }
+    </div>
+  }
+</header>

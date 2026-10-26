@@ -1,0 +1,46 @@
+@startuml
+title UML sequence behaviour — Action while offline
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Member" as actor
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "ConnectivityService" as conn
+  participant "SystemBannerService" as banner
+  participant "Feature page" as page
+  participant "ApiErrorInterceptor" as int
+  participant "Router" as router
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "TuTuMuch API" as api
+end box
+conn -> conn : window 'offline' event
+conn -> banner : Show warning "You’re offline. We’ll retry when you’re back." (no dismiss)
+actor -> page : Take an action
+page -> int : HTTP request
+int -> api : Request fails, status 0
+int -> conn : online()?
+conn --> int : false
+int --> page : AppError kind offline (L2-068)
+alt Navigation to a new page
+  page -> router : Show OfflinePageComponent "You’re offline" / "Try again"
+else Action on current page
+  page --> actor : Keep input; banner explains offline state
+end
+conn -> conn : window 'online' event
+conn -> banner : Clear offline banner; toast "Back online"
+conn -> page : Retry last failed idempotent GET
+page -> api : Request
+api --> page : 200
+@enduml

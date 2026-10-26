@@ -1,0 +1,33 @@
+@startuml
+title UML sequence behaviour — Load the next catalog page
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+actor "Visitor or member" as actor
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "tl-load-more" as more
+  participant "CatalogStore" as store
+  participant "CatalogApi" as client
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "CatalogController" as controller
+end box
+participant "Photo origin (/photos)" as photos
+actor -> more : Load more
+more -> store : loadMore()
+store -> more : busy
+store -> client : listings(page + 1, category)
+client -> controller : GET /api/catalog/listings?page=2
+controller --> client : 200 CatalogPageDto
+alt success
+  client --> store : ok
+  store -> store : append cards whose id is not shown yet
+  store --> more : Showing 30 of 30, button hidden when all shown
+  actor -> photos : lazy images below the first screen, 400 w on a 375 px phone
+else failure
+  client --> store : problem
+  store --> more : cards stay; danger alert "Couldn’t load more items", Ref, Try again
+end
+@enduml

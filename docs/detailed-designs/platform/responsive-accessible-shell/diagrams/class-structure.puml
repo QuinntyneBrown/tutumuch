@@ -1,0 +1,96 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Responsive, accessible application shell
+
+enum Breakpoint {
+  xs
+  sm
+  md
+  lg
+  xl
+}
+class BreakpointService {
+  +breakpoint: Signal<Breakpoint>
+  +isBelowMd: Signal<boolean>
+  +isBelowLg: Signal<boolean>
+}
+class SheetService {
+  +open<T>(component: Type<T>, config: SheetConfig): SheetRef<T>
+}
+class SheetConfig {
+  +variant: 'full' | 'side'
+  +ariaLabelledBy: string
+  +closeOnNavigation: boolean
+}
+class DialogService {
+  +open<T>(component: Type<T>, config: DialogConfig): DialogRef<T>
+}
+class LiveRegionService {
+  +polite(message: string): Promise<void>
+  +assertive(message: string): Promise<void>
+}
+class RouteFocusService {
+  +init(): void
+  -focusMain(): void
+}
+class FormErrorsDirective {
+  +form: FormGroup
+  +summaryTitle: string
+  +onSubmit(): void
+  +applyServerErrors(errors: Record<string, string[]>): void
+}
+class ErrorSummaryComponent {
+  +title: string
+  +errors: FieldError[]
+  +focus(): void
+}
+class FieldError {
+  +fieldId: string
+  +message: string
+}
+class ToastService {
+  +show(toast: ToastInput): ToastRef
+  +dismiss(id: string): void
+  +toasts: Signal<Toast[]>
+}
+class Toast {
+  +id: string
+  +kind: 'info' | 'success' | 'warning' | 'danger'
+  +title: string
+  +text?: string
+  +actionLabel?: string
+  +autoDismissMs: number | null
+}
+class SystemBannerService {
+  +banners: Signal<Banner[]>
+  +show(banner: Banner): void
+  +clear(id: string): void
+}
+class NavMenuSheetComponent {
+  +isGuest: Signal<boolean>
+  +close(): void
+}
+class TopbarComponent {
+  +openMenu(): void
+}
+
+BreakpointService --> Breakpoint
+TopbarComponent ..> SheetService : opens menu
+TopbarComponent ..> BreakpointService : reads
+SheetService ..> SheetConfig
+SheetService ..> NavMenuSheetComponent : hosts
+FormErrorsDirective ..> ErrorSummaryComponent : renders
+ErrorSummaryComponent "1" *-- "*" FieldError
+FormErrorsDirective ..> LiveRegionService : announces
+RouteFocusService ..> LiveRegionService : announces
+ToastService "1" o-- "*" Toast
+@enduml

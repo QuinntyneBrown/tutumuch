@@ -1,0 +1,51 @@
+<tl-dialog heading="Report a problem">
+  <span description>
+    @if (data.deadline) {
+      Open until {{ data.deadline }}.
+    }
+    We hold the seller’s payout while our team looks into it.</span
+  >
+  @if (summary().length) {
+    <tl-error-summary top [errors]="summary()" />
+  } @else if (state() === 'failed') {
+    <tl-alert top tone="danger" heading="That didn’t go through"
+      >Your photos and description are saved here. Try again.</tl-alert
+    >
+  }
+  <tl-segmented
+    legend="What’s wrong?"
+    groupId="problem-reason"
+    [options]="labels"
+    [error]="reasonError()"
+    (change)="choose($any($event.target).value)"
+  />
+  <tl-form-field #df fieldId="problem-description" label="Describe it" [error]="descriptionError()">
+    <textarea
+      class="textarea"
+      id="problem-description"
+      rows="3"
+      [value]="description()"
+      [attr.aria-describedby]="df.describedBy()"
+      [attr.aria-invalid]="df.invalid()"
+      (input)="description.set($any($event.target).value)"
+    ></textarea>
+  </tl-form-field>
+  <div class="field">
+    <span class="field__label">Photos <span class="optional">(up to 4)</span></span>
+    <tl-photo-uploader
+      inputId="problem-photos"
+      [tiles]="tiles()"
+      [max]="max"
+      [cover]="false"
+      [error]="photosError()"
+      (filesSelected)="add($event)"
+      (removed)="remove($event)"
+    />
+  </div>
+  <ng-container ngProjectAs="[footer]">
+    <button tlButton type="button" [disabled]="state() === 'busy'" (click)="ref.close()">Cancel</button>
+    <button tlButton="primary" type="submit" [busy]="state() === 'busy'" (click)="submit()">
+      {{ state() === 'failed' ? 'Try again' : 'Send to TuTuMuch' }}
+    </button>
+  </ng-container>
+</tl-dialog>

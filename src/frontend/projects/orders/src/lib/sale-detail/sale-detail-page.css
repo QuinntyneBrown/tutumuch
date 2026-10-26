@@ -1,0 +1,15 @@
+:host {
+  display: block;
+}
+.order__crumbs {
+  margin-top: var(--space-6);
+}
+.order__body {
+  margin-top: var(--space-8);
+}
+.order__loading {
+  margin-top: var(--space-10);
+}
+.order__skeleton-block {
+  height: 6rem;
+}

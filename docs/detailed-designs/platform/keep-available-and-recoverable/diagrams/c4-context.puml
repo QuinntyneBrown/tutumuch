@@ -1,0 +1,18 @@
+@startuml
+!include <C4/C4_Context>
+LAYOUT_WITH_LEGEND()
+title System Context — Keep TuTuMuch available and recoverable
+
+Person(visitor, "Visitor or member", "Browses, lists and buys")
+Person(operator, "Operator", "Runs maintenance and restore tests")
+System(tutumuch, "TuTuMuch", "Marketplace on several instances behind a load balancer")
+System_Ext(uptime, "Uptime monitor", "Checks catalog, a listing page and /health/ready every minute <TO SUPPLY>")
+System_Ext(github, "GitHub Actions", "maintenance.yml, restore-test.yml")
+System_Ext(oncall, "On-call channel", "Restore test results and alerts")
+
+Rel(visitor, tutumuch, "Uses", "HTTPS")
+Rel(uptime, tutumuch, "Probes every minute", "HTTPS")
+Rel(operator, github, "Dispatches maintenance and restore workflows")
+Rel(github, tutumuch, "Switches maintenance mode; restores database copy")
+Rel(github, oncall, "Posts restore results")
+@enduml

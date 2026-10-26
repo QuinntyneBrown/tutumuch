@@ -1,0 +1,75 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Manage cookie consent
+
+package "TuTuMuch Web (@tutumuch/privacy, @tutumuch/components)" {
+  enum ConsentState {
+    unknown
+    necessary
+    analytics
+  }
+  class CookieConsentService {
+    +consent: Signal<ConsentState>
+    +acceptAnalytics(): void
+    +necessaryOnly(): void
+    +save(analytics: boolean): void
+  }
+  class AnalyticsConfig {
+    +scriptUrl: string
+    +cookieNames: string[]
+  }
+  class AnalyticsService {
+    -script?: HTMLScriptElement
+    +trackPageView(url: string): void
+    -start(): void
+    -stop(): void
+  }
+  class CookieConsentComponent {
+    +accept(): void
+    +decline(): void
+  }
+  class CookieSettingsDialog {
+    +analytics: WritableSignal<boolean>
+    +save(): void
+  }
+  class CookieSettingsDialogService {
+    +open(): DialogRef<boolean>
+  }
+  class ConsentBannerComponent <<tl-consent-banner>> {
+    +accepted: OutputRef
+    +declined: OutputRef
+    +settings: OutputRef
+  }
+  class ToastService {
+    +show(options: ToastOptions): number
+  }
+}
+package "TuTuMuch.Api" {
+  class StrictlyNecessaryCookieOptions {
+    +string[] StrictlyNecessary
+  }
+  class CookieAllowListMiddleware {
+    +InvokeAsync(context: HttpContext): Task
+  }
+}
+
+CookieConsentService --> ConsentState : holds
+AnalyticsService --> CookieConsentService : reacts to consent
+AnalyticsService --> AnalyticsConfig
+CookieConsentComponent --> ConsentBannerComponent : renders while unknown
+CookieConsentComponent ..> CookieConsentService
+CookieConsentComponent ..> ToastService
+CookieConsentComponent ..> CookieSettingsDialogService
+CookieSettingsDialogService ..> CookieSettingsDialog : opens
+CookieSettingsDialog ..> CookieConsentService
+CookieAllowListMiddleware --> StrictlyNecessaryCookieOptions
+@enduml

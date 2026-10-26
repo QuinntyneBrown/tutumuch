@@ -1,0 +1,123 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+hide empty members
+title Class structure — Ship an order (order state machine)
+
+enum OrderStatus {
+  Paid
+  Shipped
+  Delivered
+  Completed
+  Cancelled
+  Refunded
+}
+enum OrderActor {
+  Buyer
+  Seller
+  Administrator
+  System
+  Carrier
+}
+enum Carrier {
+  Usps
+  Ups
+  FedEx
+  Dhl
+}
+class Order <<aggregate root>> {
+  +Guid Id
+  +string Reference
+  +Guid ListingId
+  +Guid BuyerId
+  +Guid SellerId
+  +Guid PaymentId
+  +decimal Total
+  +OrderStatus Status <<concurrency token>>
+  +DateTime PaidAt
+  +DateTime ShipBy
+  +DateTime? ShippedAt
+  +DateTime? DeliveredAt
+  +DateTime? EndedAt
+  +Carrier? Carrier
+  +string? TrackingNumber
+  +ShippingAddress ShippingAddress
+  +IReadOnlyList<OrderStatusChange> StatusChanges
+  +{static} CreatePaid(number, checkout, sellerId, payment, now): Order
+  +MarkShipped(carrier, number, now): void
+  +MarkDelivered(actor, now): void
+  +Cancel(actor, now): void
+  +TransitionTo(to, actor, now): void
+}
+class OrderStatusChange {
+  +Guid Id
+  +Guid OrderId
+  +OrderStatus? From
+  +OrderStatus To
+  +DateTime OccurredAt
+  +OrderActor Actor
+}
+class OrderStateMachine <<static>> {
+  +{static} IsAllowed(from, to, actor): bool
+  +{static} IsTerminal(status): bool
+  +{static} EnsureAllowed(from, to, actor): void
+}
+class InvalidOrderTransitionException {
+  +OrderStatus From
+  +OrderStatus To
+}
+class BusinessDays <<static>> {
+  +{static} Add(start, days): DateTime
+}
+class TrackingNumbers <<static>> {
+  +{static} Parse(name): Carrier?
+  +{static} Normalise(carrier, entered): string?
+  +{static} Url(carrier, number): string
+  +{static} InvalidMessage(carrier): string
+}
+class Refund {
+  +{static} ForMissedShipDeadline(payment, now): Refund
+}
+class AddTrackingCommandHandler {
+  +Handle(AddTrackingCommand): Task<Result<SaleDto>>
+}
+class GetSaleQueryHandler
+class CarrierWebhookHandler {
+  +Handle(HandleCarrierWebhookCommand): Task<Result<CarrierWebhookOutcome>>
+}
+class CancelUnshippedOrdersHandler {
+  +Handle(CancelUnshippedOrdersCommand): Task<int>
+}
+interface ICarrierTracking {
+  +ReadWebhook(body, signature): CarrierEvent?
+}
+interface IPaymentProvider {
+  +RefundAsync(providerPaymentId, amount, key): Task<string>
+}
+class ShipDeadlineJob <<hosted service>>
+
+Order "1" *-- "1..*" OrderStatusChange : history
+Order --> OrderStatus
+Order ..> OrderStateMachine : validates with
+Order ..> BusinessDays : ShipBy
+OrderStateMachine ..> InvalidOrderTransitionException : throws
+OrderStatusChange --> OrderActor
+Order --> Carrier
+AddTrackingCommandHandler ..> TrackingNumbers : checks format
+AddTrackingCommandHandler --> Order : MarkShipped
+GetSaleQueryHandler --> Order : reads
+CarrierWebhookHandler ..> ICarrierTracking : reads event
+CarrierWebhookHandler --> Order : MarkDelivered(Carrier)
+CancelUnshippedOrdersHandler --> Order : Cancel(System)
+CancelUnshippedOrdersHandler ..> Refund : creates
+CancelUnshippedOrdersHandler ..> IPaymentProvider : refunds
+ShipDeadlineJob ..> CancelUnshippedOrdersHandler : sends command
+@enduml

@@ -1,0 +1,23 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Meet performance and scale targets
+
+Container_Boundary(api, "TuTuMuch API") {
+  Component(kind, "EndpointKindAttribute", "Endpoint metadata", "Read, Write, PaymentBound")
+  Component(dp, "Data Protection", "ASP.NET Core", "Key ring persisted to Redis")
+  Component(rlstore, "RedisFixedWindowRateLimitStore", "IRateLimitStore", "From harden-http-and-api")
+  Component(tokens, "Refresh-token store", "Accounts adapter", "Token families in Redis")
+  Component(factory, "RedisConnectionFactory", "Singleton", "IConnectionMultiplexer, prefix tutumuch:")
+  Component(queries, "Read query handlers", "MediatR handlers", "AsNoTracking projections, pages of 24")
+}
+ContainerDb(cache, "Distributed cache", "Redis", "Shared state")
+ContainerDb(db, "TuTuMuch database", "SQL Server", "Business data")
+
+Rel(dp, factory, "Uses")
+Rel(rlstore, factory, "Uses")
+Rel(tokens, factory, "Uses")
+Rel(factory, cache, "Connects", "RESP/TLS")
+Rel(queries, db, "Projects rows", "EF Core")
+Rel(kind, queries, "Tags endpoints of")
+@enduml

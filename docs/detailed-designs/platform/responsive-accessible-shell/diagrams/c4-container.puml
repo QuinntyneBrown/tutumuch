@@ -1,0 +1,19 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Responsive, accessible application shell
+
+Person(visitor, "Visitor or member", "Browser")
+System_Boundary(tutumuch, "TuTuMuch") {
+  Container(web, "TuTuMuch Web", "Angular", "Application shell, sheets, dialogs, live regions, toasts")
+  Container(api, "TuTuMuch API", "ASP.NET Core", "Feature data; no shell endpoints")
+}
+System_Boundary(ci, "GitHub Actions CI") {
+  Container(pw, "Playwright suite", "TypeScript", "a11y, reflow, touch targets, keyboard journey, visual snapshots")
+  ContainerDb(snaps, "Approved snapshots", "e2e/__screenshots__", "Per page and breakpoint")
+}
+Rel(visitor, web, "Uses", "HTTPS")
+Rel(web, api, "Calls", "JSON/HTTPS")
+Rel(pw, web, "Drives production build with fixture API")
+Rel(pw, snaps, "Compares against")
+@enduml

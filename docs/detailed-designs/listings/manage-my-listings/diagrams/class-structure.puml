@@ -1,0 +1,93 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Manage my listings
+
+package "TuTuMuch.Application" {
+  class GetMyListingsQuery {
+    +Guid SellerId
+    +string? Status
+  }
+  class GetMyListingsQueryHandler {
+    +Handle(query): Task<Result<MyListingsDto>>
+  }
+  class MyListingsDto {
+    +IReadOnlyList<MyListingRowDto> Items
+    +MyListingCountsDto Counts
+  }
+  class MyListingRowDto {
+    +string Reference
+    +string Status
+    +string? Title
+    +string Category
+    +decimal? Price
+    +CardPhotoDto? Photo
+    +DateTime CreatedAt
+    +Guid? SaleOrderId
+  }
+  class MyListingCountsDto {
+    +int All
+    +int Draft
+    +int Active
+    +int Reserved
+    +int Sold
+    +int Removed
+  }
+  class "DraftExpiryReminderEmail (deferred)" as DraftExpiryReminderEmail {
+    +Guid MemberId
+    +string Reference
+    +string? Title
+    +DateOnly DeleteOn
+  }
+}
+
+package "TuTuMuch.Domain" {
+  class Listing {
+    +Guid Id
+    +string Reference
+    +Guid SellerId
+    +ListingStatus Status
+    +DateTime CreatedAt
+    +DateTime UpdatedAt
+    +DateTime? DraftReminderSentAt
+    +MarkDraftReminderSent(clock): void
+  }
+}
+
+package "TuTuMuch.Worker" {
+  class "DraftCleanupJob (deferred)" as DraftCleanupJob {
+    +ExecuteAsync(ct): Task
+  }
+  class DraftCleanupOptions {
+    +int RetentionDays = 90
+    +int ReminderDaysBefore = 7
+    +string Schedule
+    +int BatchSize
+  }
+}
+
+package "TuTuMuch.Api" {
+  class ListingsController {
+    +Mine(status): Task<IActionResult>
+    +GetMine(reference): Task<IActionResult>
+  }
+}
+
+ListingsController ..> GetMyListingsQuery : sends
+GetMyListingsQueryHandler ..> GetMyListingsQuery : handles
+GetMyListingsQueryHandler ..> MyListingsDto : returns
+MyListingsDto "1" *-- "*" MyListingRowDto
+MyListingsDto *-- MyListingCountsDto
+GetMyListingsQueryHandler ..> Listing : projects
+DraftCleanupJob --> Listing : reminds / deletes
+DraftCleanupJob ..> DraftExpiryReminderEmail : writes to outbox
+DraftCleanupJob --> DraftCleanupOptions
+@enduml

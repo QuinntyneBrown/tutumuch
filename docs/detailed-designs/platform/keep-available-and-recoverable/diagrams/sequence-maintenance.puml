@@ -1,0 +1,53 @@
+@startuml
+title UML sequence behaviour — Announced maintenance
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Visitor" as actor
+actor "Operator" as op
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "SystemStatusService" as status
+  participant "SystemBannerService" as banner
+  participant "MaintenanceInterceptor" as mint
+  participant "MaintenancePageComponent" as mpage
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "SystemStatusController" as ctrl
+  participant "MaintenanceModeMiddleware" as mmw
+  participant "MaintenanceOptionsValidator" as val
+end box
+op -> val : Set Maintenance:Windows (Tue 27 Oct 06:00-07:00 UTC)
+alt Over 120 min, inside 06:00-23:00 ET, or month total over 120 min
+  val --> op : Reject; log maintenance_window_invalid (L2-066)
+else Valid
+  val --> ctrl : Options reloaded
+end
+status -> ctrl : GET /api/system/status
+ctrl --> status : { maintenance: { startsAt, endsAt } }
+status -> banner : Info "Planned maintenance Tue 27 Oct, 2:00–3:00 AM ET."
+banner --> actor : Banner above the top bar
+== Window starts ==
+op -> mmw : maintenance.yml action=on (Maintenance:Active=true)
+actor -> mint : Any API call
+mint -> mmw : Request
+mmw --> mint : 503 code maintenance, Retry-After
+mint -> mpage : Navigate
+mpage --> actor : "Back at 3:00 AM ET" / "TuTuMuch is down for planned maintenance. Orders and payments are safe."
+== Window ends ==
+op -> mmw : maintenance.yml action=off
+actor -> mpage : "Check status"
+mpage -> ctrl : GET /api/system/status
+ctrl --> mpage : { maintenance: null }
+mpage --> actor : Return to previous page
+@enduml

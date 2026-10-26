@@ -1,0 +1,26 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Sign up and sign in
+
+Container(web, "TuTuMuch Web", "Angular", "JoinPage, VerifyEmailPage, SignInPage, AuthState, sessionInterceptor")
+Container_Boundary(api, "TuTuMuch API") {
+  Component(ctrl, "AuthController", "ASP.NET Core controller", "/api/auth: register, verify-email, verification-email, sign-in, refresh, sign-out, me")
+  Component(cookies, "SessionCookies", "API service", "Issues the 15-minute JWT and writes tl_access and tl_refresh")
+  Component(jwt, "JWT bearer authentication", "ASP.NET Core", "Reads tl_access")
+  Component(policy, "VerifiedMember and CanSell policies", "ASP.NET Core authorization", "VerifiedEmailHandler; 401 and 403 problem details")
+  Component(handlers, "Account handlers", "MediatR handlers", "Register, verify, resend, sign in, refresh, sign out, current member")
+  Component(mails, "VerificationEmails", "Application service", "Revokes earlier links, issues a new one, sends it")
+  Component(ports, "IPasswordHasher, IBreachedPasswords, IEmailSender", "Application ports", "Identity PBKDF2, bundled list, logging sender")
+  ComponentDb(db, "TuTuMuchDbContext", "EF Core", "Members, EmailVerificationTokens, Sessions")
+}
+
+Rel(web, ctrl, "Calls", "JSON/HTTPS")
+Rel(ctrl, handlers, "Sends commands")
+Rel(ctrl, cookies, "Writes cookies after sign-in and refresh")
+Rel(jwt, cookies, "Validates tokens issued by")
+Rel(policy, db, "Reads EmailVerifiedAt")
+Rel(handlers, mails, "Uses on register and resend")
+Rel(handlers, ports, "Uses")
+Rel(handlers, db, "Reads and writes")
+@enduml

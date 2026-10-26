@@ -1,0 +1,10 @@
+#cloud-config
+# First boot of the TuTuMuch host: Docker, a swap file for the small VM, and the deploy directory.
+package_update: true
+packages: [ca-certificates, curl]
+runcmd:
+  - curl -fsSL https://get.docker.com | sh
+  - usermod -aG docker azureuser
+  - fallocate -l 2G /swapfile && chmod 600 /swapfile && mkswap /swapfile && swapon /swapfile
+  - echo '/swapfile none swap sw 0 0' >> /etc/fstab
+  - mkdir -p /opt/tutumuch && chown azureuser:azureuser /opt/tutumuch

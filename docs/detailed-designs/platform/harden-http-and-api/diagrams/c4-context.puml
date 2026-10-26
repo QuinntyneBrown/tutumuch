@@ -1,0 +1,14 @@
+@startuml
+!include <C4/C4_Context>
+LAYOUT_WITH_LEGEND()
+title System Context — Harden HTTP and the API
+
+Person(visitor, "Visitor or member", "Browses, buys and sells on a phone or desktop browser")
+Person_Ext(attacker, "Hostile website or script", "Attempts CSRF, injection, mass assignment or request floods")
+System(tutumuch, "TuTuMuch", "Marketplace for girls' clothing")
+System_Ext(payments, "Payment provider", "Hosted card fields, payments, signed webhooks")
+
+Rel(visitor, tutumuch, "Uses", "HTTPS, TLS 1.2+")
+Rel(attacker, tutumuch, "Sends forged or excessive requests to", "HTTP/HTTPS")
+Rel(payments, tutumuch, "Posts signed webhooks to", "HTTPS")
+@enduml

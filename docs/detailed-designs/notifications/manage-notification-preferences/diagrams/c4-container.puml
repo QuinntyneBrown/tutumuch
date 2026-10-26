@@ -1,0 +1,18 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Manage notification preferences
+
+Person(member, "Member or email recipient", "Changes settings or unsubscribes")
+System_Boundary(tutumuch, "TuTuMuch") {
+  Container(web, "TuTuMuch Web", "Angular", "NotificationSettingsPageComponent at /account/emails; UnsubscribePageComponent at /emails/unsubscribe")
+  Container(api, "TuTuMuch API", "ASP.NET Core", "Preference endpoints and anonymous unsubscribe endpoint")
+  Container(worker, "TuTuMuch Worker", ".NET worker service", "Checks preferences before each send")
+  ContainerDb(db, "TuTuMuch database", "SQL Server", "NotificationPreferences")
+}
+
+Rel(member, web, "Uses", "HTTPS")
+Rel(web, api, "GET/PUT /api/me/notification-preferences, POST /api/notifications/unsubscribe", "JSON/HTTPS")
+Rel(api, db, "Reads and writes preferences", "EF Core")
+Rel(worker, db, "Reads preferences at dispatch", "EF Core")
+@enduml

@@ -1,0 +1,34 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — View a listing's detail
+
+Person(viewer, "Visitor or member", "Views one listing")
+Container_Boundary(web, "TuTuMuch Web") {
+  Component(page, "ListingDetailPage", "@tutumuch/catalog route component", "items/:reference, view states, breadcrumb, info column")
+  Component(store, "ListingDetailStore", "Angular signal store", "listing, view, primaryAction, similar")
+  Component(gallery, "tl-gallery", "@tutumuch/components", "Thumbnails, swipe below 992 px")
+  Component(seller, "tl-seller-summary", "@tutumuch/components", "Rating or New seller, profile link")
+  Component(buybar, "tl-buy-bar", "@tutumuch/components", "Buy now, sign in to buy, Edit listing")
+  Component(client, "CatalogApi", "@tutumuch/api", "listing(reference), listings(page, category)")
+}
+Container_Boundary(api, "TuTuMuch API") {
+  Component(ctrl, "CatalogController", "ASP.NET Core controller", "GET /api/catalog/listings/{reference}")
+  Component(handler, "GetListingDetailQueryHandler", "MediatR handler", "Visibility, viewer relation, total")
+  Component(vis, "ListingDetailVisibility", "Domain rule", "Draft and Removed only for the seller")
+  Component(dbctx, "ITuTuMuchDbContext", "Application port, EF Core", "Listings, ListingPhotos, Members")
+}
+ContainerDb(db, "TuTuMuch database", "SQL Server", "Listings, ListingPhotos, Members")
+
+Rel(viewer, page, "Opens /items/{reference}")
+Rel(page, store, "load(reference)")
+Rel(page, gallery, "Renders")
+Rel(page, seller, "Renders")
+Rel(page, buybar, "Renders for primaryAction")
+Rel(store, client, "Requests listing")
+Rel(client, ctrl, "GET with credentials", "JSON/HTTPS")
+Rel(ctrl, handler, "GetListingDetailQuery")
+Rel(handler, vis, "CanView")
+Rel(handler, dbctx, "Reads, AsNoTracking")
+Rel(dbctx, db, "Reads", "EF Core")
+@enduml

@@ -1,0 +1,1102 @@
+{
+  "project": "TuTuMuch",
+  "required_states": {
+    "page": [
+      "default",
+      "loading",
+      "empty",
+      "error"
+    ],
+    "dialog": [
+      "default",
+      "busy",
+      "invalid"
+    ],
+    "notification": [
+      "info",
+      "success",
+      "warning",
+      "danger"
+    ]
+  },
+  "screens": [
+    {
+      "id": "account",
+      "kind": "page",
+      "title": "Account",
+      "route": "/account",
+      "requirements": [
+        "L2-003",
+        "L2-002"
+      ],
+      "states": [
+        "default",
+        "loading",
+        "empty",
+        "error",
+        "unverified"
+      ]
+    },
+    {
+      "id": "edit-profile",
+      "kind": "page",
+      "title": "Edit profile",
+      "route": "/account/profile",
+      "requirements": [
+        "L2-004",
+        "L2-017"
+      ],
+      "states": [
+        "default",
+        "invalid",
+        "submitting",
+        "success",
+        "loading",
+        "error"
+      ],
+      "not_applicable": {
+        "empty": "A profile always has a display name."
+      }
+    },
+    {
+      "id": "forgot-password",
+      "kind": "page",
+      "title": "Forgot password",
+      "route": "/forgot-password",
+      "requirements": [
+        "L2-009"
+      ],
+      "states": [
+        "default",
+        "invalid",
+        "submitting",
+        "success",
+        "error"
+      ],
+      "not_applicable": {
+        "loading": "The form renders without fetching data.",
+        "empty": "A form, not a collection."
+      }
+    },
+    {
+      "id": "notification-settings",
+      "kind": "page",
+      "title": "Email settings",
+      "route": "/account/emails",
+      "requirements": [
+        "L2-042",
+        "L2-043"
+      ],
+      "states": [
+        "default",
+        "submitting",
+        "success",
+        "loading",
+        "error"
+      ],
+      "not_applicable": {
+        "empty": "The list of email types is fixed."
+      }
+    },
+    {
+      "id": "profile",
+      "kind": "page",
+      "title": "Member profile",
+      "route": "/members/{displayName}",
+      "requirements": [
+        "L2-041",
+        "L2-040",
+        "L2-054"
+      ],
+      "states": [
+        "default",
+        "own",
+        "empty",
+        "loading",
+        "error",
+        "unavailable",
+        "long"
+      ]
+    },
+    {
+      "id": "register",
+      "kind": "page",
+      "title": "Join",
+      "route": "/join",
+      "requirements": [
+        "L2-001",
+        "L2-002",
+        "L2-051",
+        "L2-065"
+      ],
+      "states": [
+        "default",
+        "invalid",
+        "submitting",
+        "success",
+        "error"
+      ],
+      "not_applicable": {
+        "loading": "The form renders without fetching data.",
+        "empty": "A form, not a collection."
+      }
+    },
+    {
+      "id": "reset-password",
+      "kind": "page",
+      "title": "Reset password",
+      "route": "/reset-password",
+      "requirements": [
+        "L2-009",
+        "L2-001"
+      ],
+      "states": [
+        "default",
+        "invalid",
+        "submitting",
+        "success",
+        "expired",
+        "error"
+      ],
+      "not_applicable": {
+        "loading": "The token is checked when the form is submitted.",
+        "empty": "A form, not a collection."
+      }
+    },
+    {
+      "id": "session-expired",
+      "kind": "page",
+      "title": "Session expired",
+      "route": "/sign-in?expired=1",
+      "requirements": [
+        "L2-008"
+      ],
+      "states": [
+        "default"
+      ],
+      "not_applicable": {
+        "loading": "Static message; no data is fetched.",
+        "empty": "Not a collection.",
+        "error": "This page is itself the recovery path for an ended session."
+      }
+    },
+    {
+      "id": "settings",
+      "kind": "page",
+      "title": "Settings",
+      "route": "/account/settings",
+      "requirements": [
+        "L2-005",
+        "L2-008",
+        "L2-009",
+        "L2-056"
+      ],
+      "states": [
+        "default",
+        "loading",
+        "error"
+      ],
+      "not_applicable": {
+        "empty": "Every member has an email, password and session."
+      }
+    },
+    {
+      "id": "sign-in",
+      "kind": "page",
+      "title": "Sign in",
+      "route": "/sign-in",
+      "requirements": [
+        "L2-006",
+        "L2-007",
+        "L2-026",
+        "L2-065"
+      ],
+      "states": [
+        "default",
+        "return",
+        "invalid",
+        "submitting",
+        "locked",
+        "error"
+      ],
+      "not_applicable": {
+        "loading": "The form renders without fetching data.",
+        "empty": "A form, not a collection."
+      }
+    },
+    {
+      "id": "verify-email",
+      "kind": "page",
+      "title": "Verify email",
+      "route": "/verify",
+      "requirements": [
+        "L2-002"
+      ],
+      "states": [
+        "default",
+        "loading",
+        "expired",
+        "used",
+        "error"
+      ],
+      "not_applicable": {
+        "empty": "A single confirmation, not a collection."
+      }
+    },
+    {
+      "id": "catalog",
+      "kind": "page",
+      "title": "Catalog",
+      "route": "/",
+      "requirements": [
+        "L2-022",
+        "L2-023",
+        "L2-024",
+        "L2-059",
+        "L2-061",
+        "L2-062"
+      ],
+      "states": [
+        "default",
+        "guest",
+        "category",
+        "search",
+        "filtered",
+        "loading",
+        "empty",
+        "no-results",
+        "error",
+        "offline"
+      ]
+    },
+    {
+      "id": "listing-detail",
+      "kind": "page",
+      "title": "Listing detail",
+      "route": "/items/{id}",
+      "requirements": [
+        "L2-025",
+        "L2-026",
+        "L2-028",
+        "L2-016",
+        "L2-063",
+        "L2-065"
+      ],
+      "states": [
+        "default",
+        "guest",
+        "new-seller",
+        "reserved",
+        "sold",
+        "own",
+        "loading",
+        "error",
+        "unavailable"
+      ],
+      "not_applicable": {
+        "empty": "A listing always has its required fields; a missing listing is the 'unavailable' state."
+      }
+    },
+    {
+      "id": "welcome",
+      "kind": "page",
+      "title": "Marketing page",
+      "route": "/welcome",
+      "requirements": [
+        "L2-078",
+        "L2-079",
+        "L2-080",
+        "L2-081",
+        "L2-082",
+        "L2-083"
+      ],
+      "states": [
+        "default",
+        "signed-in"
+      ],
+      "not_applicable": {
+        "loading": "Static content ships with the app; the page calls no TuTuMuch API endpoint.",
+        "empty": "The page always has content.",
+        "error": "Static content cannot fail to load once the app is served; the video has its own error state."
+      }
+    },
+    {
+      "id": "checkout",
+      "kind": "page",
+      "title": "Checkout",
+      "route": "/checkout/{id}",
+      "requirements": [
+        "L2-027",
+        "L2-028",
+        "L2-029",
+        "L2-030",
+        "L2-063",
+        "L2-065"
+      ],
+      "states": [
+        "default",
+        "new-address",
+        "invalid",
+        "non-us",
+        "submitting",
+        "declined",
+        "expired",
+        "conflict",
+        "loading",
+        "error"
+      ],
+      "not_applicable": {
+        "empty": "Checkout always holds exactly one reserved item."
+      }
+    },
+    {
+      "id": "order-confirmation",
+      "kind": "page",
+      "title": "Order confirmed",
+      "route": "/orders/{id}/confirmed",
+      "requirements": [
+        "L2-030",
+        "L2-033"
+      ],
+      "states": [
+        "default",
+        "loading",
+        "error"
+      ],
+      "not_applicable": {
+        "empty": "Only reached after a confirmed payment, which always has an order."
+      }
+    },
+    {
+      "id": "order-detail",
+      "kind": "page",
+      "title": "Order (buyer)",
+      "route": "/orders/{id}",
+      "requirements": [
+        "L2-032",
+        "L2-033",
+        "L2-034",
+        "L2-035",
+        "L2-036"
+      ],
+      "states": [
+        "default",
+        "paid",
+        "cancel-requested",
+        "cancel-declined",
+        "delivered",
+        "completed",
+        "cancelled",
+        "refunded",
+        "problem",
+        "loading",
+        "error"
+      ],
+      "not_applicable": {
+        "empty": "An order always has an item, a status and a history."
+      }
+    },
+    {
+      "id": "purchases",
+      "kind": "page",
+      "title": "Purchases",
+      "route": "/account/purchases",
+      "requirements": [
+        "L2-037"
+      ],
+      "states": [
+        "default",
+        "loading",
+        "empty",
+        "error"
+      ]
+    },
+    {
+      "id": "sale-detail",
+      "kind": "page",
+      "title": "Sale (seller)",
+      "route": "/sales/{id}",
+      "requirements": [
+        "L2-031",
+        "L2-032",
+        "L2-033",
+        "L2-035",
+        "L2-036",
+        "L2-037"
+      ],
+      "states": [
+        "default",
+        "shipped",
+        "cancel-requested",
+        "problem",
+        "completed",
+        "address-hidden",
+        "cancelled",
+        "loading",
+        "error"
+      ],
+      "not_applicable": {
+        "empty": "A sale always has an item, a buyer and a status."
+      }
+    },
+    {
+      "id": "sales",
+      "kind": "page",
+      "title": "Sales",
+      "route": "/account/sales",
+      "requirements": [
+        "L2-037",
+        "L2-033"
+      ],
+      "states": [
+        "default",
+        "loading",
+        "empty",
+        "error"
+      ]
+    },
+    {
+      "id": "edit-listing",
+      "kind": "page",
+      "title": "Edit listing",
+      "route": "/items/{id}/edit",
+      "requirements": [
+        "L2-015",
+        "L2-016",
+        "L2-017",
+        "L2-018",
+        "L2-020",
+        "L2-013"
+      ],
+      "states": [
+        "default",
+        "loading",
+        "error",
+        "invalid",
+        "submitting",
+        "success",
+        "locked",
+        "changed",
+        "sold",
+        "withdrawn"
+      ],
+      "not_applicable": {
+        "empty": "Only existing listings can be edited; a missing one is the listing's 'unavailable' page."
+      }
+    },
+    {
+      "id": "my-listings",
+      "kind": "page",
+      "title": "Your listings",
+      "route": "/account/listings",
+      "requirements": [
+        "L2-019",
+        "L2-021"
+      ],
+      "states": [
+        "default",
+        "filtered",
+        "loading",
+        "empty",
+        "error"
+      ]
+    },
+    {
+      "id": "payouts",
+      "kind": "page",
+      "title": "Payouts",
+      "route": "/account/payouts",
+      "requirements": [
+        "L2-031"
+      ],
+      "states": [
+        "default",
+        "not-onboarded",
+        "loading",
+        "empty",
+        "error"
+      ]
+    },
+    {
+      "id": "sell",
+      "kind": "page",
+      "title": "Sell an item",
+      "route": "/sell",
+      "requirements": [
+        "L2-003",
+        "L2-011",
+        "L2-012",
+        "L2-014",
+        "L2-015",
+        "L2-016",
+        "L2-017",
+        "L2-018",
+        "L2-019",
+        "L2-031",
+        "L2-051",
+        "L2-063"
+      ],
+      "states": [
+        "default",
+        "filled",
+        "invalid",
+        "submitting",
+        "draft-saved",
+        "success",
+        "unverified",
+        "limited",
+        "error"
+      ],
+      "not_applicable": {
+        "loading": "A new listing form needs no data; categories ship with the app shell.",
+        "empty": "The form is the page; an empty form is the default state."
+      }
+    },
+    {
+      "id": "forbidden",
+      "kind": "page",
+      "title": "Forbidden",
+      "route": "/403",
+      "requirements": [
+        "L2-010",
+        "L2-068"
+      ],
+      "states": [
+        "default"
+      ],
+      "not_applicable": {
+        "loading": "Shown after the API refuses; nothing to load.",
+        "empty": "Not a collection.",
+        "error": "This page is itself the error."
+      }
+    },
+    {
+      "id": "maintenance",
+      "kind": "page",
+      "title": "Maintenance",
+      "route": "(any)",
+      "requirements": [
+        "L2-066"
+      ],
+      "states": [
+        "default"
+      ],
+      "not_applicable": {
+        "loading": "Served as a static page during maintenance.",
+        "empty": "Not a collection.",
+        "error": "This page is itself the outage notice."
+      }
+    },
+    {
+      "id": "not-found",
+      "kind": "page",
+      "title": "Not found",
+      "route": "/*",
+      "requirements": [
+        "L2-068"
+      ],
+      "states": [
+        "default"
+      ],
+      "not_applicable": {
+        "loading": "Shown after routing; nothing to load.",
+        "empty": "Not a collection.",
+        "error": "This page is itself the error."
+      }
+    },
+    {
+      "id": "offline",
+      "kind": "page",
+      "title": "Offline",
+      "route": "(any)",
+      "requirements": [
+        "L2-068"
+      ],
+      "states": [
+        "default"
+      ],
+      "not_applicable": {
+        "loading": "Shown from the cached shell without a request.",
+        "empty": "Not a collection.",
+        "error": "This page is itself the error state."
+      }
+    },
+    {
+      "id": "privacy",
+      "kind": "page",
+      "title": "Privacy",
+      "route": "/privacy",
+      "requirements": [
+        "L2-054",
+        "L2-056",
+        "L2-005"
+      ],
+      "states": [
+        "default"
+      ],
+      "not_applicable": {
+        "loading": "Static content ships with the app; nothing is fetched.",
+        "empty": "The page always has content.",
+        "error": "Static content cannot fail to load once the app is served."
+      }
+    },
+    {
+      "id": "problem-detail",
+      "kind": "page",
+      "title": "Problem detail",
+      "route": "/admin/problems/{id}",
+      "requirements": [
+        "L2-036",
+        "L2-010"
+      ],
+      "states": [
+        "default",
+        "resolved",
+        "loading",
+        "error"
+      ],
+      "not_applicable": {
+        "empty": "A problem always has a buyer claim and an order."
+      }
+    },
+    {
+      "id": "rules",
+      "kind": "page",
+      "title": "Marketplace rules",
+      "route": "/rules",
+      "requirements": [
+        "L2-011",
+        "L2-014",
+        "L2-016",
+        "L2-031",
+        "L2-033"
+      ],
+      "states": [
+        "default"
+      ],
+      "not_applicable": {
+        "loading": "Static content ships with the app; nothing is fetched.",
+        "empty": "The page always has content.",
+        "error": "Static content cannot fail to load once the app is served."
+      }
+    },
+    {
+      "id": "server-error",
+      "kind": "page",
+      "title": "Server error",
+      "route": "/error",
+      "requirements": [
+        "L2-068"
+      ],
+      "states": [
+        "default"
+      ],
+      "not_applicable": {
+        "loading": "Rendered from the error response; nothing to load.",
+        "empty": "Not a collection.",
+        "error": "This page is itself the error."
+      }
+    },
+    {
+      "id": "terms",
+      "kind": "page",
+      "title": "Terms",
+      "route": "/terms",
+      "requirements": [
+        "L2-001",
+        "L2-036",
+        "L2-031"
+      ],
+      "states": [
+        "default"
+      ],
+      "not_applicable": {
+        "loading": "Static content ships with the app; nothing is fetched.",
+        "empty": "The page always has content.",
+        "error": "Static content cannot fail to load once the app is served."
+      }
+    },
+    {
+      "id": "change-password",
+      "kind": "dialog",
+      "title": "Change password",
+      "opens_from": "settings",
+      "requirements": [
+        "L2-009",
+        "L2-001",
+        "L2-008"
+      ],
+      "states": [
+        "default",
+        "invalid",
+        "busy",
+        "failed"
+      ]
+    },
+    {
+      "id": "close-account",
+      "kind": "dialog",
+      "title": "Close account",
+      "opens_from": "settings",
+      "requirements": [
+        "L2-005"
+      ],
+      "states": [
+        "default",
+        "invalid",
+        "busy",
+        "blocked"
+      ]
+    },
+    {
+      "id": "sign-out-everywhere",
+      "kind": "dialog",
+      "title": "Sign out everywhere",
+      "opens_from": "settings",
+      "requirements": [
+        "L2-008"
+      ],
+      "states": [
+        "default",
+        "busy",
+        "failed"
+      ],
+      "not_applicable": {
+        "invalid": "Confirmation only; no inputs."
+      }
+    },
+    {
+      "id": "verify-email-prompt",
+      "kind": "dialog",
+      "title": "Verify email prompt",
+      "opens_from": "listing-detail",
+      "requirements": [
+        "L2-002",
+        "L2-003"
+      ],
+      "states": [
+        "default",
+        "busy",
+        "sent",
+        "limited"
+      ],
+      "not_applicable": {
+        "invalid": "No inputs; the email is the account’s."
+      }
+    },
+    {
+      "id": "filters",
+      "kind": "dialog",
+      "title": "Filters",
+      "opens_from": "catalog",
+      "requirements": [
+        "L2-024",
+        "L2-062"
+      ],
+      "states": [
+        "default",
+        "invalid",
+        "busy"
+      ]
+    },
+    {
+      "id": "nav-menu",
+      "kind": "dialog",
+      "title": "Menu",
+      "opens_from": "catalog",
+      "requirements": [
+        "L2-062",
+        "L2-065"
+      ],
+      "states": [
+        "default",
+        "guest"
+      ],
+      "not_applicable": {
+        "busy": "Opening the menu makes no request.",
+        "invalid": "The menu has no inputs."
+      }
+    },
+    {
+      "id": "pitch-video",
+      "kind": "dialog",
+      "title": "Pitch video",
+      "opens_from": "welcome",
+      "requirements": [
+        "L2-080",
+        "L2-081",
+        "L2-082"
+      ],
+      "states": [
+        "default",
+        "loading",
+        "error",
+        "captions"
+      ],
+      "not_applicable": {
+        "busy": "Playing a video sends nothing to the TuTuMuch API.",
+        "invalid": "Nothing to fill in."
+      }
+    },
+    {
+      "id": "add-tracking",
+      "kind": "dialog",
+      "title": "Add tracking",
+      "opens_from": "sale-detail",
+      "requirements": [
+        "L2-033"
+      ],
+      "states": [
+        "default",
+        "invalid",
+        "busy",
+        "failed"
+      ]
+    },
+    {
+      "id": "cancel-order",
+      "kind": "dialog",
+      "title": "Cancel order",
+      "opens_from": "sale-detail",
+      "requirements": [
+        "L2-035"
+      ],
+      "states": [
+        "default",
+        "invalid",
+        "busy",
+        "failed"
+      ]
+    },
+    {
+      "id": "confirm-receipt",
+      "kind": "dialog",
+      "title": "Confirm receipt",
+      "opens_from": "order-detail",
+      "requirements": [
+        "L2-034"
+      ],
+      "states": [
+        "default",
+        "busy",
+        "failed"
+      ],
+      "not_applicable": {
+        "invalid": "A single confirmation; no inputs."
+      }
+    },
+    {
+      "id": "relist",
+      "kind": "dialog",
+      "title": "Relist item",
+      "opens_from": "sale-detail",
+      "requirements": [
+        "L2-035"
+      ],
+      "states": [
+        "default",
+        "busy"
+      ],
+      "not_applicable": {
+        "invalid": "Relisting reuses the original details; nothing to fill in."
+      }
+    },
+    {
+      "id": "report-problem",
+      "kind": "dialog",
+      "title": "Report a problem",
+      "opens_from": "order-detail",
+      "requirements": [
+        "L2-036"
+      ],
+      "states": [
+        "default",
+        "invalid",
+        "busy",
+        "failed"
+      ]
+    },
+    {
+      "id": "request-cancellation",
+      "kind": "dialog",
+      "title": "Ask to cancel",
+      "opens_from": "order-detail",
+      "requirements": [
+        "L2-035"
+      ],
+      "states": [
+        "default",
+        "busy",
+        "failed"
+      ],
+      "not_applicable": {
+        "invalid": "The note is optional; nothing can be invalid."
+      }
+    },
+    {
+      "id": "respond-cancellation",
+      "kind": "dialog",
+      "title": "Respond to cancellation",
+      "opens_from": "sale-detail",
+      "requirements": [
+        "L2-035"
+      ],
+      "states": [
+        "default",
+        "busy",
+        "failed"
+      ],
+      "not_applicable": {
+        "invalid": "Two buttons, no inputs to validate."
+      }
+    },
+    {
+      "id": "withdraw-listing",
+      "kind": "dialog",
+      "title": "Withdraw listing",
+      "opens_from": "listing-detail",
+      "requirements": [
+        "L2-020"
+      ],
+      "states": [
+        "default",
+        "busy",
+        "failed"
+      ],
+      "not_applicable": {
+        "invalid": "Confirming has no inputs to validate."
+      }
+    },
+    {
+      "id": "cookie-settings",
+      "kind": "dialog",
+      "title": "Cookie settings",
+      "opens_from": "catalog",
+      "requirements": [
+        "L2-056"
+      ],
+      "states": [
+        "default",
+        "analytics-on"
+      ],
+      "not_applicable": {
+        "busy": "The choice is stored in the browser instantly; no request.",
+        "invalid": "Only switches; nothing can be invalid."
+      }
+    },
+    {
+      "id": "resolve-problem",
+      "kind": "dialog",
+      "title": "Resolve problem",
+      "opens_from": "problem-detail",
+      "requirements": [
+        "L2-036"
+      ],
+      "states": [
+        "default",
+        "invalid",
+        "busy"
+      ]
+    },
+    {
+      "id": "account-banner",
+      "kind": "notification",
+      "title": "Account banner",
+      "opens_from": "catalog",
+      "requirements": [
+        "L2-002"
+      ],
+      "states": [
+        "info",
+        "success",
+        "warning"
+      ],
+      "not_applicable": {
+        "danger": "Account suspension is deferred (see docs/adr/general/0001-defer-moderation-reviews-and-data-export.md); no danger banner exists."
+      }
+    },
+    {
+      "id": "reservation-timer",
+      "kind": "notification",
+      "title": "Reservation timer",
+      "opens_from": "checkout",
+      "requirements": [
+        "L2-028",
+        "L2-030"
+      ],
+      "states": [
+        "info",
+        "warning",
+        "danger",
+        "success"
+      ]
+    },
+    {
+      "id": "payout-banner",
+      "kind": "notification",
+      "title": "Payout banner",
+      "opens_from": "my-listings",
+      "requirements": [
+        "L2-031"
+      ],
+      "states": [
+        "info",
+        "success",
+        "warning",
+        "danger"
+      ]
+    },
+    {
+      "id": "toast",
+      "kind": "notification",
+      "title": "Toasts",
+      "opens_from": "my-listings",
+      "requirements": [
+        "L2-019",
+        "L2-020",
+        "L2-068"
+      ],
+      "states": [
+        "info",
+        "success",
+        "warning",
+        "danger",
+        "with-action",
+        "stacked"
+      ]
+    },
+    {
+      "id": "cookie-consent",
+      "kind": "notification",
+      "title": "Cookie consent",
+      "opens_from": "catalog",
+      "requirements": [
+        "L2-056"
+      ],
+      "states": [
+        "info",
+        "success"
+      ],
+      "not_applicable": {
+        "warning": "Consent has nothing to warn about.",
+        "danger": "Choices are stored locally and cannot fail."
+      }
+    },
+    {
+      "id": "system-banner",
+      "kind": "notification",
+      "title": "System notices",
+      "opens_from": "catalog",
+      "requirements": [
+        "L2-066",
+        "L2-068"
+      ],
+      "states": [
+        "info",
+        "success",
+        "warning",
+        "danger"
+      ]
+    }
+  ]
+}

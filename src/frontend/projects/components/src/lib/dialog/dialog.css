@@ -1,0 +1,21 @@
+:host {
+  display: contents;
+}
+.dialog__heading {
+  flex: 1;
+}
+.dialog__description {
+  margin-top: var(--space-2);
+}
+.dialog__description:empty {
+  display: none;
+}
+.dialog__top {
+  padding: var(--space-4) var(--space-6) 0;
+}
+.dialog__top:empty {
+  display: none;
+}
+.dialog__body:empty {
+  display: none;
+}

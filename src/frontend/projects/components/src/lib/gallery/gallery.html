@@ -1,0 +1,48 @@
+<section class="gallery" aria-label="Photos">
+  <div class="gallery__main">
+    <div class="gallery__track" #track (scroll)="onScroll()">
+      @for (photo of photos(); track $index; let i = $index) {
+        <div class="photo">
+          <picture>
+            <source type="image/webp" [attr.srcset]="photo.webp" [attr.sizes]="sizes" />
+            <img
+              [src]="photo.src"
+              [attr.srcset]="photo.jpeg"
+              [attr.sizes]="sizes"
+              [alt]="photo.alt"
+              [width]="photo.width"
+              [height]="photo.height"
+              [attr.loading]="i === 0 ? 'eager' : 'lazy'"
+              [attr.fetchpriority]="i === 0 ? 'high' : null"
+            />
+          </picture>
+        </div>
+      }
+    </div>
+  </div>
+  @if (photos().length > 1) {
+    <div class="gallery__dots" aria-hidden="true">
+      @for (photo of photos(); track $index; let i = $index) {
+        <span [attr.aria-current]="i === selected() ? 'true' : null"></span>
+      }
+    </div>
+    <ul class="gallery__thumbs" role="list">
+      @for (photo of photos(); track $index; let i = $index) {
+        <li>
+          <button
+            #thumb
+            type="button"
+            [attr.aria-label]="'Show photo ' + (i + 1) + ' of ' + photos().length"
+            [attr.aria-current]="i === selected() ? 'true' : null"
+            (click)="show(i)"
+            (keydown)="onKeydown($event, i)"
+          >
+            <div class="photo">
+              <img [src]="photo.src" alt="" [width]="photo.width" [height]="photo.height" loading="lazy" />
+            </div>
+          </button>
+        </li>
+      }
+    </ul>
+  }
+</section>

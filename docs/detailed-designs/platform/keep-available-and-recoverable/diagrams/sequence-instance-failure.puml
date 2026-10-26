@@ -1,0 +1,47 @@
+@startuml
+title UML sequence behaviour — An API instance fails
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Visitor" as actor
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "Catalog page" as page
+end box
+box "Backend — Load balancer" #FFF4E5
+  participant "Load balancer" as lb
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "API instance A (failing)" as a
+  participant "API instance B" as b
+end box
+loop Every 10 s
+  lb -> a : GET /health/ready (timeout 5 s)
+  lb -> b : GET /health/ready
+  b --> lb : 200
+end
+a --> lb : 503 or timeout (1st failure)
+a --> lb : 503 or timeout (2nd failure)
+lb -> lb : Mark A unhealthy within 25 s (L2-066)
+actor -> page : Browse
+page -> lb : GET /api/catalog
+lb -> b : Route to healthy instance only
+b --> lb : 200
+lb --> page : Listings
+page --> actor : No error shown
+opt Orchestrator liveness
+  lb -> a : (orchestrator) /health/live fails 3 times -> restart A
+end
+a --> lb : 2 consecutive readiness successes
+lb -> lb : Return A to rotation
+@enduml

@@ -1,0 +1,87 @@
+@startuml
+title UML sequence behaviour — Address, tax and payment with hosted fields
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+skinparam sequenceMessageAlign left
+skinparam maxMessageSize 260
+actor "Buyer" as actor
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "CheckoutPage" as page
+  participant "HostedCardFields" as hf
+  participant "CheckoutApi (@tutumuch/api)" as client
+end box
+participant "Payment provider" as pay
+box "Backend — TuTuMuch API application (TuTuMuch.Api)" #D1FADF
+  participant "CheckoutsController" as ctrl
+end box
+box "Backend — TuTuMuch.Application and TuTuMuch.Domain" #ECFDF3
+  participant "SetCheckoutAddressCommandHandler" as qh
+  participant "SubmitPaymentCommandHandler" as ph
+end box
+box "Backend — TuTuMuch.Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
+end box
+actor -> page : Pick saved address or enter a new one
+page -> client : setAddress(checkoutId, address)
+client -> ctrl : PUT /api/checkouts/{id}/address
+ctrl -> qh : Send SetCheckoutAddressCommand
+alt missing street, city, state or ZIP (L2-027)
+  qh --> ctrl : 400 field errors
+  ctrl --> page : Error summary and inline errors (invalid state)
+else country is not United States
+  qh --> ctrl : 422 "NON_US_ADDRESS"
+  ctrl --> page : "TuTuMuch ships within the United States only" (non-us state)
+else valid US address
+  qh -> pay : QuoteTaxAsync(address, item + shipping)
+  pay --> qh : Sales tax
+  qh -> db : Save address, tax and Total on Checkout
+  qh --> ctrl : CheckoutDto with Total
+  ctrl --> page : 200; Pay button reads "Pay $102.34"
+end
+actor -> hf : Enter card into provider iframe
+hf -> pay : Tokenize card (card data never reaches TuTuMuch, L2-030)
+pay --> hf : Payment method token
+actor -> page : Choose "Pay $102.34"
+page -> page : Disable Pay, reuse one Idempotency-Key per attempt (submitting state)
+page -> client : submitPayment(checkoutId, token, expectedTotal, key)
+client -> ctrl : POST /api/checkouts/{id}/payments, header Idempotency-Key
+ctrl -> ph : Send SubmitPaymentCommand
+alt reservation expired or released
+  ph --> ctrl : 409 "RESERVATION_EXPIRED"
+  ctrl --> page : Expired state "Your reservation ended"
+else expectedTotal differs from Checkout.Total (L2-027 criterion 5)
+  ph --> ctrl : 409 "TOTAL_CHANGED"
+else same key already used
+  ph -> db : Find Payment by IdempotencyKey
+  ph --> ctrl : 202 with the existing payment (charged once, L2-030)
+else new attempt
+  ph -> db : Insert Payment (Pending), Checkout Processing
+  ph -> pay : CreatePaymentAsync(Total, token, key)
+  pay --> ph : Provider payment id, status pending
+  ph --> ctrl : 202 Accepted
+end
+ctrl --> client : Response
+loop until Checkout status is Paid or Open with decline (poll GET /api/checkouts/{id})
+  client -> ctrl : GET /api/checkouts/{id}
+  ctrl --> client : Status
+end
+alt Paid
+  client --> page : orderId
+  page --> actor : Navigate to /orders/{orderId}/confirmed, toast "Payment confirmed"
+else declined (reported by webhook)
+  client --> page : Decline reason
+  page --> actor : "Your bank declined the card" with reason; timer keeps running
+end
+@enduml

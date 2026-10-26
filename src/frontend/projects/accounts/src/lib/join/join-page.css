@@ -1,0 +1,9 @@
+:host {
+  display: contents;
+}
+.join__lead {
+  margin-top: var(--space-2);
+}
+.join__icon {
+  margin: 0;
+}

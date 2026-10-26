@@ -1,0 +1,64 @@
+@startuml
+title UML sequence behaviour — Administrator resolves a problem
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+skinparam sequenceMessageAlign left
+skinparam maxMessageSize 260
+actor "Administrator" as actor
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "ProblemDetailPage" as page
+  participant "ResolveProblemDialog" as dlg
+  participant "AdminProblemsApi (@tutumuch/api)" as client
+end box
+box "Backend — TuTuMuch API application (TuTuMuch.Api)" #D1FADF
+  participant "AdminProblemsController" as ctrl
+end box
+box "Backend — TuTuMuch.Application and TuTuMuch.Domain" #ECFDF3
+  participant "ResolveProblemCommandHandler" as h
+  participant "OrderProblem" as prob
+  participant "Order" as order
+end box
+box "Backend — TuTuMuch.Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
+end box
+actor -> page : Open /admin/problems/P-0912 from the alert email
+page -> client : getProblem(reference)
+client -> ctrl : GET /api/admin/problems/{reference}
+ctrl --> page : 200 ProblemDetailDto (claim, photos, seller reply, order facts, Payout Held)
+actor -> dlg : "Resolve"; choose "Refund buyer in full" or "Release payout to seller", enter reason
+alt reason missing
+  dlg --> actor : "Add a reason. Both members see it." (invalid state)
+else
+  dlg -> client : resolve(reference, outcome, reason) (busy "Refunding")
+  client -> ctrl : POST /api/admin/problems/{reference}/resolution
+  ctrl -> ctrl : Administrator policy (403 otherwise, L2-010)
+  ctrl -> h : ResolveProblemCommand
+  h -> db : Load problem, order, payout
+  alt problem already resolved
+    h --> ctrl : 409 "PROBLEM_ALREADY_RESOLVED"
+  else FullRefund (L2-036 criterion 3)
+    h -> order : RefundForProblem(now) Shipped/Delivered to Refunded
+    h -> db : Refund for Total (ProblemResolved), Payout.Cancel(), save; then IPaymentProvider.RefundAsync keyed by refund ID
+  else ReleaseToSeller (L2-036 criterion 4)
+    h -> order : Complete(Administrator, now) Delivered to Completed
+    h -> db : Payout.MarkReleasable() via OrderCompleted
+  end
+  h -> prob : Resolve(outcome, amount, reason, adminId, now)
+  h -> h : Structured log: administrator, outcome, P-0912, correlation ID (L2-069)
+  h -> db : Enqueue ProblemResolved to buyer and seller; save all in one transaction
+  ctrl --> client : 200 ProblemDetailDto
+  page --> actor : Resolved state "Refunded in full" or payout released; problem leaves the queue
+end
+@enduml

@@ -1,0 +1,44 @@
+@startuml
+title UML sequence behaviour — Open the catalog
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+actor "Visitor or member" as actor
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "CatalogPage" as page
+  participant "CatalogStore" as store
+  participant "CatalogApi" as client
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "CatalogController" as controller
+end box
+box "Backend — TuTuMuch Application" #ECFDF3
+  participant "BrowseCatalogQueryHandler" as handler
+end box
+database "TuTuMuch database" as db
+actor -> page : Open / (or /tops)
+page -> store : load(category)
+store -> page : view = loading (8 skeleton cards)
+store -> client : listings(1, category)
+client -> controller : GET /api/catalog/listings[?category=Tops]
+controller -> handler : BrowseCatalogQuery(1, null, category)
+alt page or page size below 1, or unknown category
+  handler --> controller : 400 VALIDATION_FAILED
+else valid
+  handler -> db : COUNT and page of Active or Reserved, PublishedAt DESC, Id DESC
+  handler -> db : cover photos (Position 0) with versions
+  handler --> controller : CatalogPageDto (page size capped at 48)
+end
+controller --> client : 200 JSON, Cache-Control: no-store
+alt success
+  client --> store : ok
+  store -> store : save first page of / to localStorage
+  store --> page : view = loaded, or empty when totalCount is 0
+else status 0 and navigator.onLine is false, snapshot saved
+  store --> page : view = offline (banner, saved cards)
+else failure
+  store --> page : view = error (Ref from correlationId, Try again)
+end
+@enduml

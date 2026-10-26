@@ -1,0 +1,7 @@
+:host {
+  display: contents;
+}
+.remove .icon {
+  width: 0.875rem;
+  height: 0.875rem;
+}

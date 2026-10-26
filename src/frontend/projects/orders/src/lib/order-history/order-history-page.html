@@ -1,0 +1,81 @@
+<div class="page-header">
+  <div class="stack stack--sm">
+    <h1>{{ heading }}</h1>
+    @if (subtitle(); as subtitle) {
+      <p class="subtitle">{{ subtitle }}</p>
+    }
+  </div>
+</div>
+@switch (view()) {
+  @case ('loading') {
+    <ul class="order-list" role="list" aria-busy="true" aria-label="Loading orders">
+      @for (row of [1, 2, 3]; track row) {
+        <li>
+          <div class="item-row history__skeleton-row">
+            <span class="skeleton skeleton--rect thumb history__skeleton-thumb"></span>
+            <div class="item-row__body">
+              <span class="skeleton skeleton--text history__skeleton-title"></span>
+              <span class="skeleton skeleton--text history__skeleton-meta"></span>
+            </div>
+            <span class="skeleton skeleton--text history__skeleton-price"></span>
+          </div>
+        </li>
+      }
+    </ul>
+  }
+  @case ('error') {
+    <tl-empty-state icon="refresh" [heading]="'Couldn’t load ' + list" tone="error">
+      <span class="ref">{{ errorRef() }}</span>
+      <button actions tlButton="primary" type="button" (click)="retry()"><tl-icon name="refresh" />Try again</button>
+    </tl-empty-state>
+  }
+  @default {
+    @if (orders(); as orders) {
+      @if (orders.items.length === 0) {
+        @if (list === 'purchases') {
+          <tl-empty-state icon="bag" heading="Nothing bought yet">
+            Everything in the catalog already fits.
+            <a actions tlButton="primary" routerLink="/">Browse the catalog</a>
+          </tl-empty-state>
+        } @else {
+          <tl-empty-state icon="tag" heading="No sales yet">
+            Sold items show up here with what to do next.
+            <a actions tlButton="primary" routerLink="/sell">Sell an item</a>
+          </tl-empty-state>
+        }
+      } @else {
+        <ul class="order-list" role="list">
+          @for (row of orders.items; track row.id) {
+            <li>
+              <a [routerLink]="[detailPath, row.id]">
+                <tl-item-row [title]="row.item.title" [meta]="meta(row)">
+                  <div thumb class="thumb">
+                    <div class="photo photo--6">
+                      @if (row.item.photo; as photo) {
+                        <picture>
+                          <source type="image/webp" [attr.srcset]="photo.webp" sizes="64px" />
+                          <img
+                            [src]="photo.src"
+                            [attr.srcset]="photo.jpeg"
+                            sizes="64px"
+                            alt=""
+                            width="160"
+                            height="160"
+                          />
+                        </picture>
+                      }
+                    </div>
+                  </div>
+                </tl-item-row>
+                <span class="order-list__end">
+                  <span class="price">{{ money(row.total) }}</span>
+                  <tl-status [tone]="tone(row.status)">{{ row.status }}</tl-status>
+                </span>
+              </a>
+            </li>
+          }
+        </ul>
+      }
+    }
+  }
+}

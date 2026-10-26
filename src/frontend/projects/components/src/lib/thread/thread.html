@@ -1,0 +1,19 @@
+<div class="thread">
+  @for (entry of entries(); track $index) {
+    <div class="thread__item">
+      <span class="text-caption">{{ entry.caption }}</span>
+      <p>{{ entry.text }}</p>
+      @if (entry.photos?.length) {
+        <ul class="uploader" role="list">
+          @for (photo of entry.photos; track photo.src) {
+            <li>
+              <div class="photo photo--square">
+                <img [src]="photo.src" [alt]="photo.alt" width="160" height="160" loading="lazy" />
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+  }
+</div>

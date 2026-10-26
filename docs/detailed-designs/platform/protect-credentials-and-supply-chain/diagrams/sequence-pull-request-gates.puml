@@ -1,0 +1,51 @@
+@startuml
+title UML sequence behaviour — Pull request security gates
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Developer" as dev
+participant "GitHub pull request" as pr
+box "Build — GitHub Actions CI" #FFF4E5
+  participant "secret-scan (gitleaks)" as gl
+  participant "dependency-scan (Trivy)" as tv
+  participant "static-analysis (CodeQL, analyzers, ESLint)" as sa
+end box
+participant "Code scanning and artifacts" as cs
+dev -> pr : Push commits
+par Secret scan
+  pr -> gl : Run on pull request history
+  alt Secret found
+    gl --> pr : Fail with file and line (L2-052)
+  else None
+    gl --> pr : Pass
+  end
+else Dependency scan
+  pr -> tv : Scan packages.lock.json and package-lock.json
+  alt HIGH or CRITICAL with fix available
+    tv --> pr : Fail naming package, version, fixed version (L2-053)
+  else None, or no fix available
+    tv --> pr : Pass
+  end
+  tv -> cs : Upload SARIF + artifact
+else Static analysis
+  pr -> sa : Analyse C# and TypeScript
+  alt Security finding
+    sa --> pr : Fail with annotations (L2-053)
+  else None
+    sa --> pr : Pass
+  end
+  sa -> cs : Upload SARIF + artifact
+end
+pr --> dev : Merge allowed only when all required checks pass
+@enduml

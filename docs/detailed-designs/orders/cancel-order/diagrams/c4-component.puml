@@ -1,0 +1,38 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Cancel an order
+
+Container(web, "TuTuMuch Web", "Angular, @tutumuch/orders and @tutumuch/api", "CancelOrderDialog, RequestCancellationDialog, RespondCancellationDialog, RelistDialog; OrdersApi")
+Container_Boundary(api, "TuTuMuch API") {
+  Component(ctrl, "OrdersController, ListingsController", "ASP.NET Core controllers", "Cancellation, request, response and relist endpoints")
+  Component(cancel, "CancelOrderCommandHandler", "MediatR handler", "Seller cancels with a reason")
+  Component(req, "RequestCancellationCommandHandler", "MediatR handler", "Buyer asks once")
+  Component(resp, "RespondToCancellationCommandHandler", "MediatR handler", "Accept or decline")
+  Component(relist, "RelistListingCommandHandler", "MediatR handler", "Removed to Active")
+  Component(path, "OrderCancellation", "Application service", "Cancel, remove listing, refund row and emails in one save; then issue the refund")
+  Component(order, "Order", "Domain", "State machine from ship-order; cancellation and request fields")
+  Component(listing, "Listing", "Domain (listings subsystem)", "RemoveAfterCancellation, Relist")
+  Component(notify, "IEmailOutbox", "Application port (notifications)", "Enqueues email in the same save")
+  Component(pay, "IPaymentProvider", "Application port", "RefundAsync with the refund ID as key")
+}
+Container_Boundary(worker, "TuTuMuch Worker") {
+  Component(dl, "ShipDeadlineJob", "Hosted service", "CancelUnshippedOrdersCommand, see ship-order")
+}
+ContainerDb(db, "TuTuMuch database", "SQL Server", "Orders, refunds, listings, outbox")
+Rel(web, ctrl, "Calls", "JSON/HTTPS")
+Rel(ctrl, cancel, "CancelOrderCommand")
+Rel(ctrl, req, "RequestCancellationCommand")
+Rel(ctrl, resp, "RespondToCancellationCommand")
+Rel(ctrl, relist, "RelistListingCommand")
+Rel(cancel, path, "CancelAsync(reason, note, Seller)")
+Rel(resp, path, "On accept: CancelAsync(BuyerAskedToCancel, Seller)")
+Rel(dl, path, "CancelAsync(ShipDeadlinePassed, System)")
+Rel(path, order, "Cancel")
+Rel(path, listing, "RemoveAfterCancellation")
+Rel(path, notify, "OrderCancelled, OrderRefunded")
+Rel(path, pay, "RefundAsync")
+Rel(req, notify, "CancellationRequested")
+Rel(relist, listing, "Relist")
+Rel(path, db, "Saves in one transaction", "EF Core")
+@enduml

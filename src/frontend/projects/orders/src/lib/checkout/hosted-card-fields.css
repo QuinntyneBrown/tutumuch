@@ -1,0 +1,9 @@
+:host {
+  display: block;
+}
+/* The provider's frame draws its own border; the test-mode fields are a .select. */
+.hosted-field {
+  display: block;
+  padding: 0;
+  border: 0;
+}

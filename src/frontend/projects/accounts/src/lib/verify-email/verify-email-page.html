@@ -1,0 +1,62 @@
+@switch (state()) {
+  @case ('loading') {
+    <div><h1>Verifying</h1></div>
+    <tl-spinner label="Checking your link…" />
+  }
+  @case ('verified') {
+    <div>
+      <h1>You’re verified</h1>
+      <p class="text-muted verify__lead">Buying and selling are open.</p>
+    </div>
+    <div class="stack">
+      <a tlButton="primary" size="lg" [block]="true" routerLink="/">Start shopping</a>
+      <a tlButton size="lg" [block]="true" routerLink="/sell">Sell an item</a>
+    </div>
+  }
+  @case ('expired') {
+    <div>
+      <h1>This link has expired</h1>
+      <p class="text-muted verify__lead">Links work for 24 hours. A new one replaces it.</p>
+    </div>
+    @if (resend() === 'sent') {
+      <tl-alert tone="success" heading="Link sent" live="polite">Earlier links no longer work.</tl-alert>
+    } @else if (resend() === 'limited') {
+      <tl-alert tone="warning" heading="Too many requests" icon="clock"
+        >You can request 3 links an hour. Try again later.</tl-alert
+      >
+    }
+    <div class="stack">
+      <button
+        tlButton="primary"
+        size="lg"
+        [block]="true"
+        type="button"
+        [busy]="resend() === 'busy'"
+        (click)="sendNewLink()"
+      >
+        Send a new link
+      </button>
+    </div>
+  }
+  @case ('used') {
+    <div>
+      <h1>Link already used</h1>
+      <p class="text-muted verify__lead">This email is already verified.</p>
+    </div>
+    <div class="stack">
+      <a tlButton="primary" size="lg" [block]="true" routerLink="/sign-in">Sign in</a>
+    </div>
+  }
+  @case ('error') {
+    <div>
+      <h1>Something went wrong</h1>
+      <p class="text-muted verify__lead">We couldn’t check your link.</p>
+    </div>
+    <span class="ref">{{ ref() }}</span>
+    <div class="stack">
+      <button tlButton="primary" size="lg" [block]="true" type="button" (click)="verify()">
+        <tl-icon name="refresh" />Try again
+      </button>
+    </div>
+  }
+}

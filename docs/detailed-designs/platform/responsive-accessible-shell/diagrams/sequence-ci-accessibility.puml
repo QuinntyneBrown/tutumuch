@@ -1,0 +1,43 @@
+@startuml
+title UML sequence behaviour — Accessibility and visual checks in CI
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Developer" as dev
+participant "GitHub pull request" as pr
+box "Build — GitHub Actions CI" #FFF4E5
+  participant "Playwright runner (pinned image)" as pw
+  participant "axe-core" as axe
+end box
+box "Frontend — TuTuMuch Web application (production build)" #E0F2FE
+  participant "Page or dialog under test" as page
+end box
+dev -> pr : Push change
+pr -> pw : Run e2e suite over e2e/routes.ts
+loop Each page and dialog state, light and dark theme
+  pw -> page : Load with fixture API responses
+  pw -> axe : Analyse wcag2a, wcag2aa, wcag21aa, wcag22aa
+  axe --> pw : Violations
+  pw -> page : Reflow at 320 px and 640 px; touch targets below 992 px
+  loop 375, 576, 768, 992, 1280 px
+    pw -> page : toHaveScreenshot
+  end
+end
+pw -> page : Keyboard journey: browse, filter, listing, checkout, review
+alt Any violation, overflow, small target, focus failure or snapshot diff
+  pw --> pr : Fail build with report and diff images (L2-061, L2-064, L2-065)
+else All pass
+  pw --> pr : Pass
+end
+@enduml

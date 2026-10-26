@@ -1,0 +1,35 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Report errors and observe the system
+
+Container_Boundary(web, "TuTuMuch Web") {
+  Component(interceptor, "ApiErrorInterceptor", "HttpInterceptorFn", "Maps HttpErrorResponse to AppError")
+  Component(pages, "ServerError / NotFound / Forbidden / Offline pages", "Route components", "Full-page error states")
+  Component(loaderr, "LoadErrorComponent", "Component", "In-place 'Couldn’t load' state")
+  Component(conn, "ConnectivityService", "Service", "Online signal; offline banner, 'Back online' toast")
+  Component(toasts, "ToastService", "Shell service", "Danger toast with Try again and Ref")
+}
+Container_Boundary(api, "TuTuMuch API") {
+  Component(corr, "CorrelationIdMiddleware", "Middleware", "Assigns ID, header, log scope, Activity baggage")
+  Component(pd, "ProblemDetailsExceptionHandler", "IExceptionHandler", "RFC 9457 body with code and correlationId")
+  Component(log, "Serilog + SensitiveDataRedactionPolicy", "Logging", "JSON to stdout, redacted")
+  Component(meter, "TuTuMuch Meter + OpenTelemetry", "Metrics", "HTTP, checkout, webhook, job metrics on /metrics")
+  Component(health, "Health checks", "ASP.NET Core", "/health/live, /health/ready (database, photo storage)")
+  Component(handler, "CorrelationIdDelegatingHandler", "HttpClient handler", "Forwards X-Correlation-ID")
+}
+ContainerDb(db, "TuTuMuch database", "SQL Server", "")
+ContainerDb(photos, "Photo storage", "Object storage", "")
+
+Rel(interceptor, pages, "Routes to")
+Rel(interceptor, loaderr, "Feeds")
+Rel(interceptor, toasts, "Raises danger toast")
+Rel(interceptor, conn, "Checks online state")
+Rel(interceptor, corr, "Calls API", "HTTPS")
+Rel(corr, log, "Opens scope for")
+Rel(pd, log, "Logs 5xx with exception")
+Rel(pd, meter, "Status recorded by")
+Rel(handler, log, "Logs outbound calls")
+Rel(health, db, "CanConnectAsync")
+Rel(health, photos, "Metadata request")
+@enduml

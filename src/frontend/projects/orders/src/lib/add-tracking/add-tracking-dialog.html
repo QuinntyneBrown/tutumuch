@@ -1,0 +1,42 @@
+<tl-dialog heading="Add tracking">
+  <span description>We’ll email {{ data.buyerDisplayName }} the tracking link.</span>
+  @if (state() === 'failed') {
+    <tl-alert top tone="danger" heading="That didn’t go through"
+      >Nothing changed. Check your connection and try again.</tl-alert
+    >
+  }
+  <tl-form-field #cf fieldId="track-carrier" label="Carrier" [error]="errors().carrier">
+    <select
+      class="select"
+      id="track-carrier"
+      data-autofocus
+      [value]="carrier()"
+      [attr.aria-describedby]="cf.describedBy()"
+      [attr.aria-invalid]="cf.invalid()"
+      (change)="carrier.set($any($event.target).value)"
+    >
+      @for (option of carriers; track option) {
+        <option [value]="option" [selected]="option === carrier()">{{ option }}</option>
+      }
+    </select>
+  </tl-form-field>
+  <tl-form-field #tf fieldId="track-number" label="Tracking number" [error]="errors().trackingNumber">
+    <input
+      class="input"
+      id="track-number"
+      type="text"
+      autocomplete="off"
+      [value]="trackingNumber()"
+      [attr.aria-describedby]="tf.describedBy()"
+      [attr.aria-invalid]="tf.invalid()"
+      (input)="trackingNumber.set($any($event.target).value)"
+      (keydown.enter)="submit()"
+    />
+  </tl-form-field>
+  <ng-container ngProjectAs="[footer]">
+    <button tlButton type="button" [disabled]="state() === 'busy'" (click)="ref.close()">Cancel</button>
+    <button tlButton="primary" type="submit" [busy]="state() === 'busy'" (click)="submit()">
+      {{ state() === 'failed' ? 'Try again' : 'Mark as shipped' }}
+    </button>
+  </ng-container>
+</tl-dialog>

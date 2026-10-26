@@ -1,0 +1,37 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Seller payouts
+
+Container(web, "TuTuMuch Web", "Angular", "@tutumuch/orders PayoutsPage, PayoutBannerComponent; @tutumuch/api PayoutsApi")
+Container_Boundary(api, "TuTuMuch API") {
+  Component(ctrl, "PayoutsController", "ASP.NET Core controller", "GET /api/payouts, POST /api/payouts/onboarding-link")
+  Component(wh, "PayoutWebhookController", "ASP.NET Core controller", "POST /api/payouts/webhook: account.updated, payout.paid, payout.failed")
+  Component(q, "GetPayoutSummaryHandler", "MediatR handler", "Totals, onboarding, bank, banner, history")
+  Component(ol, "CreateOnboardingLinkHandler", "MediatR handler", "Connected account and hosted onboarding URL")
+  Component(whh, "PayoutWebhookHandler", "MediatR handler", "Onboarding state and payout settlement")
+  Component(evt, "OrderCompletedPayoutHandler", "MediatR notification handler", "Releasable, or held for onboarding")
+  Component(fee, "PayoutFees", "Domain", "Fee from Selling:PlatformFeePercent")
+  Component(ent, "Payout, SellerPayoutAccount", "Domain", "Payout lifecycle and onboarding")
+}
+Container_Boundary(worker, "TuTuMuch Worker") {
+  Component(job, "PayoutReleaseJob", "Hosted service", "Sends ReleasePayoutsCommand")
+  Component(rel, "ReleasePayoutsHandler", "MediatR handler", "Sends Releasable payouts of Completed orders")
+}
+ContainerDb(db, "TuTuMuch database", "SQL Server", "Payouts, SellerPayoutAccounts, Orders")
+System_Ext(pay, "Payment provider", "IPayoutProvider")
+Rel(web, ctrl, "Calls", "JSON/HTTPS")
+Rel(pay, wh, "Posts events", "Signed webhook")
+Rel(ctrl, q, "Sends GetPayoutSummaryQuery")
+Rel(ctrl, ol, "Sends CreateOnboardingLinkCommand")
+Rel(wh, whh, "Sends HandlePayoutWebhookCommand")
+Rel(ol, pay, "CreateConnectedAccountAsync, CreateOnboardingLinkAsync", "HTTPS")
+Rel(whh, ent, "Update, SellerOnboarded, MarkPaid, MarkFailed")
+Rel(evt, ent, "OrderCompleted(onboarded)")
+Rel(ent, fee, "Uses")
+Rel(job, rel, "Sends ReleasePayoutsCommand")
+Rel(rel, ent, "MarkSent")
+Rel(rel, pay, "CreatePayoutAsync(key = Payout.Id)", "HTTPS")
+Rel(q, db, "Reads", "SQL")
+Rel(rel, db, "Reads and writes", "SQL")
+@enduml

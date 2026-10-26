@@ -1,0 +1,57 @@
+@startuml
+title UML sequence behaviour — Input validation and mass assignment
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Member" as actor
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "Edit listing page" as page
+  participant "ListingsApiService" as client
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "Kestrel + JSON input" as kestrel
+  participant "ListingsController" as ctrl
+end box
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
+  participant "ValidationBehavior" as vb
+  participant "UpdateListingCommandHandler" as handler
+end box
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
+end box
+actor -> page : Save listing
+page -> client : PUT /api/listings/{id}
+client -> kestrel : Body (may include "sellerId" or "status")
+alt Body over 1 MB
+  kestrel --> client : 413 code request_too_large (L2-049)
+else Malformed JSON
+  kestrel --> client : 400 code malformed_json, no stack trace (L2-049)
+else Well-formed body
+  kestrel -> ctrl : Bind UpdateListingRequest; unknown fields skipped (L2-049)
+  ctrl -> vb : Send UpdateListingCommand
+  vb -> vb : Check type, length, range and format
+  alt Any rule fails
+    vb --> ctrl : RequestValidationException
+    ctrl --> client : 400 code validation_failed with errors per field
+  else All rules pass
+    vb -> handler : Handle
+    handler -> db : Parameterised UPDATE via EF Core
+    db --> handler : Saved
+    handler --> ctrl : Result
+    ctrl --> client : 200 listing
+  end
+end
+client --> page : Result or field errors
+page --> actor : Show outcome
+@enduml

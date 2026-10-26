@@ -1,0 +1,29 @@
+<section
+  class="feature-band"
+  [class.feature-band--surface]="tone() === 'surface'"
+  [class.feature-band--stacked]="stacked()"
+  [attr.aria-labelledby]="headingId()"
+>
+  <div class="feature-band__inner">
+    <div>
+      @if (eyebrow()) {
+        <p class="feature-band__eyebrow">{{ eyebrow() }}</p>
+      }
+      <h2 class="feature-band__title" [id]="headingId()">{{ heading() }}</h2>
+      <div class="feature-band__actions"><ng-content select="[actions]" /></div>
+    </div>
+    <div>
+      @if (points().length) {
+        <ul class="feature-band__points" role="list">
+          @for (point of points(); track point.title) {
+            <li class="feature-band__point">
+              <strong>{{ point.title }}</strong
+              ><span>{{ point.text }}</span>
+            </li>
+          }
+        </ul>
+      }
+      <ng-content />
+    </div>
+  </div>
+</section>

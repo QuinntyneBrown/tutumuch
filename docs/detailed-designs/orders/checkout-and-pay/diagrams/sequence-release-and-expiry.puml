@@ -1,0 +1,58 @@
+@startuml
+title UML sequence behaviour — Release on cancel and reservation expiry
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+skinparam sequenceMessageAlign left
+skinparam maxMessageSize 260
+actor "Buyer" as actor
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "CheckoutPage" as page
+  participant "ReservationTimer" as timer
+  participant "CheckoutApi (@tutumuch/api)" as client
+end box
+box "Backend — TuTuMuch API application (TuTuMuch.Api)" #D1FADF
+  participant "CheckoutsController" as ctrl
+end box
+box "Backend — TuTuMuch Worker application (TuTuMuch.Worker)" #D1FADF
+  participant "ReservationExpiryJob" as job
+end box
+box "Backend — TuTuMuch.Application and TuTuMuch.Domain" #ECFDF3
+  participant "Checkout handlers" as h
+  participant "Checkout" as co
+end box
+box "Backend — TuTuMuch.Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
+end box
+alt buyer chooses "Cancel and release item" (L2-028 criterion 4)
+  actor -> page : Cancel and release item
+  page -> client : releaseCheckout(id)
+  client -> ctrl : DELETE /api/checkouts/{id}
+  ctrl -> h : ReleaseCheckoutCommand
+  h -> co : Release(Released)
+  h -> db : Checkout Released; Listing Active where ReservedByCheckoutId = id
+  ctrl --> client : 204
+  page --> actor : Back to the listing
+else timer runs out
+  timer -> timer : At 60 s announce once, warning banner "Less than a minute left to pay."
+  timer --> actor : At 0:00 disable Pay, danger banner "Your reservation ended. You weren't charged."
+  job -> db : Every Checkout:ExpiryJobInterval select Open or Processing checkouts with ExpiresAt <= now
+  loop each expired checkout
+    job -> h : ExpireReservationsCommand
+    h -> co : Release(Expired)
+    h -> db : Checkout Expired; Listing Active (L2-028 criterion 3)
+  end
+  note over job : A payment that succeeds after expiry is handled by PaymentWebhookHandler: order if the listing is still Active, refund otherwise
+end
+@enduml

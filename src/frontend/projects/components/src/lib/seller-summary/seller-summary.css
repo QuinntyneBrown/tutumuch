@@ -1,0 +1,13 @@
+:host {
+  display: block;
+}
+.seller__body {
+  flex: 1;
+  gap: var(--space-1);
+}
+.badge {
+  align-self: flex-start;
+}
+.rating__off {
+  color: var(--color-border-strong);
+}

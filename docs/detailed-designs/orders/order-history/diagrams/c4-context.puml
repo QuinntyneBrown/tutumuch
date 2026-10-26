@@ -1,0 +1,9 @@
+@startuml
+!include <C4/C4_Context>
+LAYOUT_WITH_LEGEND()
+title System Context — Order history
+
+Person(member, "Member", "Buyer and seller with one account")
+System(tutumuch, "TuTuMuch", "Girls' clothing marketplace")
+Rel(member, tutumuch, "Lists purchases and sales and opens each order using")
+@enduml

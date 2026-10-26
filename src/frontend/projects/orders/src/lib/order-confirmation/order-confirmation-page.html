@@ -1,0 +1,51 @@
+@switch (view()) {
+  @case ('loading') {
+    <div class="center-state" aria-busy="true">
+      <span class="spinner spinner--lg" aria-hidden="true"></span>
+      <h1>Confirming your payment</h1>
+      <p class="text-muted" role="status">This usually takes a few seconds. Don’t close this page.</p>
+    </div>
+  }
+  @case ('error') {
+    <tl-center-state heading="We couldn’t show your order">
+      <p class="text-muted">If you were charged, the order is in Purchases.</p>
+      <span class="ref">{{ errorRef() }}</span>
+      <button actions tlButton="primary" type="button" (click)="retry()"><tl-icon name="refresh" />Try again</button>
+      <a actions tlButton routerLink="/account/purchases">Go to purchases</a>
+    </tl-center-state>
+  }
+  @default {
+    @if (order(); as order) {
+      <div class="confirm">
+        <div class="confirm__mark" aria-hidden="true"><tl-icon name="check" /></div>
+        <p class="eyebrow">Order {{ order.reference }}</p>
+        <h1>It’s yours.</h1>
+        <div class="confirm__item">
+          <tl-item-row [title]="order.item.title" [meta]="paid()">
+            <div thumb class="thumb">
+              <div class="photo photo--6">
+                @if (order.item.photo; as photo) {
+                  <picture>
+                    <source type="image/webp" [attr.srcset]="photo.webp" sizes="64px" />
+                    <img [src]="photo.src" [attr.srcset]="photo.jpeg" sizes="64px" alt="" width="160" height="160" />
+                  </picture>
+                }
+              </div>
+            </div>
+          </tl-item-row>
+        </div>
+        <ol class="next-steps">
+          <li>
+            <b>{{ order.sellerDisplayName }} ships it</b><span>Within 5 business days. We’ll email the tracking.</span>
+          </li>
+          <li><b>You get it</b><span>Confirm it arrived, or tell us within 3 days if something’s wrong.</span></li>
+          <li><b>Confirm it arrived</b><span>The order completes and the seller is paid.</span></li>
+        </ol>
+        <div class="cluster">
+          <a tlButton="primary" [routerLink]="['/orders', order.id]">View order</a>
+          <a tlButton routerLink="/">Keep shopping</a>
+        </div>
+      </div>
+    }
+  }
+}

@@ -1,0 +1,280 @@
+@switch (store.view()) {
+  @case ('loading') {
+    <h1 class="visually-hidden">Loading checkout</h1>
+    <div class="split checkout__skeleton" aria-busy="true" aria-label="Loading checkout">
+      <div class="stack stack--lg">
+        <span class="skeleton skeleton--title skeleton--w45"></span>
+        <span class="skeleton skeleton--rect checkout__block"></span>
+        <span class="skeleton skeleton--rect checkout__block"></span>
+        <span class="skeleton skeleton--rect checkout__button skeleton--w50"></span>
+      </div>
+      <div class="panel stack">
+        <div class="item-row">
+          <span class="skeleton skeleton--rect thumb checkout__thumb"></span>
+          <div class="item-row__body">
+            <span class="skeleton skeleton--text skeleton--w70"></span>
+            <span class="skeleton skeleton--text skeleton--w40"></span>
+          </div>
+        </div>
+        <span class="skeleton skeleton--text"></span>
+        <span class="skeleton skeleton--text"></span>
+        <span class="skeleton skeleton--text skeleton--w50"></span>
+      </div>
+    </div>
+  }
+  @case ('conflict') {
+    <tl-center-state icon="lock" heading="Someone else is checking out">
+      <p class="text-muted">If they don’t finish within 10 minutes, it’s back on sale.</p>
+      <a actions tlButton="primary" [routerLink]="['/items', reference()]">Back to the item</a>
+      <a actions tlButton routerLink="/">Keep shopping</a>
+    </tl-center-state>
+  }
+  @case ('expired') {
+    <tl-center-state icon="clock" heading="Your reservation ended">
+      <p class="text-muted">
+        You weren’t charged. The item is back on sale — if it’s still there, you can start again.
+      </p>
+      <a actions tlButton="primary" [routerLink]="['/items', reference()]">Back to the item</a>
+      <a actions tlButton routerLink="/">Keep shopping</a>
+    </tl-center-state>
+  }
+  @case ('error') {
+    <tl-center-state heading="Couldn’t start checkout">
+      <p class="text-muted">Something went wrong on our side. Try again in a moment.</p>
+      <span class="ref">{{ store.errorRef() }}</span>
+      <button actions tlButton="primary" type="button" (click)="store.retry()">
+        <tl-icon name="refresh" />Try again
+      </button>
+      <a actions tlButton [routerLink]="['/items', reference()]">Back to the item</a>
+    </tl-center-state>
+  }
+  @default {
+    @if (store.checkout(); as checkout) {
+      @if (phase() === 'warning') {
+        <div class="checkout__banner">
+          <tl-alert tone="warning" icon="clock" [banner]="true"
+            >Less than a minute left to pay. After that, the item goes back on sale.</tl-alert
+          >
+        </div>
+      } @else if (phase() === 'danger') {
+        <div class="checkout__banner">
+          <tl-alert tone="danger" icon="clock" [banner]="true" live="off"
+            >Your reservation ended. You weren’t charged.
+            <a [routerLink]="['/items', reference()]">Start again</a></tl-alert
+          >
+        </div>
+      }
+      <div class="page-header">
+        <div class="stack stack--sm">
+          <h1>Checkout</h1>
+          <tl-reservation-timer [expiresAt]="checkout.expiresAt" (phaseChange)="onPhase($event)" />
+        </div>
+      </div>
+      <div class="split">
+        <form class="stack stack--lg" novalidate [formGroup]="form" (ngSubmit)="submit()">
+          <tl-error-summary [errors]="summary()" />
+          @if (store.alert(); as alert) {
+            @switch (alert.kind) {
+              @case ('non-us') {
+                <tl-alert tone="danger" heading="TuTuMuch ships within the United States only"
+                  >Choose a US address to continue.</tl-alert
+                >
+              }
+              @case ('declined') {
+                @if (alert.kind === 'declined') {
+                  <tl-alert tone="danger" heading="Your bank declined the card"
+                    >{{ alert.reason }} Try another card — the item is still reserved for you.</tl-alert
+                  >
+                }
+              }
+              @case ('total-changed') {
+                <tl-alert tone="warning" heading="The total changed"
+                  >Tax for this address is {{ money(checkout.salesTax ?? '0') }}. Check the total and pay
+                  again.</tl-alert
+                >
+              }
+              @case ('card') {
+                @if (alert.kind === 'card') {
+                  <tl-alert tone="danger" heading="Check your card">{{ alert.message }}</tl-alert>
+                }
+              }
+              @default {
+                @if (alert.kind === 'error') {
+                  <tl-alert tone="danger" heading="We couldn’t take the payment"
+                    >You weren’t charged. Try again in a moment.
+                    @if (alert.ref) {
+                      <span class="ref">{{ alert.ref }}</span>
+                    }
+                  </tl-alert>
+                }
+              }
+            }
+          }
+
+          <section class="checkout-step" aria-labelledby="ship-h">
+            <h2 id="ship-h">Ship to</h2>
+            @if (store.savedAddress(); as saved) {
+              <fieldset class="stack">
+                <legend class="visually-hidden">Shipping address</legend>
+                <label class="option"
+                  ><input
+                    type="radio"
+                    name="addr"
+                    [checked]="store.addressChoice() === 'saved'"
+                    (change)="chooseAddress('saved')"
+                  /><span class="option__body"
+                    ><address class="address">
+                      {{ saved.fullName }}<br />{{ saved.line1 }}{{ saved.line2 ? ', ' + saved.line2 : '' }}<br />{{
+                        saved.city
+                      }}, {{ saved.state }} {{ saved.zip }}
+                    </address></span
+                  ></label
+                >
+                <label class="option"
+                  ><input
+                    type="radio"
+                    name="addr"
+                    [checked]="store.addressChoice() === 'new'"
+                    (change)="chooseAddress('new')"
+                  /><span class="option__body">New address</span></label
+                >
+              </fieldset>
+            }
+            @if (store.addressChoice() === 'new') {
+              <div class="stack">
+                <tl-form-field #fn fieldId="a-name" label="Full name" [error]="errors()['a-name']">
+                  <input
+                    class="input"
+                    id="a-name"
+                    type="text"
+                    autocomplete="name"
+                    formControlName="fullName"
+                    [attr.aria-describedby]="fn.describedBy()"
+                    [attr.aria-invalid]="fn.invalid()"
+                  />
+                </tl-form-field>
+                <tl-form-field #st fieldId="a-street" label="Street address" [error]="errors()['a-street']">
+                  <input
+                    class="input"
+                    id="a-street"
+                    type="text"
+                    autocomplete="address-line1"
+                    formControlName="line1"
+                    [attr.aria-describedby]="st.describedBy()"
+                    [attr.aria-invalid]="st.invalid()"
+                  />
+                </tl-form-field>
+                <tl-form-field
+                  #apt
+                  fieldId="a-apt"
+                  label="Apartment, suite"
+                  [optional]="true"
+                  [error]="errors()['a-apt']"
+                >
+                  <input
+                    class="input"
+                    id="a-apt"
+                    type="text"
+                    autocomplete="address-line2"
+                    formControlName="line2"
+                    [attr.aria-describedby]="apt.describedBy()"
+                    [attr.aria-invalid]="apt.invalid()"
+                  />
+                </tl-form-field>
+                <div class="form-row">
+                  <tl-form-field #ci fieldId="a-city" label="City" [error]="errors()['a-city']">
+                    <input
+                      class="input"
+                      id="a-city"
+                      type="text"
+                      autocomplete="address-level2"
+                      formControlName="city"
+                      [attr.aria-describedby]="ci.describedBy()"
+                      [attr.aria-invalid]="ci.invalid()"
+                    />
+                  </tl-form-field>
+                  <tl-form-field #sta fieldId="a-state" label="State" [error]="errors()['a-state']">
+                    <select
+                      class="select"
+                      id="a-state"
+                      autocomplete="address-level1"
+                      formControlName="state"
+                      [attr.aria-describedby]="sta.describedBy()"
+                      [attr.aria-invalid]="sta.invalid()"
+                    >
+                      <option value="">Select a state</option>
+                      @for (state of states; track state.code) {
+                        <option [value]="state.code">{{ state.name }}</option>
+                      }
+                    </select>
+                  </tl-form-field>
+                </div>
+                <div class="form-row">
+                  <tl-form-field #zp fieldId="a-zip" label="ZIP code" [error]="errors()['a-zip']">
+                    <input
+                      class="input"
+                      id="a-zip"
+                      type="text"
+                      inputmode="numeric"
+                      autocomplete="postal-code"
+                      formControlName="zip"
+                      [attr.aria-describedby]="zp.describedBy()"
+                      [attr.aria-invalid]="zp.invalid()"
+                    />
+                  </tl-form-field>
+                  <tl-form-field #co fieldId="a-country" label="Country" [error]="errors()['a-country']">
+                    <select
+                      class="select"
+                      id="a-country"
+                      autocomplete="country"
+                      formControlName="country"
+                      [attr.aria-describedby]="co.describedBy()"
+                      [attr.aria-invalid]="co.invalid()"
+                    >
+                      @for (country of countries; track country.code) {
+                        <option [value]="country.code">{{ country.name }}</option>
+                      }
+                    </select>
+                  </tl-form-field>
+                </div>
+              </div>
+            }
+          </section>
+
+          <section class="checkout-step" aria-labelledby="pay-h">
+            <h2 id="pay-h">Pay</h2>
+            <tl-hosted-card-fields />
+          </section>
+
+          <div class="stack stack--sm">
+            <button
+              tlButton="primary"
+              size="lg"
+              [block]="true"
+              type="submit"
+              [busy]="store.paying()"
+              [disabled]="store.timedOut()"
+            >
+              {{ store.payLabel() }}
+            </button>
+            @if (store.paying()) {
+              <p class="text-caption checkout__paying" role="status">Confirming with your bank…</p>
+            }
+            <button tlButton="ghost" [block]="true" type="button" (click)="store.cancel()">
+              Cancel and release item
+            </button>
+          </div>
+        </form>
+        @if (summaryItem(); as item) {
+          <tl-order-summary
+            [item]="item"
+            [itemPrice]="money(checkout.itemPrice)"
+            [shipping]="shipping()"
+            [salesTax]="checkout.salesTax === null ? null : money(checkout.salesTax)"
+            [total]="checkout.total === null ? null : money(checkout.total)"
+          />
+        }
+      </div>
+    }
+  }
+}

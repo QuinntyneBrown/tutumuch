@@ -1,0 +1,67 @@
+@startuml
+title UML sequence behaviour — Publish a listing
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Seller" as actor
+box "Frontend — @tutumuch/listings and @tutumuch/api" #E0F2FE
+  participant "SellPage" as page
+  participant "ListingsApi" as client
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "ListingsController" as controller
+end box
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
+  participant "ListingCommandHandlers" as handler
+  participant "Listing" as entity
+  participant "ISellerPayoutAccountReader" as payout
+end box
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
+end box
+actor -> page : Tick size confirmation, choose "Publish"
+page -> page : checkListing(publish); on failure show the error summary and focus it
+page -> client : Save the draft (POST or PUT), then publish(reference, sizeConfirmed)
+client -> controller : POST /api/listings/{reference}/publish
+controller -> handler : Send PublishListingCommand
+handler -> db : Load the caller's listing
+alt not found or not owned by caller
+  handler --> controller : LISTING_NOT_FOUND
+  controller --> client : 404 (L2-010)
+else not a draft
+  controller --> client : 409 LISTING_NOT_DRAFT
+else draft found
+  handler -> db : Count the seller's listings published since 00:00 UTC (L2-051)
+  alt 20 or more today
+    handler --> controller : RATE_LIMITED
+    controller --> client : 429 with Retry-After until 00:00 UTC
+    client --> page : Limited state "That's 20 listings today"
+  else within limit
+    handler -> entity : Publish(sizeConfirmed) applies L2-014 to L2-018
+    alt any publish rule fails
+      entity --> handler : Violations for every failing field
+      controller --> client : 422 with errors per field
+      client --> page : Invalid state: summary at top, each error inline
+    else all rules pass
+      entity --> handler : Status Active, SizeConfirmedAt and PublishedAt set
+      handler -> db : Save
+      handler -> payout : IsOnboardedAsync(sellerId) (L2-031)
+      payout --> handler : false
+      handler --> controller : PublishListingResult(PayoutOnboardingRequired = true)
+      controller --> client : 200
+      client --> page : Success state "It's live" with "Set up payouts"
+    end
+  end
+end
+@enduml

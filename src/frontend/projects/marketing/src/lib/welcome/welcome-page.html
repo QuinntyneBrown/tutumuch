@@ -1,0 +1,49 @@
+<tl-marketing-hero
+  headingId="welcome-title"
+  eyebrow="Clothes · Dance · Sports · Gear, all for girls"
+  lede="New and gently loved clothes and gear for girls. Shop her next favourite thing, or pass on what she has outgrown."
+>
+  <ng-container title>Twirl it <em>forward.</em></ng-container>
+  <ng-container actions>
+    <a tlButton="primary" size="lg" routerLink="/">Shop the catalog</a>
+    <a tlButton size="lg" [routerLink]="sellHref()">Start selling</a>
+  </ng-container>
+  <tl-video-poster
+    media
+    poster="/media/tutumuch-pitch-poster.png"
+    label="Watch the 30-second pitch"
+    duration="0:30"
+    (watch)="openVideo()"
+  />
+</tl-marketing-hero>
+
+<tl-feature-band
+  headingId="shoppers-title"
+  eyebrow="For shoppers"
+  heading="Everything here is for girls."
+  [points]="shopperPoints"
+>
+  <a tlButton="primary" routerLink="/" actions>Browse the catalog</a>
+</tl-feature-band>
+
+<tl-feature-band
+  headingId="sellers-title"
+  eyebrow="For sellers"
+  heading="Pass it on to the next girl."
+  tone="surface"
+  [points]="sellerPoints"
+>
+  <a tlButton="primary" [routerLink]="sellHref()" actions>Start selling</a>
+</tl-feature-band>
+
+<tl-feature-band headingId="how-title" eyebrow="How it works" heading="Three steps. That’s it." [stacked]="true">
+  <tl-steps [steps]="steps" />
+</tl-feature-band>
+
+<tl-marketing-hero variant="closing" headingId="closing-title" lede="New listings every day, every one for girls.">
+  <ng-container title>Her next favourite thing is <em>waiting.</em></ng-container>
+  <ng-container actions>
+    <a tlButton="primary" size="lg" routerLink="/">Shop the catalog</a>
+    <a tlButton size="lg" [routerLink]="sellHref()">Start selling</a>
+  </ng-container>
+</tl-marketing-hero>

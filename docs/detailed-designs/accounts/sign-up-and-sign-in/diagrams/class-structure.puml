@@ -1,0 +1,96 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Sign up and sign in
+
+package "TuTuMuch.Domain" {
+  class Member {
+    +Guid Id
+    +string DisplayName
+    +string NormalizedDisplayName
+    +string Email
+    +string NormalizedEmail
+    +string PasswordHash
+    +DateTime CreatedAt
+    +DateTime? EmailVerifiedAt
+    +static Register(displayName, email, passwordHash, now): Member
+    +MarkEmailVerified(now): void
+  }
+  class EmailVerificationToken {
+    +Guid MemberId
+    +string TokenHash
+    +DateTime CreatedAt
+    +DateTime ExpiresAt
+    +DateTime? UsedAt
+    +DateTime? RevokedAt
+    +static Issue(memberId, tokenHash, now)
+    +IsUsable(now): bool
+    +MarkUsed(now): void
+    +Revoke(now): void
+  }
+  class Session {
+    +Guid MemberId
+    +Guid FamilyId
+    +string TokenHash
+    +DateTime ExpiresAt
+    +DateTime? RotatedAt
+    +DateTime? RevokedAt
+    +static Start(memberId, tokenHash, now)
+    +IsActive(now): bool
+    +Rotate(nextTokenHash, now): Session
+    +Revoke(now): void
+  }
+}
+
+package "TuTuMuch.Application" {
+  class RegisterMemberCommandHandler
+  class VerifyEmailCommandHandler
+  class RequestVerificationEmailCommandHandler
+  class SignInCommandHandler
+  class RefreshSessionCommandHandler
+  class SignOutCommandHandler
+  class VerificationEmails
+  class SignedIn <<record>> {
+    +Guid MemberId
+    +string RefreshToken
+    +DateTime RefreshExpiresAt
+  }
+  interface IPasswordHasher
+  interface IBreachedPasswords
+  interface IEmailSender
+}
+
+package "TuTuMuch.Api" {
+  class AuthController
+  class SessionCookies {
+    +Write(response, SignedIn): void
+    +static Clear(response): void
+  }
+  class VerifiedEmailHandler
+}
+
+Member "1" o-- "*" EmailVerificationToken
+Member "1" o-- "*" Session
+RegisterMemberCommandHandler ..> Member : creates
+RegisterMemberCommandHandler ..> IPasswordHasher
+RegisterMemberCommandHandler ..> IBreachedPasswords
+RegisterMemberCommandHandler ..> VerificationEmails
+RequestVerificationEmailCommandHandler ..> VerificationEmails
+VerificationEmails ..> EmailVerificationToken : issues, revokes
+VerificationEmails ..> IEmailSender
+VerifyEmailCommandHandler ..> EmailVerificationToken : uses once
+SignInCommandHandler ..> Session : starts
+RefreshSessionCommandHandler ..> Session : rotates or revokes family
+SignOutCommandHandler ..> Session : revokes family
+SignInCommandHandler ..> SignedIn : returns
+AuthController ..> SessionCookies
+VerifiedEmailHandler ..> Member : reads EmailVerifiedAt
+@enduml

@@ -1,0 +1,92 @@
+@switch (store.view()) {
+  @case ('loading') {
+    <h1 class="visually-hidden">Loading profile</h1>
+    <section class="profile-head" aria-busy="true" aria-label="Loading profile">
+      <span class="skeleton avatar avatar--xl"></span>
+      <div class="profile-head__body">
+        <span class="skeleton skeleton--title member-profile__skeleton-name"></span>
+        <span class="skeleton skeleton--text skeleton--w35"></span>
+        <span class="skeleton skeleton--text skeleton--w30"></span>
+      </div>
+    </section>
+    <tl-listing-grid [cards]="[]" [loading]="true" />
+  }
+  @case ('unavailable') {
+    <tl-center-state code="404" heading="This member isn’t available">
+      <p class="text-muted">The account may have been closed.</p>
+      <a actions tlButton="primary" routerLink="/">Back to shop</a>
+    </tl-center-state>
+  }
+  @case ('error') {
+    <tl-center-state heading="Couldn’t load this profile">
+      <p class="text-muted">
+        It’s us, not you. <span class="ref">{{ store.errorRef() }}</span>
+      </p>
+      <button actions tlButton="primary" type="button" (click)="store.retry()">
+        <tl-icon name="refresh" />Try again
+      </button>
+      <a actions tlButton routerLink="/">Back to shop</a>
+    </tl-center-state>
+  }
+  @default {
+    @if (store.profile(); as profile) {
+      <section class="profile-head">
+        @if (profile.avatarUrl) {
+          <span class="avatar avatar--xl"><img [src]="profile.avatarUrl" alt="" /></span>
+        } @else {
+          <span class="avatar avatar--xl" aria-hidden="true">{{ initials() }}</span>
+        }
+        <div class="profile-head__body">
+          <h1>{{ profile.displayName }}</h1>
+          @if (profile.publicLocation) {
+            <span class="text-muted member-profile__location"
+              ><tl-icon name="map-pin" size="sm" />{{ profile.publicLocation }}</span
+            >
+          }
+          <tl-rating-summary [rating]="profile.rating" />
+          @if (profile.bio) {
+            <p class="text-muted member-profile__bio">{{ profile.bio }}</p>
+          }
+        </div>
+      </section>
+      <div class="stats">
+        <tl-stat label="Sales" [value]="profile.completedSales.toLocaleString('en-US')" />
+        <tl-stat label="Member since" [value]="since()" />
+      </div>
+      <section class="section member-profile__section" aria-labelledby="for-sale-heading">
+        <div class="section-head">
+          <h2 id="for-sale-heading">For sale</h2>
+          <span class="text-muted text-sm">{{ store.totalListings() }}</span>
+        </div>
+        @if (store.totalListings() === 0) {
+          <tl-empty-state icon="tag" heading="No items for sale" [compact]="true">
+            {{ profile.displayName }} hasn’t listed anything yet.
+          </tl-empty-state>
+        } @else {
+          <tl-listing-grid [cards]="cards()" />
+          @if (store.moreErrorRef(); as ref) {
+            <tl-alert tone="danger" heading="Couldn’t load more items"
+              >Something went wrong on our side. <span class="ref">{{ ref }}</span>
+              <button tlButton="link" type="button" (click)="store.loadMore()">Try again</button></tl-alert
+            >
+          }
+          <tl-load-more
+            [shown]="store.listings().length"
+            [total]="store.totalListings()"
+            [busy]="store.loadingMore()"
+            (loadMore)="store.loadMore()"
+          />
+        }
+      </section>
+      <section class="section member-profile__section member-profile__reviews" aria-labelledby="reviews-heading">
+        <div class="section-head">
+          <h2 id="reviews-heading">Reviews</h2>
+          <span class="text-muted text-sm">{{ profile.rating.count }}</span>
+        </div>
+        @if (profile.rating.count === 0) {
+          <p class="text-muted">No reviews yet</p>
+        }
+      </section>
+    }
+  }
+}

@@ -1,0 +1,90 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Browse the catalog
+
+enum ListingStatus {
+  Draft
+  Active
+  Reserved
+  Sold
+  Removed
+}
+
+class CatalogVisibility <<static>> {
+  +{static} IsVisible: Expression<Func<Listing, bool>>
+}
+
+class BrowseCatalogQuery <<record>> {
+  +int Page
+  +int? PageSize
+  +string? Category
+}
+
+class BrowseCatalogQueryHandler {
+  -ITuTuMuchDbContext db
+  +Handle(query: BrowseCatalogQuery, ct: CancellationToken): Task<Result<CatalogPageDto>>
+}
+
+class CatalogOptions {
+  +int DefaultPageSize = 24
+  +int MaxPageSize = 48
+}
+
+class PhotoOptions {
+  +string PublicBaseUrl = "/photos"
+}
+
+class CatalogPageDto <<record>> {
+  +ListingCardDto[] Items
+  +int Page
+  +int PageSize
+  +int TotalCount
+}
+
+class ListingCardDto <<record>> {
+  +Guid Id
+  +string Reference
+  +string Title
+  +string Brand
+  +string Category
+  +string? Subcategory
+  +string SizeLabel
+  +string Condition
+  +string Price
+  +string Status
+  +DateTime PublishedAt
+  +CardPhotoDto? CoverPhoto
+}
+
+class CardPhotoDto <<record>> {
+  +int Width
+  +int Height
+  +string Alt
+  +string Src
+  +string Webp
+  +string Jpeg
+}
+
+class CatalogController {
+  +Listings(page: int, pageSize: int?, category: string?): Task<IActionResult>
+}
+
+CatalogController ..> BrowseCatalogQuery : sends
+BrowseCatalogQueryHandler ..> BrowseCatalogQuery : handles
+BrowseCatalogQueryHandler --> CatalogOptions : caps page size with
+BrowseCatalogQueryHandler --> PhotoOptions : builds photo URLs with
+BrowseCatalogQueryHandler ..> CatalogVisibility : filters with
+CatalogVisibility ..> ListingStatus
+BrowseCatalogQueryHandler ..> CatalogPageDto : returns
+CatalogPageDto "1" *-- "0..48" ListingCardDto
+ListingCardDto *-- CardPhotoDto
+@enduml

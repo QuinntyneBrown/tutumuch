@@ -1,0 +1,71 @@
+@startuml
+title UML sequence behaviour — Store and read a shipping address
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Buyer" as buyer
+actor "Seller" as seller
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "CheckoutPage / SaleDetailPage" as page
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "OrdersController" as controller
+end box
+box "Backend — TuTuMuch.Application and Domain" #ECFDF3
+  participant "Order handlers" as handler
+  participant "ShippingAddressProtector" as protector
+end box
+box "Backend — TuTuMuch.Infrastructure" #FFF4E5
+  participant "EncryptedShippingAddressConverter" as converter
+  participant "AesGcmFieldEncryptor" as enc
+  database "TuTuMuch database" as db
+end box
+== Store ==
+buyer -> page : Pay with shipping address
+page -> controller : POST /api/orders (address in body, HTTPS)
+controller -> handler : Send PlaceOrderCommand
+handler -> converter : SaveChanges with ShippingAddress
+converter -> protector : Protect(address)
+protector -> enc : Encrypt(json, "shipping-address") with active DEK (L2-054)
+enc --> protector : Envelope (version, keyId, nonce, ciphertext, tag)
+protector --> converter : byte[]
+converter -> db : INSERT Orders.ShippingAddressCipher
+db --> handler : Commit
+handler --> controller : Order created
+controller --> page : 201 Created
+== Read ==
+seller -> page : Open sale TM-48302
+page -> controller : GET /api/sales/{orderId}
+controller -> handler : Send GetSaleDetailQuery
+handler -> handler : Apply L2-037 visibility (seller, within 30 days of order end)
+alt address visible
+  handler -> db : Load order
+  db --> converter : ShippingAddressCipher
+  converter -> protector : Unprotect(envelope)
+  protector -> enc : Decrypt(envelope, "shipping-address")
+  alt key ID known and tag valid
+    enc --> protector : Plaintext JSON
+    protector --> handler : ShippingAddress
+    handler --> controller : SaleDetailDto with address
+    controller --> page : 200 OK
+  else unknown key or tag mismatch
+    enc --> handler : FieldDecryptionException
+    handler --> controller : Failure (ciphertext not logged)
+    controller --> page : 500 problem details privacy.field_decryption_failed
+  end
+else address hidden
+  handler --> controller : SaleDetailDto without address
+  controller --> page : 200 OK (address-hidden state)
+end
+@enduml

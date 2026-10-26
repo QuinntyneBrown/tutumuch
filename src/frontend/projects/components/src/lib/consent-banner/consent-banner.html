@@ -1,0 +1,9 @@
+<section class="consent" [attr.aria-labelledby]="id + '-title'">
+  <h2 class="consent__title" [id]="id + '-title'">Cookies</h2>
+  <p class="text-sm">We use necessary cookies to run TuTuMuch. Analytics only if you say yes.</p>
+  <div class="consent__actions">
+    <button tlButton="primary" type="button" (click)="accepted.emit()">Accept analytics</button>
+    <button tlButton type="button" (click)="declined.emit()">Necessary only</button>
+  </div>
+  <button class="consent__link" type="button" (click)="settings.emit()">Cookie settings</button>
+</section>

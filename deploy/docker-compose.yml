@@ -1,0 +1,50 @@
+# Production stack for one Linux host. Copied to /opt/tutumuch on the server by the deploy workflow.
+# Secrets and settings come from /opt/tutumuch/.env (see .env.example).
+services:
+  web:
+    image: ${IMAGE_PREFIX}/tutumuch-web:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS}
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - api
+
+  api:
+    image: ${IMAGE_PREFIX}/tutumuch-api:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      PhotoStorage__RootPath: /data/photos
+    volumes:
+      - photos:/data/photos
+    healthcheck:
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/8080"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  worker:
+    image: ${IMAGE_PREFIX}/tutumuch-worker:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      PhotoStorage__RootPath: /data/photos
+    volumes:
+      - photos:/data/photos
+
+  migrator:
+    image: ${IMAGE_PREFIX}/tutumuch-migrator:${IMAGE_TAG:-latest}
+    env_file: .env
+    profiles: ["migrate"]
+
+volumes:
+  photos:
+  caddy_data:
+  caddy_config:

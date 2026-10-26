@@ -1,0 +1,24 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Report errors and observe the system
+
+Person(visitor, "Visitor or member", "Browser")
+System_Ext(monitor, "Monitoring and log platform", "<TO SUPPLY>")
+System_Boundary(tutumuch, "TuTuMuch") {
+  Container(web, "TuTuMuch Web", "Angular + service worker", "Error pages, toasts, offline banner")
+  Container(lb, "Load balancer", "Hosting platform", "Probes /health/ready")
+  Container(api, "TuTuMuch API", "ASP.NET Core", "Problem details, correlation IDs, logs, metrics, health")
+  Container(worker, "TuTuMuch Worker", ".NET worker", "Logs with outbox correlation IDs; job metrics")
+  ContainerDb(db, "TuTuMuch database", "SQL Server", "OutboxMessages.CorrelationId")
+  ContainerDb(photos, "Photo storage", "Object storage", "Readiness dependency")
+}
+Rel(visitor, web, "Uses", "HTTPS")
+Rel(web, lb, "Calls API", "JSON/HTTPS")
+Rel(lb, api, "Forwards; probes readiness", "HTTPS")
+Rel(api, db, "Reads and writes", "EF Core")
+Rel(api, photos, "Checks reachability")
+Rel(worker, db, "Reads outbox", "EF Core")
+Rel(monitor, api, "Collects stdout JSON logs; scrapes /metrics on management port")
+Rel(monitor, worker, "Collects logs; scrapes /metrics")
+@enduml

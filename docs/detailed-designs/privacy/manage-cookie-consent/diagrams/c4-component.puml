@@ -1,0 +1,30 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Manage cookie consent
+
+Person(visitor, "Visitor", "Browser user")
+Container_Boundary(web, "TuTuMuch Web") {
+  Component(banner, "CookieConsentComponent + tl-consent-banner", "@tutumuch/privacy, @tutumuch/components", "First-visit banner")
+  Component(dialog, "CookieSettingsDialog", "@tutumuch/privacy dialog", "Analytics switch, Cancel / Save")
+  Component(entry, "Entry points", "tl-footer Cookie settings button, banner", "Open the dialog")
+  Component(consent, "CookieConsentService", "@tutumuch/privacy service, signals", "Consent state and tm_consent cookie")
+  Component(analyticsSvc, "AnalyticsService", "@tutumuch/privacy service", "Starts, stops and tracks; deletes analytics cookies")
+  Component(toast, "ToastService", "@tutumuch/components", "Cookie choice saved")
+  Component(apis, "Typed API services", "@tutumuch/api", "Catalog, session and other API calls")
+}
+Container_Boundary(api, "TuTuMuch API") {
+  Component(mw, "CookieAllowListMiddleware", "ASP.NET Core middleware", "Drops non-allow-listed Set-Cookie headers")
+}
+System_Ext(analytics, "Analytics provider", "Script and collection endpoint")
+
+Rel(visitor, banner, "Chooses")
+Rel(visitor, entry, "Opens Cookie settings")
+Rel(entry, dialog, "Opens")
+Rel(banner, consent, "acceptAnalytics() / necessaryOnly()")
+Rel(banner, toast, "Shows saved toast")
+Rel(dialog, consent, "save(analytics)")
+Rel(analyticsSvc, consent, "Reads consent signal")
+Rel(analyticsSvc, analytics, "Script and events only when consent = analytics", "HTTPS")
+Rel(apis, mw, "Responses pass through", "JSON/HTTPS")
+@enduml

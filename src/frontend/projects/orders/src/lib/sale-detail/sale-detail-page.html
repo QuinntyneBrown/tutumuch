@@ -1,0 +1,161 @@
+@switch (view()) {
+  @case ('loading') {
+    <h1 class="visually-hidden">Loading sale</h1>
+    <div class="split order__loading" aria-busy="true">
+      <div class="stack stack--lg">
+        <span class="skeleton skeleton--title"></span>
+        <span class="skeleton skeleton--rect order__skeleton-block"></span>
+        <span class="skeleton skeleton--rect order__skeleton-block"></span>
+      </div>
+      <div class="panel stack">
+        <span class="skeleton skeleton--text"></span>
+        <span class="skeleton skeleton--text"></span>
+        <span class="skeleton skeleton--text"></span>
+      </div>
+    </div>
+  }
+  @case ('error') {
+    <tl-center-state heading="Couldn’t load this sale">
+      <p class="text-muted">Something went wrong on our side. Try again in a moment.</p>
+      <span class="ref">{{ errorRef() }}</span>
+      <button actions tlButton="primary" type="button" (click)="retry()"><tl-icon name="refresh" />Try again</button>
+      <a actions tlButton routerLink="/account/sales">Back to sales</a>
+    </tl-center-state>
+  }
+  @default {
+    @if (sale(); as sale) {
+      <nav aria-label="Breadcrumb" class="order__crumbs">
+        <ol class="breadcrumb">
+          <li><a routerLink="/account/sales">Sales</a></li>
+          <li aria-current="page">{{ sale.reference }}</li>
+        </ol>
+      </nav>
+      <div class="split order__body">
+        <div class="stack stack--lg">
+          <div class="stack stack--sm">
+            <p class="eyebrow">Order {{ sale.reference }} · {{ day(sale.paidAt) }}</p>
+            <h1>{{ heading() }}</h1>
+          </div>
+          @if (ended()) {
+            <tl-alert tone="info" [heading]="sale.status + ' · Buyer refunded in full'">{{ endedNote() }}</tl-alert>
+            @if (sale.canRelist) {
+              <div class="cluster">
+                <button tlButton="primary" type="button" (click)="relist()">Relist item</button>
+              </div>
+            }
+          } @else if (problemOpen() && sale.problem; as problem) {
+            <tl-alert tone="warning" icon="flag" [heading]="'Problem reported · ' + problem.reasonLabel"
+              >Your payout is on hold while our team reviews this.</tl-alert
+            >
+            <tl-thread [entries]="thread()" />
+            @if (!problem.sellerResponse) {
+              @if (replyState() === 'failed') {
+                <tl-alert tone="danger" heading="That didn’t go through"
+                  >Your reply is kept here. Check your connection and try again.</tl-alert
+                >
+              }
+              <tl-form-field
+                #rf
+                fieldId="problem-reply"
+                label="Your reply"
+                help="Visible to the buyer and to TuTuMuch."
+                [error]="replyError()"
+              >
+                <textarea
+                  class="textarea"
+                  id="problem-reply"
+                  rows="3"
+                  [value]="reply()"
+                  [attr.aria-describedby]="rf.describedBy()"
+                  [attr.aria-invalid]="rf.invalid()"
+                  (input)="reply.set($any($event.target).value)"
+                ></textarea>
+              </tl-form-field>
+              <div class="cluster">
+                <button tlButton="primary" type="button" [busy]="replyState() === 'busy'" (click)="sendReply()">
+                  {{ replyState() === 'failed' ? 'Try again' : 'Send reply' }}
+                </button>
+              </div>
+            }
+          } @else {
+            @if (requested() && sale.cancellationRequest; as request) {
+              @if (request.message) {
+                <tl-quote [text]="request.message" [cite]="sale.buyerDisplayName" />
+              }
+              <div class="cluster">
+                <button tlButton="primary" type="button" (click)="respond()">Respond</button>
+              </div>
+            } @else if (sale.status === 'Paid') {
+              <p class="lead">
+                Ship by <strong>{{ day(sale.shipBy) }}</strong
+                >.
+              </p>
+            } @else {
+              <tl-order-timeline [steps]="steps()" />
+              @if (sale.tracking; as tracking) {
+                <tl-tracking-link [carrier]="tracking.carrier" [number]="tracking.number" [url]="tracking.url" />
+              }
+            }
+            @if (sale.status === 'Completed' && sale.payout; as payout) {
+              <div class="panel panel--sunken stack">
+                <h2 class="panel__title">Payout</h2>
+                <dl class="totals">
+                  <div>
+                    <dt>Item and shipping</dt>
+                    <dd>{{ money(payout.gross) }}</dd>
+                  </div>
+                  <div>
+                    <dt>TuTuMuch fee ({{ payout.feePercent }}%)</dt>
+                    <dd>−{{ money(payout.fee) }}</dd>
+                  </div>
+                  <div class="totals__total">
+                    <dt>Your payout</dt>
+                    <dd>{{ money(payout.net) }}</dd>
+                  </div>
+                </dl>
+                <p class="text-caption">{{ payoutNote() }}</p>
+              </div>
+            }
+            <div class="stack stack--sm">
+              <h2 class="panel__title">Ship to</h2>
+              @if (sale.shipTo; as shipTo) {
+                <address class="address">
+                  {{ shipTo.fullName }}<br />{{ shipTo.line1 }}{{ shipTo.line2 ? ', ' + shipTo.line2 : '' }}<br />{{
+                    shipTo.city
+                  }},
+                  {{ shipTo.state }}
+                  {{ shipTo.zip }}
+                </address>
+                <p class="text-caption">Visible until 30 days after the order ends.</p>
+              } @else {
+                <p class="text-muted text-sm">
+                  <tl-icon name="eye-off" size="sm" /> Removed 30 days after the order ended.
+                </p>
+              }
+            </div>
+            @if (sale.status === 'Paid' && !requested()) {
+              <div class="cluster">
+                <button tlButton="primary" type="button" (click)="addTracking()">
+                  <tl-icon name="truck" />Add tracking
+                </button>
+                <button tlButton="ghost" type="button" (click)="cancelOrder()">Cancel order</button>
+              </div>
+            }
+          }
+        </div>
+        @if (summaryItem(); as item) {
+          <tl-order-summary
+            heading=""
+            [item]="item"
+            [itemPrice]="money(sale.itemPrice)"
+            [shipping]="money(sale.shippingCost)"
+            [salesTax]="money(sale.salesTax)"
+            [total]="money(sale.total)"
+          >
+            <tl-order-party role="Buyer" [displayName]="sale.buyerDisplayName" />
+          </tl-order-summary>
+        }
+      </div>
+    }
+  }
+}

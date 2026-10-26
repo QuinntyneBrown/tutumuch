@@ -1,0 +1,23 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Protect credentials and the supply chain
+
+System_Ext(vault, "Secret store", "Vault <TO SUPPLY>")
+Container_Boundary(api, "TuTuMuch API") {
+  Component(provider, "AddTuTuMuchSecretStore", "Configuration provider", "Maps vault entries to configuration keys")
+  Component(guard, "SecretGuard", "IHostedService", "Stops the host when a secret is missing or file-sourced")
+  Component(options, "Options classes", "IOptions<T>", "Connection strings, provider keys, signing keys")
+  Component(handlers, "Accounts handlers", "MediatR handlers", "Register, sign in, reset password")
+  Component(hasher, "Pbkdf2PasswordHasher", "IPasswordHasher", "PBKDF2-HMAC-SHA512, 210,000 iterations, 16-byte salt")
+  Component(hashopts, "PasswordHashingOptions", "Options", "Security:PasswordHashing:Iterations")
+}
+ContainerDb(db, "TuTuMuch database", "SQL Server", "Members.PasswordHash")
+
+Rel(provider, vault, "Reads secrets", "HTTPS")
+Rel(guard, provider, "Checks value source of each SecretKeys entry")
+Rel(options, provider, "Bound from")
+Rel(handlers, hasher, "Hash / Verify / NeedsRehash")
+Rel(hasher, hashopts, "Reads iterations")
+Rel(handlers, db, "Saves encoded hash", "EF Core")
+@enduml

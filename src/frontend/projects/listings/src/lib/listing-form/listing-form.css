@@ -1,0 +1,8 @@
+/* The sections stay direct items of the page's form layout. */
+:host {
+  display: contents;
+}
+/* The page's error summary comes first in the form, so the photos section keeps its first-of-type spacing. */
+:host .form-section:first-child {
+  padding-top: var(--space-4);
+}

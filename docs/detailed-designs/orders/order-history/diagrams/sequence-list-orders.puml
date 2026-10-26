@@ -1,0 +1,52 @@
+@startuml
+title UML sequence behaviour — List purchases or sales
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+skinparam sequenceMessageAlign left
+skinparam maxMessageSize 260
+actor "Member" as actor
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "PurchasesPage / SalesPage" as page
+  participant "OrdersApiService" as client
+end box
+box "Backend — TuTuMuch API application (TuTuMuch.Api)" #D1FADF
+  participant "PurchasesController / SalesController" as ctrl
+end box
+box "Backend — TuTuMuch.Application and TuTuMuch.Domain" #ECFDF3
+  participant "ListOrdersQueryHandler" as h
+end box
+box "Backend — TuTuMuch.Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
+end box
+actor -> page : Open /account/purchases (or /account/sales)
+page -> page : Show skeleton rows (loading state)
+page -> client : listPurchases(cursor) / listSales(cursor)
+client -> ctrl : GET /api/purchases?cursor= (or /api/sales)
+ctrl -> ctrl : Authenticate (401 if anonymous)
+ctrl -> h : ListOrdersQuery(callerId, Buyer or Seller)
+h -> db : SELECT ... WHERE BuyerId = @me ORDER BY PaidAt DESC, Id DESC (IX_Orders_BuyerId_PaidAt), keyset page
+db --> h : Rows + counts by status
+h --> ctrl : OrderListDto
+alt request fails
+  ctrl --> client : 500 ProblemDetails with correlation ID
+  page --> actor : "Couldn't load purchases", Ref, "Try again" (error state)
+else no orders
+  ctrl --> client : 200 with empty items
+  page --> actor : "Nothing bought yet" + "Browse the catalog" (L2-037 criterion 4) or "No sales yet" + "Sell an item"
+else orders
+  ctrl --> client : 200 OrderListDto
+  page --> actor : Rows newest first: item, other party, total, status, date (L2-037 criterion 1)
+end
+@enduml

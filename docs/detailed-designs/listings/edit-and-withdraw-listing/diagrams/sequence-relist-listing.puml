@@ -1,0 +1,54 @@
+@startuml
+title UML sequence behaviour — Relist after a cancelled sale
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Seller" as actor
+box "Frontend — @tutumuch/orders and @tutumuch/api" #E0F2FE
+  participant "RelistDialog" as dialog
+  participant "OrdersApi" as client
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "ListingsController" as controller
+end box
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
+  participant "RelistListingCommandHandler" as handler
+  participant "Listing" as entity
+end box
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
+end box
+actor -> dialog : Choose "Relist item" on a cancelled sale
+dialog --> actor : "Relist this item?" with "Not now", "Edit first", "Relist"
+alt Edit first
+  dialog --> actor : Close; navigate to /items/{reference}/edit (EditListingPage)
+else Relist
+  dialog -> dialog : Busy: Relist aria-busy, Not now disabled
+  dialog -> client : relist(reference)
+  client -> controller : POST /api/listings/{reference}/relist
+  controller -> handler : Send RelistListingCommand
+  handler -> db : Load caller's listing
+  handler -> entity : Relist()
+  alt not Removed with RemovalReason OrderCancelled
+    entity --> handler : LISTING_NOT_RELISTABLE
+    controller --> client : 409
+    client --> dialog : Danger alert "That didn't go through", listing unchanged
+  else relistable (L2-035)
+    entity --> handler : Active with original photos, price and description
+    handler -> db : SaveChanges
+    controller --> client : 204
+    client --> dialog : Close; the sale says "The listing is back in the catalog."
+  end
+end
+@enduml

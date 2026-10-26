@@ -1,0 +1,27 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Meet performance and scale targets
+
+Person(shopper, "Visitor or member", "Browser")
+System_Boundary(tutumuch, "TuTuMuch") {
+  Container(web, "TuTuMuch Web", "Angular", "Calls the API through the load balancer")
+  Container(lb, "Load balancer", "Hosting platform <TO SUPPLY>", "Round-robin, no sticky sessions")
+  Container(api1, "TuTuMuch API instance 1", "ASP.NET Core", "Stateless")
+  Container(api2, "TuTuMuch API instance 2", "ASP.NET Core", "Stateless")
+  Container(api3, "TuTuMuch API instance 3", "ASP.NET Core", "Stateless")
+  ContainerDb(cache, "Distributed cache", "Redis", "Data Protection keys, refresh-token families, rate-limit counters")
+  ContainerDb(db, "TuTuMuch database", "SQL Server", "Listings with rowversion; reservations")
+}
+Rel(shopper, web, "Loads", "HTTPS")
+Rel(web, lb, "Calls API", "JSON/HTTPS")
+Rel(lb, api1, "Routes", "HTTPS")
+Rel(lb, api2, "Routes", "HTTPS")
+Rel(lb, api3, "Routes", "HTTPS")
+Rel(api1, cache, "Shared state", "RESP")
+Rel(api2, cache, "Shared state", "RESP")
+Rel(api3, cache, "Shared state", "RESP")
+Rel(api1, db, "Reads and writes", "EF Core")
+Rel(api2, db, "Reads and writes", "EF Core")
+Rel(api3, db, "Reads and writes", "EF Core")
+@enduml

@@ -1,0 +1,76 @@
+@startuml
+title UML sequence behaviour — Edit a listing
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Seller" as actor
+box "Frontend — @tutumuch/listings and @tutumuch/api" #E0F2FE
+  participant "EditListingPage" as page
+  participant "ListingsApi" as client
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "ListingsController" as controller
+end box
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
+  participant "ListingCommandHandlers" as handler
+  participant "Listing" as entity
+end box
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
+end box
+actor -> page : Open /items/{reference}/edit
+page -> client : getForEdit(reference)
+client -> controller : GET /api/me/listings/{reference}
+alt not found or not owned (L2-010)
+  controller --> client : 404
+  client --> page : Error state "Couldn't load this listing"
+else Reserved, Sold or withdrawn
+  controller --> client : 200 with status, ETag
+  page --> actor : Locked, sold or withdrawn state
+else Active, or removed after a cancelled order
+  controller --> client : 200 MyListingDto, ETag "7"
+  page --> actor : Prefilled form, size confirmation ticked
+  actor -> page : Change price to 40.00, choose "Save changes"
+  page -> client : updateListing(reference, body with sizeConfirmed, "7")
+  client -> controller : PUT /api/listings/{reference}, If-Match "7"
+  controller -> handler : Send UpdateListingCommand (unknown fields ignored, L2-049)
+  handler -> db : Load caller's listing
+  alt Reserved, Sold or withdrawn (L2-020)
+    handler --> controller : LISTING_RESERVED, LISTING_SOLD or LISTING_NOT_EDITABLE
+    controller --> client : 409, listing unchanged
+    client --> page : Locked, sold or withdrawn state
+  else If-Match missing or stale
+    controller --> client : 428 PRECONDITION_REQUIRED or 412 LISTING_CHANGED
+    client --> page : Warning "This listing changed since you opened it" with Reload
+  else
+    handler -> entity : Edit(details, sizeConfirmed, photoCount)
+    alt publish rule fails or size not accepted (L2-013, L2-014)
+      entity --> handler : Field errors, listing unchanged
+      controller --> client : 422 problem details
+      client --> page : Invalid state with error summary
+    else valid
+      entity --> handler : Size set from category, Version + 1
+      handler -> db : SaveChanges where Version = 7
+      alt a checkout reserved it meanwhile
+        db --> handler : DbUpdateConcurrencyException
+        handler -> db : Reload status
+        controller --> client : 409 LISTING_RESERVED (or 412 LISTING_CHANGED)
+      else committed
+        controller --> client : 200 MyListingDto, ETag "8"
+        client --> page : Success alert "Changes saved" with "View listing"
+      end
+    end
+  end
+end
+@enduml

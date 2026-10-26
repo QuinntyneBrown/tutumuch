@@ -1,0 +1,68 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Protect credentials and the supply chain
+
+interface IPasswordHasher {
+  +Hash(password: string): string
+  +Verify(password: string, encoded: string): PasswordVerification
+  +NeedsRehash(encoded: string): bool
+}
+enum PasswordVerification {
+  Failed
+  Succeeded
+  SucceededNeedsRehash
+}
+class Pbkdf2PasswordHasher {
+  -const int SaltBytes = 16
+  -const int KeyBytes = 64
+  -PasswordHashingOptions options
+  +Hash(password): string
+  +Verify(password, encoded): PasswordVerification
+  +NeedsRehash(encoded): bool
+}
+class PasswordHashingOptions {
+  +int Iterations = 210000
+}
+class EncodedPasswordHash <<value object>> {
+  +string Algorithm
+  +int Iterations
+  +byte[] Salt
+  +byte[] Key
+  +Parse(encoded: string): EncodedPasswordHash
+  +ToString(): string
+}
+class Member {
+  +Guid Id
+  +string Email
+  +string PasswordHash
+  +ChangePasswordHash(encoded: string): void
+}
+class SecretKeys <<static>> {
+  +IReadOnlyList<string> All
+}
+class SecretGuard {
+  -IConfigurationRoot configuration
+  -IHostEnvironment environment
+  +StartAsync(ct): Task
+}
+class SecretStoreConfigurationExtensions <<static>> {
+  +AddTuTuMuchSecretStore(builder: IHostApplicationBuilder): IHostApplicationBuilder
+}
+
+Pbkdf2PasswordHasher ..|> IPasswordHasher
+Pbkdf2PasswordHasher --> PasswordHashingOptions : reads
+Pbkdf2PasswordHasher ..> EncodedPasswordHash : formats / parses
+IPasswordHasher ..> PasswordVerification : returns
+Member ..> EncodedPasswordHash : stores string form
+SecretGuard ..> SecretKeys : checks each key
+SecretGuard ..> SecretStoreConfigurationExtensions : expects provider added by
+@enduml

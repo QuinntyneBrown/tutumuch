@@ -1,0 +1,65 @@
+@switch (view()) {
+  @case ('loading') {
+    <h1 class="visually-hidden">Loading problem</h1>
+    <div class="split problem__loading" aria-busy="true" aria-label="Loading">
+      <div class="stack stack--lg">
+        <span class="skeleton skeleton--title"></span>
+        <span class="skeleton skeleton--rect problem__skeleton-block"></span>
+        <div><span class="skeleton skeleton--text"></span><span class="skeleton skeleton--text"></span></div>
+      </div>
+      <div class="panel panel--sunken stack">
+        <span class="skeleton skeleton--text"></span>
+        <span class="skeleton skeleton--rect"></span>
+      </div>
+    </div>
+  }
+  @case ('error') {
+    <div class="page-header">
+      <div class="stack stack--sm"><h1>Order problem</h1></div>
+    </div>
+    <tl-empty-state icon="refresh" heading="Couldn’t load this problem" tone="error"
+      >Something went wrong on our side. <span class="ref">{{ errorRef() }}</span>
+      <button actions tlButton="primary" type="button" (click)="retry()"><tl-icon name="refresh" />Try again</button>
+    </tl-empty-state>
+  }
+  @default {
+    @if (detail(); as detail) {
+      <div class="page-header">
+        <div class="stack stack--sm">
+          <h1>{{ detail.problem.reasonLabel }}</h1>
+          <p class="subtitle">Order problem {{ detail.problem.reference }} · opened {{ opened() }}</p>
+        </div>
+      </div>
+      <div class="split">
+        <div class="stack stack--lg">
+          @if (decision(); as decision) {
+            <tl-alert tone="success" [heading]="decision.heading">{{ decision.text }}</tl-alert>
+            @if (detail.problem.resolutionReason; as reason) {
+              <p class="text-muted text-sm">Reason: {{ reason }}</p>
+            }
+          }
+          <tl-thread [entries]="thread()" />
+        </div>
+        <aside class="panel panel--sunken stack" aria-label="Order">
+          <span class="eyebrow">Order {{ detail.order.reference }}</span>
+          <tl-item-row
+            [title]="detail.order.item.title"
+            [meta]="detail.order.item.brand + ' · ' + detail.order.item.size"
+          >
+            <div thumb class="thumb">
+              <div class="photo photo--1">
+                @if (detail.order.item.photo; as photo) {
+                  <img [src]="photo.src" alt="" width="160" height="160" />
+                }
+              </div>
+            </div>
+          </tl-item-row>
+          <tl-facts [facts]="facts()" />
+          @if (detail.problem.status === 'Open') {
+            <button tlButton="primary" type="button" (click)="resolve()">Resolve</button>
+          }
+        </aside>
+      </div>
+    }
+  }
+}

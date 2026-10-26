@@ -1,0 +1,95 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Harden HTTP and the API
+
+class SecurityHeadersOptions {
+  +string ContentSecurityPolicy
+  +string ReferrerPolicy
+  +bool RemoveServerHeader
+}
+class SecurityHeadersMiddleware {
+  +InvokeAsync(context: HttpContext): Task
+}
+class RateLimitPolicy {
+  +string Name
+  +int PermitLimit
+  +TimeSpan Window
+  +RateLimitPartition Partition
+  +BuildKey(context: HttpContext, now: DateTimeOffset): string
+}
+enum RateLimitPartition {
+  ClientIp
+  MemberId
+}
+class RateLimitPolicies <<static>> {
+  +Anonymous: RateLimitPolicy
+  +Member: RateLimitPolicy
+  +Register: RateLimitPolicy
+  +CreateListing: RateLimitPolicy
+}
+class RateLimitPolicyAttribute {
+  +string PolicyName
+}
+interface IRateLimitStore {
+  +AcquireAsync(key: string, limit: int, window: TimeSpan): Task<RateLimitLease>
+}
+class RateLimitLease {
+  +bool IsAcquired
+  +int Count
+  +TimeSpan RetryAfter
+}
+class RedisFixedWindowRateLimitStore {
+  -IConnectionMultiplexer redis
+  -LuaScript incrementScript
+  +AcquireAsync(key, limit, window): Task<RateLimitLease>
+}
+class RedisRateLimitingMiddleware {
+  +InvokeAsync(context: HttpContext): Task
+}
+class AntiforgeryValidationMiddleware {
+  -IAntiforgery antiforgery
+  +InvokeAsync(context: HttpContext): Task
+}
+class AntiforgeryController {
+  +GetToken(): AntiforgeryTokenResponse
+}
+class "ValidationBehavior<TRequest,TResponse>" as VB {
+  -IEnumerable<IValidator<TRequest>> validators
+  +Handle(request, next, ct): Task<TResponse>
+}
+class RequestValidationException {
+  +IDictionary<string,string[]> Errors
+}
+class UpdateListingRequest <<record>> {
+  +string Title
+  +string Description
+  +ListingCondition Condition
+  +int PriceCents
+  +int ShippingCents
+  +IReadOnlyList<Guid> PhotoIds
+}
+class UpdateListingRequestValidator {
+  +UpdateListingRequestValidator()
+}
+
+SecurityHeadersMiddleware --> SecurityHeadersOptions : reads
+RedisRateLimitingMiddleware ..> RateLimitPolicyAttribute : reads endpoint metadata
+RedisRateLimitingMiddleware ..> RateLimitPolicies : resolves
+RateLimitPolicies "1" *-- "4" RateLimitPolicy
+RateLimitPolicy --> RateLimitPartition
+RedisRateLimitingMiddleware --> IRateLimitStore : acquires lease
+IRateLimitStore ..> RateLimitLease : returns
+RedisFixedWindowRateLimitStore ..|> IRateLimitStore
+VB ..> RequestValidationException : throws
+UpdateListingRequestValidator ..> UpdateListingRequest : validates
+VB ..> UpdateListingRequestValidator : runs
+@enduml

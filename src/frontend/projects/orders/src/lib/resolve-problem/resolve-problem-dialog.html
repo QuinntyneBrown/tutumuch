@@ -1,0 +1,50 @@
+<tl-dialog [heading]="'Resolve problem ' + data.detail.problem.reference">
+  @if (state() === 'failed') {
+    <tl-alert top tone="danger" heading="That didn’t go through">{{ failure() }}</tl-alert>
+  }
+  <tl-radio-group legend="Decision">
+    <tl-choice inputId="outcome-refund">
+      <input
+        type="radio"
+        name="outcome"
+        id="outcome-refund"
+        data-autofocus
+        [checked]="outcome() === 'FullRefund'"
+        [disabled]="state() === 'busy'"
+        (change)="outcome.set('FullRefund')"
+      /><span class="choice__text"
+        >Refund buyer in full<small>{{ total }} to {{ data.detail.buyerDisplayName }} · no payout</small></span
+      ></tl-choice
+    >
+    <tl-choice inputId="outcome-release">
+      <input
+        type="radio"
+        name="outcome"
+        id="outcome-release"
+        [checked]="outcome() === 'ReleaseToSeller'"
+        [disabled]="state() === 'busy'"
+        (change)="outcome.set('ReleaseToSeller')"
+      /><span class="choice__text"
+        >Release payout to seller<small>Order completes · {{ data.detail.sellerDisplayName }} is paid</small></span
+      ></tl-choice
+    >
+  </tl-radio-group>
+  <tl-form-field #rf fieldId="resolve-reason" label="Reason" help="Sent to both members." [error]="reasonError()">
+    <textarea
+      class="textarea"
+      id="resolve-reason"
+      rows="3"
+      [readOnly]="state() === 'busy'"
+      [value]="reason()"
+      [attr.aria-describedby]="rf.describedBy()"
+      [attr.aria-invalid]="rf.invalid()"
+      (input)="reason.set($any($event.target).value)"
+    ></textarea>
+  </tl-form-field>
+  <ng-container ngProjectAs="[footer]">
+    <button tlButton type="button" [disabled]="state() === 'busy'" (click)="ref.close()">Cancel</button>
+    <button tlButton="primary" type="submit" [busy]="state() === 'busy'" (click)="submit()">
+      {{ state() === 'busy' ? busyLabel() : state() === 'failed' ? 'Try again' : action() }}
+    </button>
+  </ng-container>
+</tl-dialog>

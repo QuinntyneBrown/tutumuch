@@ -1,0 +1,18 @@
+@startuml
+!include <C4/C4_Context>
+LAYOUT_WITH_LEGEND()
+title System Context — Check out and pay
+
+Person(buyer, "Buyer", "Verified member buying one listing")
+Person(seller, "Seller", "Member who owns the listing")
+System(tutumuch, "TuTuMuch", "Girls' clothing marketplace")
+System_Ext(pay, "Payment provider", "PCI DSS hosted card fields, payments, refunds, tax rates, signed webhooks")
+System_Ext(email, "Email provider", "Transactional email")
+
+Rel(buyer, tutumuch, "Reserves, addresses and pays for a listing using")
+Rel(buyer, pay, "Enters card details into hosted fields served by", "HTTPS iframe")
+Rel(tutumuch, pay, "Creates payments, refunds duplicates, reads tax via", "HTTPS API")
+Rel(pay, tutumuch, "Confirms payment results to", "Signed webhook")
+Rel(tutumuch, email, "Sends the SaleMade email via", "HTTPS API")
+Rel(email, seller, "Delivers new-sale email to")
+@enduml

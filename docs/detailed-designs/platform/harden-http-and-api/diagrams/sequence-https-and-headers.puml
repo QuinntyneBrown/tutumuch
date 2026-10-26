@@ -1,0 +1,50 @@
+@startuml
+title UML sequence behaviour — HTTPS redirect and security headers
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Visitor" as actor
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "Browser" as browser
+  participant "Static host" as host
+end box
+box "Backend — Load balancer" #FFF4E5
+  participant "Load balancer" as lb
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "SecurityHeadersMiddleware" as sh
+  participant "Controller" as ctrl
+end box
+actor -> browser : Open http://tutumuch.<TO SUPPLY>/
+browser -> lb : GET http://… (port 80)
+lb --> browser : 301 Location https://… (L2-048)
+browser -> lb : TLS handshake
+alt TLS 1.1 or earlier offered
+  lb --> browser : Handshake failure (L2-048)
+else TLS 1.2 or 1.3
+  lb --> browser : Handshake complete
+  browser -> lb : GET https://tutumuch…/
+  lb -> host : Forward request
+  host --> lb : index.html + HSTS, CSP (no inline script), nosniff, Referrer-Policy
+  lb --> browser : Page response
+  browser -> lb : GET https://api…/api/listings
+  lb -> sh : Forward with X-Forwarded-For / Proto
+  sh -> ctrl : Continue pipeline
+  ctrl --> sh : JSON response
+  sh -> sh : Add CSP default-src 'none'; frame-ancestors 'none', nosniff, Referrer-Policy; remove Server
+  sh --> lb : Response with headers
+  lb --> browser : Response
+end
+browser --> actor : Render page
+@enduml

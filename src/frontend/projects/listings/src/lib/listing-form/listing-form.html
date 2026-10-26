@@ -1,0 +1,168 @@
+<section class="form-section" aria-labelledby="s-photos">
+  <h2 id="s-photos">Photos</h2>
+  <tl-photo-uploader
+    [tiles]="model().photos()"
+    [max]="model().maxPhotos()"
+    [error]="model().photoError()"
+    (filesSelected)="model().addPhotos($event)"
+    (removed)="model().removePhoto($event)"
+    (moved)="model().movePhoto($event)"
+  />
+</section>
+
+<section class="form-section" aria-labelledby="s-item">
+  <h2 id="s-item">Item</h2>
+  <div class="form-row">
+    <tl-form-field #cat fieldId="cat" label="Category" [error]="model().errors().cat">
+      <select
+        class="select"
+        id="cat"
+        formControlName="category"
+        [attr.aria-describedby]="cat.describedBy()"
+        [attr.aria-invalid]="cat.invalid()"
+      >
+        <option value="">Choose a category</option>
+        @for (option of model().categories(); track option.name) {
+          <option [value]="option.name">{{ option.name }}</option>
+        }
+      </select>
+    </tl-form-field>
+    <tl-form-field #sub fieldId="sub" label="Type" [error]="model().errors().sub">
+      <select
+        class="select"
+        id="sub"
+        formControlName="subcategory"
+        [attr.aria-describedby]="sub.describedBy()"
+        [attr.aria-invalid]="sub.invalid()"
+      >
+        <option value="">Choose a type</option>
+        @for (option of model().category()?.subcategories ?? []; track option) {
+          <option [value]="option">{{ option }}</option>
+        }
+      </select>
+    </tl-form-field>
+  </div>
+  @if (model().category(); as chosen) {
+    <tl-fixed-size [size]="chosen.acceptedSize" [sizeLabel]="chosen.sizeLabel" />
+  }
+  <tl-form-field #title fieldId="title" label="Title" [error]="model().errors().title" [counter]="model().titleCount()">
+    <input
+      class="input"
+      id="title"
+      type="text"
+      maxlength="80"
+      formControlName="title"
+      [attr.aria-describedby]="title.describedBy()"
+      [attr.aria-invalid]="title.invalid()"
+    />
+  </tl-form-field>
+  <tl-form-field #brand fieldId="brand" label="Brand" [error]="model().errors().brand">
+    <input
+      class="input"
+      id="brand"
+      type="text"
+      list="brands"
+      maxlength="50"
+      formControlName="brand"
+      [attr.aria-describedby]="brand.describedBy()"
+      [attr.aria-invalid]="brand.invalid()"
+    />
+    <datalist id="brands">
+      @for (suggestion of model().options()?.suggestedBrands ?? []; track suggestion) {
+        <option [value]="suggestion"></option>
+      }
+    </datalist>
+  </tl-form-field>
+  <tl-segmented
+    legend="Condition"
+    groupId="cond"
+    formControlName="condition"
+    [options]="model().options()?.conditions ?? []"
+    [error]="model().errors()['cond-0']"
+  />
+  @if (model().isUsedFair()) {
+    <tl-form-field
+      #flaws
+      fieldId="flaws"
+      label="Describe the flaws"
+      help="Shown on the listing. At least 10 characters."
+      [error]="model().errors().flaws"
+    >
+      <textarea
+        class="textarea"
+        id="flaws"
+        rows="2"
+        formControlName="flaws"
+        [attr.aria-describedby]="flaws.describedBy()"
+        [attr.aria-invalid]="flaws.invalid()"
+      ></textarea>
+    </tl-form-field>
+  }
+  <tl-form-field
+    #desc
+    fieldId="desc"
+    label="Description"
+    [error]="model().errors().desc"
+    [counter]="model().descriptionCount()"
+  >
+    <textarea
+      class="textarea"
+      id="desc"
+      rows="4"
+      formControlName="description"
+      [attr.aria-describedby]="desc.describedBy()"
+      [attr.aria-invalid]="desc.invalid()"
+    ></textarea>
+  </tl-form-field>
+</section>
+
+<section class="form-section" aria-labelledby="s-price">
+  <h2 id="s-price">Price</h2>
+  <div class="form-row">
+    <tl-form-field #price fieldId="price" label="Price" [error]="model().errors().price">
+      <tl-input-group addon="$">
+        <input
+          class="input"
+          id="price"
+          inputmode="decimal"
+          formControlName="price"
+          [attr.aria-describedby]="price.describedBy()"
+          [attr.aria-invalid]="price.invalid()"
+        />
+      </tl-input-group>
+    </tl-form-field>
+    <tl-form-field
+      #ship
+      fieldId="ship"
+      label="Shipping"
+      help="Flat rate. $0 shows as free shipping."
+      [error]="model().errors().ship"
+    >
+      <tl-input-group addon="$">
+        <input
+          class="input"
+          id="ship"
+          inputmode="decimal"
+          formControlName="shipping"
+          [attr.aria-describedby]="ship.describedBy()"
+          [attr.aria-invalid]="ship.invalid()"
+        />
+      </tl-input-group>
+    </tl-form-field>
+  </div>
+  <tl-earnings [feePercent]="model().options()?.feePercent ?? 0" [amount]="model().earnings()" />
+</section>
+
+<section class="form-section" aria-labelledby="s-confirm">
+  <h2 id="s-confirm" class="visually-hidden">Size confirmation</h2>
+  <tl-choice #confirm inputId="confirm" [error]="model().errors().confirm">
+    <input
+      type="checkbox"
+      id="confirm"
+      formControlName="confirm"
+      [attr.aria-describedby]="confirm.describedBy()"
+      [attr.aria-invalid]="confirm.invalid()"
+    />
+    {{ model().confirmText() }}
+  </tl-choice>
+</section>

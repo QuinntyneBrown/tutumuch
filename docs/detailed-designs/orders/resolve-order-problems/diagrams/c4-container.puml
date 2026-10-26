@@ -1,0 +1,27 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Resolve order problems
+
+Person(buyer, "Buyer", "Member")
+Person(seller, "Seller", "Member")
+Person(admin, "Administrator", "Administrator role")
+System_Boundary(tutumuch, "TuTuMuch") {
+  Container(web, "TuTuMuch Web", "Angular", "Report problem dialog, order and sale pages, admin problem detail")
+  Container(api, "TuTuMuch API", "ASP.NET Core", "Problem endpoints")
+  Container(worker, "TuTuMuch Worker", ".NET worker service", "Outbox dispatch, payout release")
+  ContainerDb(db, "TuTuMuch database", "SQL Server", "Order problems, orders, refunds, payouts")
+  Container(photos, "Photo storage", "Object storage", "Private problem photos")
+}
+System_Ext(pay, "Payment provider", "Refunds and payouts")
+System_Ext(email, "Email provider", "Email")
+Rel(buyer, web, "Uses", "HTTPS")
+Rel(seller, web, "Uses", "HTTPS")
+Rel(admin, web, "Uses", "HTTPS")
+Rel(web, api, "Calls", "JSON/HTTPS, multipart")
+Rel(api, db, "Reads and writes", "EF Core")
+Rel(api, photos, "Stores and streams private photos", "HTTPS")
+Rel(worker, db, "Reads outbox and payouts", "EF Core")
+Rel(worker, pay, "Refunds and pays out", "HTTPS")
+Rel(worker, email, "Sends email", "HTTPS")
+@enduml

@@ -1,0 +1,109 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — View a listing's detail
+
+enum ListingStatus {
+  Draft
+  Active
+  Reserved
+  Sold
+  Removed
+}
+
+class Listing <<aggregate, listings>> {
+  +Guid Id
+  +string Reference
+  +Guid SellerId
+  +ListingStatus Status
+  +decimal? Price
+  +decimal? ShippingCost
+  +string? Flaws
+}
+
+class ListingDetailVisibility <<static, domain>> {
+  +CanView(status: ListingStatus, sellerId: Guid, viewerId: Guid?): bool
+}
+
+class GetListingDetailQuery <<record>> {
+  +string Reference
+  +Guid? ViewerId
+}
+
+class GetListingDetailQueryHandler {
+  +Handle(q: GetListingDetailQuery): Task<Result<ListingDetailDto>>
+}
+
+interface ITuTuMuchDbContext {
+  +Listings
+  +ListingPhotos
+  +Members
+}
+
+class CatalogPhotos <<static>> {
+  +ToDto(photo, alt, baseUrl): CardPhotoDto
+}
+
+class ListingDetailDto <<record>> {
+  +Guid Id
+  +string Reference
+  +string Title
+  +string Brand
+  +string Category
+  +string? Subcategory
+  +string SizeLabel
+  +string Condition
+  +string? Flaws
+  +string Description
+  +string Price
+  +string ShippingCost
+  +string Total
+  +string Status
+  +DateTime PublishedAt
+}
+
+class ViewerDto <<record>> {
+  +string Relation  // Anonymous, Seller, OtherMember
+}
+
+class SellerSummaryDto <<record>> {
+  +string DisplayName
+  +int CompletedSalesCount
+  +decimal? RatingAverage
+  +int PublishedReviewCount
+}
+
+class CardPhotoDto <<record>> {
+  +int Width
+  +int Height
+  +string Alt
+  +string Src
+  +string Webp
+  +string Jpeg
+}
+
+class CatalogController {
+  +Listing(reference: string): Task<IActionResult>
+}
+
+CatalogController ..> GetListingDetailQuery : sends
+GetListingDetailQueryHandler ..> GetListingDetailQuery : handles
+GetListingDetailQueryHandler --> ITuTuMuchDbContext
+GetListingDetailQueryHandler --> ListingDetailVisibility
+GetListingDetailQueryHandler --> CatalogPhotos
+GetListingDetailQueryHandler ..> ListingDetailDto : returns
+ListingDetailDto "1" *-- "1..8" CardPhotoDto
+ListingDetailDto *-- SellerSummaryDto
+ListingDetailDto *-- ViewerDto
+ITuTuMuchDbContext ..> Listing
+ListingDetailVisibility ..> ListingStatus
+Listing --> ListingStatus
+@enduml

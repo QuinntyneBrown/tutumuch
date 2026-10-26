@@ -1,0 +1,68 @@
+@startuml
+title UML sequence behaviour — Upload a listing photo
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Seller" as actor
+box "Frontend — @tutumuch/listings, @tutumuch/components, @tutumuch/api" #E0F2FE
+  participant "SellPage + tl-photo-uploader" as up
+  participant "PhotosApi" as client
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "PhotoUploadsController" as controller
+end box
+box "Backend — TuTuMuch Application" #ECFDF3
+  participant "ListingPhotoHandlers" as handler
+end box
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  participant "SkiaImageInspector" as inspector
+  participant "SkiaPhotoProcessor" as processor
+  database "Photo storage" as storage
+  database "TuTuMuch database" as db
+end box
+actor -> up : Choose files ("Add photos", n of 8)
+up -> up : Take only the free slots; disable "Add photos" at 8 (L2-017)
+up -> up : Refuse files over 10 MB before upload (rejected tile)
+loop each accepted file
+  up -> client : upload(file)
+  client -> controller : POST /api/photo-uploads (multipart)
+  controller -> controller : Authenticate, CanSell policy, 16 MB body limit
+  controller -> handler : Send UploadListingPhotoCommand
+  alt larger than 10 MB
+    handler --> controller : PHOTO_TOO_LARGE
+    controller --> client : 413 "Photos must be 10 MB or smaller"
+  else
+    handler -> inspector : Detect type from magic bytes, read dimensions
+    alt not JPEG, PNG or WebP by content (L2-017)
+      inspector --> handler : null
+      controller --> client : 415 "Use a JPEG, PNG or WebP photo"
+    else shortest side under 800 px or over 50 megapixels
+      inspector --> handler : 600 x 900
+      controller --> client : 422 PHOTO_TOO_SMALL or PHOTO_TOO_MANY_PIXELS
+    else valid image
+      inspector --> handler : image/jpeg 1200 x 1600
+      handler -> processor : Process(original, [400, 800, 1600])
+      processor -> processor : Decode to sRGB, apply orientation, drop all metadata
+      processor --> handler : 6 versions (WebP and JPEG per size)
+      handler -> storage : Save public {sha256}/{size}.{ext} x 6
+      handler -> storage : Save private originals/{photoId}
+      handler -> db : Insert ListingPhotos row with 6 ListingPhotoVersions
+      handler --> controller : PhotoDto (url = 400 px WebP)
+      controller --> client : 201 Created, Location /api/photo-uploads/{id}
+    end
+  end
+  client --> up : Ready tile with thumbnail, or rejected tile with name, size and message
+end
+up --> actor : First tile carries the "Cover" badge
+@enduml

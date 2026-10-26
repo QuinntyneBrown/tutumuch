@@ -1,0 +1,44 @@
+@startuml
+title UML sequence behaviour — Buy now as an anonymous visitor
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+actor "Anonymous visitor" as actor
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "tl-buy-bar (@tutumuch/components)" as bar
+  participant "SignInPage (@tutumuch/accounts)" as signin
+  participant "ListingDetailPage (@tutumuch/catalog)" as page
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "AuthController (accounts)" as auth
+  participant "CatalogController" as controller
+end box
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
+  participant "GetListingDetailQueryHandler" as handler
+end box
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
+end box
+actor -> bar : Choose "Buy now" (primaryAction = sign-in-to-buy)
+bar -> signin : navigate /sign-in?returnUrl=%2Fitems%2FL-20931 (L2-026)
+signin --> actor : "Sign in to buy"
+actor -> signin : Email and password
+signin -> auth : Sign in (designed in accounts/sign-in)
+alt credentials accepted
+  auth --> signin : 200, session cookies set
+  signin -> signin : Validate returnUrl is a relative TuTuMuch path
+  signin -> page : navigate /items/L-20931
+  page -> controller : GET /api/catalog/listings/L-20931 with cookie
+  controller -> handler : GetListingDetailQuery(reference, viewerId)
+  handler -> db : Load listing
+  db --> handler : Row
+  handler --> controller : relation OtherMember
+  controller --> page : 200 ListingDetailDto
+  page --> actor : Same listing with "Buy now" to /checkout/L-20931
+else credentials refused
+  auth --> signin : 401 problem details
+  signin --> actor : Sign-in error, returnUrl kept
+end
+@enduml

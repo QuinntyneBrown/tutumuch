@@ -1,0 +1,39 @@
+@startuml
+title UML sequence behaviour — Play the pitch video (L2-080 to L2-082)
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+actor "Visitor" as v
+box "@tutumuch/marketing" #FFF4E5
+  participant "WelcomePage" as page
+  participant "PitchVideoDialog" as dlg
+end box
+box "@tutumuch/components" #EEF4FF
+  participant "tl-video-poster" as poster
+  participant "DialogService" as ds
+  participant "tl-video-player" as player
+end box
+participant "Static host /media/" as host
+
+v -> page : open /welcome
+page -> poster : render poster (no video element yet)
+v -> poster : Enter / click "Watch the 30-second pitch"
+poster -> page : (watch)
+page -> ds : open(PitchVideoDialog)
+ds -> dlg : create, make page inert
+dlg -> player : render (autoplay after the press)
+player -> host : GET tutumuch-pitch.mp4, else tutumuch-pitch.webm
+alt loads
+  host --> player : video
+  player -> player : canplay → hide spinner, play()
+  v -> player : Pause / Play, Captions
+else both sources fail
+  host --> player : 404 / network error
+  player -> player : error on the last <source> → "The video didn't load", Try again, transcript link
+end
+v -> ds : Escape or Close
+ds -> dlg : destroy (video stops)
+ds -> poster : focus returns
+@enduml
