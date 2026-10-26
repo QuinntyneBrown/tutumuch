@@ -542,64 +542,78 @@
    TuTuMuch brand palette.
 
    TuTuMuch uses the Giddy design system (everything above) with its own
-   colours, taken from the TuTuMuch logo: plum outline #382835, raspberry
-   shadow #b8336a, bubblegum dots #e39ac0 and lavender checks #b1a2e5 /
-   #ebe5fa. This block adds those primitives and points Giddy's semantic
-   colour tokens at them; type, space, shape, elevation and motion stay
-   Giddy's. Contrast checked for WCAG 2.2 AA in both themes.
+   colours: Raspberry #D6336C (primary: logo, buttons), Lilac #9B7FD4
+   (secondary: accents), Blush #FDE2EA (soft surfaces, tags), Sunny #F6C64B
+   (highlights, deals), Cream #FDF8F5 (page) and Plum #372332 (text, dark
+   surfaces). This block adds those scales and points Giddy's semantic colour
+   tokens at them; type, space, shape, elevation and motion stay Giddy's.
+   Raspberry 600 carries white button text (4.6:1); raspberry text and links
+   use raspberry 700 so they meet WCAG 2.2 AA on cream. Lilac 500 is too light
+   for text and is used for fills; lilac text uses 700-800.
    ========================================================================== */
 
 :root, [data-theme="light"] {
-  --palette-raspberry-50: #fdf1f6;
-  --palette-raspberry-100: #fbe0ec;
-  --palette-raspberry-200: #f6bfd6;
-  --palette-raspberry-300: #ee94b8;
-  --palette-raspberry-400: #df6496;
-  --palette-raspberry-500: #cc4580;
-  --palette-raspberry-600: #b8336a; /* logo shadow */
-  --palette-raspberry-700: #9b2a59;
-  --palette-raspberry-800: #7d2148;
-  --palette-raspberry-900: #5f1937;
-  --palette-raspberry-950: #3d1023;
+  --palette-raspberry-50: #fff0f5;
+  --palette-raspberry-100: #fde2ea; /* Blush: soft surfaces, tags */
+  --palette-raspberry-200: #f9c2d4;
+  --palette-raspberry-300: #f394b5;
+  --palette-raspberry-400: #e8689a;
+  --palette-raspberry-500: #de4b81;
+  --palette-raspberry-600: #d6336c; /* Raspberry: primary, logo, buttons */
+  --palette-raspberry-700: #c2255c; /* raspberry text and links (AA on cream) */
+  --palette-raspberry-800: #a61e4d;
+  --palette-raspberry-900: #7d173b;
+  --palette-raspberry-950: #4a0e23;
 
-  --palette-bubblegum-50: #fdf3f8;
-  --palette-bubblegum-100: #f9e3ee;
-  --palette-bubblegum-200: #f2c7dc;
-  --palette-bubblegum-300: #e39ac0; /* logo dots */
-  --palette-bubblegum-400: #d777a8;
-  --palette-bubblegum-500: #c35a91;
+  --palette-lilac-50: #f6f2fd;
+  --palette-lilac-100: #ece5fa;
+  --palette-lilac-200: #dacdf4;
+  --palette-lilac-300: #c3b0ec;
+  --palette-lilac-400: #ad95e0;
+  --palette-lilac-500: #9b7fd4; /* Lilac: secondary, accents */
+  --palette-lilac-600: #8467c8;
+  --palette-lilac-700: #6a4fb0;
+  --palette-lilac-800: #553e8f;
+  --palette-lilac-900: #3f2e6a;
+  --palette-lilac-950: #261c42;
 
-  --palette-lavender-50: #f8f5ff;
-  --palette-lavender-100: #efeafc; /* logo light check */
-  --palette-lavender-200: #e1d9f8;
-  --palette-lavender-300: #ccc0f1;
-  --palette-lavender-400: #b1a2e5; /* logo dark check */
-  --palette-lavender-500: #9585d7;
-  --palette-lavender-600: #7766c5;
-  --palette-lavender-700: #5f4fa8;
-  --palette-lavender-800: #493c86;
-  --palette-lavender-900: #342b62;
-  --palette-lavender-950: #1f1a3d;
+  --palette-sunny-100: #fdf0c9;
+  --palette-sunny-300: #f9d77c;
+  --palette-sunny-400: #f6c64b; /* Sunny: highlights, deals */
+  --palette-sunny-500: #e0ab25;
+  --palette-sunny-800: #6e4f00;
+  --palette-sunny-950: #332503;
 
-  --palette-plum-50: #f8f3f6;
-  --palette-plum-100: #ede3ea;
-  --palette-plum-200: #d9c9d5;
-  --palette-plum-300: #bfa9ba;
-  --palette-plum-400: #9c8498;
-  --palette-plum-500: #7a6276;
-  --palette-plum-600: #5f4a5b;
-  --palette-plum-700: #4a3646;
-  --palette-plum-800: #382835; /* logo outline */
-  --palette-plum-850: #2e212b;
-  --palette-plum-900: #251a22;
-  --palette-plum-950: #1c1319;
-  --palette-plum-990: #150e13;
+  --palette-cream-50: #fdf8f5; /* page background */
+  --palette-cream-100: #f8efea;
+  --palette-cream-200: #efe2db;
+
+  --palette-plum-50: #faf5f8;
+  --palette-plum-100: #f0e6ec;
+  --palette-plum-200: #dccbd5;
+  --palette-plum-300: #c0a9b7;
+  --palette-plum-400: #9a8692;
+  --palette-plum-500: #735d6b;
+  --palette-plum-600: #6b5563;
+  --palette-plum-700: #523d4b;
+  --palette-plum-800: #372332; /* text, dark surfaces */
+  --palette-plum-850: #2d1c29;
+  --palette-plum-900: #241620;
+  --palette-plum-950: #1c1119;
+  --palette-plum-990: #150c12;
+
+  /* Giddy's party-pop sun is TuTuMuch's Sunny. */
+  --palette-sun-100: var(--palette-sunny-100);
+  --palette-sun-300: var(--palette-sunny-300);
+  --palette-sun-400: var(--palette-sunny-400);
+  --palette-sun-800: var(--palette-sunny-800);
+  --palette-sun-950: var(--palette-sunny-950);
 
   /* Semantic colour (light) */
-  --color-bg-canvas: var(--palette-lavender-50);
-  --color-bg-surface-sunken: var(--palette-lavender-100);
-  --color-bg-subtle: var(--palette-lavender-100);
-  --color-bg-subtle-hover: var(--palette-lavender-200);
+  --color-bg-canvas: var(--palette-cream-50);
+  --color-bg-surface-sunken: var(--palette-cream-100);
+  --color-bg-subtle: var(--palette-cream-100);
+  --color-bg-subtle-hover: var(--palette-cream-200);
   --color-bg-inverse: var(--palette-plum-800);
 
   --color-fg-default: var(--palette-plum-800);
@@ -609,25 +623,27 @@
   --color-fg-link: var(--palette-raspberry-700);
   --color-fg-link-hover: var(--palette-raspberry-800);
 
-  --color-border-default: var(--palette-lavender-200);
+  --color-border-default: var(--palette-cream-200);
   --color-border-strong: var(--palette-plum-400);
   --color-border-inverse: var(--palette-plum-600);
 
   --color-accent: var(--palette-raspberry-600);
   --color-accent-hover: var(--palette-raspberry-700);
   --color-accent-active: var(--palette-raspberry-800);
-  --color-accent-subtle: var(--palette-lavender-100);
-  --color-accent-subtle-hover: var(--palette-lavender-200);
+  --color-accent-subtle: var(--palette-raspberry-100);
+  --color-accent-subtle-hover: var(--palette-raspberry-200);
   --color-fg-accent: var(--palette-raspberry-700);
   --color-focus-ring: var(--palette-raspberry-600);
   --color-accent-press: var(--palette-raspberry-800);
 
-  --color-pop-pink-bg: var(--palette-bubblegum-100);
+  --color-pop-pink-bg: var(--palette-raspberry-100);
   --color-pop-pink-fg: var(--palette-raspberry-800);
-  --color-pop-grape-bg: var(--palette-lavender-100);
-  --color-pop-grape-fg: var(--palette-lavender-800);
+  --color-pop-grape-bg: var(--palette-lilac-100);
+  --color-pop-grape-fg: var(--palette-lilac-800);
+  --color-pop-sun-bg: var(--palette-sunny-400);
+  --color-pop-sun-fg: var(--palette-plum-800);
   --color-hero-from: var(--palette-raspberry-600);
-  --color-hero-to: var(--palette-lavender-600);
+  --color-hero-to: var(--palette-lilac-700);
 }
 
 [data-theme="dark"] {
@@ -637,36 +653,38 @@
   --color-bg-surface-sunken: var(--palette-plum-990);
   --color-bg-subtle: var(--palette-plum-800);
   --color-bg-subtle-hover: var(--palette-plum-700);
-  --color-bg-inverse: var(--palette-lavender-100);
+  --color-bg-inverse: var(--palette-cream-100);
 
-  --color-fg-default: #f8f1f6;
-  --color-fg-muted: #d6c6d2;
-  --color-fg-subtle: #b8a4b4;
+  --color-fg-default: #fbf3f6;
+  --color-fg-muted: var(--palette-plum-200);
+  --color-fg-subtle: var(--palette-plum-300);
   --color-fg-disabled: var(--palette-plum-600);
   --color-fg-inverse: var(--palette-plum-800);
-  --color-fg-link: var(--palette-bubblegum-300);
-  --color-fg-link-hover: var(--palette-bubblegum-200);
+  --color-fg-link: var(--palette-raspberry-300);
+  --color-fg-link-hover: var(--palette-raspberry-200);
 
   --color-border-default: var(--palette-plum-700);
-  --color-border-strong: #a28c9e;
+  --color-border-strong: var(--palette-plum-400);
   --color-border-inverse: var(--palette-plum-300);
 
-  --color-accent: var(--palette-bubblegum-300);
-  --color-accent-hover: var(--palette-bubblegum-200);
-  --color-accent-active: var(--palette-bubblegum-100);
+  --color-accent: var(--palette-raspberry-400);
+  --color-accent-hover: var(--palette-raspberry-300);
+  --color-accent-active: var(--palette-raspberry-200);
   --color-accent-subtle: var(--palette-raspberry-950);
   --color-accent-subtle-hover: var(--palette-raspberry-900);
   --color-fg-on-accent: var(--palette-plum-950);
-  --color-fg-accent: var(--palette-bubblegum-300);
-  --color-focus-ring: var(--palette-bubblegum-300);
-  --color-accent-press: var(--palette-raspberry-600);
+  --color-fg-accent: var(--palette-raspberry-300);
+  --color-focus-ring: var(--palette-raspberry-300);
+  --color-accent-press: var(--palette-raspberry-700);
 
   --color-pop-pink-bg: var(--palette-raspberry-950);
-  --color-pop-pink-fg: var(--palette-bubblegum-300);
-  --color-pop-grape-bg: var(--palette-lavender-950);
-  --color-pop-grape-fg: var(--palette-lavender-200);
+  --color-pop-pink-fg: var(--palette-raspberry-200);
+  --color-pop-grape-bg: var(--palette-lilac-950);
+  --color-pop-grape-fg: var(--palette-lilac-200);
+  --color-pop-sun-bg: var(--palette-sunny-950);
+  --color-pop-sun-fg: var(--palette-sunny-400);
   --color-hero-from: var(--palette-raspberry-800);
-  --color-hero-to: var(--palette-lavender-800);
+  --color-hero-to: var(--palette-lilac-800);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -677,36 +695,38 @@
     --color-bg-surface-sunken: var(--palette-plum-990);
     --color-bg-subtle: var(--palette-plum-800);
     --color-bg-subtle-hover: var(--palette-plum-700);
-    --color-bg-inverse: var(--palette-lavender-100);
+    --color-bg-inverse: var(--palette-cream-100);
 
-    --color-fg-default: #f8f1f6;
-    --color-fg-muted: #d6c6d2;
-    --color-fg-subtle: #b8a4b4;
+    --color-fg-default: #fbf3f6;
+    --color-fg-muted: var(--palette-plum-200);
+    --color-fg-subtle: var(--palette-plum-300);
     --color-fg-disabled: var(--palette-plum-600);
     --color-fg-inverse: var(--palette-plum-800);
-    --color-fg-link: var(--palette-bubblegum-300);
-    --color-fg-link-hover: var(--palette-bubblegum-200);
+    --color-fg-link: var(--palette-raspberry-300);
+    --color-fg-link-hover: var(--palette-raspberry-200);
 
     --color-border-default: var(--palette-plum-700);
-    --color-border-strong: #a28c9e;
+    --color-border-strong: var(--palette-plum-400);
     --color-border-inverse: var(--palette-plum-300);
 
-    --color-accent: var(--palette-bubblegum-300);
-    --color-accent-hover: var(--palette-bubblegum-200);
-    --color-accent-active: var(--palette-bubblegum-100);
+    --color-accent: var(--palette-raspberry-400);
+    --color-accent-hover: var(--palette-raspberry-300);
+    --color-accent-active: var(--palette-raspberry-200);
     --color-accent-subtle: var(--palette-raspberry-950);
     --color-accent-subtle-hover: var(--palette-raspberry-900);
     --color-fg-on-accent: var(--palette-plum-950);
-    --color-fg-accent: var(--palette-bubblegum-300);
-    --color-focus-ring: var(--palette-bubblegum-300);
-    --color-accent-press: var(--palette-raspberry-600);
+    --color-fg-accent: var(--palette-raspberry-300);
+    --color-focus-ring: var(--palette-raspberry-300);
+    --color-accent-press: var(--palette-raspberry-700);
 
     --color-pop-pink-bg: var(--palette-raspberry-950);
-    --color-pop-pink-fg: var(--palette-bubblegum-300);
-    --color-pop-grape-bg: var(--palette-lavender-950);
-    --color-pop-grape-fg: var(--palette-lavender-200);
+    --color-pop-pink-fg: var(--palette-raspberry-200);
+    --color-pop-grape-bg: var(--palette-lilac-950);
+    --color-pop-grape-fg: var(--palette-lilac-200);
+    --color-pop-sun-bg: var(--palette-sunny-950);
+    --color-pop-sun-fg: var(--palette-sunny-400);
     --color-hero-from: var(--palette-raspberry-800);
-    --color-hero-to: var(--palette-lavender-800);
+    --color-hero-to: var(--palette-lilac-800);
   }
 }
 
@@ -729,9 +749,9 @@
   --palette-ink-600: var(--palette-plum-700);
 
   --palette-paper-25: var(--palette-white);
-  --palette-paper-50: var(--palette-lavender-50);
-  --palette-paper-100: var(--palette-lavender-100);
-  --palette-paper-200: var(--palette-lavender-200);
+  --palette-paper-50: var(--palette-cream-50);
+  --palette-paper-100: var(--palette-cream-100);
+  --palette-paper-200: var(--palette-cream-200);
   --palette-paper-300: var(--palette-gray-200);
   --palette-paper-400: var(--palette-gray-300);
 
@@ -747,11 +767,11 @@
   --palette-red-800: var(--palette-red-700);
 
   /* Listing photo wells: Giddy's party-pop tints. */
-  --photo-bg-1: var(--palette-bubblegum-100);
+  --photo-bg-1: var(--palette-raspberry-100);
   --photo-bg-2: var(--palette-mint-100);
-  --photo-bg-3: var(--palette-sun-100);
+  --photo-bg-3: var(--palette-sunny-100);
   --photo-bg-4: var(--palette-sky-100);
-  --photo-bg-5: var(--palette-lavender-100);
+  --photo-bg-5: var(--palette-lilac-100);
   --photo-bg-6: var(--palette-orange-100);
 
   --font-weight-black: var(--font-weight-heavy);
