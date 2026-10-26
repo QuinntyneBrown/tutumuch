@@ -77,9 +77,8 @@ copied to `docs/mocks/assets/media/`. `docs/mocks/_build/video/build_video.py` b
    Playwright's Chromium has no H.264 decoder; browsers pick the first source they can play.
 6. Captions from the line timings, transcript, poster (last slide) and `ATTRIBUTION.md`.
 
-The committed media are an interim **silent** build (`--silent`): no narration and no music
-yet, captions timed from the text. The full build follows once the music excerpt and the
-Kokoro model are available.
+The committed media are the full build: narrated by `af_bella`, with the music ducked under the
+voice.
 
 ### Tests (`src/frontend/e2e/`)
 
@@ -105,8 +104,8 @@ copy must stay true to).
 
 ## Diagrams
 
-The PlantUML sources are in `diagrams/`. The PNGs have not been rendered for TuTuMuch yet;
-render them with
+The PlantUML sources are in `diagrams/`, each with its rendered PNG. Re-render after an edit
+with
 `python -B -I .claude/skills/writing-software-design-documents/scripts/render_puml.py docs/detailed-designs/platform/marketing-page/diagrams`.
 
 ### Components

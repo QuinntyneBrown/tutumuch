@@ -1,10 +1,11 @@
 # Agent instructions for TuTuMuch
 
-TuTuMuch is an open marketplace for new and used girls' (children's) clothing: dresses, tops,
-outerwear and bottoms, every one accepted only in girls' sizes. Anyone can join, set up a profile
+TuTuMuch is an open marketplace for all things young girls: new and gently loved clothes, shoes,
+dance gear, sports equipment, cameras and tech, toys and crafts, every item for girls
+([ADR general/0006](docs/adr/general/0006-all-things-young-girls.md)). Anyone can join, set up a profile
 and sell what their daughter has outgrown; TuTuMuch's owner sells on it as an ordinary member
 too. TuTuMuch began as a clone of 12L, so every journey, screen, layout, component (including
-the `tl` selector prefix) and rule mirrors 12L; only the domain words and the size rule differ.
+the `tl` selector prefix) and rule mirrors 12L; only the domain words and the audience (size) rule differ.
 The look is the **Giddy design system**: `docs/design-system/tokens/tokens.css` is Giddy's token
 file plus a short block of TuTuMuch layout tokens that alias 12L-only names onto Giddy tokens.
 Change colour, type, shape or motion in Giddy's tokens, never in components. The product

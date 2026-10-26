@@ -17,7 +17,7 @@ Container_Boundary(api, "TuTuMuch API") {
 }
 ContainerDb(db, "TuTuMuch database", "SQL Server", "Listings, ListingPhotos, ListingPhotoVersions")
 
-Rel(visitor, page, "Opens / or /dresses, /tops...")
+Rel(visitor, page, "Opens / or /clothing, /dance, /cameras-and-tech...")
 Rel(page, store, "Reads state, calls load, retry and loadMore")
 Rel(page, grid, "Renders cards with")
 Rel(page, states, "Renders states with")

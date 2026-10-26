@@ -11,13 +11,13 @@ public sealed class ListingTests
 {
     private static readonly DateTime Now = new(2026, 10, 25, 12, 0, 0, DateTimeKind.Utc);
 
-    private static ListingDetails Complete(string category = "Dresses", string subcategory = "Dresses") => new(
+    private static ListingDetails Complete(string category = "Clothing", string subcategory = "Dresses") => new(
         category, subcategory, null, "Rainbow tulle tutu, pink", "Light wear, colours still bright.", "Gymboree", "Used - Good", null, 60.00m, 8.00m);
 
     [Fact]
     public void A_draft_needs_only_a_category_and_takes_its_size_from_it()
     {
-        var listing = Listing.CreateDraft(Guid.NewGuid(), 10001, ListingDetails.Empty with { Category = "Dresses" }, Now);
+        var listing = Listing.CreateDraft(Guid.NewGuid(), 10001, ListingDetails.Empty with { Category = "Clothing" }, Now);
 
         Assert.Equal(ListingStatus.Draft, listing.Status);
         Assert.Equal("Girls'", listing.Size);
@@ -27,7 +27,7 @@ public sealed class ListingTests
     [Fact]
     public void Changing_the_category_changes_the_size()
     {
-        var listing = Listing.CreateDraft(Guid.NewGuid(), 10001, Complete("Tops", "Hoodies"), Now);
+        var listing = Listing.CreateDraft(Guid.NewGuid(), 10001, Complete("Clothing", "Tops"), Now);
 
         listing.UpdateDetails(Complete(), Now);
 
@@ -98,7 +98,7 @@ public sealed class ListingTests
     [Fact]
     public void Publishing_an_empty_draft_reports_every_missing_field()
     {
-        var listing = Listing.CreateDraft(Guid.NewGuid(), 10001, ListingDetails.Empty with { Category = "Tops" }, Now);
+        var listing = Listing.CreateDraft(Guid.NewGuid(), 10001, ListingDetails.Empty with { Category = "Clothing" }, Now);
 
         var violations = listing.Publish(sizeConfirmed: false, Now, photoCount: 0);
 

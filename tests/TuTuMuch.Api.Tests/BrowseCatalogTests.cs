@@ -35,7 +35,7 @@ public sealed class BrowseCatalogTests : IDisposable
     public async Task A_visitor_sees_active_listings_newest_first_as_cards()
     {
         var older = Seed("Floral party dress, pink", minutes: 1);
-        var newer = Seed("Oxford shirt, blue", minutes: 2, category: "Tops", subcategory: "Shirts", price: 18.50m);
+        var newer = Seed("Oxford shirt, blue", minutes: 2, category: "Clothing", subcategory: "Tops", price: 18.50m);
         Seed("Unpublished draft", minutes: 3, publish: false);
 
         using var response = await _client.GetAsync("/api/catalog/listings");
@@ -49,7 +49,7 @@ public sealed class BrowseCatalogTests : IDisposable
         var card = page.Items[0];
         Assert.Equal("Oxford shirt, blue", card.Title);
         Assert.Equal("Gymboree", card.Brand);
-        Assert.Equal("Tops", card.Category);
+        Assert.Equal("Clothing", card.Category);
         Assert.Equal("Girls", card.SizeLabel);
         Assert.Equal("Used - Good", card.Condition);
         Assert.Equal("18.50", card.Price);
@@ -112,12 +112,12 @@ public sealed class BrowseCatalogTests : IDisposable
     public async Task A_category_narrows_the_catalog()
     {
         Seed("Floral party dress, pink", minutes: 1);
-        var shirt = Seed("Oxford shirt, blue", minutes: 2, category: "Tops", subcategory: "Shirts");
+        var camera = Seed("Instant camera, mint", minutes: 2, category: "Cameras and tech", subcategory: "Cameras");
 
-        var page = (await _client.GetFromJsonAsync<CatalogPage>("/api/catalog/listings?category=Tops"))!;
+        var page = (await _client.GetFromJsonAsync<CatalogPage>("/api/catalog/listings?category=cameras-and-tech"))!;
 
         Assert.Equal(1, page.TotalCount);
-        Assert.Equal([shirt], page.Items.Select(i => i.Reference));
+        Assert.Equal([camera], page.Items.Select(i => i.Reference));
     }
 
     [Fact]
@@ -129,7 +129,7 @@ public sealed class BrowseCatalogTests : IDisposable
         Assert.Equal("CATALOG_FILTER_INVALID", (await Problem.ReadAsync(response)).Code);
     }
 
-    private string Seed(string title, int minutes, string category = "Dresses", string subcategory = "Dresses", decimal price = 85m, bool publish = true)
+    private string Seed(string title, int minutes, string category = "Clothing", string subcategory = "Dresses", decimal price = 85m, bool publish = true)
     {
         var now = _start.AddMinutes(minutes);
         var number = ++_number;

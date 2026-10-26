@@ -366,7 +366,7 @@ def note(text: str, pos: str = "top: 6rem; right: 1rem;") -> str:
 @dataclass
 class Page:
     main: str
-    nav: str = ""            # shop | dresses | tops | outerwear | bottoms | sell
+    nav: str = ""            # shop | clothing | shoes | dance | sports | cameras-and-tech | toys-and-crafts | sell
     user: str = "member"     # member | guest | unverified | admin
     shell: str = "app"       # app | auth | admin | bare
     account: str = ""        # active account subnav tab: overview | listings | purchases | sales | payouts | profile | notifications | settings
@@ -393,12 +393,18 @@ class Note:
     notes: str = ""
 
 
-NAV = [("dresses", "Dresses"), ("tops", "Tops"), ("outerwear", "Outerwear"), ("bottoms", "Bottoms")]
+NAV = [("clothing", "Clothing"), ("shoes", "Shoes"), ("dance", "Dance"), ("sports", "Sports"),
+       ("cameras-and-tech", "Cameras and tech"), ("toys-and-crafts", "Toys and crafts")]
+
+
+def cat_key(cat: str) -> str:
+    """Category name to its route slug: "Cameras and tech" -> "cameras-and-tech"."""
+    return cat.lower().replace(" ", "-")
 
 
 def nav_href(key: str) -> str:
-    """Dresses has its own filtered state; the other categories reuse the catalog."""
-    return P("catalog", "category") if key == "dresses" else P("catalog")
+    """Clothing has its own filtered state; the other categories reuse the catalog."""
+    return P("catalog", "category") if key == "clothing" else P("catalog")
 
 
 def topbar(pg: Page) -> str:

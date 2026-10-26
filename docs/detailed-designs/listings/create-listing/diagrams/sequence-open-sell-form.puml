@@ -36,13 +36,13 @@ else verified member may sell (L2-003)
   page -> opts : load()
   opts -> ctrl : GET /api/categories and GET /api/selling/options
   ctrl -> catalog : Read accepted categories, subcategories and sizes (L2-011)
-  catalog --> ctrl : 4 categories, 12 subcategories
+  catalog --> ctrl : 6 categories, 26 subcategories
   alt API reachable
     ctrl --> opts : 200 categories; 200 feePercent, conditions, suggestedBrands
     opts --> page : Categories and options (cached for the session)
     page --> actor : Blank form with no size input (L2-012)
-    actor -> page : Choose category "Dresses"
-    page --> actor : tl-fixed-size "Size: Girls'" and the Dresses types
+    actor -> page : Choose category "Cameras and tech"
+    page --> actor : tl-fixed-size "Size: Girls'" and the Cameras and tech types
     actor -> page : Enter price and shipping
     page --> actor : "You earn after the 10% fee" estimate (L2-031)
   else 5xx or network failure

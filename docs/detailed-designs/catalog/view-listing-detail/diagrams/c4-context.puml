@@ -5,7 +5,7 @@ title System Context — View a listing's detail
 
 Person(visitor, "Visitor", "Anonymous person deciding whether to buy")
 Person(member, "Member", "Signed-in buyer, or the listing's seller")
-System(tutumuch, "TuTuMuch", "Marketplace for girls' clothing")
+System(tutumuch, "TuTuMuch", "Marketplace for all things young girls")
 System_Ext(cdn, "Photo CDN", "Serves content-addressed listing photos")
 System_Ext(pay, "Payment provider", "Takes payment once checkout starts")
 

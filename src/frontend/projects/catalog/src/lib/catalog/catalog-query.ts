@@ -29,10 +29,36 @@ const option = (label: string): Option => ({ slug: label.toLowerCase().replace(/
 
 /** The L2-011 categories with their subcategories; the URL carries the slugs. */
 export const CATEGORIES: readonly CategoryOption[] = [
-  { ...option('Dresses'), sizeLabel: 'Girls', subcategories: ['Dresses', 'Skirts', 'Tutus', 'Rompers'].map(option) },
-  { ...option('Tops'), sizeLabel: 'Girls', subcategories: ['Shirts', 'T-shirts', 'Sweaters', 'Hoodies'].map(option) },
-  { ...option('Outerwear'), sizeLabel: 'Girls', subcategories: ['Jackets', 'Coats'].map(option) },
-  { ...option('Bottoms'), sizeLabel: 'Girls', subcategories: ['Pants', 'Leggings', 'Shorts'].map(option) },
+  {
+    ...option('Clothing'),
+    sizeLabel: 'Girls',
+    subcategories: ['Dresses', 'Tops', 'Bottoms', 'Outerwear', 'Pajamas', 'Swimwear'].map(option),
+  },
+  {
+    ...option('Shoes'),
+    sizeLabel: 'Girls',
+    subcategories: ['Sneakers', 'Boots', 'Sandals', 'Dress shoes'].map(option),
+  },
+  {
+    ...option('Dance'),
+    sizeLabel: 'Girls',
+    subcategories: ['Tutus', 'Leotards', 'Dance shoes', 'Dance bags'].map(option),
+  },
+  {
+    ...option('Sports'),
+    sizeLabel: 'Girls',
+    subcategories: ['Soccer', 'Volleyball', 'Gymnastics', 'Swimming', 'Bikes and scooters'].map(option),
+  },
+  {
+    ...option('Cameras and tech'),
+    sizeLabel: 'Girls',
+    subcategories: ['Cameras', 'Headphones', 'Tablet accessories'].map(option),
+  },
+  {
+    ...option('Toys and crafts'),
+    sizeLabel: 'Girls',
+    subcategories: ['Dolls', 'Arts and crafts', 'Games and puzzles', 'Books'].map(option),
+  },
 ];
 
 /** The L2-016 conditions. */

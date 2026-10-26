@@ -136,7 +136,7 @@ def rules_body() -> str:
     rows = "".join(f'<tr><th scope="row">{c}</th><td>{", ".join(s)}</td><td>{size_tag(z)}</td></tr>' for c, s, z in CATEGORIES)
     sizes = ('<div class="table-wrap"><table class="table"><caption class="visually-hidden">Accepted categories and sizes</caption>'
              f'<thead><tr><th scope="col">Category</th><th scope="col">Includes</th><th scope="col">Size</th></tr></thead><tbody>{rows}</tbody></table></div>')
-    rules = [("Girls’ clothing only", "Dresses, tops, outerwear and bottoms in girls’ sizes. The label must say so."),
+    rules = [("For girls only", "Clothing, shoes, dance, sports, cameras and tech, toys and crafts. Every item must be for girls."),
              ("18 and over", "One account to buy and sell. No approval step."),
              ("Honest condition", ", ".join(CONDITIONS) + ". Used - Fair needs its flaws described."),
              ("Ship in 5 business days", "Add tracking or the order is cancelled and refunded."),

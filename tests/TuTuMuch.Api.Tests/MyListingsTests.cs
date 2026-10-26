@@ -30,7 +30,7 @@ public sealed class MyListingsTests : IDisposable
         Assert.Equal(["Draft", "Active", "Draft", "Sold"], page!.Items.Select(i => i.Status));
         var untitled = page.Items[0];
         Assert.Null(untitled.Title);
-        Assert.Equal("Tops", untitled.Category);
+        Assert.Equal("Clothing", untitled.Category);
         Assert.Null(untitled.Price);
         Assert.Null(untitled.Photo);
         var active = page.Items[1];
@@ -95,10 +95,10 @@ public sealed class MyListingsTests : IDisposable
     {
         await _buyer.SignInVerifiedMemberAsync(_factory);
         var (orderId, seller) = await _factory.SeedPaidOrderAsync(_buyer);
-        var draft = await seller.CreateDraftAsync(new { category = "Dresses", title = "Smocked romper, yellow" });
+        var draft = await seller.CreateDraftAsync(new { category = "Clothing", title = "Smocked romper, yellow" });
         var active = await seller.CreateDraftWithPhotoAsync(Listings.Complete());
         (await seller.PublishAsync(active)).EnsureSuccessStatusCode();
-        var untitled = await seller.CreateDraftAsync(new { category = "Tops" });
+        var untitled = await seller.CreateDraftAsync(new { category = "Clothing" });
         CreatedMinutesAgo("L-30001", 40);
         CreatedMinutesAgo(draft, 30);
         CreatedMinutesAgo(active, 20);

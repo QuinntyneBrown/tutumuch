@@ -72,7 +72,7 @@ export class SellPage {
   /** Needs servePhotoUploads; uploads one photo first. */
   async fillComplete(): Promise<void> {
     await this.addPhotos('front.jpg');
-    await this.category.selectOption('Dresses');
+    await this.category.selectOption('Clothing');
     await this.type.selectOption('Dresses');
     await this.title.fill('Rainbow tulle tutu, pink');
     await this.brand.fill('Gymboree');

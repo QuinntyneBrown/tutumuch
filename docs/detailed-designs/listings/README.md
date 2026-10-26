@@ -1,6 +1,6 @@
 # Listings subsystem
 
-The listings subsystem covers how a seller creates, photographs, prices, publishes, edits, withdraws and reviews listings, and how `TuTuMuch API` enforces the size rule that only girls' clothing is accepted (`L1-003`, `L1-004`). Each feature below is a vertical slice from the Angular pages through `TuTuMuch API` and `TuTuMuch Worker` to the `Listings`, `ListingPhotos` and `ListingPhotoVersions` tables, built on the [architecture baseline](../README.md). Pages and dialogs live in the `@tutumuch/listings` library (`src/frontend/projects/listings/`) and call `TuTuMuch API` through `@tutumuch/api`.
+The listings subsystem covers how a seller creates, photographs, prices, publishes, edits, withdraws and reviews listings, and how `TuTuMuch API` enforces the audience rule that only items for girls are accepted (`L1-003`, `L1-004`). Each feature below is a vertical slice from the Angular pages through `TuTuMuch API` and `TuTuMuch Worker` to the `Listings`, `ListingPhotos` and `ListingPhotoVersions` tables, built on the [architecture baseline](../README.md). Pages and dialogs live in the `@tutumuch/listings` library (`src/frontend/projects/listings/`) and call `TuTuMuch API` through `@tutumuch/api`.
 
 | Feature | Design | Estimate | L2 requirements |
 |---------|--------|----------|-----------------|

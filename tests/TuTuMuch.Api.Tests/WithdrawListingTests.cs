@@ -98,7 +98,7 @@ public sealed class WithdrawListingTests : IDisposable
     public async Task A_draft_cannot_be_withdrawn()
     {
         await _seller.SignInVerifiedMemberAsync(_factory);
-        var reference = await _seller.CreateDraftAsync(new { category = "Tops" });
+        var reference = await _seller.CreateDraftAsync(new { category = "Clothing" });
 
         using var response = await WithdrawAsync(reference);
 

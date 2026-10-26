@@ -43,7 +43,7 @@ public sealed class ListingDraftTests : IDisposable
     {
         await _client.SignInVerifiedMemberAsync(_factory);
 
-        using var response = await _client.PostAsJsonAsync("/api/listings", new { category = "Tops", title = "Grey hoodie" });
+        using var response = await _client.PostAsJsonAsync("/api/listings", new { category = "Clothing", title = "Grey hoodie" });
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         var draft = (await response.Content.ReadFromJsonAsync<MyListing>())!;
@@ -67,9 +67,9 @@ public sealed class ListingDraftTests : IDisposable
     }
 
     [Theory]
-    [InlineData("Dresses", "Dresses", "11")]
-    [InlineData("Tops", "Hoodies", "M")]
-    [InlineData("Tops", "Hoodies", "XL")]
+    [InlineData("Clothing", "Dresses", "11")]
+    [InlineData("Clothing", "Tops", "M")]
+    [InlineData("Clothing", "Tops", "XL")]
     public async Task Any_size_other_than_the_accepted_size_is_refused(string category, string subcategory, string size)
     {
         await _client.SignInVerifiedMemberAsync(_factory);
@@ -82,9 +82,9 @@ public sealed class ListingDraftTests : IDisposable
     }
 
     [Theory]
-    [InlineData("Dresses", "Hoodies")]
+    [InlineData("Clothing", "Hoodies")]
     [InlineData("Accessories", null)]
-    [InlineData("Tops", "Hats")]
+    [InlineData("Clothing", "Hats")]
     [InlineData(null, null)]
     public async Task A_category_or_subcategory_outside_the_table_is_refused(string? category, string? subcategory)
     {
@@ -127,9 +127,9 @@ public sealed class ListingDraftTests : IDisposable
     public async Task Updating_a_draft_to_dresses_sets_the_size_to_girls()
     {
         await _client.SignInVerifiedMemberAsync(_factory);
-        var reference = await _client.CreateDraftAsync(Listings.Complete("Tops", "Hoodies"));
+        var reference = await _client.CreateDraftAsync(Listings.Complete("Clothing", "Tops"));
 
-        using var response = await _client.PutAsJsonAsync($"/api/listings/{reference}", Listings.Complete("Dresses", "Tutus"));
+        using var response = await _client.PutAsJsonAsync($"/api/listings/{reference}", Listings.Complete("Dance", "Tutus"));
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var stored = await _client.GetFromJsonAsync<MyListing>($"/api/me/listings/{reference}");

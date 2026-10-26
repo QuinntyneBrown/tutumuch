@@ -61,7 +61,7 @@ public sealed partial record CatalogCriteria(
         ["price-desc"] = CatalogSort.PriceDescending,
     };
 
-    /// <summary>"T-shirts" becomes "t-shirts"; the URL carries subcategories this way.</summary>
+    /// <summary>"Cameras and tech" becomes "cameras-and-tech"; the URL carries categories and subcategories this way.</summary>
     public static string Slug(string name) => name.ToLowerInvariant().Replace(' ', '-');
 
     /// <summary>Checks every value; an unknown or malformed one is 400 CATALOG_FILTER_INVALID, min above max 400 CATALOG_PRICE_RANGE_INVALID.</summary>
@@ -70,10 +70,11 @@ public sealed partial record CatalogCriteria(
         CategoryDefinition? category = null;
         if (!string.IsNullOrEmpty(filters.Category))
         {
-            category = CategoryCatalog.All.FirstOrDefault(c => string.Equals(c.Name, filters.Category, StringComparison.OrdinalIgnoreCase));
+            category = CategoryCatalog.All.FirstOrDefault(c =>
+                string.Equals(c.Name, filters.Category, StringComparison.OrdinalIgnoreCase) || Slug(c.Name) == filters.Category.ToLowerInvariant());
             if (category is null)
             {
-                return Invalid("Choose one of the 4 categories");
+                return Invalid($"Choose one of the {CategoryCatalog.All.Count} categories");
             }
         }
 

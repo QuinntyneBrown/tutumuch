@@ -13,7 +13,7 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
 
-TuTuMuch is an open marketplace for new and used **girls' (children's) clothing**: dresses, tops, outerwear and bottoms. Parents and families join, set up a profile, list what their daughters have outgrown and buy what they will wear next.
+TuTuMuch is an open marketplace for **all things young girls**: new and gently loved clothes, shoes, dance gear, sports equipment, cameras and tech, toys and crafts. Parents and families join, set up a profile, list what their daughters have outgrown and buy what comes next.
 
 TuTuMuch is a responsive web application built with [Angular](https://angular.dev) and [ASP.NET Core](https://dotnet.microsoft.com).
 
@@ -39,14 +39,16 @@ TuTuMuch is a responsive web application built with [Angular](https://angular.de
 
 ## Overview
 
-General marketplaces bury girls' clothes among everything else. On TuTuMuch every listing is girls' clothing, so parents only browse what their daughter can wear. The API enforces the size rules whatever the client sends. TuTuMuch's owner also sells on the marketplace as a regular member, with the same rules as everyone else.
+General marketplaces bury girls' things among everything else. On TuTuMuch every listing is for girls, so parents only browse what their daughter can use. The API enforces the audience lock (every listing is `Girls'`) whatever the client sends. TuTuMuch's owner also sells on the marketplace as a regular member, with the same rules as everyone else.
 
-| Category                                  | Accepted size | Condition   |
-| ----------------------------------------- | ------------- | ----------- |
-| Dresses (dresses, skirts, tutus, rompers) | Girls'        | New or used |
-| Tops (shirts, t-shirts, sweaters, hoodies) | Girls'        | New or used |
-| Outerwear (jackets, coats)                | Girls'        | New or used |
-| Bottoms (pants, leggings, shorts)         | Girls'        | New or used |
+| Category                                                              | Accepted size | Condition   |
+| --------------------------------------------------------------------- | ------------- | ----------- |
+| Clothing (dresses, tops, bottoms, outerwear, pajamas, swimwear)       | Girls'        | New or used |
+| Shoes (sneakers, boots, sandals, dress shoes)                         | Girls'        | New or used |
+| Dance (tutus, leotards, dance shoes, dance bags)                      | Girls'        | New or used |
+| Sports (soccer, volleyball, gymnastics, swimming, bikes and scooters) | Girls'        | New or used |
+| Cameras and tech (cameras, headphones, tablet accessories)            | Girls'        | New or used |
+| Toys and crafts (dolls, arts and crafts, games and puzzles, books)    | Girls'        | New or used |
 
 ## Project status
 
@@ -54,7 +56,7 @@ General marketplaces bury girls' clothes among everything else. On TuTuMuch ever
 | ------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
 | Accounts      | Available | Join, email verification, sign in and sign out with session cookies and rotating refresh tokens                                                |
 | Listings      | Available | Sell page with drafts, publishing, photo upload and processing, and a daily publish limit                                                      |
-| Catalog       | Available | Home and category pages (`/dresses`, `/tops`, `/outerwear`, `/bottoms`), paged newest first, and the listing detail page at `/items/{reference}` |
+| Catalog       | Available | Home and six category pages (`/clothing`, `/shoes`, `/dance`, `/sports`, `/cameras-and-tech`, `/toys-and-crafts`), paged newest first, and the listing detail page at `/items/{reference}` |
 | Orders        | Available | Checkout, shipping, receipt confirmation, payouts and order problems                                                                           |
 | Privacy       | Partial   | Cookie consent; account closure and erasure are planned                                                                                        |
 | Reviews       | Available | Public seller profile; ratings show "No reviews yet"                                                                                           |
@@ -131,7 +133,7 @@ To check that the API is up, send `GET http://localhost:5045/api/health`. It ret
 ### Load demo data
 
 `TuTuMuch.Cli` resets a local database and fills it with 8 demo members and 48 listings with
-real product photos in every category, so `/`, `/dresses`, `/tops`, `/outerwear`, `/bottoms`
+real product photos in every category, so `/`, the six category pages
 and the listing pages look real. It is for your own machine only; see
 [its README](src/backend/TuTuMuch.Cli/README.md) for the demo accounts and password.
 

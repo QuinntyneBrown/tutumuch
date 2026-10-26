@@ -2,7 +2,7 @@
 
 ## Overview
 
-TuTuMuch is a marketplace for new and used girls' clothing, where every
+TuTuMuch is a marketplace for all things young girls, where every
 member can both buy and sell with one account (`L2-003`). This feature gives each member
 two lists of their orders, "Purchases" and "Sales", and the two detail pages behind
 them: the buyer's order page and the seller's sale page. The detail pages show the
@@ -29,7 +29,7 @@ Terms used in this design:
 ### Frontend (`@tutumuch/orders`, `src/frontend/projects/orders/src/lib/`)
 
 - **`OrderHistoryPage`** (`order-history/`) serves both lists below, chosen by route data `list`.
-- **Purchases** (route `/account/purchases`, account area, mock `docs/mocks/pages/purchases/`) — heading "Purchases" with a subtitle from counts, for example "1 on the way · 1 to confirm" (Shipped and Delivered counts). Each `tl-item-row` row links to `/orders/:id`. A row shows thumbnail, title, "from {seller} · {date}", total and `tl-status`. States: `loading` (3 skeleton rows); `empty` ("Nothing bought yet", "Everything in the catalog is girls' clothing.", "Browse the catalog"); `error` ("Couldn't load purchases", reference code, "Try again", account navigation kept).
+- **Purchases** (route `/account/purchases`, account area, mock `docs/mocks/pages/purchases/`) — heading "Purchases" with a subtitle from counts, for example "1 on the way · 1 to confirm" (Shipped and Delivered counts). Each `tl-item-row` row links to `/orders/:id`. A row shows thumbnail, title, "from {seller} · {date}", total and `tl-status`. States: `loading` (3 skeleton rows); `empty` ("Nothing bought yet", "Everything in the catalog is for girls.", "Browse the catalog"); `error` ("Couldn't load purchases", reference code, "Try again", account navigation kept).
 - **Sales** (route `/account/sales`, mock `docs/mocks/pages/sales/`) — heading "Sales", subtitle "{n} to ship" (Paid count). Rows read "to {buyer} · ship by {date}" for Paid orders and link to `/sales/:id`. States: `loading`; `empty` ("No sales yet", "Sold items show up here with what to do next.", "Sell an item"); `error` ("Couldn't load sales").
 - **`OrderDetailPage`** (route `/orders/:id`, mock `docs/mocks/pages/order-detail/`) — breadcrumb "Purchases › {number}", eyebrow "Order {number} · {date}", `OrderTimelineComponent`, and a side `OrderSummaryPanelComponent` with the seller. One state per status, each reading the `actions` flags:
   - `paid` — "Waiting to ship", "{seller} ships by {date}. If not, you're refunded automatically.", "Ask to cancel" (cancel-order);

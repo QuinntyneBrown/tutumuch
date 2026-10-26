@@ -48,7 +48,7 @@ test.describe('marketing page', () => {
 
     await welcome.link('Shop the catalog').click();
     await expect(page).toHaveURL(/\/$/);
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Girls’ clothing. Nothing else.');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Everything for girls. Nothing else.');
   });
 
   test('title, meta description, heading order and no horizontal scroll at 320px', async ({ page }) => {

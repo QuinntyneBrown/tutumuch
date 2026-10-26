@@ -5,7 +5,7 @@ title System Context — Ship an order
 
 Person(seller, "Seller", "Verified member who sold an item")
 Person(buyer, "Buyer", "Verified member who bought the item")
-System(tutumuch, "TuTuMuch", "Girls' clothing marketplace")
+System(tutumuch, "TuTuMuch", "Marketplace for all things young girls")
 System_Ext(email, "Email provider", "Sends transactional email")
 System_Ext(carrier, "Carrier tracking service", "<TO SUPPLY>: reports delivery for USPS, UPS, FedEx and DHL")
 System_Ext(pay, "Payment provider", "Issues the full refund when the ship deadline passes")

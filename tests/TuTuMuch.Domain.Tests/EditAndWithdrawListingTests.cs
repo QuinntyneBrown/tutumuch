@@ -11,7 +11,7 @@ public sealed class EditAndWithdrawListingTests
 {
     private static readonly DateTime Now = new(2026, 10, 25, 12, 0, 0, DateTimeKind.Utc);
 
-    private static ListingDetails Complete(string category = "Dresses", string subcategory = "Dresses") => new(
+    private static ListingDetails Complete(string category = "Clothing", string subcategory = "Dresses") => new(
         category, subcategory, null, "Rainbow tulle tutu, pink", "Light wear, colours still bright.", "Gymboree", "Used - Good", null, 60.00m, 8.00m);
 
     private static Listing Active()
@@ -52,7 +52,7 @@ public sealed class EditAndWithdrawListingTests
         var listing = Active();
         var later = Now.AddHours(1);
 
-        Assert.Empty(listing.Edit(Complete("Tops", "Hoodies"), sizeConfirmed: true, photoCount: 1, later));
+        Assert.Empty(listing.Edit(Complete("Dance", "Leotards"), sizeConfirmed: true, photoCount: 1, later));
 
         Assert.Equal("Girls'", listing.Size);
         Assert.Equal(later, listing.SizeConfirmedAt);

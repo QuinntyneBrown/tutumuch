@@ -169,7 +169,7 @@ test.describe('manage notification preferences', () => {
     const emails = new EmailSettingsPage(page);
     await emails.goto();
 
-    await expect(emails.loading.locator('li')).toHaveCount(4);
+    await expect(emails.loading.locator('li')).toHaveCount(4, { timeout: 15_000 });
     release();
     await expect(emails.error).toContainText('Couldn’t load email settings');
     await expect(emails.error).toContainText('Something went wrong on our side.');

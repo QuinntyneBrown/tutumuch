@@ -2,7 +2,7 @@
 
 ## Overview
 
-TuTuMuch is a marketplace for new and used girls' clothing. An order
+TuTuMuch is a marketplace for all things young girls. An order
 is *complete* when the buyer has the item and the sale is final: the seller is paid
 and both parties may review each other. This feature moves an order into the
 `Completed` status in two ways. The buyer can confirm receipt, or TuTuMuch can complete

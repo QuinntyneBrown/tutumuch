@@ -2,7 +2,7 @@
 
 ## Overview
 
-TuTuMuch is a marketplace of new and used girls' clothing in which every
+TuTuMuch is a marketplace for all things young girls in which every
 member can both buy and sell. Before buying, a member wants to know whom they are dealing
 with. The *public profile* answers that question. Anyone, signed in or not, can open it at
 `/members/{displayName}`.

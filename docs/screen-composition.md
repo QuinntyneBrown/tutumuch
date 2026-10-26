@@ -26,12 +26,12 @@ implemented, and the catalogue grows in the same change.
 
 | Part | Library components | Local UI |
 |---|---|---|
-| App shell (`shell: 'app'`) | `tl-skip-link`, `tl-top-bar` (guest, member), `tl-footer` (its `cookieSettings` opens `CookieSettingsDialogService`), `tl-toast-region`, `@tutumuch/privacy` `tl-cookie-consent` in the root component | `<main id="main" tabindex="-1">` with the router outlet, in `projects/tutumuch` |
+| App shell (`shell: 'app'`) | `tl-skip-link`, `tl-top-bar` (guest, member; six category links inline from 1280px, menu button and nav-menu sheet below), `tl-footer` (its `cookieSettings` opens `CookieSettingsDialogService`), `tl-toast-region`, `@tutumuch/privacy` `tl-cookie-consent` in the root component | `<main id="main" tabindex="-1">` with the router outlet, in `projects/tutumuch` |
 | Auth shell (`shell: 'auth'`) | `tl-skip-link`, `tl-logo` (lg), `tl-toast-region` | `.auth-layout` with `<main id="main" class="auth-card" tabindex="-1">` and the router outlet, in `projects/tutumuch`; chosen by route `data.shell = 'auth'` |
 | Admin shell (`shell: 'admin'`) | `tl-skip-link`, `tl-top-bar` (`variant="admin"`: logo, "Admin" label, the member's initials), `tl-toast-region` | `<main id="main" class="container page" tabindex="-1">` with the router outlet and no footer, in `projects/tutumuch`; chosen by route `data.shell = 'admin'` |
 | Marketing shell (`shell: 'marketing'`) | `tl-skip-link`, `tl-top-bar` (guest, member), `tl-footer` (with "About TuTuMuch" to `/welcome`), `tl-toast-region` | `<main id="main" class="marketing" tabindex="-1">` with the router outlet and no container, in `projects/tutumuch`; chosen by route `data.shell = 'marketing'` ([ADR platform/0011](adr/platform/0011-marketing-feature-library.md)) |
 | Bare shell (`shell: 'bare'`) | `tl-skip-link`, `tl-top-bar` (bare variant), `tl-toast-region` | Not yet composed |
-| Nav-menu sheet (`dialogs/nav-menu`: default, guest) | `tl-sheet`, `tl-button`, `tl-link` | Not yet composed |
+| Nav-menu sheet (`dialogs/nav-menu`: default, guest) | `tl-sheet`, `tl-button`, `tl-link` | The six category links (Clothing, Shoes, Dance, Sports, Cameras and tech, Toys and crafts) at `/clothing`, `/shoes`, `/dance`, `/sports`, `/cameras-and-tech`, `/toys-and-crafts`; the top bar shows them inline only from 1280px (`--layout-breakpoint-xl`) and the menu button opens this sheet below that. Composed as `tl-nav-menu` in `@tutumuch/components` (opened by `tl-top-bar` through `SheetService`) with the six category links; the member links, Sign out and the row chevrons of the mock are not composed yet |
 | Toast region (`notifications/toast`: info, success, warning, danger, with-action, stacked) | `tl-toast-region`, `tl-toast`, `ToastService` | None |
 | System banner (`notifications/system-banner`: info, success, warning, danger) | `tl-system-banner` (not in the catalogue yet) | Not yet composed |
 
@@ -154,7 +154,7 @@ toggle, the chips and the sort select). The URL holds the result set (`q`, `cate
   `tlButton="link"` Try again when a next page fails), `tl-chip` (one per active filter value),
   `tlButton` (Filters toggle, "Clear all" link button), `tl-choice` and `tl-input-group` (inside
   the filter form), `SheetService` (opens the Filters sheet below 992px), `tl-icon`
-- Local: the hero (`.hero`, h1 "Girls' clothing. *Nothing else.*" and lead), the page header
+- Local: the hero (`.hero`, h1 "Everything for girls. *Nothing else.*" and lead "Clothes, dance and sports gear, cameras, toys and more, from families whose girls have outgrown them."), the page header
   (category name with size tag; eyebrow "Search" with “{q}”; "Shop" for other filters), the
   `.catalog-layout` grid, the `.toolbar` with the polite item count and its text skeleton, the
   `.sort` select, `FilterForm` (`tl-filter-form`, fieldsets Category, subcategories, Brand with
@@ -176,7 +176,7 @@ their profile.
   (default and guest: "Buy now" as `tlButton="primary"` lg; own: "Edit listing" with icon
   `edit` and secondary lg "Withdraw" through `DialogService`; absent for Reserved and Sold), `tl-alert` (reserved: warning, icon `clock`, "In
   someone’s checkout"), `tl-seller-summary` (rating or "New seller"), `tl-listing-grid` (sold:
-  "More girls' clothing"), `tl-center-state` (unavailable: code "404" and "Shop
+  "More for girls"), `tl-center-state` (unavailable: code "404" and "Shop
   similar items"; error: reference, "Try again" with icon `refresh` and "Back to shop"),
   `tlButton`, `tl-icon`
 - Local: the breadcrumb, the info column (`.photo__stamp` Reserved or Sold, `.eyebrow` brand,
@@ -301,7 +301,7 @@ at `/sell/{reference}` instead.
 
 - Library: `tl-status` (the listing status beside the heading), `tl-error-summary`,
   `tl-photo-uploader`, `tl-form-field`, `tl-fixed-size`, `tl-segmented`, `tl-input-group`,
-  `tl-earnings`, `tl-choice` (the ticked size confirmation), `tl-alert` (success "Changes saved"
+  `tl-earnings`, `tl-choice` (the ticked "This item is for girls" confirmation), `tl-alert` (success "Changes saved"
   with "View listing"; warning "This listing changed since you opened it" with sm "Reload" and icon
   `refresh`; danger "Couldn’t save your changes" with the reference), `tlButton` (ghost "Cancel"
   link, primary "Save changes" with busy), `tl-center-state` (error: icon `refresh`, "Couldn’t
@@ -352,7 +352,7 @@ App shell. `@tutumuch/listings` `SellPage` at `/sell` and `/sell/{reference}` (c
 Visitors are sent to `/sign-in?returnUrl=/sell`. The Photos section comes first; each chosen file
 uploads at once and a save sends the photo IDs in order. The footer stays visible under the form.
 
-- Library: `tl-photo-uploader` (photos with cover, uploading and rejected tiles, add tile, help and error), `tl-error-summary` (invalid), `tl-alert` (draft-saved success, save or publish failure), `tl-form-field` (category, type, title with counter, brand, flaws, description with counter, price, shipping), `tl-input-group` (`$` addon), `tl-fixed-size` with `tl-size-tag` (after a category is chosen), `tl-segmented` (condition), `tl-earnings`, `tl-choice` (size confirmation), `tl-button` (Save draft, Publish with busy), `tl-center-state` (success, unverified, limited, error) with `tl-item-row` (success panel) and `tl-icon`, `DialogService` (opens the verify-email prompt)
+- Library: `tl-photo-uploader` (photos with cover, uploading and rejected tiles, add tile, help and error), `tl-error-summary` (invalid), `tl-alert` (draft-saved success, save or publish failure), `tl-form-field` (category, type, title with counter, brand, flaws, description with counter, price, shipping), `tl-input-group` (`$` addon), `tl-fixed-size` with `tl-size-tag` (after a category is chosen), `tl-segmented` (condition), `tl-earnings`, `tl-choice` ("This item is for girls"; error "Confirm this item is for girls"), `tl-button` (Save draft, Publish with busy), `tl-center-state` (success, unverified, limited, error) with `tl-item-row` (success panel) and `tl-icon`, `DialogService` (opens the verify-email prompt)
 - Local: `.page-header` with the h1, `.sell-form` sections (Photos, Item, Price, confirmation: `.form-section`, `.form-row`), the upload state of each tile and its client size check, the brand `<datalist>`, the sticky `.form-actions` bar, the success panel wrapper and the payouts line
 
 ### Forbidden — `/403` (`pages/forbidden`: default)
@@ -439,7 +439,7 @@ Built by resolve-order-problems in `@tutumuch/orders` (`src/lib/problem-detail/`
 | Sign out everywhere (`dialogs/sign-out-everywhere`: default, busy, failed) | `DialogService` | not yet composed | not yet composed |
 | Verify email prompt (`dialogs/verify-email-prompt`: default, busy, sent, limited) | `DialogService` | `tl-dialog` (mail icon, description with the email), `tl-alert` (sent success, limited warning) in the top slot, `tl-button` (Not now, Resend link with busy, Done) | `VerifyEmailPromptComponent` in `@tutumuch/listings`; it moves to a shared place when checkout also opens it |
 | Filters (`dialogs/filters`: default, invalid, busy) | `SheetService` | `tl-sheet` (`side`, heading "Filters", close "Close filters"), `tl-error-summary` (heading "Check the price range"), `tl-choice`, `tl-input-group`, `tl-button` (Clear; primary "Show {n} items" with `aria-busy`, disabled when invalid) | `FiltersSheet` and `FilterForm` in `@tutumuch/catalog` |
-| Menu (`dialogs/nav-menu`: default, guest) | `tl-sheet` | `tl-sheet`, `tl-button`, `tl-link` | not yet composed |
+| Menu (`dialogs/nav-menu`: default, guest) | `SheetService` | `tl-sheet` (heading "Menu", close "Close menu"), the six category links on `.menu-sheet__links` | `tl-nav-menu` in `@tutumuch/components`, opened by `tl-top-bar`; member links, Sign out and row chevrons not composed yet |
 | Add tracking (`dialogs/add-tracking`: default, invalid, busy, failed) | `DialogService` | `tl-dialog` (description "We’ll email {buyer} the tracking link."), `tl-form-field` (Carrier select, focused on open; Tracking number with the inline error), `tl-alert` (danger "That didn’t go through" in the top slot), `tl-button` (Cancel, disabled while busy; primary "Mark as shipped" with busy, "Try again" after a failure) | `AddTrackingDialog` in `@tutumuch/orders` |
 | Cancel order (`dialogs/cancel-order`: default, invalid, busy, failed) | `DialogService` | `tl-dialog` (icon `alert`, `tone="danger"`, description "{buyer} is refunded {total} in full. The listing stays off the catalog until you relist."), `tl-radio-group` (legend "Reason", error "Choose a reason") with four `tl-choice` radios (first focused on open), `tl-form-field` (textarea "Note to buyer", optional), `tl-alert` (danger "That didn’t go through" in the top slot), `tl-button` ("Keep sale", disabled while busy; danger "Cancel sale" with busy, "Try again" after a failure) | `CancelOrderDialog` in `@tutumuch/orders` |
 | Confirm receipt (`dialogs/confirm-receipt`: default, busy, failed) | `DialogService` | `tl-dialog` (`size="sm"`, description "This completes the order and pays {seller}. You can’t report a problem afterwards."), `tl-item-row` (item thumbnail, title, brand and size), `tl-alert` (danger "That didn’t go through" in the top slot), `tl-button` ("Not yet", disabled while busy; primary "Yes, complete order" with busy, "Try again" after a failure) | `ConfirmReceiptDialog` in `@tutumuch/orders` |

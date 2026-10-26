@@ -2,7 +2,7 @@
 
 ## Overview
 
-TuTuMuch is a marketplace for new and used girls' clothing. Members
+TuTuMuch is a marketplace for all things young girls. Members
 sign in, list items, pay for them and leave reviews through the `TuTuMuch Web`
 single-page application, which calls the `TuTuMuch API` over HTTPS. Every one of those
 calls carries a session cookie and, for writes, changes money or personal data.

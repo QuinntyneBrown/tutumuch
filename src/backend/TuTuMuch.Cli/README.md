@@ -11,7 +11,7 @@ tool, and CI never runs it against a database
 | Command | What it does |
 |---------|--------------|
 | `reset [--force]` | Drops the database, applies every EF Core migration (the same code as `TuTuMuch.Migrator`) and empties the photo store. |
-| `seed [--reset] [--force]` | Loads 8 demo members and 48 Active listings, 12 in each of Dresses, Tops, Outerwear and Bottoms, each with 1 to 4 photos. `--reset` runs `reset` first. |
+| `seed [--reset] [--force]` | Loads 8 demo members and 72 Active listings, 12 in each of Clothing, Shoes, Dance, Sports, Cameras and tech, and Toys and crafts, each with 1 to 4 photos from its category's folder. `--reset` runs `reset` first. |
 | `help` | Prints usage. |
 
 `reset` (and `seed --reset`) only runs when `DOTNET_ENVIRONMENT` is `Development`, unless
@@ -78,7 +78,9 @@ Seller ratings show "No reviews yet": no orders, reviews, reports or data export
 
 ## Photos
 
-The 24 images in [`SeedPhotos/`](SeedPhotos/), six per category, are original illustrations of
-girls' clothing generated for TuTuMuch and covered by the repository's licence. Each file and
+The 54 images in [`SeedPhotos/`](SeedPhotos/) are original illustrations of girls' items
+generated for TuTuMuch and covered by the repository's licence: 24 in `Clothing/` and 6 in each of
+`Shoes/`, `Dance/`, `Sports/`, `Cameras and tech/` and `Toys and crafts/`. A folder is named
+exactly as its category, and every demo listing uses photos from its own category's folder. Each file and
 what it shows is listed in [`SeedPhotos/ATTRIBUTION.md`](SeedPhotos/ATTRIBUTION.md); keep that
 file with the images.

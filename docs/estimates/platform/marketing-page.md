@@ -5,8 +5,7 @@
 The hours assume an intermediate Angular/TypeScript developer who does not yet know the
 TuTuMuch codebase. They cover implementation, automated tests and review fixes, and exclude
 requirements, design and mock work. They assume the app shell, the `DialogService` and
-`AuthState` exist. The page, components and tests are built; the video is an interim silent
-build, so the narrated build with music (part of the last row) remains.
+`AuthState` exist. The page, components, tests and the narrated video with music are built.
 [Detailed design](../../detailed-designs/platform/marketing-page/README.md)
 
 ## Full design
@@ -35,4 +34,4 @@ Captions and Play buttons and the shape motion. Minimal total: **26** hours.
 | Video dialog and player | Native player only; no clear error state | 8 |
 | Shape motion | Static decoration | 1 |
 | WebM fallback | Playwright tests cannot play the video | 1 |
-| Narration and music | The silent interim video stays; captions carry the message | 3 |
+| Narration and music | A silent video; captions carry the message | 3 |

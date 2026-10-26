@@ -4,7 +4,7 @@ LAYOUT_WITH_LEGEND()
 title System Context — Manage cookie consent
 
 Person(visitor, "Visitor", "Anyone using TuTuMuch, signed in or not")
-System(tutumuch, "TuTuMuch", "Marketplace for girls' clothing")
+System(tutumuch, "TuTuMuch", "Marketplace for all things young girls")
 System_Ext(analytics, "Analytics provider", "Page-view and timing analytics (product not chosen yet)")
 
 Rel(visitor, tutumuch, "Browses; accepts or declines analytics", "HTTPS")

@@ -65,7 +65,7 @@ public static class Checkouts
         factory.InDatabase(db =>
         {
             var seller = sellerId ?? SeedMember(db, $"kicks_{number}", $"kicks{number}@example.com").Id;
-            var details = new ListingDetails("Dresses", "Dresses", null, "Floral party dress, pink", "Worn a handful of times. No stains.", "Gymboree", "Used - Excellent", null, 85m, 9m);
+            var details = new ListingDetails("Clothing", "Dresses", null, "Floral party dress, pink", "Worn a handful of times. No stains.", "Gymboree", "Used - Excellent", null, 85m, 9m);
             var listing = Listing.CreateDraft(seller, number, details, DateTime.UtcNow);
             Assert.Empty(listing.Publish(sizeConfirmed: true, DateTime.UtcNow, photoCount: 1));
             db.Listings.Add(listing);

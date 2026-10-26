@@ -111,7 +111,7 @@ test.describe('upload listing photos', () => {
     await sell.photo(3).dragTo(sell.photo(1));
 
     await expect(sell.photo(1).locator('img')).toHaveAttribute('src', photo('p-3')['url'] as string);
-    await sell.category.selectOption('Dresses');
+    await sell.category.selectOption('Clothing');
     await sell.saveDraft.click();
     await expect.poll(lastSave).toMatchObject({ photoIds: ['p-3', 'p-1', 'p-2'] });
     await expect(sell.photo(1)).toContainText('Cover');
@@ -128,7 +128,7 @@ test.describe('upload listing photos', () => {
 
     await expect(sell.photoAnnouncement).toHaveText('Photo moved to position 1 of 2. It is now the cover.');
     await expect(sell.photo(1)).toBeFocused();
-    await sell.category.selectOption('Tops');
+    await sell.category.selectOption('Shoes');
     await sell.saveDraft.click();
     await expect.poll(lastSave).toMatchObject({ photoIds: ['p-2', 'p-1'] });
   });
@@ -144,7 +144,7 @@ test.describe('upload listing photos', () => {
     await expect(sell.photoTiles).toHaveCount(1);
     await expect(sell.addPhotosTile).toContainText('1 of 8');
     await expect(sell.photo(1)).toContainText('Cover');
-    await sell.category.selectOption('Tops');
+    await sell.category.selectOption('Shoes');
     await sell.saveDraft.click();
     await expect.poll(lastSave).toMatchObject({ photoIds: ['p-2'] });
   });
@@ -162,7 +162,7 @@ test.describe('upload listing photos', () => {
 
   test('a saved draft opens with its photos in order', async ({ page }) => {
     await page.route('**/api/me/listings/L-10001', (route) =>
-      route.fulfill({ json: myListing({ category: 'Tops', photos: [photo('p-7'), photo('p-8')] }) }),
+      route.fulfill({ json: myListing({ category: 'Shoes', photos: [photo('p-7'), photo('p-8')] }) }),
     );
     const sell = new SellPage(page);
 

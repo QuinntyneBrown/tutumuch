@@ -16,7 +16,7 @@ import {
 import { PitchVideoDialog } from './pitch-video-dialog';
 
 const DESCRIPTION =
-  'New and gently loved clothes and gear for girls: dresses, dance and sports gear, cameras and more. Shop her next favourite thing, or pass on what she has outgrown.';
+  'New and gently loved clothes and gear for girls: clothes, shoes, dance and sports gear, cameras, toys and more. Shop her next favourite thing, or pass on what she has outgrown.';
 
 /**
  * Public marketing page at /welcome (L2-078 to L2-083). Static copy, no TuTuMuch API call of its own;
@@ -47,7 +47,7 @@ export class WelcomePage implements OnDestroy {
   readonly shopperPoints: FeaturePoint[] = [
     {
       title: 'Every listing is for girls',
-      text: 'Clothes, dance and sports gear, cameras and more. Nothing to filter out.',
+      text: 'Clothes, shoes, dance and sports gear, cameras, toys and more. Nothing to filter out.',
     },
     { title: 'Outgrown, not worn out', text: 'Most things still have plenty of twirl left in them.' },
     { title: 'Honest condition', text: 'Five grades, and flaws named up front.' },

@@ -11,17 +11,23 @@ namespace TuTuMuch.Cli.Tests;
 
 public sealed class SeedListingsTests(SeededDemo demo) : IClassFixture<SeededDemo>
 {
-    private static readonly string[] Categories = ["Dresses", "Tops", "Outerwear", "Bottoms"];
+    private static readonly string[] Categories = ["Clothing", "Shoes", "Dance", "Sports", "Cameras and tech", "Toys and crafts"];
 
     [Fact]
-    public void Forty_to_eighty_listings_are_active_with_at_least_eight_per_category()
+    public void Forty_eight_to_eighty_listings_are_active_with_at_least_eight_per_category()
     {
         var listings = demo.Harness.InDatabase(db => db.Listings.ToList());
 
         Assert.Equal(ExitCodes.Success, demo.Run.ExitCode);
-        Assert.InRange(listings.Count, 40, 80);
+        Assert.InRange(listings.Count, 48, 80);
         Assert.All(listings, l => Assert.Equal(ListingStatus.Active, l.Status));
         Assert.All(Categories, c => Assert.True(listings.Count(l => l.Category == c) >= 8, $"{c} has fewer than 8 listings"));
+    }
+
+    [Fact]
+    public void Every_listing_uses_photos_from_its_own_categorys_folder()
+    {
+        Assert.All(DemoCatalogue.Listings, l => Assert.All(l.Photos, p => Assert.StartsWith($"{l.Category}/", p)));
     }
 
     [Fact]
@@ -95,13 +101,15 @@ public sealed class SeedListingsTests(SeededDemo demo) : IClassFixture<SeededDem
     }
 
     [Theory]
-    [InlineData("Dresses")]
-    [InlineData("Tops")]
-    [InlineData("Outerwear")]
-    [InlineData("Bottoms")]
+    [InlineData("Clothing")]
+    [InlineData("Shoes")]
+    [InlineData("Dance")]
+    [InlineData("Sports")]
+    [InlineData("Cameras and tech")]
+    [InlineData("Toys and crafts")]
     public async Task The_catalog_lists_each_categorys_demo_listings_with_a_cover_photo(string category)
     {
-        var page = await demo.Harness.SendAsync(new BrowseCatalogQuery(1, 48, new CatalogFilters(Category: category.ToLowerInvariant())));
+        var page = await demo.Harness.SendAsync(new BrowseCatalogQuery(1, 48, new CatalogFilters(Category: CatalogCriteria.Slug(category))));
 
         Assert.True(page.IsSuccess);
         Assert.Equal(DemoCatalogue.Listings.Count(l => l.Category == category), page.Value!.TotalCount);

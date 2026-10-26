@@ -2,7 +2,7 @@
 
 ## Overview
 
-TuTuMuch is a marketplace for new and used girls' clothing. Before any
+TuTuMuch is a marketplace for all things young girls. Before any
 feature can be built, a developer needs a repository that builds, lints and tests on the
 first day. This feature, part of the `platform` subsystem, creates that starting point:
 the backend solution, the frontend workspace, the empty application shell, the test

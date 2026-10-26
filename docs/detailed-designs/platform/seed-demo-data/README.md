@@ -2,7 +2,7 @@
 
 ## Overview
 
-TuTuMuch is a marketplace for new and used girls' clothing. A fresh local
+TuTuMuch is a marketplace for all things young girls. A fresh local
 install has no members and no listings, so every catalog page is empty until someone
 registers, verifies, uploads photos and publishes by hand. This feature, part of the
 `platform` subsystem, adds `TuTuMuch.Cli`, a developer tool with two commands: `reset`

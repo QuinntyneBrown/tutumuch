@@ -5,7 +5,7 @@ namespace TuTuMuch.Api.Tests.Support;
 /// <summary>Request bodies and calls for the listings endpoints.</summary>
 public static class Listings
 {
-    public static Dictionary<string, object?> Complete(string category = "Dresses", string subcategory = "Dresses") => new()
+    public static Dictionary<string, object?> Complete(string category = "Clothing", string subcategory = "Dresses") => new()
     {
         ["category"] = category,
         ["subcategory"] = subcategory,

@@ -76,9 +76,9 @@ public sealed class SearchAndFilterCatalogTests : IDisposable
     {
         var match = Seed("Smocked romper", condition: "New with tags");
         Seed("Floral party dress pink", condition: "Used - Good");
-        Seed("Oxford shirt", category: "Tops", subcategory: "Shirts", condition: "New with tags");
+        Seed("Canvas sneakers", category: "Shoes", subcategory: "Sneakers", condition: "New with tags");
 
-        Assert.Equal([match], await References("category=dresses&condition=new-with-tags"));
+        Assert.Equal([match], await References("category=clothing&condition=new-with-tags"));
     }
 
     [Fact]
@@ -87,11 +87,23 @@ public sealed class SearchAndFilterCatalogTests : IDisposable
         var gymboree = Seed("Floral party dress pink", brand: "Gymboree");
         var crewcuts = Seed("Smocked romper", brand: "Crewcuts");
         Seed("Retro fleece", brand: "Primary");
-        var tutu = Seed("Ballerina tutu", brand: "Mini Boden", subcategory: "Tutus");
-        Seed("Velvet skirt", brand: "Janie and Jack", subcategory: "Skirts");
+        var tutu = Seed("Ballerina tutu", brand: "Mini Boden", category: "Dance", subcategory: "Tutus");
+        Seed("Velvet leotard", brand: "Janie and Jack", category: "Dance", subcategory: "Leotards");
 
         Assert.Equal([crewcuts, gymboree], await References("brand=Gymboree&brand=crewcuts"));
-        Assert.Equal([tutu], await References("category=dresses&subcategory=tutus"));
+        Assert.Equal([tutu], await References("category=dance&subcategory=tutus"));
+    }
+
+    [Fact]
+    public async Task Category_and_subcategory_slugs_match_names_with_spaces()
+    {
+        var scooter = Seed("Pink kick scooter", category: "Sports", subcategory: "Bikes and scooters");
+        Seed("Size 4 soccer ball", category: "Sports", subcategory: "Soccer");
+        var camera = Seed("Instant camera, mint", category: "Cameras and tech", subcategory: "Cameras");
+
+        Assert.Equal([scooter], await References("category=sports&subcategory=bikes-and-scooters"));
+        Assert.Equal([camera], await References("category=cameras-and-tech"));
+        Assert.Equal([camera], await References("category=Cameras%20and%20tech"));
     }
 
     [Fact]
@@ -120,7 +132,9 @@ public sealed class SearchAndFilterCatalogTests : IDisposable
 
     [Theory]
     [InlineData("category=hats")]
-    [InlineData("category=tops&subcategory=tutus")]
+    [InlineData("category=clothing&subcategory=tutus")]
+    [InlineData("category=cameras-and-tech&subcategory=tutus")]
+    [InlineData("category=tops")]
     [InlineData("subcategory=tutus")]
     [InlineData("condition=mint")]
     [InlineData("sort=cheapest")]
@@ -182,7 +196,7 @@ public sealed class SearchAndFilterCatalogTests : IDisposable
         string title,
         string brand = "Gymboree",
         string description = "Light wear, colours still bright.",
-        string category = "Dresses",
+        string category = "Clothing",
         string subcategory = "Dresses",
         string condition = "Used - Good",
         decimal price = 85m,
