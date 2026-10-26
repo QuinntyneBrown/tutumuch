@@ -4,7 +4,7 @@ The platform subsystem holds the cross-cutting capabilities that every TuTuMuch
 feature inherits: HTTP and API hardening, credential and supply-chain
 protection, stateless scaling, the responsive and
 accessible application shell, error reporting and observability,
-availability and recovery, the developer tool that resets and seeds a demo install, and the public marketing page. It refines `L1-013`, `L1-015`, `L1-016`, `L1-017`,
+availability and recovery, the developer tool that resets and seeds a demo install, the public marketing page, and continuous deployment to one low-cost VM. It refines `L1-013`, `L1-015`, `L1-016`, `L1-017`,
 `L1-018`, `L1-019` and `L1-020`. Each feature is a vertical slice through middleware, the Angular shell,
 infrastructure and CI, and each has an estimate in
 [`docs/estimates/platform/`](../../estimates/platform/).
@@ -20,3 +20,4 @@ infrastructure and CI, and each has an estimate in
 | [report-errors-and-observe](report-errors-and-observe/README.md) | `L2-068`, `L2-069`, `L2-070` |
 | [keep-available-and-recoverable](keep-available-and-recoverable/README.md) | `L2-066`, `L2-067` |
 | [marketing-page](marketing-page/README.md) | `L2-078`, `L2-079`, `L2-080`, `L2-081`, `L2-082`, `L2-083` |
+| [deploy-to-production](deploy-to-production/README.md) | `L2-084`, `L2-085`, `L2-086` |

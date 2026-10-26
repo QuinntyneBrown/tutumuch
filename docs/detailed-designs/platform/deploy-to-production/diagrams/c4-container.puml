@@ -1,0 +1,27 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Deploy to production
+
+Person(owner, "Owner", "Merges to main; rolls back by hand")
+Person(member, "Member", "Uses https://tutumuch.kids")
+System_Ext(gh, "GitHub Actions", "CI (verify) then Deploy (build, deploy, smoke test)")
+System_Ext(ghcr, "GitHub Container Registry", "tutumuch-api|worker|migrator|web:{sha}")
+System_Boundary(vm, "Azure Linux VM (B1s/B1ms, 2 GB swap) — /opt/tutumuch") {
+  Container(web, "web", "Caddy", "TLS, static Angular build, no-cache index.html, proxies /api and /photos")
+  Container(api, "api", "TuTuMuch.Api", "512 MB; /api/health needs no database")
+  Container(worker, "worker", "TuTuMuch.Worker", "384 MB; outbox and jobs")
+  Container(migrator, "migrator", "TuTuMuch.Migrator", "Run once per deploy before the restart")
+}
+ContainerDb(sql, "TuTuMuch database", "Azure SQL Database, Basic")
+Rel(owner, gh, "git push main / Run workflow (ref)")
+Rel(gh, ghcr, "Pushes images")
+Rel(gh, migrator, "SSH: compose file, pull, migrate, up -d")
+Rel(gh, web, "GET /api/health (smoke test)")
+Rel(member, web, "HTTPS")
+Rel(web, api, "HTTP 8080")
+Rel(api, sql, "SQL")
+Rel(worker, sql, "SQL")
+Rel(migrator, sql, "Migrate()")
+Rel(api, ghcr, "Image pulled by docker compose")
+@enduml

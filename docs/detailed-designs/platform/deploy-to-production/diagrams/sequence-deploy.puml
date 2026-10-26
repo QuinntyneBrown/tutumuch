@@ -1,0 +1,48 @@
+@startuml
+title UML sequence behaviour — Deploy on push to main (L2-084, L2-085)
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+actor "Owner" as owner
+box "GitHub" #FFF4E5
+  participant "CI (verify)" as ci
+  participant "Deploy: build" as build
+  participant "Deploy: deploy" as deploy
+end box
+participant "GHCR" as ghcr
+box "Azure VM /opt/tutumuch" #D1FADF
+  participant "docker compose" as compose
+  participant "migrator" as mig
+  participant "web + api + worker" as stack
+end box
+database "Azure SQL" as sql
+owner -> ci : push to main
+alt verify fails or run is a pull request
+  ci --> owner : red run; Deploy build job skipped
+else verify passes
+  ci -> build : workflow_run completed, success, head_sha
+  build -> ghcr : push tutumuch-{api,worker,migrator,web}:{sha} and :latest
+  build -> deploy : needs: build (environment production)
+  deploy -> compose : scp docker-compose.yml; docker login (token on stdin)
+  deploy -> compose : bash -s (set -euo pipefail): IMAGE_TAG={sha}, pull
+  compose -> ghcr : pull {sha}
+  compose -> mig : run --rm -T migrator < /dev/null
+  mig -> sql : apply migrations
+  alt migration fails
+    mig --> deploy : non-zero exit; up -d never runs
+    deploy --> owner : run fails; old containers keep serving
+  else migrations applied
+    compose -> stack : up -d --remove-orphans; prune images older than 72h
+    loop up to 20 times, 6 s apart
+      deploy -> stack : GET https://SITE_HOST/api/health
+    end
+    alt 200
+      deploy --> owner : green run; live on next page load (no-cache index.html)
+    else no 200 within 2 minutes
+      deploy --> owner : "health check failed"; run fails
+    end
+  end
+end
+@enduml

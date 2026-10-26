@@ -28,6 +28,7 @@ TuTuMuch is a responsive web application built with [Angular](https://angular.de
   - [Load demo data](#load-demo-data)
 - [Configuration](#configuration)
 - [Testing](#testing)
+- [Deployment](#deployment)
 - [API reference](#api-reference)
 - [Architecture](#architecture)
 - [Repository structure](#repository-structure)
@@ -176,6 +177,10 @@ Run each check from `src/frontend`.
 
 Backend tests use in-memory substitutes and never connect to a real database. Playwright tests serve the API through route fixtures and never start the backend. See [AGENTS.md](AGENTS.md#testing-rules-critical) for the full rules.
 
+## Deployment
+
+Every push to `main` deploys to `https://tutumuch.kids` once CI's `npm run verify` passes: the Deploy workflow builds the four images, pushes them to GitHub Container Registry, migrates the database, restarts the Docker Compose stack on one small Azure Linux VM and checks `/api/health`. Run the Deploy workflow by hand with an older commit SHA to roll back. See [docs/deployment.md](docs/deployment.md) and ADR platform/0012.
+
 ## API reference
 
 Endpoints are served under `/api`, except processed photos under `/photos`. Endpoints marked _member_ need a signed-in session; listing and photo upload endpoints also need a verified email.
@@ -221,7 +226,8 @@ Architecture decisions are recorded in [docs/adr](docs/adr).
 
 ```text
 tutumuch/
-├── .github/                 CI workflow, issue and pull request templates
+├── .github/                 CI and deploy workflows, issue and pull request templates
+├── deploy/                  Production stack: Docker Compose, Dockerfiles, Caddyfile, cloud-init
 ├── docs/                    Journeys, specs, mocks, design system, designs, estimates, ADRs
 ├── src/
 │   ├── backend/             .NET solution: Api, Application, Domain, Infrastructure, Worker, Migrator, Cli
@@ -242,6 +248,7 @@ tutumuch/
 | [docs/design-system](docs/design-system)       | Tokens and components                           |
 | [docs/detailed-designs](docs/detailed-designs) | Per-feature designs and diagrams                |
 | [docs/estimates](docs/estimates/README.md)     | Effort, progress and roadmap                    |
+| [docs/deployment.md](docs/deployment.md)       | Production host, deploys and rollback           |
 | [AGENTS.md](AGENTS.md)                         | Working agreement for AI coding agents          |
 | [CHANGELOG.md](CHANGELOG.md)                   | Notable changes                                 |
 

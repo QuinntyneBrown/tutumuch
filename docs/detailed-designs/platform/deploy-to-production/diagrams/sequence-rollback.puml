@@ -1,0 +1,25 @@
+@startuml
+title UML sequence behaviour — Roll back to an earlier commit (L2-086)
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+actor "Owner" as owner
+participant "Deploy workflow" as deploy
+box "Azure VM /opt/tutumuch" #D1FADF
+  participant ".env" as env
+  participant "docker compose" as compose
+end box
+alt through GitHub
+  owner -> deploy : Run workflow, ref = older full SHA
+  deploy -> deploy : checkout ref; build and push images tagged ref
+  deploy -> compose : IMAGE_TAG=ref; pull; migrator (no-op); up -d
+  deploy --> owner : smoke test passes
+else on the VM
+  owner -> env : set IMAGE_TAG=<older sha>
+  owner -> compose : docker compose up -d
+  compose --> owner : stack runs the older images
+end
+note over owner, compose : Migrations are forward-only: going back past a breaking schema change needs a compatible migration first.
+@enduml
