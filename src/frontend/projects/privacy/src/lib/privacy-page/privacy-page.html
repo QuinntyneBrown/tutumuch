@@ -1,0 +1,19 @@
+<div class="page--narrow">
+  <div class="page-header">
+    <div class="stack stack--sm">
+      <h1>Privacy</h1>
+      <p class="subtitle">Updated 1 Oct 2026</p>
+    </div>
+  </div>
+  <ul class="rules-list" role="list">
+    @for (item of items; track item.title) {
+      <li class="settings-list__body">
+        <span class="settings-list__title">{{ item.title }}</span>
+        <span class="settings-list__meta">{{ item.detail }}</span>
+      </li>
+    }
+  </ul>
+  <p class="text-sm privacy__cookies">
+    <button tlButton="link" size="sm" type="button" (click)="cookieSettings.open()">Cookie settings</button>
+  </p>
+</div>

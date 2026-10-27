@@ -92,6 +92,9 @@ const cases: GuidelineCase[] = [
     heading: 'Floral party dress, pink',
   },
   { name: 'marketing page', path: '/welcome', heading: 'Twirl it forward.', tilly: /^Tilly twirling/ },
+  { name: 'marketplace rules', path: '/rules', heading: 'Marketplace rules' },
+  { name: 'privacy', path: '/privacy', heading: 'Privacy' },
+  { name: 'terms', path: '/terms', heading: 'Terms of service' },
   { name: 'sign in', path: '/sign-in', heading: 'Sign in' },
   { name: 'join', path: '/join', heading: 'Join TuTuMuch' },
   {

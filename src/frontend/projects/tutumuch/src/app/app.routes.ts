@@ -8,4 +8,5 @@ export const routes: Routes = [
   { path: 'members', loadChildren: () => import('@tutumuch/reviews').then((m) => m.routes) },
   { path: 'privacy', loadChildren: () => import('@tutumuch/privacy').then((m) => m.routes) },
   { path: '', loadChildren: () => import('@tutumuch/accounts').then((m) => m.routes) },
+  { path: '', loadChildren: () => import('@tutumuch/marketing').then((m) => m.infoRoutes) },
 ];

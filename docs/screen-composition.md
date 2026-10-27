@@ -440,8 +440,11 @@ girls and never promises boys' or adult sizes ([ADR general/0005](adr/general/00
 
 ### Privacy — `/privacy` (`pages/privacy`: default)
 
-- Library: not yet composed
-- Local: not yet composed
+Built in `@tutumuch/privacy` (`src/lib/privacy-page/`), in the app shell. Static copy, no TuTuMuch API call.
+
+- Library: `.page-header`, `.settings-list__title` and `.settings-list__meta` rows, `tl-button` (link "Cookie
+  settings", opening `CookieSettingsDialogService`)
+- Local: `PrivacyPage`, the narrow column and the `.rules-list` borders
 
 ### Problem detail — `/admin/problems/{id}` (`pages/problem-detail`: default, resolved, loading, error)
 
@@ -459,8 +462,11 @@ Built by resolve-order-problems in `@tutumuch/orders` (`src/lib/problem-detail/`
 
 ### Marketplace rules — `/rules` (`pages/rules`: default)
 
-- Library: not yet composed
-- Local: not yet composed
+Built in `@tutumuch/marketing` (`src/lib/rules/`, exported as `infoRoutes`), in the app shell. Static copy.
+
+- Library: `.page-header`, `.table-wrap` and `.table` (categories and sizes), `tl-size-tag` ("Girls"),
+  `.settings-list__title` and `.settings-list__meta` rows
+- Local: `RulesPage`, the narrow column and the `.rules-list` borders
 
 ### Server error — `/error` (`pages/server-error`: default)
 
@@ -469,8 +475,10 @@ Built by resolve-order-problems in `@tutumuch/orders` (`src/lib/problem-detail/`
 
 ### Terms — `/terms` (`pages/terms`: default)
 
-- Library: not yet composed
-- Local: not yet composed
+Built in `@tutumuch/marketing` (`src/lib/terms/`, exported as `infoRoutes`), in the app shell. Static copy.
+
+- Library: `.page-header`, links to `/rules` and `/privacy`
+- Local: `TermsPage`, the narrow column and the numbered `.terms-list`
 
 
 ## Dialogs

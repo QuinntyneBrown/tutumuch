@@ -1,0 +1,20 @@
+.page--narrow {
+  max-width: 40rem;
+}
+.terms-list {
+  margin: 0;
+  padding-left: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: var(--layout-measure);
+}
+.terms-list li {
+  padding-left: var(--space-2);
+}
+.terms-list li::marker {
+  font-weight: var(--font-weight-bold);
+}
+.terms__see-also {
+  margin-top: var(--space-8);
+}
