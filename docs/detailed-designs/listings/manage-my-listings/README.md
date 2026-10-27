@@ -24,7 +24,7 @@ Screens, states and copy come from `docs/mocks/pages/my-listings/` and `docs/moc
   - `loading` — the filter chips plus 4 skeleton rows matching thumbnail, title and price, `aria-busy="true"`, `aria-label="Loading listings"`; no subtitle.
   - `default` — all listings, newest first.
   - `filtered` — one chip pressed, for example "Sold", with only the matching rows.
-  - `empty` — tag icon, "Nothing listed yet", "List a pair of 12s or something in L." and a primary "Sell an item" action, without chips (`L2-021`).
+  - `empty` — tag icon, "Nothing listed yet", "List a dress, a leotard or anything she’s outgrown." and a primary "Sell an item" action, without chips (`L2-021`).
   - `error` — refresh icon, "Couldn't load your listings", "Try again in a moment." with the correlation reference ("Ref …") and a "Try again" button (`L2-068`).
   - A filter that matches nothing shows the chips with a count of 0 and no rows; its copy is `<TO SUPPLY>`.
 - **Status filter** — `tl-filter-chips` from `@tutumuch/components`: `role="group"` with `aria-label="Filter by status"`, 6 toggle chips ("All", "Draft", "Active", "Reserved", "Sold", "Removed"), each with its count and `aria-pressed`. The chosen status is kept in the URL query (`?status=sold`), so the filter survives reload and back navigation; each change asks the API again with that status.
