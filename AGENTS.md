@@ -8,7 +8,9 @@ too. TuTuMuch began as a clone of 12L, so every journey, screen, layout, compone
 the `tl` selector prefix) and rule mirrors 12L; only the domain words and the audience (size) rule differ.
 The look is the **Giddy design system**: `docs/design-system/tokens/tokens.css` is Giddy's token
 file plus a short block of TuTuMuch layout tokens that alias 12L-only names onto Giddy tokens.
-Change colour, type, shape or motion in Giddy's tokens, never in components. The product
+Change colour, type, shape or motion in Giddy's tokens, never in components. Every page follows
+[`docs/page-guidelines.md`](docs/page-guidelines.md) (`L1-022`, `L2-096`), mapped onto this stack by
+[ADR general/0009](docs/adr/general/0009-page-guidelines-on-the-angular-and-giddy-stack.md). The product
 is defined, before code, by `docs/journeys.md`, `docs/specs/` (L1 and L2 requirements),
 `docs/mocks/` (generated HTML mocks), `docs/detailed-designs/` and `docs/estimates/`.
 Architecture decisions live in `docs/adr/`.
@@ -104,7 +106,8 @@ tutumuch/
 │       └── projects/
 │           ├── tutumuch/         the application (projectType "application")
 │           │   ├── src/app/     app.config.ts, app.routes.ts, shells only
-│           │   └── public/media/ pitch video, captions, poster and share image (ADR platform/0011)
+│           │   └── public/      media/ pitch video, captions, poster and share image (ADR platform/0011);
+│           │                    fonts/ Titan One, Fraunces, DM Sans with OFL files; tilly/ Tilly poses (ADR general/0009)
 │           ├── api/             library: typed HTTP services, DTOs, auth state, interceptors
 │           ├── components/      library: design-system components and styles
 │           ├── accounts/        library: feature area
