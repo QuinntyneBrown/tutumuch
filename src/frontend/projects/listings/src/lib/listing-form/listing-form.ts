@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { ControlContainer, ReactiveFormsModule } from '@angular/forms';
 import {
-  ChoiceComponent,
   EarningsComponent,
   FixedSizeComponent,
   FormFieldComponent,
@@ -13,15 +12,13 @@ import {
 import { ListingFormModel } from './listing-form-model';
 
 /**
- * The fields of a listing (mocks pages/sell and pages/edit-listing): photos, item, price and the
- * size confirmation. It renders inside the page's form, whose group is the model's form, so the
- * page owns the error summary, the alerts and the actions.
+ * The fields of a listing (mocks pages/sell and pages/edit-listing): photos, item and price. It renders inside the page's form, whose group is the model's
+ * form, so the page owns the error summary, the alerts and the actions.
  */
 @Component({
   selector: 'tl-listing-form',
   imports: [
     ReactiveFormsModule,
-    ChoiceComponent,
     EarningsComponent,
     FixedSizeComponent,
     FormFieldComponent,

@@ -105,7 +105,7 @@ public sealed class DemoSeeder(ISender sender, TuTuMuchDbContext db, SeedClock c
             listing.Category, listing.Subcategory, Size: null, listing.Title, listing.Description, listing.Brand,
             listing.Condition, listing.Flaws, listing.Price, listing.ShippingCost);
         var draft = Expect(await sender.Send(new CreateListingDraftCommand(sellerId, details, photoIds), cancellationToken), $"Creating '{listing.Title}'");
-        Expect(await sender.Send(new PublishListingCommand(sellerId, draft.Reference, SizeConfirmed: true), cancellationToken), $"Publishing '{listing.Title}'");
+        Expect(await sender.Send(new PublishListingCommand(sellerId, draft.Reference), cancellationToken), $"Publishing '{listing.Title}'");
     }
 
     /// <summary>The raw token in the verification link of an EmailVerificationEmail payload.</summary>

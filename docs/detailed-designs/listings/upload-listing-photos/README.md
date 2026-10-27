@@ -55,7 +55,7 @@ Screens, states and copy come from `docs/mocks/pages/sell/` (`default`, `filled`
   - more than 8 IDs gives `PHOTO_LIMIT` (`422`, field `photos`), so a ninth photo is refused even when the client control is bypassed (`L2-017`);
   - every photo must be owned by the caller and unattached or already on this listing, without repeats (`PHOTO_NOT_FOUND`, `422`, field `photos`);
   - it then sets `ListingId` and `Position` (0 to n − 1) in the given order and detaches photos the request omits.
-- **Publish rule** — `Listing.Publish(sizeConfirmed, now, photoCount)` adds `PHOTOS_REQUIRED` "Add at least one photo" on field `photos` when no photo is attached. The maximum is enforced on attach.
+- **Publish rule** — `Listing.Publish(now, photoCount)` adds `PHOTOS_REQUIRED` "Add at least one photo" on field `photos` when no photo is attached. The maximum is enforced on attach.
 - **`ListingPhoto`** entity — `Id`, `OwnerId`, `ListingId?`, `Position?`, `OriginalKey`, `OriginalContentType` (sniffed), `OriginalBytes`, `OriginalHash`, `Width`, `Height` (as displayed, after orientation), `CreatedAt` and the owned `Versions`.
 - **`ListingPhotoVersion`** value — `Size` (target width 400, 800 or 1600), `Format` (`WebP`, `Jpeg`), `Width`, `Height` (actual, never upscaled), `Key`, `Bytes`.
 - **Ports** — `IImageInspector`, `IListingPhotoProcessor`, `IPhotoStorage` (`SaveOriginalAsync`, `SavePublicAsync`, `ReadPublicAsync`).

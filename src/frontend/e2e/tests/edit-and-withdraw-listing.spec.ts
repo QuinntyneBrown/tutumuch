@@ -93,7 +93,6 @@ test.describe('edit listing', () => {
     await expect(edit.form.flaws).toHaveValue('Footbed shows wear at the heel.');
     await expect(edit.form.price).toHaveValue('45.00');
     await expect(edit.form.photoTiles).toHaveCount(3);
-    await expect(edit.form.confirm).toBeChecked();
     await expect(edit.cancel).toHaveAttribute('href', '/items/L-10001');
     await expect(edit.form.publish).toHaveCount(0);
     expect(unfixturedApiCalls).toEqual([]);
@@ -112,7 +111,7 @@ test.describe('edit listing', () => {
     await expect(edit.savedAlert.getByRole('link', { name: 'View listing' })).toHaveAttribute('href', '/items/L-10001');
     expect(sent).toHaveLength(1);
     expect(sent[0].ifMatch).toBe('"3"');
-    expect(sent[0].body).toMatchObject({ price: 40, sizeConfirmed: true, photoIds: ['p-1', 'p-2', 'p-3'] });
+    expect(sent[0].body).toMatchObject({ price: 40, photoIds: ['p-1', 'p-2', 'p-3'] });
     expect(sent[0].body).not.toHaveProperty('size');
     expect(sent[0].body).not.toHaveProperty('status');
 

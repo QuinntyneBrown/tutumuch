@@ -4,7 +4,7 @@ The listings subsystem covers how a seller creates, photographs, prices, publish
 
 | Feature | Design | Estimate | L2 requirements |
 |---------|--------|----------|-----------------|
-| Create a listing | [create-listing](create-listing/README.md) | [estimate](../../estimates/listings.md) | `L2-003`, `L2-011`, `L2-012`, `L2-013`, `L2-014`, `L2-015`, `L2-016`, `L2-018`, `L2-019`, `L2-031`, `L2-051` |
+| Create a listing | [create-listing](create-listing/README.md) | [estimate](../../estimates/listings.md) | `L2-003`, `L2-011`, `L2-012`, `L2-013`, `L2-015`, `L2-016`, `L2-018`, `L2-019`, `L2-031`, `L2-051` |
 | Upload listing photos | [upload-listing-photos](upload-listing-photos/README.md) | [estimate](../../estimates/listings.md) | `L2-017`, `L2-059` |
 | Edit and withdraw a listing | [edit-and-withdraw-listing](edit-and-withdraw-listing/README.md) | [estimate](../../estimates/listings.md) | `L2-020`, `L2-013`, `L2-049`, `L2-035` |
 | Manage my listings | [manage-my-listings](manage-my-listings/README.md) | [estimate](../../estimates/listings.md) | `L2-021`, `L2-019` |

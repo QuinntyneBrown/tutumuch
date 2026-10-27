@@ -17,7 +17,7 @@ public sealed class EditAndWithdrawListingTests
     private static Listing Active()
     {
         var listing = Listing.CreateDraft(Guid.NewGuid(), 10001, Complete(), Now);
-        Assert.Empty(listing.Publish(sizeConfirmed: true, Now, photoCount: 1));
+        Assert.Empty(listing.Publish(Now, photoCount: 1));
         return listing;
     }
 
@@ -27,7 +27,7 @@ public sealed class EditAndWithdrawListingTests
         var listing = Active();
         var before = listing.Version;
 
-        Assert.Empty(listing.Edit(Complete() with { Price = 40m }, sizeConfirmed: true, photoCount: 1, Now));
+        Assert.Empty(listing.Edit(Complete() with { Price = 40m }, photoCount: 1, Now));
 
         Assert.Equal(before + 1, listing.Version);
         Assert.Equal(40m, listing.Price);
@@ -39,23 +39,22 @@ public sealed class EditAndWithdrawListingTests
         var listing = Active();
         var before = listing.Version;
 
-        var violations = listing.Edit(Complete() with { Condition = "Used - Fair", Price = 5200m }, sizeConfirmed: false, photoCount: 0, Now);
+        var violations = listing.Edit(Complete() with { Condition = "Used - Fair", Price = 5200m }, photoCount: 0, Now);
 
-        Assert.Equal(["photos", "flaws", "price", "sizeConfirmed"], violations.Select(v => v.Field));
+        Assert.Equal(["photos", "flaws", "price"], violations.Select(v => v.Field));
         Assert.Equal(before, listing.Version);
         Assert.Equal(60m, listing.Price);
     }
 
     [Fact]
-    public void A_new_category_resets_the_size_and_the_confirmation()
+    public void A_new_category_resets_the_size()
     {
         var listing = Active();
         var later = Now.AddHours(1);
 
-        Assert.Empty(listing.Edit(Complete("Dance", "Leotards"), sizeConfirmed: true, photoCount: 1, later));
+        Assert.Empty(listing.Edit(Complete("Dance", "Leotards"), photoCount: 1, later));
 
         Assert.Equal("Girls'", listing.Size);
-        Assert.Equal(later, listing.SizeConfirmedAt);
     }
 
     [Fact]
@@ -70,7 +69,7 @@ public sealed class EditAndWithdrawListingTests
         Assert.Equal(ListingRemovalReason.Withdrawn, listing.RemovalReason);
         Assert.False(listing.CanRelist);
         Assert.Equal("LISTING_NOT_EDITABLE", listing.EditRefusal);
-        Assert.Throws<InvalidOperationException>(() => listing.Edit(Complete(), true, 1, Now));
+        Assert.Throws<InvalidOperationException>(() => listing.Edit(Complete(), 1, Now));
     }
 
     [Fact]

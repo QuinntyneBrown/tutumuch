@@ -142,7 +142,7 @@ public sealed class BrowseCatalogTests : IDisposable
         photo.AttachTo(listing.Id, 0);
         if (publish)
         {
-            Assert.Empty(listing.Publish(sizeConfirmed: true, now, photoCount: 1));
+            Assert.Empty(listing.Publish(now, photoCount: 1));
         }
 
         _factory.InDatabase(db =>

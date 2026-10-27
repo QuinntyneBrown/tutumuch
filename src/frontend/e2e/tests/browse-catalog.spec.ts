@@ -13,7 +13,7 @@ test.describe('browse catalog', () => {
     const catalog = new CatalogPage(page);
     await catalog.goto();
 
-    await expect(catalog.heading).toHaveText('Everything for girls. Nothing else.');
+    await expect(catalog.heading).toHaveText('Find something she’ll love.');
     await expect(catalog.count).toHaveText('30 items');
     await expect(catalog.cards).toHaveCount(24);
     const card = catalog.card('Floral party dress no. 1');

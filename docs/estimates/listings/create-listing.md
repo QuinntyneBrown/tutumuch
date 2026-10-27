@@ -21,13 +21,13 @@ The estimate assumes an intermediate Angular/TypeScript and ASP.NET Core/C# deve
 | `ListingFormComponent` typed reactive form, client validation, counters, conditional flaws field, size confirmation label | 10 |
 | `FixedSizeComponent` and `EarningsEstimateComponent` | 3 |
 | Error summary, focus management and live-region announcements on the form | 3 |
-| API acceptance tests for `L2-011`, `L2-013`, `L2-014`, `L2-015`, `L2-016`, `L2-018`, `L2-019`, `L2-051` | 8 |
+| API acceptance tests for `L2-011`, `L2-013`, `L2-015`, `L2-016`, `L2-018`, `L2-019`, `L2-051` | 8 |
 | Playwright acceptance tests for the sell page via page objects (`L2-003`, `L2-012`, `L2-031`) | 6 |
 | **Total** | **72** |
 
 ## Minimal scope
 
-The minimal version keeps the size rule and the publish path intact. It includes `CategoryCatalog`, the `Listing` aggregate with server-set size, the `Listings` table, the publish rules, `POST /api/listings` that creates and publishes in one call, `GET /api/categories`, a single-state sell form with fixed size, condition, flaws, price, shipping and size confirmation, and API acceptance tests. It leaves out separate draft saving, the earnings estimate, the payout prompt, the rate limit, the dedicated unverified, suspended and limited states, and Playwright tests. It still satisfies `L2-011`, `L2-012`, `L2-013`, `L2-014`, `L2-015`, `L2-016` and `L2-018`. It defers the draft part of `L2-019`, the fee display of `L2-031` and the listing limit of `L2-051`. Minimal scope totals **42** hours.
+The minimal version keeps the size rule and the publish path intact. It includes `CategoryCatalog`, the `Listing` aggregate with server-set size, the `Listings` table, the publish rules, `POST /api/listings` that creates and publishes in one call, `GET /api/categories`, a single-state sell form with fixed size, condition, flaws, price, shipping and size confirmation, and API acceptance tests. It leaves out separate draft saving, the earnings estimate, the payout prompt, the rate limit, the dedicated unverified, suspended and limited states, and Playwright tests. It still satisfies `L2-011`, `L2-012`, `L2-013`, `L2-015`, `L2-016` and `L2-018`. It defers the draft part of `L2-019`, the fee display of `L2-031` and the listing limit of `L2-051`. Minimal scope totals **42** hours.
 
 ## Partial descoping
 

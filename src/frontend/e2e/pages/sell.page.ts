@@ -22,7 +22,6 @@ export class SellPage {
   readonly price: Locator;
   readonly shipping: Locator;
   readonly earnings: Locator;
-  readonly confirm: Locator;
   readonly saveDraft: Locator;
   readonly publish: Locator;
   readonly errorSummary: Locator;
@@ -47,7 +46,6 @@ export class SellPage {
     this.price = page.locator('#price');
     this.shipping = page.getByLabel('Shipping');
     this.earnings = page.locator('.earnings');
-    this.confirm = page.locator('#confirm');
     this.saveDraft = page.getByRole('button', { name: 'Save draft' });
     this.publish = page.getByRole('button', { name: 'Publish' });
     this.errorSummary = page.getByRole('alert').filter({ hasText: 'Fix these to continue' });
@@ -80,7 +78,6 @@ export class SellPage {
     await this.description.fill('Light wear, colours still bright. Cleaned and ready to wear.');
     await this.price.fill('60.00');
     await this.shipping.fill('8.00');
-    await this.confirm.check();
   }
 
   fieldError(id: string): Locator {

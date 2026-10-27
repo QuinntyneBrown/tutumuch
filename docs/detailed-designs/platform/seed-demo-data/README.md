@@ -101,8 +101,7 @@ keeps covering the migration list.
    published with the seed clock at `now − 30 days + i × (30 days ÷ n)`. For each:
    `UploadListingPhotoCommand` per photo file (the full upload pipeline: type sniffing,
    800 px rule, metadata strip, WebP and JPEG at 400/800/1600, content-addressed keys),
-   `CreateListingDraftCommand` with the photo IDs, then `PublishListingCommand` with
-   `SizeConfirmed: true`. The size comes from the category, as for every listing
+   `CreateListingDraftCommand` with the photo IDs, then `PublishListingCommand`. The size comes from the category, as for every listing
    (`L2-013`).
 5. Print "Seeded 8 members and 48 listings." and exit 0.
 

@@ -22,8 +22,6 @@ export interface ListingDetails {
   shippingCost?: number;
   /** Uploaded photo IDs in display order; the first is the cover (L2-017). */
   photoIds?: string[];
-  /** The seller ticked the size confirmation again; required to save a published listing (L2-014). */
-  sizeConfirmed?: boolean;
 }
 
 /** A listing as its seller sees it. */
@@ -96,11 +94,9 @@ export class ListingsApi {
     return toResult(this.http.put<MyListing>(`${this.baseUrl}/listings/${encodeURIComponent(reference)}`, details));
   }
 
-  publish(reference: string, sizeConfirmed: boolean): Promise<ApiResult<PublishResult>> {
+  publish(reference: string): Promise<ApiResult<PublishResult>> {
     return toResult(
-      this.http.post<PublishResult>(`${this.baseUrl}/listings/${encodeURIComponent(reference)}/publish`, {
-        sizeConfirmed,
-      }),
+      this.http.post<PublishResult>(`${this.baseUrl}/listings/${encodeURIComponent(reference)}/publish`, null),
     );
   }
 

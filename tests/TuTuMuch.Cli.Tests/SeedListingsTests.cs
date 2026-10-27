@@ -47,8 +47,7 @@ public sealed class SeedListingsTests(SeededDemo demo) : IClassFixture<SeededDem
         Assert.All(listings, l =>
         {
             var details = new ListingDetails(l.Category, l.Subcategory, l.Size, l.Title, l.Description, l.Brand, l.Condition?.ToLabel(), l.Flaws, l.Price, l.ShippingCost);
-            Assert.Empty(Listing.CheckPublish(details, sizeConfirmed: true, photoCounts.GetValueOrDefault(l.Id)));
-            Assert.NotNull(l.SizeConfirmedAt);
+            Assert.Empty(Listing.CheckPublish(details, photoCounts.GetValueOrDefault(l.Id)));
         });
     }
 

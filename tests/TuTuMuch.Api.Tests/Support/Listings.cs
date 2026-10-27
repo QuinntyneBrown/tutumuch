@@ -38,8 +38,8 @@ public static class Listings
         return await client.CreateDraftAsync(body.With("photoIds", new[] { photoId }));
     }
 
-    public static Task<HttpResponseMessage> PublishAsync(this HttpClient client, string reference, bool sizeConfirmed = true) =>
-        client.PostAsJsonAsync($"/api/listings/{reference}/publish", new { sizeConfirmed });
+    public static Task<HttpResponseMessage> PublishAsync(this HttpClient client, string reference) =>
+        client.PostAsync($"/api/listings/{reference}/publish", content: null);
 }
 
 public sealed record MyListing(

@@ -154,7 +154,7 @@ toggle, the chips and the sort select). The URL holds the result set (`q`, `cate
   `tlButton="link"` Try again when a next page fails), `tl-chip` (one per active filter value),
   `tlButton` (Filters toggle, "Clear all" link button), `tl-choice` and `tl-input-group` (inside
   the filter form), `SheetService` (opens the Filters sheet below 992px), `tl-icon`
-- Local: the hero (`.hero`, h1 "Everything for girls. *Nothing else.*" and lead "Clothes, dance and sports gear, cameras, toys and more, from families whose girls have outgrown them."), the page header
+- Local: the hero (`.hero`, h1 "Find something *she’ll love.*" and lead "Clothes, dance and sports gear, cameras, toys and more, from families whose girls have outgrown them."), the page header
   (category name with size tag; eyebrow "Search" with “{q}”; "Shop" for other filters), the
   `.catalog-layout` grid, the `.toolbar` with the polite item count and its text skeleton, the
   `.sort` select, `FilterForm` (`tl-filter-form`, fieldsets Category, subcategories, Brand with
@@ -301,7 +301,7 @@ at `/sell/{reference}` instead.
 
 - Library: `tl-status` (the listing status beside the heading), `tl-error-summary`,
   `tl-photo-uploader`, `tl-form-field`, `tl-fixed-size`, `tl-segmented`, `tl-input-group`,
-  `tl-earnings`, `tl-choice` (the ticked "This item is for girls" confirmation), `tl-alert` (success "Changes saved"
+  `tl-earnings`, `tl-alert` (success "Changes saved"
   with "View listing"; warning "This listing changed since you opened it" with sm "Reload" and icon
   `refresh`; danger "Couldn’t save your changes" with the reference), `tlButton` (ghost "Cancel"
   link, primary "Save changes" with busy), `tl-center-state` (error: icon `refresh`, "Couldn’t
@@ -352,7 +352,7 @@ App shell. `@tutumuch/listings` `SellPage` at `/sell` and `/sell/{reference}` (c
 Visitors are sent to `/sign-in?returnUrl=/sell`. The Photos section comes first; each chosen file
 uploads at once and a save sends the photo IDs in order. The footer stays visible under the form.
 
-- Library: `tl-photo-uploader` (photos with cover, uploading and rejected tiles, add tile, help and error), `tl-error-summary` (invalid), `tl-alert` (draft-saved success, save or publish failure), `tl-form-field` (category, type, title with counter, brand, flaws, description with counter, price, shipping), `tl-input-group` (`$` addon), `tl-fixed-size` with `tl-size-tag` (after a category is chosen), `tl-segmented` (condition), `tl-earnings`, `tl-choice` ("This item is for girls"; error "Confirm this item is for girls"), `tl-button` (Save draft, Publish with busy), `tl-center-state` (success, unverified, limited, error) with `tl-item-row` (success panel) and `tl-icon`, `DialogService` (opens the verify-email prompt)
+- Library: `tl-photo-uploader` (photos with cover, uploading and rejected tiles, add tile, help and error), `tl-error-summary` (invalid), `tl-alert` (draft-saved success, save or publish failure), `tl-form-field` (category, type, title with counter, brand, flaws, description with counter, price, shipping), `tl-input-group` (`$` addon), `tl-fixed-size` with `tl-size-tag` (after a category is chosen), `tl-segmented` (condition), `tl-earnings`, `tl-button` (Save draft, Publish with busy), `tl-center-state` (success, unverified, limited, error) with `tl-item-row` (success panel) and `tl-icon`, `DialogService` (opens the verify-email prompt)
 - Local: `.page-header` with the h1, `.sell-form` sections (Photos, Item, Price, confirmation: `.form-section`, `.form-row`), the upload state of each tile and its client size check, the brand `<datalist>`, the sticky `.form-actions` bar, the success panel wrapper and the payouts line
 
 ### Forbidden — `/403` (`pages/forbidden`: default)

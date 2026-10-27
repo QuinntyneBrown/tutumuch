@@ -127,18 +127,6 @@ public sealed class EditListingTests : IDisposable
     }
 
     [Fact]
-    public async Task An_active_listing_needs_the_size_confirmed_again()
-    {
-        var reference = await ActiveListingAsync();
-        var etag = await EtagAsync(reference);
-
-        using var response = await PutAsync(reference, Edited().With("sizeConfirmed", false), etag);
-
-        Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
-        Assert.Equal("SIZE_CONFIRMATION_REQUIRED", (await Problem.ReadAsync(response)).Errors!["sizeConfirmed"].Code);
-    }
-
-    [Fact]
     public async Task A_size_other_than_the_accepted_size_is_refused_on_update()
     {
         var reference = await ActiveListingAsync();
@@ -213,7 +201,7 @@ public sealed class EditListingTests : IDisposable
         (await client.StartCheckoutAsync(reference)).EnsureSuccessStatusCode();
     }
 
-    private static Dictionary<string, object?> Edited() => Listings.Complete().With("sizeConfirmed", true);
+    private static Dictionary<string, object?> Edited() => Listings.Complete();
 
     private async Task<string> EtagAsync(string reference)
     {

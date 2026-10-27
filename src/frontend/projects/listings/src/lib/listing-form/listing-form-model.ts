@@ -12,7 +12,6 @@ import {
   MAX_PHOTO_BYTES,
   SERVER_FIELDS,
   checkListing,
-  confirmLabel,
   estimateEarnings,
   formatFileSize,
   toDetails,
@@ -44,7 +43,6 @@ export class ListingFormModel {
     description: '',
     price: '',
     shipping: '',
-    confirm: false,
   });
 
   readonly categories = signal<Category[]>([]);
@@ -62,7 +60,6 @@ export class ListingFormModel {
 
   readonly value = toSignal(this.form.valueChanges.pipe(map(() => this.raw())), { initialValue: this.raw() });
   readonly category = computed(() => this.categories().find((c) => c.name === this.value().category) ?? null);
-  readonly confirmText = computed(() => confirmLabel());
   readonly isUsedFair = computed(() => this.value().condition === 'Used - Fair');
   readonly titleCount = computed(() => `${this.value().title.length} / 80`);
   readonly descriptionCount = computed(() => `${this.value().description.length.toLocaleString('en-US')} / 2,000`);
@@ -153,7 +150,7 @@ export class ListingFormModel {
     this.errors.set(errors);
   }
 
-  /** Fills the form from a saved listing; a published listing comes with its size confirmed. */
+  /** Fills the form from a saved listing. */
   fill(listing: MyListing): void {
     this.photos.set(listing.photos.map((photo: Photo) => this.readyTile(photo)));
     this.form.patchValue({
@@ -166,7 +163,6 @@ export class ListingFormModel {
       description: listing.description ?? '',
       price: listing.price === null ? '' : listing.price.toFixed(2),
       shipping: listing.shippingCost === null ? '' : listing.shippingCost.toFixed(2),
-      confirm: listing.status !== 'Draft',
     });
     this.errors.set({});
   }

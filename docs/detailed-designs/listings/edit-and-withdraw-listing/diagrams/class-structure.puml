@@ -36,11 +36,11 @@ package "TuTuMuch.Domain" {
     +string? EditRefusal
     +bool CanRelist
     +UpdateDetails(details, now): void
-    +Edit(details, sizeConfirmed, photoCount, now): RuleViolation[]
+    +Edit(details, photoCount, now): RuleViolation[]
     +Withdraw(now): void
     +RemoveAfterCancellation(now): void
     +Relist(now): void
-    +{static} CheckPublish(details, sizeConfirmed, photoCount): RuleViolation[]
+    +{static} CheckPublish(details, photoCount): RuleViolation[]
   }
 }
 
@@ -59,7 +59,6 @@ package "TuTuMuch.Application" {
     +string Reference
     +ListingDetails Details
     +Guid[]? PhotoIds
-    +bool SizeConfirmed
     +int? ExpectedVersion
   }
   class WithdrawListingCommand {
@@ -104,7 +103,6 @@ package "TuTuMuch.Api" {
     +decimal? Price
     +decimal? ShippingCost
     +Guid[]? PhotoIds
-    +bool? SizeConfirmed
   }
 }
 

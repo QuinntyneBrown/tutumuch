@@ -90,8 +90,6 @@ public sealed class Listing
 
     public decimal? ShippingCost { get; private set; }
 
-    public DateTime? SizeConfirmedAt { get; private set; }
-
     public DateTime CreatedAt { get; private set; }
 
     public DateTime UpdatedAt { get; private set; }
@@ -158,25 +156,20 @@ public sealed class Listing
 
     /// <summary>
     /// Replaces the fields of a published listing (Active, or Removed after a cancelled order) when
-    /// the publish rules of L2-014 to L2-018 hold, reporting every failing field; otherwise leaves
-    /// it unchanged. A changed category needs the size confirmed again and refreshes the confirmation.
+    /// the publish rules of L2-015 to L2-018 hold, reporting every failing field; otherwise leaves
+    /// it unchanged.
     /// </summary>
-    public IReadOnlyList<RuleViolation> Edit(ListingDetails details, bool sizeConfirmed, int photoCount, DateTime now)
+    public IReadOnlyList<RuleViolation> Edit(ListingDetails details, int photoCount, DateTime now)
     {
         if (Status == ListingStatus.Draft || EditRefusal is not null)
         {
             throw new InvalidOperationException("Only an active listing or the listing of a cancelled order can be edited.");
         }
 
-        var violations = CheckPublish(details, sizeConfirmed, photoCount);
+        var violations = CheckPublish(details, photoCount);
         if (violations.Count == 0)
         {
-            var categoryChanged = details.Category != Category;
             UpdateDetails(details, now);
-            if (categoryChanged)
-            {
-                SizeConfirmedAt = now;
-            }
         }
 
         return violations;
@@ -357,11 +350,11 @@ public sealed class Listing
     }
 
     /// <summary>
-    /// Publishes a draft when the publish rules of L2-014 to L2-018 hold, reporting every failing
+    /// Publishes a draft when the publish rules of L2-015 to L2-018 hold, reporting every failing
     /// field together; otherwise leaves it unchanged. <paramref name="photoCount"/> is the number
     /// of attached photos; at most 8 can be attached, so only the minimum is checked here.
     /// </summary>
-    public IReadOnlyList<RuleViolation> Publish(bool sizeConfirmed, DateTime now, int photoCount)
+    public IReadOnlyList<RuleViolation> Publish(DateTime now, int photoCount)
     {
         if (Status != ListingStatus.Draft)
         {
@@ -369,11 +362,10 @@ public sealed class Listing
         }
 
         var details = new ListingDetails(Category, Subcategory, Size, Title, Description, Brand, Condition?.ToLabel(), Flaws, Price, ShippingCost);
-        var violations = CheckPublish(details, sizeConfirmed, photoCount);
+        var violations = CheckPublish(details, photoCount);
         if (violations.Count == 0)
         {
             Status = ListingStatus.Active;
-            SizeConfirmedAt = now;
             PublishedAt ??= now;
             Touch(now);
         }
@@ -381,8 +373,8 @@ public sealed class Listing
         return violations;
     }
 
-    /// <summary>The publish rules (L2-014 to L2-018) on top of the draft rules, every failing field reported once.</summary>
-    public static IReadOnlyList<RuleViolation> CheckPublish(ListingDetails details, bool sizeConfirmed, int photoCount)
+    /// <summary>The publish rules (L2-015 to L2-018) on top of the draft rules, every failing field reported once.</summary>
+    public static IReadOnlyList<RuleViolation> CheckPublish(ListingDetails details, int photoCount)
     {
         var draft = CheckDraft(details).ToDictionary(v => v.Field);
         var violations = new List<RuleViolation>();
@@ -416,11 +408,6 @@ public sealed class Listing
 
         Check("price", details.Price is null, PriceOutOfRange);
         Check("shippingCost", details.ShippingCost is null, ShippingOutOfRange);
-        if (!sizeConfirmed)
-        {
-            violations.Add(new("sizeConfirmed", "SIZE_CONFIRMATION_REQUIRED", "Confirm this item is for girls"));
-        }
-
         return violations;
     }
 

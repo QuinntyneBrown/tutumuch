@@ -28,7 +28,8 @@ calls the same `PUT` for drafts without any `If-Match`. The listing detail page 
   missing is `428 PRECONDITION_REQUIRED`, stale is `412 LISTING_CHANGED`. Drafts keep the
   last-write-wins behaviour of create-listing, since only their seller can see them.
 - **One `PUT` for drafts and published listings.** A published listing takes the publish rules of
-  L2-014 to L2-018 and the size confirmation again (`sizeConfirmed` in the body). The checks run in
+  L2-014 to L2-018 and the size confirmation again (`sizeConfirmed` in the body; removed by
+  [ADR general/0008](../general/0008-remove-the-for-girls-confirmation.md)). The checks run in
   this order: 404, 409 (Reserved, Sold, withdrawn), 428, 412, 422.
 - **Withdraw is final.** `POST /api/listings/{reference}/withdraw` moves `Active` to `Removed` with
   reason `Withdrawn` and answers `200` again on a repeat. A withdrawn listing cannot be edited or

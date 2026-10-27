@@ -106,7 +106,7 @@ motion and the footer link.
 | `L2-083` | `L1-020` | Contrast over gradients, heading order, reduced motion, title, meta description and link-preview tags |
 
 Related requirements applied without restating them: `L2-061` to `L2-065` (responsive,
-accessible shell), `L2-010` (no role needed), `L2-011` to `L2-014` (the girls' size rule the
+accessible shell), `L2-010` (no role needed), `L2-011` to `L2-013` (the girls' size rule the
 copy must stay true to).
 
 ## Diagrams

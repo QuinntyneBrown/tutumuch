@@ -71,14 +71,13 @@ package "TuTuMuch.Domain" {
     +string? Flaws
     +decimal? Price
     +decimal? ShippingCost
-    +DateTime? SizeConfirmedAt
     +DateTime CreatedAt
     +DateTime UpdatedAt
     +DateTime? PublishedAt
     +static CreateDraft(sellerId, number, details, now): Listing
     +static CheckDraft(details): IReadOnlyList<RuleViolation>
     +UpdateDetails(details, now): void
-    +Publish(sizeConfirmed, now): IReadOnlyList<RuleViolation>
+    +Publish(now, photoCount): IReadOnlyList<RuleViolation>
   }
 }
 
@@ -95,7 +94,6 @@ package "TuTuMuch.Application" {
   class PublishListingCommand {
     +Guid SellerId
     +string Reference
-    +bool SizeConfirmed
   }
   class PublishListingResult {
     +string Reference

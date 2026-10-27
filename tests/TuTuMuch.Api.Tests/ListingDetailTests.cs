@@ -156,7 +156,7 @@ public sealed class ListingDetailTests : IDisposable
         }).ToList();
         if (status != ListingStatus.Draft)
         {
-            Assert.Empty(listing.Publish(sizeConfirmed: true, _start, photoCount: photos));
+            Assert.Empty(listing.Publish(_start, photoCount: photos));
         }
 
         _factory.InDatabase(db =>

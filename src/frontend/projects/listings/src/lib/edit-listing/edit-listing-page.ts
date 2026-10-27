@@ -97,8 +97,7 @@ export class EditListingPage implements OnInit {
     this.failure.set(null);
     if (!this.model.accept('publish')) return;
     this.busy.set(true);
-    const details = { ...this.model.details(), sizeConfirmed: this.model.raw().confirm };
-    const result = await this.listings.updateListing(this.reference(), details, this.etag);
+    const result = await this.listings.updateListing(this.reference(), this.model.details(), this.etag);
     this.busy.set(false);
     if (result.ok) {
       this.etag = result.value.etag;

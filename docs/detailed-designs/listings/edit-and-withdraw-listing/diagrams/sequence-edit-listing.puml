@@ -40,9 +40,9 @@ else Reserved, Sold or withdrawn
   page --> actor : Locked, sold or withdrawn state
 else Active, or removed after a cancelled order
   controller --> client : 200 MyListingDto, ETag "7"
-  page --> actor : Prefilled form, size confirmation ticked
+  page --> actor : Prefilled form
   actor -> page : Change price to 40.00, choose "Save changes"
-  page -> client : updateListing(reference, body with sizeConfirmed, "7")
+  page -> client : updateListing(reference, body, "7")
   client -> controller : PUT /api/listings/{reference}, If-Match "7"
   controller -> handler : Send UpdateListingCommand (unknown fields ignored, L2-049)
   handler -> db : Load caller's listing
@@ -54,8 +54,8 @@ else Active, or removed after a cancelled order
     controller --> client : 428 PRECONDITION_REQUIRED or 412 LISTING_CHANGED
     client --> page : Warning "This listing changed since you opened it" with Reload
   else
-    handler -> entity : Edit(details, sizeConfirmed, photoCount)
-    alt publish rule fails or size not accepted (L2-013, L2-014)
+    handler -> entity : Edit(details, photoCount)
+    alt publish rule fails or size not accepted (L2-013, L2-015 to L2-018)
       entity --> handler : Field errors, listing unchanged
       controller --> client : 422 problem details
       client --> page : Invalid state with error summary

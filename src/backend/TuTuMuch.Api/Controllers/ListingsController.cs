@@ -29,7 +29,7 @@ public sealed class ListingsController(ISender sender) : ControllerBase
     [HttpPut("api/listings/{reference}")]
     public async Task<IActionResult> Update(string reference, ListingDetailsRequest request, CancellationToken cancellationToken)
     {
-        var command = new UpdateListingCommand(User.MemberId(), reference, request.ToDetails(), request.PhotoIds, request.SizeConfirmed ?? false, IfMatchVersion());
+        var command = new UpdateListingCommand(User.MemberId(), reference, request.ToDetails(), request.PhotoIds, IfMatchVersion());
         var result = await sender.Send(command, cancellationToken);
         return result.IsSuccess ? WithEtag(result.Value!) : this.ToProblem(result.Error!);
     }
@@ -42,9 +42,9 @@ public sealed class ListingsController(ISender sender) : ControllerBase
     }
 
     [HttpPost("api/listings/{reference}/publish")]
-    public async Task<IActionResult> Publish(string reference, PublishRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Publish(string reference, CancellationToken cancellationToken)
     {
-        var result = await sender.Send(new PublishListingCommand(User.MemberId(), reference, request.SizeConfirmed), cancellationToken);
+        var result = await sender.Send(new PublishListingCommand(User.MemberId(), reference), cancellationToken);
         return result.IsSuccess ? Ok(result.Value) : this.ToProblem(result.Error!);
     }
 
@@ -91,10 +91,9 @@ public sealed class ListingsController(ISender sender) : ControllerBase
 }
 
 /// <summary>
-/// The editable fields. There is no seller, status, confirmation time or timestamp member, so a
+/// The editable fields. There is no seller, status or timestamp member, so a
 /// client cannot set them (mass assignment, L2-049); unknown members are ignored. PhotoIds lists
-/// uploaded photos in display order (L2-017); leaving it out keeps the current photos. SizeConfirmed
-/// is the seller ticking the size confirmation again when editing a published listing (L2-014).
+/// uploaded photos in display order (L2-017); leaving it out keeps the current photos.
 /// </summary>
 public sealed record ListingDetailsRequest(
     string? Category,
@@ -107,10 +106,7 @@ public sealed record ListingDetailsRequest(
     string? Flaws,
     decimal? Price,
     decimal? ShippingCost,
-    IReadOnlyList<Guid>? PhotoIds = null,
-    bool? SizeConfirmed = null)
+    IReadOnlyList<Guid>? PhotoIds = null)
 {
     public ListingDetails ToDetails() => new(Category, Subcategory, Size, Title, Description, Brand, Condition, Flaws, Price, ShippingCost);
 }
-
-public sealed record PublishRequest(bool SizeConfirmed);

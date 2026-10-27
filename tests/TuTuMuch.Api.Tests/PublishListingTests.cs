@@ -33,7 +33,6 @@ public sealed class PublishListingTests : IDisposable
         _factory.InDatabase(db =>
         {
             var listing = db.Listings.Single();
-            Assert.NotNull(listing.SizeConfirmedAt);
             Assert.NotNull(listing.PublishedAt);
         });
     }
@@ -57,37 +56,22 @@ public sealed class PublishListingTests : IDisposable
     }
 
     [Fact]
-    public async Task Publishing_without_the_confirmation_flag_is_422()
-    {
-        await _client.SignInVerifiedMemberAsync(_factory);
-        var reference = await _client.CreateDraftWithPhotoAsync(Listings.Complete());
-
-        using var response = await _client.PostAsJsonAsync($"/api/listings/{reference}/publish", new { });
-
-        Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
-        var problem = await Problem.ReadAsync(response);
-        Assert.Equal("SIZE_CONFIRMATION_REQUIRED", problem.Code);
-        Assert.Equal("Confirm this item is for girls", problem.Errors!["sizeConfirmed"].Message);
-    }
-
-    [Fact]
     public async Task Every_missing_field_is_identified()
     {
         await _client.SignInVerifiedMemberAsync(_factory);
         var reference = await _client.CreateDraftAsync(new { category = "Clothing" });
 
-        using var response = await _client.PublishAsync(reference, sizeConfirmed: false);
+        using var response = await _client.PublishAsync(reference);
 
         Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
         var problem = await Problem.ReadAsync(response);
         Assert.Equal("LISTING_INVALID", problem.Code);
         Assert.Equal(
-            ["photos", "subcategory", "title", "description", "brand", "condition", "price", "shippingCost", "sizeConfirmed"],
+            ["photos", "subcategory", "title", "description", "brand", "condition", "price", "shippingCost"],
             problem.Errors!.Keys);
         Assert.Equal("Add at least one photo", problem.Errors["photos"].Message);
         Assert.Equal("Title must be 5 to 80 characters", problem.Errors["title"].Message);
         Assert.Equal("Enter a price from $1.00 to $5,000.00", problem.Errors["price"].Message);
-        Assert.Equal("Confirm this item is for girls", problem.Errors["sizeConfirmed"].Message);
     }
 
     [Fact]

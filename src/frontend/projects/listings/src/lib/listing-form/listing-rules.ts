@@ -11,7 +11,6 @@ export interface ListingFormValue {
   description: string;
   price: string;
   shipping: string;
-  confirm: boolean;
 }
 
 /** Control ids of the form, in error summary order. The condition links to its first option. */
@@ -26,7 +25,6 @@ export const FIELD_IDS = [
   'desc',
   'price',
   'ship',
-  'confirm',
 ] as const;
 
 export type FieldId = (typeof FIELD_IDS)[number];
@@ -47,7 +45,6 @@ export const SERVER_FIELDS: Record<string, FieldId> = {
   description: 'desc',
   price: 'price',
   shippingCost: 'ship',
-  sizeConfirmed: 'confirm',
 };
 
 const USED_FAIR = 'Used - Fair';
@@ -70,11 +67,6 @@ export function parseMoney(text: string): number | null {
 function inRange(text: string, min: number, max: number): boolean {
   const value = parseMoney(text);
   return value !== null && value >= min && value <= max;
-}
-
-/** "This item is for girls" (L2-014); every category is for girls. */
-export function confirmLabel(): string {
-  return 'This item is for girls';
 }
 
 /**
@@ -108,9 +100,6 @@ export function checkListing(value: ListingFormValue, mode: 'draft' | 'publish',
   }
   if ((value.shipping.trim() || publish) && !inRange(value.shipping, 0, 100)) {
     errors.ship = 'Enter shipping from $0.00 to $100.00';
-  }
-  if (publish && !value.confirm) {
-    errors.confirm = 'Confirm this item is for girls';
   }
   return errors;
 }

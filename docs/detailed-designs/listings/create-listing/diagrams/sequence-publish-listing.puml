@@ -30,9 +30,9 @@ end box
 box "Backend — TuTuMuch Infrastructure" #FFF4E5
   database "TuTuMuch database" as db
 end box
-actor -> page : Tick size confirmation, choose "Publish"
+actor -> page : Choose "Publish"
 page -> page : checkListing(publish); on failure show the error summary and focus it
-page -> client : Save the draft (POST or PUT), then publish(reference, sizeConfirmed)
+page -> client : Save the draft (POST or PUT), then publish(reference)
 client -> controller : POST /api/listings/{reference}/publish
 controller -> handler : Send PublishListingCommand
 handler -> db : Load the caller's listing
@@ -48,13 +48,13 @@ else draft found
     controller --> client : 429 with Retry-After until 00:00 UTC
     client --> page : Limited state "That's 20 listings today"
   else within limit
-    handler -> entity : Publish(sizeConfirmed) applies L2-014 to L2-018
+    handler -> entity : Publish(now, photoCount) applies L2-015 to L2-018
     alt any publish rule fails
       entity --> handler : Violations for every failing field
       controller --> client : 422 with errors per field
       client --> page : Invalid state: summary at top, each error inline
     else all rules pass
-      entity --> handler : Status Active, SizeConfirmedAt and PublishedAt set
+      entity --> handler : Status Active and PublishedAt set
       handler -> db : Save
       handler -> payout : IsOnboardedAsync(sellerId) (L2-031)
       payout --> handler : false

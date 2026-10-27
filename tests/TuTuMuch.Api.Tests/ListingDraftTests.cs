@@ -111,16 +111,15 @@ public sealed class ListingDraftTests : IDisposable
     }
 
     [Fact]
-    public async Task Client_cannot_set_the_seller_status_or_confirmation()
+    public async Task Client_cannot_set_the_seller_or_status()
     {
         await _client.SignInVerifiedMemberAsync(_factory);
 
         var reference = await _client.CreateDraftAsync(
-            Listings.Complete().With("status", "Active").With("sellerId", Guid.NewGuid()).With("sizeConfirmedAt", DateTime.UtcNow));
+            Listings.Complete().With("status", "Active").With("sellerId", Guid.NewGuid()));
 
         var stored = await _client.GetFromJsonAsync<MyListing>($"/api/me/listings/{reference}");
         Assert.Equal("Draft", stored!.Status);
-        _factory.InDatabase(db => Assert.Null(db.Listings.Single().SizeConfirmedAt));
     }
 
     [Fact]

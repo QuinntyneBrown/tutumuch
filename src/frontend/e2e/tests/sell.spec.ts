@@ -43,7 +43,6 @@ test.describe('sell an item', () => {
       await expect(sell.type).toBeDisabled();
       await expect(sell.fixedSize).toHaveCount(0);
       await expect(sell.condition.getByRole('radio')).toHaveCount(5);
-      await expect(page.getByText('This item is for girls')).toBeVisible();
     });
 
     test('the size shown follows the category as read-only text', async ({ page }) => {
@@ -53,11 +52,9 @@ test.describe('sell an item', () => {
       await sell.category.selectOption('Clothing');
       await expect(sell.fixedSize).toContainText("Size: Girls'");
       await expect(sell.fixedSize).toContainText('Set by category');
-      await expect(page.getByText('This item is for girls')).toBeVisible();
 
       await sell.category.selectOption('Shoes');
       await expect(sell.fixedSize).toContainText("Size: Girls'");
-      await expect(page.getByText('This item is for girls')).toBeVisible();
       await expect(sell.type.getByRole('option')).toHaveText([
         'Choose a type',
         'Sneakers',
@@ -151,24 +148,22 @@ test.describe('sell an item', () => {
         'Description must be 20 to 2,000 characters',
         'Enter a price from $1.00 to $5,000.00',
         'Enter shipping from $0.00 to $100.00',
-        'Confirm this item is for girls',
       ]) {
         await expect(sell.errorSummary.getByRole('link', { name: message })).toBeVisible();
       }
       await expect(sell.title).toHaveAttribute('aria-invalid', 'true');
-      await expect(sell.fieldError('confirm')).toHaveText('Confirm this item is for girls');
       expect(unfixturedApiCalls).toEqual([]);
     });
 
-    test('a complete confirmed listing is published without a size and prompts for payouts', async ({ page }) => {
+    test('a complete listing is published without a size and prompts for payouts', async ({ page }) => {
       let created: Record<string, unknown> | null = null;
-      let published: unknown;
+      let published = false;
       await page.route('**/api/listings', async (route) => {
         created = route.request().postDataJSON();
         await route.fulfill({ status: 201, json: myListing(created!) });
       });
       await page.route('**/api/listings/L-10001/publish', async (route) => {
-        published = route.request().postDataJSON();
+        published = true;
         await route.fulfill({ json: { reference: 'L-10001', status: 'Active', payoutOnboardingRequired: true } });
       });
       const sell = new SellPage(page);
@@ -194,7 +189,7 @@ test.describe('sell an item', () => {
         photoIds: ['p-1'],
       });
       expect(created).not.toHaveProperty('size');
-      expect(published).toEqual({ sizeConfirmed: true });
+      expect(published).toBe(true);
 
       await page.getByRole('link', { name: 'Sell another' }).click();
       await expect(sell.heading).toHaveText('Sell an item');

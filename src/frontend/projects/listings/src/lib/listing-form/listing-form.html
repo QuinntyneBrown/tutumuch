@@ -152,17 +152,3 @@
   </div>
   <tl-earnings [feePercent]="model().options()?.feePercent ?? 0" [amount]="model().earnings()" />
 </section>
-
-<section class="form-section" aria-labelledby="s-confirm">
-  <h2 id="s-confirm" class="visually-hidden">Size confirmation</h2>
-  <tl-choice #confirm inputId="confirm" [error]="model().errors().confirm">
-    <input
-      type="checkbox"
-      id="confirm"
-      formControlName="confirm"
-      [attr.aria-describedby]="confirm.describedBy()"
-      [attr.aria-invalid]="confirm.invalid()"
-    />
-    {{ model().confirmText() }}
-  </tl-choice>
-</section>

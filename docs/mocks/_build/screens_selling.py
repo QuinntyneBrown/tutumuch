@@ -71,11 +71,6 @@ def sell_form(v: dict, *, photos=(), errors: dict | None = None, rejected: bool 
     p = float(v["price"]) if v.get("price") and not e.get("price") else None
     s = float(v["ship"]) if v.get("ship") else 0.0
     earnings = earn(p, s) if p is not None else "—"
-    label_text = "This item is for girls"
-    conf_err = ' aria-invalid="true" aria-describedby="confirm-error"' if e.get("confirm") else ""
-    confirm = (f'<label class="choice"><input type="checkbox" id="confirm" name="confirm"{" checked" if v.get("confirm") else ""}{conf_err}>'
-               f'<span>{label_text}</span></label>'
-               + (f'<span class="field__error" id="confirm-error">{esc(e["confirm"])}</span>' if e.get("confirm") else ""))
     tlen = len(v.get("title", ""))
     dlen = len(v.get("desc", ""))
     brands = "".join(f'<option value="{esc(b)}"></option>' for b in BRANDS)
@@ -103,7 +98,6 @@ def sell_form(v: dict, *, photos=(), errors: dict | None = None, rejected: bool 
             + field("price", "Price", money_input("price", v.get("price", "")), error=e.get("price"))
             + field("ship", "Shipping", money_input("ship", v.get("ship", "")), help="Flat rate. $0 shows as free shipping.")
             + f'</div><p class="earnings"><span>You earn after the {FEE_PERCENT}% fee</span><strong>{earnings}</strong></p></section>'
-            f'<section class="form-section" aria-labelledby="s-confirm"><h2 id="s-confirm" class="visually-hidden">Size confirmation</h2>{confirm}</section>'
             f'<div class="form-actions form-actions--sticky form-actions--split">{actions}</div></form>')
 
 
@@ -124,7 +118,7 @@ FILLED_PHOTOS = [("pink-tutu", 6), ("pink-tutu", 1), ("pink-tutu", 4)]
 # Sell
 # ---------------------------------------------------------------------------
 s = screen("sell", "page", "Sell an item", route="/sell",
-           reqs=["L2-003", "L2-011", "L2-012", "L2-014", "L2-015", "L2-016", "L2-017", "L2-018", "L2-019", "L2-031", "L2-051", "L2-063"],
+           reqs=["L2-003", "L2-011", "L2-012", "L2-015", "L2-016", "L2-017", "L2-018", "L2-019", "L2-031", "L2-051", "L2-063"],
            na={"loading": "A new listing form needs no data; categories ship with the app shell.",
                "empty": "The form is the page; an empty form is the default state."})
 
@@ -138,18 +132,17 @@ def _():
 
 @s.state("filled", "Dance chosen: size fixed at Girls', three photos with a cover, earnings after the fee.")
 def _():
-    return sell_page(sell_form({**NEW, "confirm": True}, photos=FILLED_PHOTOS))
+    return sell_page(sell_form(NEW, photos=FILLED_PHOTOS))
 
 
 @s.state("invalid", "Publish refused: summary at the top, each problem inline, focus moved to the summary.")
 def _():
     errs = {"photos": "Add at least one photo. Photos must be 10 MB or smaller.",
             "title": "Title must be 5 to 80 characters", "price": "Enter a price from $1.00 to $5,000.00",
-            "flaws": "Describe the item's flaws", "confirm": "Confirm this item is for girls"}
+            "flaws": "Describe the item's flaws"}
     top = error_summary([("photos", "Add at least one photo"), ("title", "Title must be 5 to 80 characters"),
-                         ("flaws", "Describe the item's flaws"), ("price", "Enter a price from $1.00 to $5,000.00"),
-                         ("confirm", "Confirm this item is for girls")])
-    v = {**NEW, "title": "Tutu", "cond": "Used - Fair", "price": "0.99", "confirm": False}
+                         ("flaws", "Describe the item's flaws"), ("price", "Enter a price from $1.00 to $5,000.00")])
+    v = {**NEW, "title": "Tutu", "cond": "Used - Fair", "price": "0.99"}
     pg = sell_page(sell_form(v, rejected=True, errors=errs, top=top))
     pg.notes = note("Errors are announced in a live region; focus moves to the summary (L2-065).", "top: 9rem; right: 1rem;")
     return pg
@@ -157,7 +150,7 @@ def _():
 
 @s.state("submitting", "Publishing: the button is busy, Save draft is disabled, nothing shifts.")
 def _():
-    return sell_page(sell_form({**NEW, "confirm": True}, photos=FILLED_PHOTOS, busy=True))
+    return sell_page(sell_form(NEW, photos=FILLED_PHOTOS, busy=True))
 
 
 @s.state("draft-saved", "Draft saved: kept out of the catalog, finish it later from Your listings.")
@@ -197,7 +190,7 @@ def _():
 # Edit listing
 # ---------------------------------------------------------------------------
 SUNDRESS = {"cat": "Clothing", "sub": "Dresses", "title": "Yellow gingham sundress", "brand": "Carter's", "cond": "Used - Fair",
-            "flaws": ITEMS["sundress"]["flaws"], "desc": "Light cotton with shoulder ties. Loved for a whole summer.", "price": "12.00", "ship": "5.00", "confirm": True}
+            "flaws": ITEMS["sundress"]["flaws"], "desc": "Light cotton with shoulder ties. Loved for a whole summer.", "price": "12.00", "ship": "5.00"}
 SUNDRESS_PHOTOS = [("sundress", 5), ("sundress", 1), ("sundress", 3)]
 
 e = screen("edit-listing", "page", "Edit listing", route="/items/{id}/edit", reqs=["L2-015", "L2-016", "L2-017", "L2-018", "L2-020", "L2-013"],

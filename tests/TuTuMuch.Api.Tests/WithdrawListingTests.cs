@@ -56,7 +56,7 @@ public sealed class WithdrawListingTests : IDisposable
         var reference = await ActiveListingAsync();
         (await WithdrawAsync(reference)).EnsureSuccessStatusCode();
         using var read = await _seller.GetAsync($"/api/me/listings/{reference}");
-        var request = new HttpRequestMessage(HttpMethod.Put, $"/api/listings/{reference}") { Content = JsonContent.Create(Listings.Complete().With("sizeConfirmed", true)) };
+        var request = new HttpRequestMessage(HttpMethod.Put, $"/api/listings/{reference}") { Content = JsonContent.Create(Listings.Complete()) };
         request.Headers.IfMatch.Add(read.Headers.ETag!);
 
         using var edit = await _seller.SendAsync(request);

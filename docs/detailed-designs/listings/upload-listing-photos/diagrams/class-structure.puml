@@ -41,7 +41,7 @@ package "TuTuMuch.Domain" {
     +long Bytes
   }
   class Listing {
-    +Publish(sizeConfirmed, now, photoCount): IReadOnlyList<RuleViolation>
+    +Publish(now, photoCount): IReadOnlyList<RuleViolation>
   }
 }
 

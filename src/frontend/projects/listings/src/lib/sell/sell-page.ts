@@ -125,7 +125,7 @@ export class SellPage implements OnInit {
       this.busy.set(null);
       return;
     }
-    const result = await this.listings.publish(saved.reference, this.model.raw().confirm);
+    const result = await this.listings.publish(saved.reference);
     this.busy.set(null);
     if (!result.ok) {
       this.showProblem(result.problem, 'Couldn’t publish your listing');

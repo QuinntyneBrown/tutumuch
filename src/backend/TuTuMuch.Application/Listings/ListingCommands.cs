@@ -57,11 +57,10 @@ public sealed record UpdateListingCommand(
     string Reference,
     ListingDetails Details,
     IReadOnlyList<Guid>? PhotoIds = null,
-    bool SizeConfirmed = false,
     int? ExpectedVersion = null) : IRequest<Result<MyListingDto>>;
 
-/// <summary>Publishes the caller's draft under the L2-014 to L2-018 rules and the daily limit of L2-051.</summary>
-public sealed record PublishListingCommand(Guid SellerId, string Reference, bool SizeConfirmed) : IRequest<Result<PublishListingResult>>;
+/// <summary>Publishes the caller's draft under the L2-015 to L2-018 rules and the daily limit of L2-051.</summary>
+public sealed record PublishListingCommand(Guid SellerId, string Reference) : IRequest<Result<PublishListingResult>>;
 
 public sealed record GetMyListingQuery(Guid SellerId, string Reference) : IRequest<Result<MyListingDto>>;
 
@@ -151,7 +150,7 @@ public sealed class ListingCommandHandlers(
         }
 
         var photoCount = await db.ListingPhotos.CountAsync(p => p.ListingId == listing.Id, cancellationToken);
-        if (ToError(listing.Publish(command.SizeConfirmed, now, photoCount)) is { } error)
+        if (ToError(listing.Publish(now, photoCount)) is { } error)
         {
             return error;
         }
@@ -194,7 +193,7 @@ public sealed class ListingCommandHandlers(
         }
 
         var photoCount = command.PhotoIds?.Count ?? await db.ListingPhotos.CountAsync(p => p.ListingId == listing.Id, cancellationToken);
-        if (ToError(listing.Edit(command.Details, command.SizeConfirmed, photoCount, clock.GetUtcNow().UtcDateTime)) is { } error)
+        if (ToError(listing.Edit(command.Details, photoCount, clock.GetUtcNow().UtcDateTime)) is { } error)
         {
             return error;
         }

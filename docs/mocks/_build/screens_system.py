@@ -148,7 +148,7 @@ def rules_body() -> str:
     return f'<div class="stack stack--lg">{sizes}<ol class="rules-list" role="list">{lst}</ol></div>'
 
 
-simple("rules", "Marketplace rules", "/rules", ["L2-011", "L2-014", "L2-016", "L2-031", "L2-033"],
+simple("rules", "Marketplace rules", "/rules", ["L2-011", "L2-016", "L2-031", "L2-033"],
        "The rules on one short page: sizes, age, condition, shipping, fee, US only, counterfeits.",
        lambda: doc_page("Marketplace rules", "Short, because it only has to cover girls’ clothing.", rules_body()))
 

@@ -60,16 +60,15 @@ public sealed class ListingTests
     }
 
     [Fact]
-    public void Publishing_a_complete_listing_with_confirmation_makes_it_active()
+    public void Publishing_a_complete_listing_makes_it_active()
     {
         var listing = Listing.CreateDraft(Guid.NewGuid(), 10001, Complete(), Now);
 
-        var violations = listing.Publish(sizeConfirmed: true, Now, photoCount: 1);
+        var violations = listing.Publish(Now, photoCount: 1);
 
         Assert.Empty(violations);
         Assert.Equal(ListingStatus.Active, listing.Status);
         Assert.Equal(Now, listing.PublishedAt);
-        Assert.Equal(Now, listing.SizeConfirmedAt);
     }
 
     [Fact]
@@ -77,22 +76,10 @@ public sealed class ListingTests
     {
         var listing = Listing.CreateDraft(Guid.NewGuid(), 10001, Complete(), Now);
 
-        var violation = Assert.Single(listing.Publish(sizeConfirmed: true, Now, photoCount: 0));
+        var violation = Assert.Single(listing.Publish(Now, photoCount: 0));
 
         Assert.Equal(("photos", "PHOTOS_REQUIRED", "Add at least one photo"), (violation.Field, violation.Code, violation.Message));
         Assert.Equal(ListingStatus.Draft, listing.Status);
-    }
-
-    [Fact]
-    public void Publishing_without_size_confirmation_is_refused()
-    {
-        var listing = Listing.CreateDraft(Guid.NewGuid(), 10001, Complete(), Now);
-
-        var violations = listing.Publish(sizeConfirmed: false, Now, photoCount: 1);
-
-        Assert.Equal("SIZE_CONFIRMATION_REQUIRED", Assert.Single(violations).Code);
-        Assert.Equal(ListingStatus.Draft, listing.Status);
-        Assert.Null(listing.SizeConfirmedAt);
     }
 
     [Fact]
@@ -100,10 +87,10 @@ public sealed class ListingTests
     {
         var listing = Listing.CreateDraft(Guid.NewGuid(), 10001, ListingDetails.Empty with { Category = "Clothing" }, Now);
 
-        var violations = listing.Publish(sizeConfirmed: false, Now, photoCount: 0);
+        var violations = listing.Publish(Now, photoCount: 0);
 
         Assert.Equal(
-            ["photos", "subcategory", "title", "description", "brand", "condition", "price", "shippingCost", "sizeConfirmed"],
+            ["photos", "subcategory", "title", "description", "brand", "condition", "price", "shippingCost"],
             violations.Select(v => v.Field));
     }
 
@@ -168,14 +155,14 @@ public sealed class ListingTests
     public void Only_a_draft_can_be_published()
     {
         var listing = Listing.CreateDraft(Guid.NewGuid(), 10001, Complete(), Now);
-        listing.Publish(sizeConfirmed: true, Now, photoCount: 1);
+        listing.Publish(Now, photoCount: 1);
 
-        Assert.Throws<InvalidOperationException>(() => listing.Publish(sizeConfirmed: true, Now, photoCount: 1));
+        Assert.Throws<InvalidOperationException>(() => listing.Publish(Now, photoCount: 1));
     }
 
     private static string? PublishViolation(ListingDetails details)
     {
         var listing = Listing.CreateDraft(Guid.NewGuid(), 10001, details, Now);
-        return listing.Publish(sizeConfirmed: true, Now, photoCount: 1).SingleOrDefault()?.Code;
+        return listing.Publish(Now, photoCount: 1).SingleOrDefault()?.Code;
     }
 }

@@ -41,7 +41,7 @@ not re-add references to them in other documents. The decision is recorded in
   [ADR-0003](docs/adr/general/0003-no-frontend-performance-testing.md).
 
 The removed requirement numbers `L2-038`, `L2-039`, `L2-044` to `L2-047`, `L2-055`,
-`L2-057` and `L2-058` are retired; never reuse them. `L1-012` no longer exists.
+`L2-057`, `L2-058` and `L2-014` are retired; never reuse them. `L1-012` no longer exists.
 
 Administrators still resolve order problems (`L2-036`) through the admin shell, guarded
 by the `Administrator` role check of `L2-010`. That is the only administrator feature.

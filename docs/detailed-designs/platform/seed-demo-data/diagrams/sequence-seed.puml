@@ -46,7 +46,7 @@ else all present
         mediator -> photos : inspect, strip, re-encode, save versions
       end
       seeder -> mediator : CreateListingDraftCommand(details, photo IDs)
-      seeder -> mediator : PublishListingCommand(sizeConfirmed: true)
+      seeder -> mediator : PublishListingCommand(reference)
       mediator -> sql : daily limit check, publish rules, Active
     end
     seeder --> dev : "Seeded 8 members and 48 listings." exit 0

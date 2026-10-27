@@ -2,7 +2,7 @@
 
 **Date:** 2026-10-26
 **Category:** general
-**Status:** Accepted
+**Status:** Accepted (the seller confirmation is superseded by [ADR-0008](0008-remove-the-for-girls-confirmation.md))
 **Deciders:** Quinntyne Brown (product owner)
 
 ## Context

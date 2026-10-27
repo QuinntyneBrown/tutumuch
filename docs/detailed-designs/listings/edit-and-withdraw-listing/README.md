@@ -24,7 +24,7 @@ Screens, states and copy come from `docs/mocks/pages/edit-listing/` (default, lo
 - **`EditListingPage`** — `@tutumuch/listings` `src/lib/edit-listing/`, routed at `/items/:reference/edit`. Its header shows the listing title as a link back to the listing, the heading "Edit listing" and `tl-status`. It hosts the local `ListingFormComponent` with actions "Cancel" (back to the listing) and "Save changes". A `Draft` opens the sell form at `/sell/{reference}` instead. States:
   - `loading` — skeleton for 3 photo tiles and 4 fields, `aria-busy="true"`.
   - `error` — "Couldn't load this listing", "Your listing is safe. Try again in a moment.", the correlation reference, "Try again" and "Your listings" (`L2-068`).
-  - `default` — every field prefilled, including flaws for `Used - Fair`, photos and the ticked size confirmation.
+  - `default` — every field prefilled, including flaws for `Used - Fair`, and photos.
   - `invalid` — error summary plus inline errors, for example "Describe the item's flaws" and "Enter a price from $1.00 to $5,000.00"; client checks stop the request, and a `422` lands on the same fields.
   - `submitting` — "Save changes" shows `aria-busy="true"`.
   - `success` — success alert "Changes saved" with a "View listing" link; the new ETag replaces the old one.
@@ -32,7 +32,7 @@ Screens, states and copy come from `docs/mocks/pages/edit-listing/` (default, lo
   - `locked` — the listing is `Reserved` on load or on save: "This item is in someone's checkout", "You can edit it again if they don't finish within 10 minutes.", action "Back to listing" (`L2-020`).
   - `sold` — "This item has sold", "Sold listings can't be edited.", "Your sales" and "Your listings".
   - `withdrawn` — "This listing was withdrawn", "Withdrawn listings can't be edited or relisted.", "Your listings".
-- **`ListingFormComponent`** and **`ListingFormModel`** — `@tutumuch/listings` `src/lib/listing-form/`, shared by the sell page and the edit page: the photos, item, price and confirmation sections, the photo tiles, client checks (`listing-rules.ts`) and server field errors.
+- **`ListingFormComponent`** and **`ListingFormModel`** — `@tutumuch/listings` `src/lib/listing-form/`, shared by the sell page and the edit page: the photos, item and price sections, the photo tiles, client checks (`listing-rules.ts`) and server field errors.
 - **`WithdrawListingDialog`** — `@tutumuch/catalog` `src/lib/withdraw-listing/`, opened through `DialogService` by "Withdraw" on the seller's own Active listing detail page. Title "Withdraw “{title}”?", icon `trash` in the danger tone, description "It leaves the shop right away. This can't be undone.", buttons "Keep listing" (focused) and "Withdraw" (danger). States:
   - `busy` — "Withdraw" shows `aria-busy="true"`, "Keep listing" is disabled.
   - `failed` — danger alert "Couldn't withdraw", "Your listing is still live.", the danger button reads "Try again".
@@ -48,17 +48,17 @@ Every action is on `ListingsController` under the `CanSell` policy (`L2-003`, `L
 - `PUT /api/listings/{reference}` — body `ListingDetailsRequest`, header `If-Match` for a published listing. Returns `200` with `MyListingDto` and a new `ETag`. A `Draft` keeps the draft rules and needs no `If-Match`. Errors are checked in this order: `404`; `409` `LISTING_RESERVED` ("This item is in someone's checkout"), `LISTING_SOLD` or `LISTING_NOT_EDITABLE`, with the listing unchanged; `428` `PRECONDITION_REQUIRED` when `If-Match` is missing; `412` `LISTING_CHANGED` when it is stale; `422` with field errors, `CATEGORY_INVALID` or `SIZE_NOT_ACCEPTED`.
 - `POST /api/listings/{reference}/withdraw` — `200` with `{ reference, status: "Removed" }`. A repeat call on a withdrawn listing returns `200`. Errors: `404`; `409` `LISTING_RESERVED`, `LISTING_SOLD`, or `LISTING_NOT_EDITABLE` for a draft or a listing removed after a cancelled order.
 - `POST /api/listings/{reference}/relist` — unchanged from cancel-order: `204`, `404`, or `409` `LISTING_NOT_RELISTABLE`, which now includes a withdrawn listing.
-- **Mass assignment** (`L2-049`) — `ListingDetailsRequest` holds only editable fields (`category`, `subcategory`, `size`, `title`, `description`, `brand`, `condition`, `flaws`, `price`, `shippingCost`, `photoIds`, `sizeConfirmed`). Unknown members such as `"sellerId"` or `"status": "Sold"` are ignored by `System.Text.Json` and cannot reach the entity.
+- **Mass assignment** (`L2-049`) — `ListingDetailsRequest` holds only editable fields (`category`, `subcategory`, `size`, `title`, `description`, `brand`, `condition`, `flaws`, `price`, `shippingCost`, `photoIds`). Unknown members such as `"sellerId"` or `"status": "Sold"` are ignored by `System.Text.Json` and cannot reach the entity.
 
 ### Application and domain (`TuTuMuch.Application`, `TuTuMuch.Domain`)
 
 - **`GetMyListingQuery`** — returns `MyListingDto` (with `removalReason`) and its `Version`, which the controller writes as the ETag and leaves out of the body.
 - **`UpdateListingCommand`** (`ListingCommandHandlers`) — loads the caller's listing. A draft takes the draft path of create-listing. Otherwise it refuses through `ListingRefusals` (`409`), compares `ExpectedVersion` with `Version` (`428`, `412`), attaches photos with `ListingPhotoAttacher`, calls `Listing.Edit` and saves with `Version` as the concurrency token.
   - On `DbUpdateConcurrencyException` it reloads the status and returns `LISTING_RESERVED` (or `LISTING_SOLD`) when a checkout won, otherwise `LISTING_CHANGED`.
-- **`Listing.Edit(details, sizeConfirmed, photoCount, now)`**:
+- **`Listing.Edit(details, photoCount, now)`**:
   - only for `Active`, or `Removed` with reason `OrderCancelled`; `EditRefusal` names `LISTING_RESERVED`, `LISTING_SOLD` or `LISTING_NOT_EDITABLE` otherwise (`L2-020`);
-  - applies `CheckPublish`, the publish rules of `L2-014` to `L2-018` plus the draft rules, including `SIZE_NOT_ACCEPTED` for a size other than the category's (`L2-013`) and `SIZE_CONFIRMATION_REQUIRED` when the confirmation is not ticked;
-  - on success sets the size from the category, refreshes `SizeConfirmedAt` when the category changed, trims text and bumps `Version`.
+  - applies `CheckPublish`, the publish rules of `L2-015` to `L2-018` plus the draft rules, including `SIZE_NOT_ACCEPTED` for a size other than the category's (`L2-013`);
+  - on success sets the size from the category, trims text and bumps `Version`.
 - **`WithdrawListingCommand`** / **`WithdrawListingCommandHandler`** — calls `Listing.Withdraw(now)`, which allows only `Active → Removed`, sets `RemovalReason = Withdrawn` and bumps `Version`, and saves with the version check.
 - **`Listing.RemoveAfterCancellation`** and **`Listing.Relist`** — built by cancel-order. `CanRelist` stays limited to reason `OrderCancelled`, so a withdrawn listing cannot come back, matching "This can't be undone."
 - **Status transitions owned or guarded here**:
@@ -87,7 +87,7 @@ Every action is on `ListingsController` under the `CanSell` policy (`L2-003`, `L
 | `LISTING_NOT_RELISTABLE` | 409 | Relist of a listing that was not removed after a cancelled order |
 | `LISTING_CHANGED` | 412 | `If-Match` does not match the current version |
 | `PRECONDITION_REQUIRED` | 428 | `PUT` of a published listing without `If-Match` |
-| `CATEGORY_INVALID`, `SIZE_NOT_ACCEPTED`, `SIZE_CONFIRMATION_REQUIRED`, `LISTING_INVALID` | 422 | As in [create-listing](../create-listing/README.md) |
+| `CATEGORY_INVALID`, `SIZE_NOT_ACCEPTED`, `LISTING_INVALID` | 422 | As in [create-listing](../create-listing/README.md) |
 
 ## Requirements
 
@@ -148,7 +148,7 @@ From a cancelled sale, the seller either edits first or relists at once. Only a 
 
 ## Testing
 
-- `tests/TuTuMuch.Api.Tests/EditListingTests.cs` — xUnit acceptance tests through `TuTuMuchApiFactory` with the SQLite in-memory database and fakes: the ETag on read, a save with the current ETag reaching the catalog, `412` for a stale ETag, `428` without `If-Match`, `409` for a reserved and a sold listing, the publish rules, the size confirmation, `SIZE_NOT_ACCEPTED`, the size set from a new category, ignored protected fields and `404` for another member.
+- `tests/TuTuMuch.Api.Tests/EditListingTests.cs` — xUnit acceptance tests through `TuTuMuchApiFactory` with the SQLite in-memory database and fakes: the ETag on read, a save with the current ETag reaching the catalog, `412` for a stale ETag, `428` without `If-Match`, `409` for a reserved and a sold listing, the publish rules, `SIZE_NOT_ACCEPTED`, the size set from a new category, ignored protected fields and `404` for another member.
 - `tests/TuTuMuch.Api.Tests/WithdrawListingTests.cs` — withdraw removes the listing from the catalog and the detail page, a repeat answers `200`, a withdrawn listing cannot be edited or relisted, and reserved, sold, draft and foreign listings are refused.
 - `tests/TuTuMuch.Domain.Tests/EditAndWithdrawListingTests.cs` — `Listing.Edit`, `Withdraw`, `EditRefusal` and the `Version` bump.
 - `src/frontend/e2e/tests/edit-and-withdraw-listing.spec.ts` with `e2e/pages/edit-listing.page.ts` — Playwright (Chromium) with every `TuTuMuch API` call served by `page.route` fixtures: the prefilled form, saving with `If-Match`, the stale save and Reload, client checks, the locked, sold, withdrawn and error states, the Withdraw dialog with its busy and failed states, and "Edit first" in the Relist dialog.

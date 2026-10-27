@@ -47,7 +47,7 @@ def chip(label: str) -> str:
 
 
 def hero() -> str:
-    return ('<section class="hero" aria-labelledby="hero-title"><h1 class="display" id="hero-title">Everything for girls. <em>Nothing else.</em></h1>'
+    return ('<section class="hero" aria-labelledby="hero-title"><h1 class="display" id="hero-title">Find something <em>she&#8217;ll love.</em></h1>'
             '<p class="lead">Clothes, dance and sports gear, cameras, toys and more, from families whose girls have outgrown them.</p></section>')
 
 
