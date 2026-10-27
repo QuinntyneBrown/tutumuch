@@ -53,6 +53,8 @@ public interface ITuTuMuchDbContext
 
     DbSet<ItemRequestMatch> ItemRequestMatches { get; }
 
+    DbSet<ShowcaseRequest> ShowcaseRequests { get; }
+
     /// <summary>Transactions, for the steps of checkout that must commit together.</summary>
     DatabaseFacade Database { get; }
 

@@ -55,6 +55,9 @@ namespace TuTuMuch.Infrastructure.Persistence.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<bool>("IsShowcase")
+                        .HasColumnType("bit");
+
                     b.Property<long>("Number")
                         .HasColumnType("bigint");
 
@@ -1199,6 +1202,45 @@ namespace TuTuMuch.Infrastructure.Persistence.Migrations
                     b.ToTable("ItemRequestMatches", (string)null);
                 });
 
+            modelBuilder.Entity("TuTuMuch.Domain.Requests.ShowcaseRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ListingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("MemberId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ListingId");
+
+                    b.HasIndex("UpdatedAt")
+                        .HasDatabaseName("IX_ShowcaseRequests_UpdatedAt");
+
+                    b.HasIndex("MemberId", "CreatedAt")
+                        .HasDatabaseName("IX_ShowcaseRequests_MemberId_CreatedAt");
+
+                    b.HasIndex("MemberId", "ListingId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_ShowcaseRequests_MemberId_ListingId");
+
+                    b.ToTable("ShowcaseRequests", (string)null);
+                });
+
             modelBuilder.Entity("TuTuMuch.Domain.Listings.Listing", b =>
                 {
                     b.HasOne("TuTuMuch.Domain.Members.Member", null)
@@ -1615,6 +1657,21 @@ namespace TuTuMuch.Infrastructure.Persistence.Migrations
                     b.HasOne("TuTuMuch.Domain.Listings.Listing", null)
                         .WithMany()
                         .HasForeignKey("ListingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("TuTuMuch.Domain.Requests.ShowcaseRequest", b =>
+                {
+                    b.HasOne("TuTuMuch.Domain.Listings.Listing", null)
+                        .WithMany()
+                        .HasForeignKey("ListingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TuTuMuch.Domain.Members.Member", null)
+                        .WithMany()
+                        .HasForeignKey("MemberId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

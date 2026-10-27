@@ -19,7 +19,11 @@ public sealed record SellerSummaryDto(string DisplayName, int CompletedSalesCoun
 /// <summary>Anonymous, Seller or OtherMember: decides whether the page offers Buy now (L2-026).</summary>
 public sealed record ViewerDto(string Relation);
 
-/// <summary>Everything the detail page shows. Money is two-place decimal strings (L2-018); no email or real name (L2-054).</summary>
+/// <summary>
+/// Everything the detail page shows. Money is two-place decimal strings (L2-018); no email or real
+/// name (L2-054). Showcase tells the page that Buy now shows the Sold notice (L2-108); nothing says
+/// who requested it (L2-111).
+/// </summary>
 public sealed record ListingDetailDto(
     Guid Id,
     string Reference,
@@ -38,7 +42,8 @@ public sealed record ListingDetailDto(
     DateTime PublishedAt,
     IReadOnlyList<CardPhotoDto> Photos,
     SellerSummaryDto Seller,
-    ViewerDto Viewer);
+    ViewerDto Viewer,
+    bool Showcase);
 
 /// <summary>One listing by its reference, as seen by <paramref name="ViewerId"/> (null for a visitor).</summary>
 public sealed record GetListingDetailQuery(string Reference, Guid? ViewerId) : IRequest<Result<ListingDetailDto>>;
@@ -85,7 +90,8 @@ public sealed class GetListingDetailQueryHandler(ITuTuMuchDbContext db, IOptions
             listing.PublishedAt ?? listing.CreatedAt,
             photos.Select((p, i) => CatalogPhotos.ToDto(p, $"Photo {i + 1} of {listing.Brand} {listing.Title}", baseUrl)).ToList(),
             new SellerSummaryDto(sellerName, completedSales, null, 0),
-            new ViewerDto(relation));
+            new ViewerDto(relation),
+            listing.IsShowcase);
     }
 
     private static string Money(decimal value) => value.ToString("0.00", CultureInfo.InvariantCulture);

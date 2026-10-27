@@ -110,6 +110,27 @@ public sealed class Listing
     /// </summary>
     public int Version { get; private set; }
 
+    /// <summary>
+    /// A showcase listing browses like any Active listing but is never reserved, sold or paid for:
+    /// Buy now shows Sold and "Request this item" instead (L2-107, L2-108, ADR catalog/0008).
+    /// </summary>
+    public bool IsShowcase { get; private set; }
+
+    /// <summary>Only a Draft or Active listing can be marked or unmarked (L2-107 AC4).</summary>
+    public bool CanBeShowcase => Status is ListingStatus.Draft or ListingStatus.Active;
+
+    /// <summary>Marks or unmarks the listing as a showcase listing; bumps the version like any change.</summary>
+    public void SetShowcase(bool showcase, DateTime now)
+    {
+        if (!CanBeShowcase)
+        {
+            throw new InvalidOperationException("Only a draft or active listing can be a showcase listing.");
+        }
+
+        IsShowcase = showcase;
+        Touch(now);
+    }
+
     /// <summary>Why the listing is Removed; null in any other status.</summary>
     public ListingRemovalReason? RemovalReason { get; private set; }
 

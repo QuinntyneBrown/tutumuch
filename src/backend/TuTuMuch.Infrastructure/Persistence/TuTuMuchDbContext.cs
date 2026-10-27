@@ -52,6 +52,8 @@ public sealed class TuTuMuchDbContext(DbContextOptions<TuTuMuchDbContext> option
 
     public DbSet<ItemRequestMatch> ItemRequestMatches => Set<ItemRequestMatch>();
 
+    public DbSet<ShowcaseRequest> ShowcaseRequests => Set<ShowcaseRequest>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder) =>
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(TuTuMuchDbContext).Assembly);
 }
