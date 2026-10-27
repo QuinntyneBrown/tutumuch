@@ -1,9 +1,17 @@
 """Build the 30-second TuTuMuch pitch video.
 
+The video speaks to shoppers only: in launch Phase 1 (the default) only TuTuMuch sells, so it
+promises no member selling (L2-094, ADR platform/0014). The slides follow the page guidelines
+(docs/page-guidelines.md, ADR general/0009): cream and blush, Fraunces and DM Sans, Tilly, no
+gradients or decorative shapes.
+
 Inputs  LINES below                         one narrated line per slide (caption text, spoken text)
         music/upbeat-ukulele-kids-excerpt.mp3  "Upbeat Ukulele Kids" (Cold_Fire, Pixabay), ducked under the voice
-        kokoro/                             Kokoro-82M ONNX + af_bella voice from Hugging Face (auto-downloaded)
+        kokoro/                             Kokoro-82M ONNX + af_bella voice from Hugging Face (auto-downloaded;
+                                            the kokoro-onnx GitHub release when Hugging Face is unreachable)
         docs/design-system/assets/logo.png  the TuTuMuch wordmark
+        docs/design-system/assets/fonts/    Fraunces and DM Sans (OFL)
+        docs/design-system/assets/tilly/    Tilly's poses
 Outputs tutumuch-pitch.mp4 (H.264/AAC), tutumuch-pitch.webm (VP9/Opus), tutumuch-pitch.vtt,
         tutumuch-pitch-poster.png, tutumuch-share.jpg (1200x630 link preview) and ATTRIBUTION.md, written to the app's public media folder
         (src/frontend/projects/tutumuch/public/media/) and copied to docs/mocks/assets/media/.
@@ -26,56 +34,77 @@ MUSIC, MUSIC_DB = HERE / "music/upbeat-ukulele-kids-excerpt.mp3", -9
 TARGET, LEAD, TAIL, MIN_GAP = 30.0, 0.6, 1.8, 0.25  # total length; seconds before the first line and after the last
 SILENT_WPS = 2.6  # words per second used to time captions when there is no narration
 
-# (caption text, text the narrator speaks)
+# (caption text, text the narrator speaks). Shopping only: nothing promises that a member can sell.
 LINES = [
     ("Growing fast? Outgrowing everything? Welcome to TuTuMuch.",
      "Growing fast? Outgrowing everything? Welcome to Tutu Much!"),
     ("New and gently loved clothes and gear, all for girls.",
      "New and gently loved clothes and gear. All for girls."),
-    ("Shopping? Clothes, shoes, dance and sports gear, cameras, toys and more. All for girls.",
-     "Shopping? Clothes, shoes, dance and sports gear, cameras, toys and more. All for girls!"),
-    ("Selling? List in minutes and pass it on to the next girl.",
-     "Selling? List in minutes, and pass it on to the next girl."),
-    ("Snap a photo. Set a price. Ship it. Get paid.", "Snap a photo. Set a price. Ship it. Get paid!"),
-    ("TuTuMuch. Twirl it forward. Come on in.", "Tutu Much. Twirl it forward! Come on in!"),
+    ("Clothes, shoes, dance and sports gear, cameras, toys and more.",
+     "Clothes, shoes, dance and sports gear, cameras, toys and more."),
+    ("Every piece is hand-picked by TuTuMuch, with its condition named up front.",
+     "Every piece is hand-picked by Tutu Much, with its condition named up front."),
+    ("Find it. Buy it. It ships to your door.", "Find it. Buy it. It ships to your door."),
+    ("TuTuMuch. Twirl it forward. Shop the closet.", "Tutu Much. Twirl it forward! Shop the closet."),
 ]
 
-LOGO = ('<img class="logo" alt="" src="data:image/png;base64,'
-        + base64.b64encode((REPO / "docs/design-system/assets/logo.png").read_bytes()).decode() + '">')
-# The page's decorative shapes: party-pop blobs and a polka-dot band in raspberry, lilac and sunny.
-SHAPES = '<div class="shape s1"></div><div class="shape s2"></div><div class="shape s3"></div><div class="dots"></div>'
+ASSETS = REPO / "docs/design-system/assets"
+
+
+def data_uri(path, mime):
+    return f"data:{mime};base64," + base64.b64encode(path.read_bytes()).decode()
+
+
+LOGO = f'<img class="logo" alt="" src="{data_uri(ASSETS / "logo.png", "image/png")}">'
+
+
+def tilly(pose, cls):
+    return f'<img class="tilly {cls}" alt="" src="{data_uri(ASSETS / "tilly" / f"tilly-{pose}.webp", "image/webp")}">'
+
+
+# One Tilly per slide at most, in an approved pose (page guidelines 6).
 SLIDES = [
-    '<p class="k">Clothes · Dance · Sports · Gear</p><h1>Growing fast?<br>Outgrowing <em>everything?</em></h1>'
-    '<p class="sub">Welcome to <b>TuTuMuch</b>.</p>',
-    f'{LOGO}<h1 style="margin-top:56px">New and gently loved,<br><em>all for girls.</em></h1>',
-    '<p class="k">For shoppers</p><h1>Everything here<br><em>is for girls.</em></h1>'
-    '<div class="tags"><span>Clothes</span><span>Shoes</span><span>Dance</span><span>Sports</span><span>Cameras</span><span>Toys</span></div>',
-    '<p class="k">For sellers</p><h1>List in minutes.<br><em>Pass it on to the next girl.</em></h1>',
-    '<ol class="steps"><li><b>1</b>Snap it</li><li><b>2</b>Price it</li><li><b>3</b>Ship it</li><li><b>4</b>Get paid</li></ol>',
-    f'{LOGO}<h1 style="margin-top:56px">Twirl it <em>forward.</em></h1><p class="cta">Come on in → <em>TuTuMuch</em></p>',
+    '<div class="copy"><p class="k">Clothes · Dance · Sports · Gear</p><h1>Growing fast?<br>Outgrowing <em>everything?</em></h1>'
+    '<p class="sub">Welcome to <b>TuTuMuch</b>.</p></div>' + tilly("hello", "right"),
+    f'<div class="copy">{LOGO}<h1 style="margin-top:56px">New and gently loved,<br><em>all for girls.</em></h1></div>',
+    '<div class="copy"><p class="k">For shoppers</p><h1>Everything here<br><em>is for girls.</em></h1>'
+    '<div class="tags"><span>Clothes</span><span>Shoes</span><span>Dance</span><span>Sports</span><span>Cameras</span><span>Toys</span></div></div>'
+    + tilly("soccer", "right"),
+    '<div class="copy"><p class="k">Hand-picked by TuTuMuch</p><h1>Honest about<br><em>condition.</em></h1>'
+    '<div class="badges"><span class="new">New with tags</span><span class="like">Used - Excellent</span>'
+    '<span class="loved">Used - Good</span><span class="well">Used - Fair</span></div></div>',
+    '<ol class="steps"><li><b>1</b>Find it</li><li><b>2</b>Buy it</li><li><b>3</b>It ships to you</li></ol>',
+    f'<div class="copy">{LOGO}<h1 style="margin-top:48px">Twirl it <em>forward.</em></h1>'
+    '<p class="cta">Shop the closet →</p></div>' + tilly("twirl", "right"),
 ]
-# TuTuMuch tokens (docs/design-system/tokens): Ink #3a2233 gradient (plum 850 to 700), Cream #fff8f5 text,
-# raspberry 300 #f29bbc emphasis, Raspberry #d6336c, Lilac #9b7fd4 and Sunny #f6c64b shapes; Giddy's
-# rounded type and pill shapes.
-CSS = """@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&display=swap');
+BLUSH = {1, 4}  # slides on a blush panel: sections change background, never use gradients
+# Page-guideline tokens (docs/design-system/tokens/tokens.css): Cream #fff8f5 page, Blush #fde2ea panels,
+# Ink #3a2233 text, Muted #7a6370, raspberry 700 #c2255c emphasis, Raspberry #d6336c pills, Sunny #f6c64b
+# and the condition-badge colours; Fraunces (SOFT 100) for headings, DM Sans for text; no gradients or shapes.
+FONTS = (f"@font-face{{font-family:Fraunces;font-weight:100 900;src:url({data_uri(ASSETS / 'fonts/fraunces-latin-full.woff2', 'font/woff2')})}}"
+         f"@font-face{{font-family:'DM Sans';font-weight:100 1000;src:url({data_uri(ASSETS / 'fonts/dm-sans-latin-opsz.woff2', 'font/woff2')})}}")
+CSS = FONTS + """
 html,body{margin:0;width:1920px;height:1080px;overflow:hidden}
-body{background:linear-gradient(135deg,#2d1c29 0%,#3a2233 55%,#523d4b 100%);color:#fff8f5;font-family:Nunito,ui-rounded,sans-serif;
-  display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:0 180px;box-sizing:border-box;position:relative}
-h1{font:900 124px/1.04 Nunito,ui-rounded,sans-serif;letter-spacing:-.02em;margin:0;position:relative;z-index:1}
-em{font-style:normal;color:#f29bbc}
-.k{font:800 40px Nunito,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#dccbd5;margin:0 0 40px;position:relative;z-index:1}
-.sub,.cta{font:800 64px Nunito,sans-serif;margin:48px 0 0;position:relative;z-index:1}.cta em{color:#f29bbc}
-.logo{width:760px;position:relative;z-index:1}
-.tags{display:flex;gap:28px;margin-top:64px;position:relative;z-index:1}
-.tags span{font:800 40px Nunito,sans-serif;padding:18px 36px;border-radius:999px;background:#fde2ea;color:#3a2233}
-.steps{list-style:none;display:grid;grid-template-columns:repeat(4,1fr);gap:40px;margin:0;padding:0;width:100%;position:relative;z-index:1}
-.steps li{font:900 72px Nunito,sans-serif;letter-spacing:-.02em;border-top:10px solid #d6336c;border-radius:6px;padding-top:36px}
-.steps b{display:grid;place-items:center;width:88px;height:88px;border-radius:50%;background:#f6c64b;color:#3a2233;font:900 48px Nunito,sans-serif;margin-bottom:28px}
-.shape{position:absolute;z-index:0}
-.s1{right:-80px;top:-100px;width:640px;height:540px;background:#d6336c;border-radius:58% 42% 46% 54%/52% 44% 56% 48%}
-.s2{right:300px;bottom:-130px;width:380px;height:380px;background:#9b7fd4;border-radius:50%}
-.s3{right:90px;bottom:150px;width:180px;height:180px;background:#f6c64b;border-radius:50%;opacity:.95}
-.dots{position:absolute;left:0;bottom:12px;width:100%;height:28px;background:radial-gradient(circle,#f29bbc 30%,transparent 32%) 0 50%/56px 28px repeat-x;opacity:.9}"""
+body{background:#fff8f5;color:#3a2233;font-family:'DM Sans',sans-serif;display:flex;align-items:center;
+  padding:0 180px;box-sizing:border-box;position:relative}
+body.blush{background:#fde2ea}
+.copy{position:relative;z-index:1;max-width:1000px}
+h1{font:600 112px/1.04 Fraunces,serif;font-variation-settings:'SOFT' 100,'WONK' 0;letter-spacing:-.025em;margin:0}
+em{font-style:normal;color:#c2255c}
+.k{font:600 40px 'DM Sans',sans-serif;color:#7a6370;margin:0 0 40px}
+.sub{font:500 60px 'DM Sans',sans-serif;margin:48px 0 0}
+.cta{display:inline-block;font:600 56px 'DM Sans',sans-serif;margin:56px 0 0;padding:28px 64px;border-radius:999px;background:#d6336c;color:#fff}
+.logo{width:760px}
+.tilly{position:absolute;z-index:0;height:760px;width:auto}
+.tilly.right{right:120px;bottom:160px}
+.tags,.badges{display:flex;flex-wrap:wrap;gap:24px;margin-top:64px}
+.tags span,.badges span{font:600 40px 'DM Sans',sans-serif;padding:18px 36px;border-radius:999px}
+.tags span{background:#fde2ea;color:#3a2233}
+.badges .new{background:#d6336c;color:#fff}.badges .like{background:#f6c64b;color:#3a2233}
+.badges .loved{background:#fde2ea;color:#3a2233}.badges .well{background:#fff;color:#3a2233;box-shadow:inset 0 0 0 3px rgb(58 34 51/.15)}
+.steps{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:64px;margin:0;padding:0;width:100%}
+.steps li{font:600 80px/1.1 Fraunces,serif;font-variation-settings:'SOFT' 100,'WONK' 0;letter-spacing:-.025em;border-top:3px solid rgb(58 34 51/.1);padding-top:40px}
+.steps b{display:grid;place-items:center;width:96px;height:96px;border-radius:50%;background:#f6c64b;color:#3a2233;font:600 48px 'DM Sans',sans-serif;margin-bottom:32px}"""
 
 
 def dur(p):
@@ -99,17 +128,32 @@ class Narrator:
         self.np = np
         k = HERE / "kokoro"
         k.mkdir(exist_ok=True)
-        for sub, name in (("onnx", "model.onnx"), ("voices", f"{VOICE}.bin")):
-            if not (k / name).exists():
-                shutil.copy(hf_hub_download(HF_REPO, f"{sub}/{name}"), k / name)
+        try:
+            for sub, name in (("onnx", "model.onnx"), ("voices", f"{VOICE}.bin")):
+                if not (k / name).exists():
+                    shutil.copy(hf_hub_download(HF_REPO, f"{sub}/{name}"), k / name)
+        except Exception as e:  # Hugging Face unreachable: the same Kokoro-82M v1.0 weights from the kokoro-onnx release
+            print(f"note: Hugging Face download failed ({type(e).__name__}); using the kokoro-onnx GitHub release")
+            self.from_github(k)
         self.tok = Tokenizer()
         self.sess = ort.InferenceSession(str(k / "model.onnx"))
+        self.input = self.sess.get_inputs()[0].name  # "input_ids" (Hugging Face export) or "tokens" (kokoro-onnx release)
         self.style = np.fromfile(k / f"{VOICE}.bin", dtype=np.float32).reshape(-1, 1, 256)
+
+    def from_github(self, k):
+        import urllib.request
+
+        base = "https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/"
+        if not (k / "model.onnx").exists():
+            urllib.request.urlretrieve(base + "kokoro-v1.0.onnx", k / "model.onnx")
+        if not (k / f"{VOICE}.bin").exists():
+            urllib.request.urlretrieve(base + "voices-v1.0.bin", k / "voices-v1.0.npz")
+            self.np.load(k / "voices-v1.0.npz")[VOICE].astype(self.np.float32).tofile(k / f"{VOICE}.bin")
 
     def say(self, text, out):
         np = self.np
         ids = self.tok.tokenize(self.tok.phonemize(text, lang="en-us"))
-        audio = self.sess.run(None, {"input_ids": np.array([[0, *ids, 0]], dtype=np.int64),
+        audio = self.sess.run(None, {self.input: np.array([[0, *ids, 0]], dtype=np.int64),
                                      "style": self.style[len(ids)],
                                      "speed": np.array([SPEED], dtype=np.float32)})[0].reshape(-1)
         audio = np.trim_zeros(np.where(np.abs(audio) < 0.004, 0, audio))  # trim leading/trailing silence
@@ -150,8 +194,9 @@ def main():
         b = pw.chromium.launch()
         pg = b.new_page(viewport={"width": 1920, "height": 1080})
         for i, html in enumerate(SLIDES):
-            pg.set_content(f"<style>{CSS}</style>{SHAPES if i in (0, 2, 4, 5) else ''}{html}")
-            pg.wait_for_timeout(900)
+            pg.set_content(f"<style>{CSS}</style><body class=\"{'blush' if i in BLUSH else ''}\">{html}</body>")
+            pg.evaluate("document.fonts.ready")
+            pg.wait_for_timeout(600)
             pg.screenshot(path=str(tmp / f"s{i}.png"))
         b.close()
 
