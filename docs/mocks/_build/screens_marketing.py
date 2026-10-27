@@ -107,7 +107,7 @@ def _():
 @wl.state("selling-opens-soon", "Launch Phases 1 and 2, signed out: no Start selling link; the hero and the seller band say selling opens soon.")
 def _():
     pg = welcome(False, selling=False)
-    pg.notes = note("An administrator still sees Start selling (L2-094). The shopper band, steps and video are unchanged.", "top: 6rem; right: 1rem;")
+    pg.notes = note("An administrator still sees Start selling (L2-094). The shopper band and steps are unchanged; the video is the shopper-only cut in every phase.", "top: 6rem; right: 1rem;")
     return pg
 
 

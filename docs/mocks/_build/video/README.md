@@ -20,8 +20,12 @@ It writes `tutumuch-pitch.mp4`, `tutumuch-pitch.webm`, `tutumuch-pitch.vtt`, `tu
 `tutumuch-pitch-poster.png` and `ATTRIBUTION.md` to `src/frontend/projects/tutumuch/public/media/`
 (served at `/media/`) and copies them to `docs/mocks/assets/media/` for the mocks.
 
-Needs ffmpeg and ffprobe and the Python package `playwright` (with `python -m playwright install
-chromium`); narration also needs `kokoro-onnx`, `onnxruntime`, `huggingface_hub` and `numpy`.
+Needs ffmpeg and ffprobe and the Python packages in [`requirements.txt`](requirements.txt):
+
+```
+python -m pip install -r docs/mocks/_build/video/requirements.txt
+python -m playwright install chromium
+```
 
 - **Voice**: Kokoro-82M from Hugging Face, voice `af_bella` at speed 1.12. The model and voice
   download into `kokoro/` (git-ignored, about 330 MB) on the first run. When Hugging Face is
