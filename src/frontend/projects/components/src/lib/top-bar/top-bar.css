@@ -4,17 +4,17 @@
 .topbar__avatar {
   text-decoration: none;
 }
+/* Below 992px the open search wraps onto its own line inside the header, so it pushes the page
+   down instead of covering the top of it. */
 @media (max-width: 61.99rem) {
+  .topbar .topbar__row:has(.search--open) {
+    flex-wrap: wrap;
+  }
   .topbar .search.search--open {
     display: block;
-    position: absolute;
-    inset: 100% 0 auto;
+    order: 1;
+    flex: 1 0 100%;
     max-width: none;
-    padding: var(--space-3) var(--layout-margin);
-    background: var(--color-bg-canvas);
-    border-bottom: 1px solid var(--color-border-default);
-  }
-  .topbar .search.search--open .icon {
-    left: calc(var(--layout-margin) + var(--space-3));
+    margin-bottom: var(--space-3);
   }
 }
