@@ -1,0 +1,59 @@
+@startuml
+title UML sequence behaviour — View, edit and delete item requests
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Member" as actor
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "MyRequestsPage (@tutumuch/catalog)" as page
+  participant "RequestFormPage / DeleteRequestDialog" as form
+  participant "ItemRequestsApi (@tutumuch/api)" as client
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "ItemRequestsController" as controller
+end box
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
+  participant "ItemRequestCommandHandlers" as handler
+end box
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
+end box
+actor -> page : Open /account/requests
+page --> actor : Skeleton requests
+page -> client : list()
+client -> controller : GET /api/me/item-requests
+controller -> handler : GetMyItemRequestsQuery(memberId)
+handler -> db : The member's requests, newest first, with their matches
+handler -> db : Cards of matched listings still Active (L2-102)
+controller --> client : 200 { items, openCount, limit }
+page --> actor : Requests with matches, "No matches yet" or "no longer available"; Expired with Renew
+actor -> form : Edit, change keywords, Save request
+form -> client : update(id, body)
+client -> controller : PUT /api/me/item-requests/{id}
+controller -> handler : UpdateItemRequestCommand(memberId, id)
+alt another member's request or unknown id
+  handler --> controller : 404 REQUEST_NOT_FOUND (L2-099)
+else own request
+  handler -> db : Save fields; ExpiresAt = now + 90 days (renewal, L2-098)
+  controller --> client : 200
+  form --> actor : My requests with toast "Request saved"
+end
+actor -> form : Delete, confirm "Delete this request?"
+form -> client : remove(id)
+client -> controller : DELETE /api/me/item-requests/{id}
+controller -> handler : DeleteItemRequestCommand(memberId, id)
+handler -> db : Delete the request and its matches
+controller --> client : 204
+page --> actor : Request removed, toast "Request deleted"
+@enduml

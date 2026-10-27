@@ -44,8 +44,8 @@ designed in
 
 `NotificationType` (enumeration in `TuTuMuch.Domain`) lists each email that `L2-042` and
 the related L2 requirements name. Each type maps to exactly one `NotificationCategory`.
-Only the Reviews and Marketing categories honour a member's opt-out (`L2-043`); the other
-two are always sent.
+Only the ItemRequests, Reviews and Marketing categories honour a member's opt-out (`L2-043`,
+`L2-103`); the other two are always sent.
 
 | `NotificationType` | Recipient | Category | Source | Deep link |
 |--------------------|-----------|----------|--------|-----------|
@@ -65,6 +65,7 @@ two are always sent.
 | `ProblemResolved` | buyer and seller | Orders | `L2-036` | `/orders/{orderId}` or `/sales/{orderId}` |
 | `ReviewReceived` | reviewed member | Reviews | `L2-042` | `/members/{displayName}` |
 | `Marketing` | opted-in member | Marketing | `L2-043` | per campaign, `<TO SUPPLY>` |
+| `ItemRequestMatched` | member whose open item requests a newly Active listing matched | ItemRequests | `L2-101` | `/items/{reference}` and `/account/requests` |
 
 `DraftExpiring` falls under AccountSecurity because `L2-043` permits turning off only
 review and marketing email. Administrator alerts for a reported problem (`L2-036`) go to
@@ -221,6 +222,17 @@ messages from a crashed worker. `Sent`, `Suppressed` and `Failed` are terminal.
 | `Notifications:FromAddress` | `<TO SUPPLY>` | with the provider |
 | Email provider API key | secret store | `L2-052`, with the provider |
 
+### Item request match email (request-items)
+
+[request-items](../../catalog/request-items/README.md) adds `NotificationType.ItemRequestMatched`
+with the model `ItemRequestMatchedEmail(ListingReference, Title, Brand, Price)`, queued by
+`MatchItemRequestsHandler` in the same save as the matches, one per member per listing
+([ADR catalog/0007](../../../adr/catalog/0007-match-email-per-listing-without-a-digest.md)). The
+template reads "A match for your request: {title}", gives the price and links to the listing and
+to My requests. It belongs to the new `ItemRequests` category, so the dispatcher suppresses it
+when the member turned item request emails off and, as for marketing, adds the one-click
+unsubscribe link and the `List-Unsubscribe` headers with a token of that category (`L2-103`).
+
 ### Deferred
 
 - Built by [manage-notification-preferences](../manage-notification-preferences/README.md):
@@ -246,6 +258,7 @@ requirement, cited by identifier.
 
 | L2 ID | Refines (L1) | Requirement |
 |-------|--------------|-------------|
+| `L2-101` | `L1-023`, `L1-011` | For each listing that matches, each member whose open requests it matched shall receive one email through the outbox (request-items). |
 | `L2-042` | `L1-011` | The system shall send email for: email verification, password reset, account lockout, a new sale (to the seller), shipping with tracking (to the buyer), delivery, cancellation, refund, ship-by reminders, problem reported and resolved, and review received. Emails shall be sent within 2 minutes of the event and shall not contain passwords or full card details. |
 
 ## Diagrams

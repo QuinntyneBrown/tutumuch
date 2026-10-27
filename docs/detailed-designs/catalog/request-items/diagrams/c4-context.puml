@@ -1,0 +1,15 @@
+@startuml
+!include <C4/C4_Context>
+LAYOUT_WITH_LEGEND()
+title System Context — Request items
+
+Person(member, "Member", "Asks for an item that is not in the closet yet")
+Person(seller, "Seller", "Publishes or relists a listing")
+System(tutumuch, "TuTuMuch", "Marketplace for all things young girls")
+System_Ext(email, "Email provider", "Delivers the match email")
+
+Rel(member, tutumuch, "Saves, edits and deletes item requests using", "HTTPS")
+Rel(seller, tutumuch, "Publishes or relists listings using", "HTTPS")
+Rel(tutumuch, email, "Sends the match email via", "Outbox, HTTPS")
+Rel(email, member, "Delivers the match email to", "Email")
+@enduml

@@ -1,0 +1,34 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Request items
+
+Container(web, "TuTuMuch Web", "Angular", "@tutumuch/catalog MyRequestsPage, RequestFormPage, DeleteRequestDialog; @tutumuch/api ItemRequestsApi")
+Container_Boundary(api, "TuTuMuch API") {
+  Component(ctrl, "ItemRequestsController", "ASP.NET Core controller", "GET, POST, PUT, DELETE /api/me/item-requests")
+  Component(listings, "ListingsController", "ASP.NET Core controller", "POST /api/listings/{reference}/publish and /relist")
+  Component(commands, "ItemRequest command and query handlers", "MediatR handlers", "Fields, limit, expiry, ownership")
+  Component(listingCommands, "PublishListing and RelistListing handlers", "MediatR handlers", "Publish ListingBecameActive after the save")
+  Component(matcher, "MatchItemRequestsHandler", "MediatR notification handler", "Matches open requests; queues one email per member")
+  Component(outbox, "EmailOutbox", "IEmailOutbox", "Adds ItemRequestMatchedEmail to the unit of work")
+  ComponentDb(db, "TuTuMuchDbContext", "EF Core", "ItemRequests, ItemRequestMatches, Listings, OutboxMessages")
+}
+Container_Boundary(worker, "TuTuMuch Worker") {
+  Component(dispatch, "EmailDispatchJob", "Hosted service", "Sends due outbox messages; honours the Item requests switch")
+  Component(cleanup, "ItemRequestCleanupJob", "Hosted service", "Deletes requests expired 30 days ago")
+}
+System_Ext(email, "Email provider", "Transactional email")
+
+Rel(web, ctrl, "Saves and reads requests", "JSON/HTTPS")
+Rel(web, listings, "Publishes or relists", "JSON/HTTPS")
+Rel(ctrl, commands, "Sends commands and queries")
+Rel(commands, db, "Reads and writes ItemRequests")
+Rel(listings, listingCommands, "Sends PublishListingCommand, RelistListingCommand")
+Rel(listingCommands, matcher, "Publishes ListingBecameActive")
+Rel(matcher, db, "Reads open requests; writes matches")
+Rel(matcher, outbox, "Enqueues ItemRequestMatchedEmail")
+Rel(outbox, db, "Adds OutboxMessages")
+Rel(dispatch, db, "Claims messages")
+Rel(dispatch, email, "Sends", "HTTPS")
+Rel(cleanup, db, "Deletes expired requests")
+@enduml

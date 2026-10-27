@@ -1,0 +1,60 @@
+@startuml
+title UML sequence behaviour — Match a listing and email the member
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Seller" as seller
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "ListingsController" as controller
+end box
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
+  participant "PublishListing / RelistListing handler" as listing
+  participant "MatchItemRequestsHandler" as matcher
+  participant "ItemRequest" as domain
+  participant "EmailOutbox" as outbox
+end box
+box "Backend — TuTuMuch Worker application" #DCFCE7
+  participant "EmailDispatchJob" as dispatch
+end box
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
+  participant "Email provider adapter" as email
+end box
+actor "Member" as member
+seller -> controller : POST /api/listings/{reference}/publish or /relist
+controller -> listing : PublishListingCommand or RelistListingCommand
+listing -> db : Save the listing as Active
+listing -> matcher : Publish ListingBecameActive(listingId) (L2-100)
+matcher -> db : Listing (still Active)
+matcher -> db : Open requests of its category; member not the seller and not closed; no match yet (L2-106)
+loop each request
+  matcher -> domain : Matches(listing): price, condition, every keyword word
+end
+alt no request matched
+  matcher --> listing : nothing to save
+else some matched
+  matcher -> db : Add ItemRequestMatch per request
+  matcher -> outbox : One ItemRequestMatchedEmail per member (L2-101)
+  matcher -> db : Save matches and outbox messages together
+end
+controller --> seller : 200 or 204, whatever matching did
+dispatch -> db : Claim ItemRequestMatched message
+alt member turned Item requests off (L2-103)
+  dispatch -> db : Suppress "preference_off"
+else allowed
+  dispatch -> email : Send "A match for your request: {title}" with unsubscribe link and List-Unsubscribe headers
+  email --> member : Email
+  dispatch -> db : Mark sent
+end
+@enduml

@@ -1,0 +1,135 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Request items
+
+package "TuTuMuch.Domain" {
+  class ItemRequest {
+    +Guid Id
+    +Guid MemberId
+    +string Category
+    +string Size
+    +string Keywords
+    +decimal? MaxPrice
+    +ItemCondition? MinimumCondition
+    +DateTime CreatedAt
+    +DateTime UpdatedAt
+    +DateTime ExpiresAt
+    +{static} int MaxOpenPerMember = 20
+    +{static} int OpenDays = 90
+    +{static} int KeepExpiredDays = 30
+    +{static} Check(details): IReadOnlyList<RuleViolation>
+    +{static} Create(memberId, details, now): ItemRequest
+    +Update(details, now): void
+    +IsOpen(now): bool
+    +Words: IReadOnlyList<string>
+    +Matches(listing): bool
+  }
+  class ItemRequestDetails <<record>> {
+    +string? Category
+    +string? Size
+    +string? Keywords
+    +decimal? MaxPrice
+    +string? MinimumCondition
+  }
+  class ItemRequestMatch {
+    +Guid ItemRequestId
+    +Guid ListingId
+    +DateTime MatchedAt
+  }
+  class Listing {
+    +Guid Id
+    +Guid SellerId
+    +ListingStatus Status
+    +string Category
+    +string? Title
+    +string? Brand
+    +string? Description
+    +ItemCondition? Condition
+    +decimal? Price
+  }
+  class NotificationPreferences {
+    +bool ItemRequestEmails
+    +Unsubscribe(category, now): void
+  }
+}
+
+package "TuTuMuch.Application" {
+  class ItemRequestCommandHandlers {
+    +Handle(CreateItemRequestCommand): Result<ItemRequestDto>
+    +Handle(UpdateItemRequestCommand): Result<ItemRequestDto>
+    +Handle(DeleteItemRequestCommand): Result<bool>
+    +Handle(GetMyItemRequestsQuery): MyItemRequestsDto
+    +Handle(GetMyItemRequestQuery): Result<ItemRequestDto>
+  }
+  class ListingBecameActive <<notification>> {
+    +Guid ListingId
+  }
+  class MatchItemRequestsHandler {
+    +Handle(ListingBecameActive): Task
+  }
+  class CleanUpItemRequestsHandler {
+    +Handle(CleanUpItemRequestsCommand): int
+  }
+  class ItemRequestDto <<record>> {
+    +Guid Id
+    +string Category
+    +string Size
+    +string Keywords
+    +decimal? MaxPrice
+    +string? MinimumCondition
+    +DateTime ExpiresAt
+    +string Status
+    +int MatchCount
+    +IReadOnlyList<ListingCardDto> Matches
+  }
+  class MyItemRequestsDto <<record>> {
+    +IReadOnlyList<ItemRequestDto> Items
+    +int OpenCount
+    +int Limit
+  }
+  class ItemRequestMatchedEmail <<record>> {
+    +string ListingReference
+    +string Title
+    +string Brand
+    +decimal Price
+  }
+}
+
+package "TuTuMuch.Api" {
+  class ItemRequestsController {
+    +List(): Task<IActionResult>
+    +Get(id): Task<IActionResult>
+    +Create(body): Task<IActionResult>
+    +Update(id, body): Task<IActionResult>
+    +Delete(id): Task<IActionResult>
+  }
+}
+
+package "TuTuMuch.Worker" {
+  class ItemRequestCleanupJob {
+    +RunOnceAsync(ct): Task<int>
+  }
+}
+
+ItemRequestsController ..> ItemRequestCommandHandlers : sends
+ItemRequestCommandHandlers ..> ItemRequest : creates / updates
+ItemRequestCommandHandlers ..> MyItemRequestsDto : returns
+MyItemRequestsDto "1" *-- "*" ItemRequestDto
+ItemRequest ..> ItemRequestDetails : checks
+ItemRequest "1" *-- "*" ItemRequestMatch
+ItemRequestMatch --> Listing
+ItemRequest ..> Listing : Matches(listing)
+MatchItemRequestsHandler ..> ListingBecameActive : handles
+MatchItemRequestsHandler ..> ItemRequestMatch : adds
+MatchItemRequestsHandler ..> ItemRequestMatchedEmail : enqueues
+ItemRequestCleanupJob ..> CleanUpItemRequestsHandler : sends command
+@enduml
