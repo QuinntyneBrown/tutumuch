@@ -43,3 +43,6 @@ public sealed record MarketingEmail(string Subject, string Text);
 
 /// <summary>A seller's draft is deleted on <paramref name="DeleteOn"/> unless they edit it (L2-019).</summary>
 public sealed record DraftExpiryReminderEmail(string ListingReference, string Title, DateTime DeleteOn);
+
+/// <summary>A listing that became Active matched one or more of the member's open item requests (L2-101); one email per member per listing.</summary>
+public sealed record ItemRequestMatchedEmail(string ListingReference, string Title, string Brand, decimal Price);

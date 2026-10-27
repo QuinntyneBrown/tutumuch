@@ -34,6 +34,7 @@ public static class EmailTemplates
         NotificationType.ProblemResolved => typeof(ProblemResolvedEmail),
         NotificationType.Marketing => typeof(MarketingEmail),
         NotificationType.DraftExpiryReminder => typeof(DraftExpiryReminderEmail),
+        NotificationType.ItemRequestMatched => typeof(ItemRequestMatchedEmail),
         _ => throw new ArgumentOutOfRangeException(nameof(type), type, "No template for this notification type."),
     };
 
@@ -87,6 +88,9 @@ public static class EmailTemplates
             DraftExpiryReminderEmail m => (
                 $"Your draft {m.Title} will be deleted on {Day(m.DeleteOn)}",
                 $"You have not edited your draft {m.Title} for a while. Drafts not edited for 90 days are deleted with their photos.\n\nEdit or publish it before {Day(m.DeleteOn)} to keep it:\n{root}/sell/{m.ListingReference}"),
+            ItemRequestMatchedEmail m => (
+                $"A match for your request: {m.Title}",
+                $"Something you asked for was just listed: {m.Title} by {m.Brand}, {Money(m.Price)}.\nSee it before it's gone:\n{root}/items/{m.ListingReference}\n\nYour requests: {root}/account/requests"),
             _ => throw new InvalidOperationException($"No template for {type}."),
         };
 

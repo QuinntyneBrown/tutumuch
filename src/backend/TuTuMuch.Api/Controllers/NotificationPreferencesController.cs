@@ -24,7 +24,7 @@ public sealed class NotificationPreferencesController(ISender sender) : Controll
     [HttpPut("api/me/notification-preferences")]
     public async Task<IActionResult> Update(UpdateNotificationPreferencesRequest request, CancellationToken cancellationToken)
     {
-        var command = new UpdateNotificationPreferencesCommand(User.MemberId(), request.ReviewEmails, request.MarketingEmails, IfMatchVersion());
+        var command = new UpdateNotificationPreferencesCommand(User.MemberId(), request.ReviewEmails, request.MarketingEmails, IfMatchVersion(), request.ItemRequestEmails);
         var result = await sender.Send(command, cancellationToken);
         return result.IsSuccess ? WithEtag(result.Value!) : this.ToProblem(result.Error!);
     }
@@ -52,6 +52,7 @@ public sealed class NotificationPreferencesController(ISender sender) : Controll
 
 /// <summary>
 /// Only the optional categories. There is no field for account security or order emails, so no
-/// request can turn them off (L2-043); unknown members are ignored (L2-049).
+/// request can turn them off (L2-043); unknown members are ignored (L2-049). A missing
+/// ItemRequestEmails keeps the stored choice (L2-103).
 /// </summary>
-public sealed record UpdateNotificationPreferencesRequest(bool? ReviewEmails, bool? MarketingEmails);
+public sealed record UpdateNotificationPreferencesRequest(bool? ReviewEmails, bool? MarketingEmails, bool? ItemRequestEmails = null);

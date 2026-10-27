@@ -427,6 +427,9 @@ namespace TuTuMuch.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("MemberId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("ItemRequestEmails")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LastMarketingChangeSource")
                         .HasMaxLength(16)
                         .HasColumnType("nvarchar(16)");
@@ -1117,6 +1120,85 @@ namespace TuTuMuch.Infrastructure.Persistence.Migrations
                     b.ToTable("SellerPayoutAccounts", (string)null);
                 });
 
+            modelBuilder.Entity("TuTuMuch.Domain.Requests.ItemRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Keywords")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<decimal?>("MaxPrice")
+                        .HasPrecision(7, 2)
+                        .HasColumnType("decimal(7,2)");
+
+                    b.Property<Guid>("MemberId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("MinimumCondition")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Size")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExpiresAt")
+                        .HasDatabaseName("IX_ItemRequests_ExpiresAt");
+
+                    b.HasIndex("Category", "ExpiresAt")
+                        .HasDatabaseName("IX_ItemRequests_Category_ExpiresAt");
+
+                    b.HasIndex("MemberId", "CreatedAt")
+                        .HasDatabaseName("IX_ItemRequests_MemberId_CreatedAt");
+
+                    b.ToTable("ItemRequests", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_ItemRequests_MaxPrice", "MaxPrice IS NULL OR CAST(MaxPrice AS REAL) BETWEEN 1 AND 5000");
+
+                            t.HasCheckConstraint("CK_ItemRequests_Size", "Size = 'Girls'''");
+                        });
+                });
+
+            modelBuilder.Entity("TuTuMuch.Domain.Requests.ItemRequestMatch", b =>
+                {
+                    b.Property<Guid>("ItemRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ListingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("MatchedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ItemRequestId", "ListingId");
+
+                    b.HasIndex("ListingId")
+                        .HasDatabaseName("IX_ItemRequestMatches_ListingId");
+
+                    b.ToTable("ItemRequestMatches", (string)null);
+                });
+
             modelBuilder.Entity("TuTuMuch.Domain.Listings.Listing", b =>
                 {
                     b.HasOne("TuTuMuch.Domain.Members.Member", null)
@@ -1510,6 +1592,30 @@ namespace TuTuMuch.Infrastructure.Persistence.Migrations
                         .WithMany()
                         .HasForeignKey("MemberId")
                         .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("TuTuMuch.Domain.Requests.ItemRequest", b =>
+                {
+                    b.HasOne("TuTuMuch.Domain.Members.Member", null)
+                        .WithMany()
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("TuTuMuch.Domain.Requests.ItemRequestMatch", b =>
+                {
+                    b.HasOne("TuTuMuch.Domain.Requests.ItemRequest", null)
+                        .WithMany()
+                        .HasForeignKey("ItemRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TuTuMuch.Domain.Listings.Listing", null)
+                        .WithMany()
+                        .HasForeignKey("ListingId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

@@ -10,6 +10,7 @@ builder.Services.Configure<OrderJobOptions>(builder.Configuration.GetSection("Or
 builder.Services.Configure<PayoutJobOptions>(builder.Configuration.GetSection("Payouts"));
 builder.Services.Configure<EmailDispatchJobOptions>(builder.Configuration.GetSection("Notifications"));
 builder.Services.Configure<DraftCleanupJobOptions>(builder.Configuration.GetSection("Listings:DraftCleanup"));
+builder.Services.Configure<ItemRequestCleanupJobOptions>(builder.Configuration.GetSection("ItemRequests:Cleanup"));
 builder.Services.AddHostedService<Worker>();
 builder.Services.AddHostedService<ReservationExpiryJob>();
 builder.Services.AddHostedService<ShipDeadlineJob>();
@@ -18,6 +19,7 @@ builder.Services.AddHostedService<PayoutReleaseJob>();
 builder.Services.AddHostedService<EmailDispatchJob>();
 builder.Services.AddHostedService<ShipReminderJob>();
 builder.Services.AddHostedService<DraftCleanupJob>();
+builder.Services.AddHostedService<ItemRequestCleanupJob>();
 
 var host = builder.Build();
 host.Run();

@@ -20,4 +20,7 @@ public enum NotificationType
     ProblemResolved,
     Marketing,
     DraftExpiryReminder,
+
+    /// <summary>A listing that became Active matched the member's open item requests (L2-101).</summary>
+    ItemRequestMatched,
 }
