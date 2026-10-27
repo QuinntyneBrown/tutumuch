@@ -422,7 +422,7 @@ girls and never promises boys' or adult sizes ([ADR general/0005](adr/general/00
   girls", h1 "Twirl it *forward.*", lede, actions; closing: h2 "Her next favourite thing is
   *waiting.*", lede "New listings every day, every one for girls.", `variant="closing"`),
   a solid blush panel with no shapes or gradients, `tl-tilly` (hero pose, the one Tilly of the
-  page, above the poster in the media slot), `tl-video-poster` (media slot, "Play", 0:30),
+  page, above the poster in the media slot), `tl-video-poster` (media slot, "Play", 0:15),
   `tl-feature-band` (For shoppers "Everything here is for girls.", `blush`, with three points
   and secondary "Shop the closet"; For sellers "Pass it on to the next girl.", `surface`, with
   two points and secondary "Start selling";

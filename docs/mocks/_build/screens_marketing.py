@@ -1,4 +1,4 @@
-"""Marketing page at /welcome and its 30-second pitch video dialog (L1-020, L2-078 to L2-083).
+"""Marketing page at /welcome and its short pitch video dialog (L1-020, L2-078 to L2-083).
 
 Copy rules (ADR general/0005): headlines of 3 to 6 words, one supporting line, scannable
 points; everything is for girls and the copy never promises boys' or adult sizes. The copy is
@@ -31,7 +31,7 @@ def seller_href(member: bool) -> str:
 def poster() -> str:
     return (f'<a class="video-poster" href="{D("pitch-video")}"><img src="{MEDIA}tutumuch-pitch-poster.png" alt="" width="1920" height="1080">'
             f'<span class="video-poster__play">{ic("play")}Play</span>'
-            '<span class="video-poster__meta" aria-hidden="true">0:30</span></a>')
+            '<span class="video-poster__meta" aria-hidden="true">0:15</span></a>')
 
 
 SOON = '<p class="marketing-hero__soon">Selling opens soon.</p>'

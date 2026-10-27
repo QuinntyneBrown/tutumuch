@@ -8,7 +8,7 @@
 ## Context
 
 The public marketing page (`/welcome`, `L1-020`) sells TuTuMuch to shoppers and sellers and
-plays a 30-second pitch video. It belongs to no existing feature area, and the app project may
+plays a short pitch video (under 30 seconds, `L2-080`). It belongs to no existing feature area, and the app project may
 not own feature screens (`AGENTS.md`, Frontend workspace layout). Its full-bleed bands cannot
 sit in the app shell's `main.container.page`. The video files must be served by the static host.
 
