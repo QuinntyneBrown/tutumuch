@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- The empty catalog and an empty My listings use the copy from the mocks ("Be the first to list a dress, a pair of sneakers or anything your daughter has outgrown." and "List a dress, a leotard or anything she’s outgrown.") instead of the 12L sizes left over from the clone.
 - Simpler pitch video: the poster button reads "Play", the dialog has no visible heading, captions stay off until turned on, and the transcript link and file are gone (`L2-080` to `L2-082`). The seller band drops "10% fee, only when it sells".
 
 ### Added
