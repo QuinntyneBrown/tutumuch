@@ -29,7 +29,8 @@ the switch and implemented the toast with `ToastService`; manage-cookie-consent 
 consent banner, the visible label and hint of the switch and the footer's Cookie settings button;
 the marketing page added the marketing hero, feature band, steps, video poster and video player, and the
 showcase tokens they use. The page guidelines (ADR general/0009) added the mark, Tilly, the condition badge
-and the skeleton, redrew every component to the brand kit and retired the decorative shapes.
+and the skeleton, redrew every component to the brand kit and retired the decorative shapes. Request-items added the bell icon (the empty My requests page) and uses the removed tone of the
+status for an expired request; the request list on My requests is local UI of `@tutumuch/catalog`.
 
 ## Foundations
 
@@ -73,7 +74,7 @@ and the skeleton, redrew every component to the brand kit and retired the decora
 | [Earnings](components/earnings.html) | one | unknown, known | sell/filled |
 | [Error summary](components/error-summary.html) | one | shown and focused | sell/invalid, register/invalid |
 | [Fixed size](components/fixed-size.html) | Girls' | absent, shown | sell/filled |
-| [Icon](components/icon.html) | 19 glyphs (search added by search-and-filter-catalog, flag by resolve-order-problems) | static | every page |
+| [Icon](components/icon.html) | 19 glyphs (search added by search-and-filter-catalog, flag by resolve-order-problems, bell by request-items) | static | every page |
 | [Input group](components/input-group.html) | leading addon | default, invalid | sell price and shipping |
 | [Item row](components/item-row.html) | with or without thumbnail | default, truncated | sell/success |
 | [Empty state](components/empty-state.html) | Tilly (hello) by default; error (compact, icon well); `[tilly]="false"` | static | catalog/empty, my-listings/empty, catalog/error |

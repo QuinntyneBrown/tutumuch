@@ -1,5 +1,5 @@
 // Unit Test
-// Traces to: L2-042
+// Traces to: L2-042, L2-101
 // Description: Every notification type renders with a link to its page in TuTuMuch and passes the
 // content guard; the guard refuses a card number that passes the Luhn check, a password and a
 // security code, and lets tracking numbers, order references and amounts through.
@@ -25,6 +25,7 @@ public sealed class EmailTemplateTests
         { NotificationType.OrderCancelled, new OrderCancelledEmail(OrderId, "TM-10001", "Jordan 1 Retro", ToSeller: false, "Item damaged", "Sorry"), $"https://tutumuch.test/orders/{OrderId}" },
         { NotificationType.CancellationRequested, new CancellationRequestedEmail(OrderId, "TM-10001", "Jordan 1 Retro", "Wrong colour"), $"https://tutumuch.test/sales/{OrderId}" },
         { NotificationType.OrderRefunded, new OrderRefundedEmail(OrderId, "TM-10001", 102.34m, "Visa", "4242"), $"https://tutumuch.test/orders/{OrderId}" },
+        { NotificationType.ItemRequestMatched, new ItemRequestMatchedEmail("L-10001", "Pink leather ballet slippers", "Bloch", 14m), "https://tutumuch.test/items/L-10001" },
     };
 
     [Theory]

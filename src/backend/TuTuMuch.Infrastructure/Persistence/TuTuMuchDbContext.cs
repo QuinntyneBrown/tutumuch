@@ -5,6 +5,7 @@ using TuTuMuch.Domain.Members;
 using TuTuMuch.Domain.Notifications;
 using TuTuMuch.Domain.Orders;
 using TuTuMuch.Domain.Payouts;
+using TuTuMuch.Domain.Requests;
 
 namespace TuTuMuch.Infrastructure.Persistence;
 
@@ -46,6 +47,10 @@ public sealed class TuTuMuchDbContext(DbContextOptions<TuTuMuchDbContext> option
     public DbSet<OrderProblem> OrderProblems => Set<OrderProblem>();
 
     public DbSet<NotificationPreferences> NotificationPreferences => Set<NotificationPreferences>();
+
+    public DbSet<ItemRequest> ItemRequests => Set<ItemRequest>();
+
+    public DbSet<ItemRequestMatch> ItemRequestMatches => Set<ItemRequestMatch>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) =>
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(TuTuMuchDbContext).Assembly);

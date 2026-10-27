@@ -651,7 +651,7 @@ def _():
 # ---------------------------------------------------------------------------
 # Email notification settings (L2-043)
 # ---------------------------------------------------------------------------
-ns = screen("notification-settings", "page", "Email settings", route="/account/emails", reqs=["L2-042", "L2-043"],
+ns = screen("notification-settings", "page", "Email settings", route="/account/emails", reqs=["L2-042", "L2-043", "L2-103"],
             na={"empty": "The list of email types is fixed."})
 
 
@@ -660,10 +660,11 @@ def sw(fid: str, checked: bool, disabled: bool = False, label: str = "") -> str:
             f'<span class="visually-hidden">{label}</span></label>')
 
 
-def emails(*, reviews: bool = True, marketing: bool = False, busy: bool = False, top: str = "") -> Page:
+def emails(*, reviews: bool = True, marketing: bool = False, item_requests: bool = True, busy: bool = False, top: str = "") -> Page:
     rows = [
         row("Account security", "Sign-in alerts, password resets", sw("sec", True, True, "Account security emails, always on")),
         row("Orders", "Sales, shipping, delivery, refunds", sw("ord", True, True, "Order emails, always on")),
+        row("Item requests", "When something you asked for is listed", sw("req", item_requests, busy, "Item request emails")),
         row("Reviews", "When someone reviews you", sw("rev", reviews, busy, "Review emails")),
         row("News from TuTuMuch", "New arrivals for girls, now and then", sw("mkt", marketing, busy, "Marketing emails")),
     ]
@@ -672,7 +673,7 @@ def emails(*, reviews: bool = True, marketing: bool = False, busy: bool = False,
     return account_page(main, "notifications")
 
 
-@ns.state("default", "Security and order emails locked on; reviews on; marketing off until opted in.")
+@ns.state("default", "Security and order emails locked on; item requests and reviews on; marketing off until opted in.")
 def _():
     return emails()
 
@@ -689,7 +690,7 @@ def _():
 
 @ns.state("loading", "Rows as skeletons.")
 def _():
-    return account_page(head("Emails") + f'<div class="page--form">{sk_rows(4)}</div>', "notifications")
+    return account_page(head("Emails") + f'<div class="page--form">{sk_rows(5)}</div>', "notifications")
 
 
 @ns.state("error", "Settings failed to load: retry.")

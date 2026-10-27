@@ -6,6 +6,7 @@ using TuTuMuch.Domain.Members;
 using TuTuMuch.Domain.Notifications;
 using TuTuMuch.Domain.Orders;
 using TuTuMuch.Domain.Payouts;
+using TuTuMuch.Domain.Requests;
 
 namespace TuTuMuch.Application.Abstractions;
 
@@ -47,6 +48,10 @@ public interface ITuTuMuchDbContext
     DbSet<OrderProblem> OrderProblems { get; }
 
     DbSet<NotificationPreferences> NotificationPreferences { get; }
+
+    DbSet<ItemRequest> ItemRequests { get; }
+
+    DbSet<ItemRequestMatch> ItemRequestMatches { get; }
 
     /// <summary>Transactions, for the steps of checkout that must commit together.</summary>
     DatabaseFacade Database { get; }

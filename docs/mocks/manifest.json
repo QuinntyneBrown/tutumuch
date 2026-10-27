@@ -107,7 +107,8 @@
       "route": "/account/emails",
       "requirements": [
         "L2-042",
-        "L2-043"
+        "L2-043",
+        "L2-103"
       ],
       "states": [
         "default",
@@ -284,7 +285,8 @@
         "L2-061",
         "L2-062",
         "L2-093",
-        "L2-094"
+        "L2-094",
+        "L2-104"
       ],
       "states": [
         "default",
@@ -299,6 +301,7 @@
         "phase-one-admin",
         "phase-two",
         "no-results",
+        "category-empty",
         "error",
         "offline"
       ]
@@ -490,6 +493,81 @@
         "empty",
         "error"
       ]
+    },
+    {
+      "id": "my-requests",
+      "kind": "page",
+      "title": "My requests",
+      "route": "/account/requests",
+      "requirements": [
+        "L2-098",
+        "L2-099",
+        "L2-102",
+        "L2-105",
+        "L2-106",
+        "L2-061",
+        "L2-065"
+      ],
+      "states": [
+        "default",
+        "loading",
+        "empty",
+        "error",
+        "limit-reached",
+        "expired",
+        "no-matches",
+        "signed-out"
+      ]
+    },
+    {
+      "id": "request-form",
+      "kind": "page",
+      "title": "Request an item",
+      "route": "/account/requests/new",
+      "requirements": [
+        "L2-097",
+        "L2-098",
+        "L2-099",
+        "L2-104",
+        "L2-105",
+        "L2-063",
+        "L2-065"
+      ],
+      "states": [
+        "default",
+        "prefilled",
+        "invalid",
+        "submitting",
+        "success",
+        "edit",
+        "loading",
+        "error",
+        "not-found",
+        "limit-reached",
+        "signed-out"
+      ],
+      "not_applicable": {
+        "empty": "The form is the page; a blank form is the default state."
+      }
+    },
+    {
+      "id": "request-match-email",
+      "kind": "page",
+      "title": "Match email",
+      "route": "(email)",
+      "requirements": [
+        "L2-101",
+        "L2-103",
+        "L2-042"
+      ],
+      "states": [
+        "default"
+      ],
+      "not_applicable": {
+        "loading": "An email is static text.",
+        "empty": "An email is only sent for a match.",
+        "error": "Sending failures are retried by the outbox (L2-042); the member sees nothing."
+      }
     },
     {
       "id": "edit-listing",
@@ -993,6 +1071,23 @@
       }
     },
     {
+      "id": "delete-request",
+      "kind": "dialog",
+      "title": "Delete request",
+      "opens_from": "my-requests",
+      "requirements": [
+        "L2-099"
+      ],
+      "states": [
+        "default",
+        "busy",
+        "failed"
+      ],
+      "not_applicable": {
+        "invalid": "Confirming has no inputs to validate."
+      }
+    },
+    {
       "id": "withdraw-listing",
       "kind": "dialog",
       "title": "Withdraw listing",
@@ -1071,6 +1166,23 @@
         "warning",
         "danger",
         "success"
+      ]
+    },
+    {
+      "id": "request-toasts",
+      "kind": "notification",
+      "title": "Request toasts",
+      "opens_from": "my-requests",
+      "requirements": [
+        "L2-097",
+        "L2-098",
+        "L2-099"
+      ],
+      "states": [
+        "info",
+        "success",
+        "warning",
+        "danger"
       ]
     },
     {

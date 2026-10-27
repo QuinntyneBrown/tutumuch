@@ -13,11 +13,13 @@ import {
   buyerOrder,
   catalogCard,
   expect,
+  itemRequest,
   listingDetail,
   marcus,
   memberProfile,
   myListingRow,
   myListings,
+  myItemRequests,
   orderList,
   orderRow,
   payoutSummary,
@@ -169,6 +171,7 @@ const cases: GuidelineCase[] = [
             categories: [
               { key: 'accountSecurity', enabled: true, locked: true },
               { key: 'orders', enabled: true, locked: true },
+              { key: 'itemRequests', enabled: true, locked: false },
               { key: 'reviews', enabled: true, locked: false },
               { key: 'marketing', enabled: false, locked: false },
             ],
@@ -178,6 +181,34 @@ const cases: GuidelineCase[] = [
       );
     },
     heading: 'Emails',
+  },
+  {
+    name: 'my requests',
+    path: '/account/requests',
+    setup: async (p) => {
+      await signInAs(p, marcus);
+      await photos(p);
+      await p.route('**/api/me/item-requests', (route) =>
+        route.fulfill({ json: myItemRequests([itemRequest({ matchCount: 1, matches: [catalogCard(3)] })]) }),
+      );
+    },
+    heading: 'Requests',
+  },
+  {
+    name: 'no requests yet',
+    path: '/account/requests',
+    setup: async (p) => {
+      await signInAs(p, marcus);
+      await p.route('**/api/me/item-requests', (route) => route.fulfill({ json: myItemRequests([]) }));
+    },
+    heading: 'Requests',
+    tilly: /^Tilly waving hello/,
+  },
+  {
+    name: 'request an item',
+    path: '/account/requests/new?category=dance&q=ballet%20slippers',
+    setup: (p) => signInAs(p, marcus),
+    heading: 'Request an item',
   },
   {
     name: 'member profile',

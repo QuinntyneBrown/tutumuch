@@ -1,5 +1,5 @@
 // Unit Test
-// Traces to: L2-043
+// Traces to: L2-043, L2-103
 // Description: Account security and order emails are always allowed; review emails follow the
 // member's choice and are on by default; marketing emails are off until the member opts in, and an
 // unsubscribe turns them off again and records where the change came from.
@@ -64,5 +64,23 @@ public sealed class NotificationPreferencesTests
 
         Assert.Equal(NotificationCategory.AccountSecurity, NotificationCategories.Of(NotificationType.EmailVerification));
         Assert.Equal(NotificationCategory.Orders, NotificationCategories.Of(NotificationType.SaleMade));
+    }
+
+    [Fact]
+    public void Item_request_emails_are_on_by_default_kept_when_not_sent_and_turned_off_by_an_unsubscribe()
+    {
+        var preferences = NotificationPreferences.CreateDefault(Guid.NewGuid(), Now);
+        Assert.True(preferences.IsAllowed(NotificationCategory.ItemRequests));
+        Assert.Equal(NotificationCategory.ItemRequests, NotificationCategories.Of(NotificationType.ItemRequestMatched));
+
+        preferences.Update(reviewEmails: true, marketingEmails: true, Now);
+        Assert.True(preferences.IsAllowed(NotificationCategory.ItemRequests));
+
+        preferences.Unsubscribe(NotificationCategory.ItemRequests, Now);
+        Assert.False(preferences.IsAllowed(NotificationCategory.ItemRequests));
+        Assert.True(preferences.IsAllowed(NotificationCategory.Marketing));
+
+        preferences.Update(reviewEmails: true, marketingEmails: true, Now, itemRequestEmails: true);
+        Assert.True(preferences.IsAllowed(NotificationCategory.ItemRequests));
     }
 }

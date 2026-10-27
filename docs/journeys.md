@@ -25,4 +25,5 @@ Ordered by value to the user, highest first.
 | Manage notification preferences | Member chooses which notifications they receive | 3 |
 | Manage cookie consent | Visitor accepts or rejects optional cookies | 3 |
 | Sign in with Google | Visitor joins or signs in with their Google account | 6 |
-| **Total** | | **86** |
+| Request items | Member asks for an item that is not in the closet yet (category, keywords, highest price, lowest condition), manages their requests on My requests and is emailed when a matching listing is published or relisted (`L1-023`) | 6 |
+| **Total** | | **92** |

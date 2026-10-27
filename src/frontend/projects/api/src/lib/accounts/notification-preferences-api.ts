@@ -5,7 +5,7 @@ import { map } from 'rxjs';
 import { API_BASE_URL } from '../api-base-url';
 import { ApiResult, toResult } from '../api-result';
 
-export type NotificationCategoryKey = 'accountSecurity' | 'orders' | 'reviews' | 'marketing';
+export type NotificationCategoryKey = 'accountSecurity' | 'orders' | 'itemRequests' | 'reviews' | 'marketing';
 
 /** One row of the Emails page; a locked category is always on (L2-043). */
 export interface NotificationCategory {
@@ -14,7 +14,7 @@ export interface NotificationCategory {
   locked: boolean;
 }
 
-/** GET /api/me/notification-preferences: the 4 categories in page order. */
+/** GET /api/me/notification-preferences: the 5 categories in page order. */
 export interface NotificationPreferences {
   categories: NotificationCategory[];
 }
@@ -25,13 +25,14 @@ export interface VersionedNotificationPreferences {
   etag: string;
 }
 
-/** Body of PUT /api/me/notification-preferences: only the two optional categories. */
+/** Body of PUT /api/me/notification-preferences: only the optional categories (L2-043, L2-103). */
 export interface NotificationPreferencesUpdate {
   reviewEmails: boolean;
   marketingEmails: boolean;
+  itemRequestEmails: boolean;
 }
 
-/** Typed client for email settings and the one-click marketing unsubscribe (L2-043). */
+/** Typed client for email settings and the one-click unsubscribe of marketing and item request emails (L2-043, L2-103). */
 @Injectable({ providedIn: 'root' })
 export class NotificationPreferencesApi {
   private readonly http = inject(HttpClient);
@@ -57,7 +58,7 @@ export class NotificationPreferencesApi {
     );
   }
 
-  /** Turns marketing email off with the token from the email link, without a session. */
+  /** Turns marketing or item request emails off, as the token says, with the token from the email link and no session. */
   unsubscribe(token: string): Promise<ApiResult<{ category: string; unsubscribed: boolean }>> {
     return toResult(
       this.http.post<{ category: string; unsubscribed: boolean }>(`${this.baseUrl}/notifications/unsubscribe`, {

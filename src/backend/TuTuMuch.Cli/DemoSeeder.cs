@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using TuTuMuch.Application.Accounts;
 using TuTuMuch.Application.Common;
 using TuTuMuch.Application.Listings;
+using TuTuMuch.Application.Requests;
 using TuTuMuch.Domain.Listings;
 using TuTuMuch.Domain.Members;
 using TuTuMuch.Domain.Notifications;
@@ -29,6 +30,8 @@ public sealed class DemoSeeder(ISender sender, TuTuMuchDbContext db, SeedClock c
     public const Domain.Launch.LaunchPhase LaunchPhase = Domain.Launch.LaunchPhase.Three;
 
     private const string SuppressionReason = "Demo member verified by TuTuMuch.Cli";
+
+    private const string MatchSuppressionReason = "Demo item request match seeded by TuTuMuch.Cli";
 
     /// <summary>Where the seed photos are: Seed:PhotosPath, or SeedPhotos next to the tool.</summary>
     public string PhotosPath => configuration["Seed:PhotosPath"] is { Length: > 0 } path ? path : Path.Combine(AppContext.BaseDirectory, "SeedPhotos");
@@ -56,6 +59,13 @@ public sealed class DemoSeeder(ISender sender, TuTuMuchDbContext db, SeedClock c
                 memberIds[member] = await AddMemberAsync(member, cancellationToken);
             }
 
+            // Requests come before the listings, so the publishes match them (L2-100).
+            var shopper = memberIds[DemoCatalogue.Members.Single(m => m.DisplayName == DemoCatalogue.RequestingMember)];
+            foreach (var request in DemoCatalogue.ItemRequests)
+            {
+                Expect(await sender.Send(new CreateItemRequestCommand(shopper, request), cancellationToken), $"Requesting '{request.Keywords}'");
+            }
+
             // Spread the publishes so no seller publishes twice on one day: the daily limit
             // (Selling:PublishesPerDay, L2-051) stays in force and never blocks the seed.
             var spacing = ListingsSpread / DemoCatalogue.Listings.Count;
@@ -70,7 +80,9 @@ public sealed class DemoSeeder(ISender sender, TuTuMuchDbContext db, SeedClock c
             clock.Release();
         }
 
+        await SuppressMatchEmailsAsync(cancellationToken);
         output.WriteLine($"Seeded {DemoCatalogue.Members.Count} members and {DemoCatalogue.Listings.Count} listings.");
+        output.WriteLine($"Seeded {DemoCatalogue.ItemRequests.Count} item requests.");
         output.WriteLine($"Demo data targets launch phase {LaunchPhase:D}.");
     }
 
@@ -110,6 +122,22 @@ public sealed class DemoSeeder(ISender sender, TuTuMuchDbContext db, SeedClock c
             listing.Condition, listing.Flaws, listing.Price, listing.ShippingCost);
         var draft = Expect(await sender.Send(new CreateListingDraftCommand(sellerId, details, photoIds), cancellationToken), $"Creating '{listing.Title}'");
         Expect(await sender.Send(new PublishListingCommand(sellerId, draft.Reference), cancellationToken), $"Publishing '{listing.Title}'");
+    }
+
+    /// <summary>The demo's match emails are recorded, then suppressed, so a local worker sends nothing.</summary>
+    private async Task SuppressMatchEmailsAsync(CancellationToken cancellationToken)
+    {
+        var now = clock.GetUtcNow().UtcDateTime;
+        var emails = await db.OutboxMessages
+            .Where(m => m.NotificationType == NotificationType.ItemRequestMatched && m.Status == OutboxMessageStatus.Pending)
+            .ToListAsync(cancellationToken);
+        foreach (var email in emails)
+        {
+            email.Claim(now);
+            email.Suppress(MatchSuppressionReason);
+        }
+
+        await db.SaveChangesAsync(cancellationToken);
     }
 
     /// <summary>The raw token in the verification link of an EmailVerificationEmail payload.</summary>

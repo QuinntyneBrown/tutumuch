@@ -61,7 +61,7 @@ public sealed record UpdateListingCommand(
     IReadOnlyList<Guid>? PhotoIds = null,
     int? ExpectedVersion = null) : IRequest<Result<MyListingDto>>;
 
-/// <summary>Publishes the caller's draft under the L2-015 to L2-018 rules, the daily limit of L2-051 and the launch Phase 1 product limit (L2-092).</summary>
+/// <summary>Publishes the caller's draft under the L2-015 to L2-018 rules, the daily limit of L2-051 and the launch Phase 1 product limit (L2-092), then raises ListingBecameActive (L2-100).</summary>
 public sealed record PublishListingCommand(Guid SellerId, string Reference) : IRequest<Result<PublishListingResult>>;
 
 public sealed record GetMyListingQuery(Guid SellerId, string Reference) : IRequest<Result<MyListingDto>>;
@@ -73,6 +73,7 @@ public sealed class ListingCommandHandlers(
     IOptions<SellingOptions> options,
     IOptions<PhotoOptions> photoOptions,
     IOptions<LaunchOptions> launch,
+    IPublisher publisher,
     TimeProvider clock) :
     IRequestHandler<CreateListingDraftCommand, Result<MyListingDto>>,
     IRequestHandler<UpdateListingCommand, Result<MyListingDto>>,
@@ -169,6 +170,7 @@ public sealed class ListingCommandHandlers(
         }
 
         await db.SaveChangesAsync(cancellationToken);
+        await publisher.Publish(new ListingBecameActive(listing.Id), cancellationToken);
         var onboarded = await payouts.IsOnboardedAsync(command.SellerId, cancellationToken);
         return new PublishListingResult(listing.Reference, listing.Status.ToString(), !onboarded);
     }

@@ -1,0 +1,22 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Request items
+
+Person(member, "Member", "Asks for items")
+Person(seller, "Seller", "Lists items")
+System_Boundary(tutumuch, "TuTuMuch") {
+  Container(web, "TuTuMuch Web", "Angular", "MyRequestsPage, RequestFormPage, Request it link, email switch")
+  Container(api, "TuTuMuch API", "ASP.NET Core", "/api/me/item-requests; matching on ListingBecameActive")
+  Container(worker, "TuTuMuch Worker", ".NET worker service", "EmailDispatchJob, ItemRequestCleanupJob")
+  ContainerDb(db, "TuTuMuch database", "SQL Server", "ItemRequests, ItemRequestMatches, Listings, OutboxMessages, NotificationPreferences")
+}
+System_Ext(email, "Email provider", "Transactional email")
+
+Rel(member, web, "Uses", "HTTPS")
+Rel(seller, web, "Publishes or relists", "HTTPS")
+Rel(web, api, "Calls", "JSON/HTTPS")
+Rel(api, db, "Reads and writes requests; writes matches and outbox", "EF Core")
+Rel(worker, db, "Claims outbox messages; deletes expired requests", "EF Core")
+Rel(worker, email, "Sends the match email", "HTTPS")
+@enduml

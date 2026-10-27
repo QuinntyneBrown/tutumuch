@@ -30,7 +30,8 @@ export type IconName =
   | 'map-pin'
   | 'play'
   | 'pause'
-  | 'captions';
+  | 'captions'
+  | 'bell';
 
 /** One decorative inline SVG icon from the TuTuMuch set, hidden from assistive technology (design system: Icon). */
 @Component({

@@ -1,5 +1,5 @@
 // Acceptance Test
-// Traces to: L2-043
+// Traces to: L2-043, L2-103
 // Description: A member reads and saves their email settings at /api/me/notification-preferences:
 // account security and order emails are always on and no request can turn them off, review emails
 // are on and marketing emails off until the member opts in, and a save needs the version it read
@@ -41,7 +41,7 @@ public sealed class NotificationPreferencesTests : IDisposable
         Assert.Equal("\"0\"", response.Headers.ETag?.Tag);
         var preferences = (await response.Content.ReadFromJsonAsync<PreferencesView>())!;
         Assert.Equal(
-            [new("accountSecurity", true, true), new("orders", true, true), new("reviews", true, false), new("marketing", false, false)],
+            [new("accountSecurity", true, true), new("orders", true, true), new("itemRequests", true, false), new("reviews", true, false), new("marketing", false, false)],
             preferences.Categories);
     }
 
@@ -69,7 +69,7 @@ public sealed class NotificationPreferencesTests : IDisposable
         Assert.Equal("\"1\"", response.Headers.ETag?.Tag);
         var saved = (await response.Content.ReadFromJsonAsync<PreferencesView>())!;
         Assert.Equal(
-            [new("accountSecurity", true, true), new("orders", true, true), new("reviews", false, false), new("marketing", true, false)],
+            [new("accountSecurity", true, true), new("orders", true, true), new("itemRequests", true, false), new("reviews", false, false), new("marketing", true, false)],
             saved.Categories);
         _factory.InDatabase(db =>
         {

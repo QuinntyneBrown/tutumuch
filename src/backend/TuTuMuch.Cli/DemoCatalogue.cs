@@ -226,4 +226,17 @@ public static class DemoCatalogue
 
     /// <summary>The member who sells listing <paramref name="index"/>: sellers take turns.</summary>
     public static DemoMember SellerOf(int index) => Members[index % Members.Count];
+
+    /// <summary>The demo shopper whose item requests are seeded before the listings (L1-023).</summary>
+    public const string RequestingMember = "PuddleJumperPia";
+
+    /// <summary>
+    /// Her open item requests. The ballet slippers request is matched by the Dance listings
+    /// published after it; the smartwatch one has no match yet, so My requests shows both states.
+    /// </summary>
+    public static readonly IReadOnlyList<Domain.Requests.ItemRequestDetails> ItemRequests =
+    [
+        new("Dance", Size: null, "ballet slippers", MaxPrice: 25m, MinimumCondition: "Used - Good"),
+        new("Cameras and tech", Size: null, "kids smartwatch", MaxPrice: null, MinimumCondition: null),
+    ];
 }

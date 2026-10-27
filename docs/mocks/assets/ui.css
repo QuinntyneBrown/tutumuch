@@ -1476,3 +1476,13 @@ a.link:hover {
 .btn--provider[aria-busy="true"] .icon--mark, .btn--provider[data-state="loading"] .icon--mark { visibility: hidden; }
 .or-divider { display: flex; align-items: center; gap: var(--space-3); margin: 0; color: var(--color-fg-muted); font: var(--text-caption); }
 .or-divider::before, .or-divider::after { content: ""; flex: 1; border-top: 1px solid var(--color-border-default); }
+
+/* My requests (local UI of @tutumuch/catalog, L2-099, L2-102): one block per request, its matches below. */
+.request-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--color-border-default); }
+.request { display: flex; flex-direction: column; gap: var(--space-6); padding-block: var(--space-8); border-bottom: 1px solid var(--color-border-default); }
+.request__head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
+.request__title { font: var(--text-h4); letter-spacing: var(--letter-spacing-tight); overflow-wrap: anywhere; }
+.request__actions { flex: none; }
+.request__matches { display: flex; flex-direction: column; gap: var(--space-4); }
+.request__note { margin: 0; }
+.request-list__limit { display: flex; align-items: center; gap: var(--space-2); margin: 0 0 var(--space-6); }

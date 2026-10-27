@@ -9,7 +9,7 @@ namespace TuTuMuch.Application.Notifications;
 /// <summary>One category on the settings page; locked categories cannot be turned off (L2-043).</summary>
 public sealed record NotificationCategoryDto(string Key, bool Enabled, bool Locked);
 
-/// <summary>The member's 4 categories in page order, and the version to send back in If-Match.</summary>
+/// <summary>The member's 5 categories in page order, and the version to send back in If-Match.</summary>
 public sealed record NotificationPreferencesDto(IReadOnlyList<NotificationCategoryDto> Categories)
 {
     [System.Text.Json.Serialization.JsonIgnore]
@@ -19,6 +19,7 @@ public sealed record NotificationPreferencesDto(IReadOnlyList<NotificationCatego
     [
         new("accountSecurity", true, true),
         new("orders", true, true),
+        new("itemRequests", preferences.ItemRequestEmails, false),
         new("reviews", preferences.ReviewEmails, false),
         new("marketing", preferences.MarketingEmails, false),
     ])
@@ -65,11 +66,11 @@ public sealed class GetNotificationPreferencesQueryHandler(ITuTuMuchDbContext db
 }
 
 /// <summary>
-/// Saves the two optional choices under the version they were read at (If-Match): a missing
-/// version is 428, an old one 412. There is no field for the always-on categories, so no request
-/// can turn them off; both values are required (422).
+/// Saves the optional choices under the version they were read at (If-Match): a missing version
+/// is 428, an old one 412. There is no field for the always-on categories, so no request can turn
+/// them off; review and marketing are required (422), item requests is kept when absent (L2-103).
 /// </summary>
-public sealed record UpdateNotificationPreferencesCommand(Guid MemberId, bool? ReviewEmails, bool? MarketingEmails, int? ExpectedVersion)
+public sealed record UpdateNotificationPreferencesCommand(Guid MemberId, bool? ReviewEmails, bool? MarketingEmails, int? ExpectedVersion, bool? ItemRequestEmails = null)
     : IRequest<Result<NotificationPreferencesDto>>;
 
 public sealed class UpdateNotificationPreferencesCommandHandler(ITuTuMuchDbContext db, TimeProvider clock)
@@ -111,7 +112,7 @@ public sealed class UpdateNotificationPreferencesCommandHandler(ITuTuMuchDbConte
             return NotificationRefusals.Changed;
         }
 
-        preferences.Update(command.ReviewEmails!.Value, command.MarketingEmails!.Value, now);
+        preferences.Update(command.ReviewEmails!.Value, command.MarketingEmails!.Value, now, command.ItemRequestEmails);
         try
         {
             await db.SaveChangesAsync(cancellationToken);
@@ -129,8 +130,8 @@ public sealed class UpdateNotificationPreferencesCommandHandler(ITuTuMuchDbConte
 public sealed record UnsubscribeResult(string Category, bool Unsubscribed);
 
 /// <summary>
-/// The one-click unsubscribe (L2-043): a valid token turns the member's marketing email off with no
-/// session. It answers the same for a member already unsubscribed, or one who no longer exists, so
+/// The one-click unsubscribe (L2-043, L2-103): a valid token turns the member's marketing or item
+/// request emails off, whichever category it names, with no session. It answers the same for a member already unsubscribed, or one who no longer exists, so
 /// it is idempotent and never says whose token it was.
 /// </summary>
 public sealed record UnsubscribeCommand(string? Token) : IRequest<Result<UnsubscribeResult>>;
@@ -140,30 +141,37 @@ public sealed class UnsubscribeCommandHandler(ITuTuMuchDbContext db, Unsubscribe
 {
     public async Task<Result<UnsubscribeResult>> Handle(UnsubscribeCommand command, CancellationToken cancellationToken)
     {
-        if (tokens.Read(command.Token) is not { Category: NotificationCategory.Marketing } token)
+        if (tokens.Read(command.Token) is not { Category: NotificationCategory.Marketing or NotificationCategory.ItemRequests } token)
         {
             return NotificationRefusals.UnsubscribeInvalid;
         }
 
         var now = clock.GetUtcNow().UtcDateTime;
         var preferences = await db.NotificationPreferences.SingleOrDefaultAsync(p => p.MemberId == token.MemberId, cancellationToken);
-        if (preferences is { MarketingEmails: true })
+        if (preferences is null && token.Category == NotificationCategory.ItemRequests && await db.Members.AnyAsync(m => m.Id == token.MemberId, cancellationToken))
         {
-            preferences.UnsubscribeMarketing(now);
+            // Item request emails default to on, so a member with no row needs one to turn them off.
+            preferences = NotificationPreferences.CreateDefault(token.MemberId, now);
+            db.NotificationPreferences.Add(preferences);
+        }
+
+        if (preferences is not null && preferences.IsAllowed(token.Category))
+        {
+            preferences.Unsubscribe(token.Category, now);
             try
             {
                 await db.SaveChangesAsync(cancellationToken);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateException)
             {
-                // A settings save landed in between; unsubscribing wins.
+                // A settings save landed in between, or a first row was inserted twice; unsubscribing wins.
                 db.ChangeTracker.Clear();
                 preferences = await db.NotificationPreferences.SingleAsync(p => p.MemberId == token.MemberId, cancellationToken);
-                preferences.UnsubscribeMarketing(now);
+                preferences.Unsubscribe(token.Category, now);
                 await db.SaveChangesAsync(cancellationToken);
             }
         }
 
-        return new UnsubscribeResult(nameof(NotificationCategory.Marketing), true);
+        return new UnsubscribeResult(token.Category.ToString(), true);
     }
 }

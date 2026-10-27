@@ -1,0 +1,64 @@
+@startuml
+title UML sequence behaviour — Create an item request
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Member" as actor
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "CatalogPage (@tutumuch/catalog)" as catalog
+  participant "RequestFormPage (@tutumuch/catalog)" as form
+  participant "ItemRequestsApi (@tutumuch/api)" as client
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "ItemRequestsController" as controller
+end box
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
+  participant "ItemRequestCommandHandlers" as handler
+  participant "ItemRequest" as domain
+end box
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
+end box
+actor -> catalog : Search "ballet slippers", no results
+catalog --> actor : "Can't find it? Request it" (L2-104)
+actor -> form : Open /account/requests/new?q=ballet+slippers
+form --> actor : Keywords filled in; size shown fixed once a category is chosen (L2-097)
+actor -> form : Choose Dance, Save request
+form -> client : create({ category, keywords, maxPrice?, minimumCondition? })
+client -> controller : POST /api/me/item-requests
+alt visitor
+  controller --> client : 401
+  client --> form : unauthorised
+  form --> actor : /sign-in?returnUrl=/account/requests/new?q=... and back after sign-in (L2-105)
+else signed-in member
+  controller -> handler : CreateItemRequestCommand(memberId from session)
+  handler -> domain : Check(details)
+  alt fields invalid
+    handler --> controller : 422 with field errors
+    controller --> client : 422
+    form --> actor : Error summary and inline errors
+  else valid
+    handler -> db : Count open requests of the member
+    alt 20 already open
+      handler --> controller : 409 REQUEST_LIMIT_REACHED (L2-098)
+      form --> actor : "You have 20 open requests"
+    else under the limit
+      handler -> domain : Create(memberId, details, now): size from category, ExpiresAt = now + 90 days
+      handler -> db : Insert ItemRequests row
+      controller --> client : 201 ItemRequestDto
+      form --> actor : /account/requests with toast "Request saved"
+    end
+  end
+end
+@enduml

@@ -8,6 +8,7 @@ export class EmailSettingsPage {
   readonly security: Locator;
   readonly orders: Locator;
   readonly reviews: Locator;
+  readonly itemRequests: Locator;
   readonly marketing: Locator;
   readonly save: Locator;
   readonly saved: Locator;
@@ -24,6 +25,7 @@ export class EmailSettingsPage {
     this.security = main.getByRole('switch', { name: 'Account security emails, always on' });
     this.orders = main.getByRole('switch', { name: 'Order emails, always on' });
     this.reviews = main.getByRole('switch', { name: 'Review emails' });
+    this.itemRequests = main.getByRole('switch', { name: 'Item request emails' });
     this.marketing = main.getByRole('switch', { name: 'Marketing emails' });
     this.save = main.getByRole('button', { name: 'Save' });
     this.saved = main.getByRole('status').filter({ hasText: 'Email settings saved' });

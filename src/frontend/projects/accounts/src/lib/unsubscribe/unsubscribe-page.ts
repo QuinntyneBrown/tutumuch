@@ -6,8 +6,9 @@ import { ButtonDirective, IconComponent, MarkComponent } from '@tutumuch/compone
 type State = 'working' | 'unsubscribed' | 'invalid' | 'error';
 
 /**
- * The marketing email's unsubscribe link at /emails/unsubscribe?token=… (L2-043), public. The
- * token is posted once from script on load, because mail scanners prefetch links with GET.
+ * The unsubscribe link of a marketing or item request match email at /emails/unsubscribe?token=…
+ * (L2-043, L2-103), public. The token is posted once from script on load, because mail scanners
+ * prefetch links with GET; the answer names the category it turned off.
  */
 @Component({
   selector: 'tl-unsubscribe-page',
@@ -24,6 +25,8 @@ export class UnsubscribePage implements OnInit {
 
   readonly state = signal<State>('working');
   readonly ref = signal('');
+  /** Which emails the token turned off: "Marketing" or "ItemRequests". */
+  readonly category = signal('Marketing');
 
   ngOnInit(): void {
     void this.unsubscribe();
@@ -33,6 +36,7 @@ export class UnsubscribePage implements OnInit {
     this.state.set('working');
     const result = await this.api.unsubscribe(this.token());
     if (result.ok) {
+      this.category.set(result.value.category);
       this.state.set('unsubscribed');
       return;
     }

@@ -10,9 +10,9 @@ list in one click, without signing in (`L2-043`).
 
 Terms used throughout:
 
-- **notification category** — group of email types that shares one setting: Account security, Orders, Reviews or Marketing
+- **notification category** — group of email types that shares one setting: Account security, Orders, Item requests, Reviews or Marketing
 - **always-on category** — category that cannot be turned off: Account security and Orders
-- **optional category** — category the member can turn off: Reviews, which is on by default, and Marketing, which is off by default
+- **optional category** — category the member can turn off: Item requests and Reviews, which are on by default, and Marketing, which is off by default
 - **opt-in** — member's explicit choice to turn marketing email on
 - **unsubscribe token** — signed, opaque value in a marketing email that identifies the member and the Marketing category without a session
 - **one-click unsubscribe** — removal from marketing email by following the link in the email, or by the mail client's RFC 8058 `List-Unsubscribe-Post` request, with no sign-in
@@ -38,13 +38,14 @@ account area next to "Profile" and "Settings". Composition follows
 
 - **Route** `account/emails` (app shell) → **`NotificationSettingsPage`**
   (`notification-settings/`) — heading "Emails" with the lead "Security and order emails are
-  always on." A form holds a `.settings-list` of 4 rows. Each row has a title, a description and
+  always on." A form holds a `.settings-list` of 5 rows. Each row has a title, a description and
   a `tl-switch`:
 
   | Row | Description | Switch |
   |-----|-------------|--------|
   | Account security | Sign-in alerts, password resets | on, disabled, labelled "Account security emails, always on" |
   | Orders | Sales, shipping, delivery, refunds | on, disabled, labelled "Order emails, always on" |
+  | Item requests | When something you asked for is listed | bound to `itemRequestEmails`, labelled "Item request emails" (request-items, `L2-103`) |
   | Reviews | When someone reviews you | bound to `reviewEmails`, labelled "Review emails" |
   | News from TuTuMuch | New arrivals in your size, now and then | bound to `marketingEmails`, labelled "Marketing emails" |
 
@@ -173,6 +174,18 @@ with a correlation ID (`L2-068`).
   - `Version int` as the concurrency token. The API exposes it as the `ETag`.
 - Erasure of a closed account (`L2-005`) deletes the row with the member.
 
+### Item request emails (request-items)
+
+[request-items](../../catalog/request-items/README.md) adds the `ItemRequests` category
+([ADR catalog/0007](../../../adr/catalog/0007-match-email-per-listing-without-a-digest.md),
+`L2-103`): `NotificationPreferences.ItemRequestEmails` (a `bit` column defaulting to on for
+existing rows), the `itemRequests` key between `orders` and `reviews` in the `GET` response, an
+optional `itemRequestEmails` in the `PUT` body (absent keeps the stored value) and
+`NotificationPreferences.Unsubscribe(category, now)`, which turns off Marketing or ItemRequests.
+`UnsubscribeCommand` accepts a token of either category and answers with its name
+(`{ "category": "ItemRequests", "unsubscribed": true }`); the unsubscribe page then says
+"You’re unsubscribed from item request emails".
+
 ### Configuration
 
 | Setting | Value | Source |
@@ -205,6 +218,7 @@ requirement, cited by identifier.
 
 | L2 ID | Refines (L1) | Requirement |
 |-------|--------------|-------------|
+| `L2-103` | `L1-011`, `L1-023` | The email settings page shall add an "Item requests" switch, on until turned off, and every match email shall carry a one-click unsubscribe (request-items). |
 | `L2-043` | `L1-011` | Account security and order emails shall always be sent. Members shall be able to turn off review and marketing emails. Marketing emails shall be off until the member opts in, and every marketing email shall include a one-click unsubscribe link. |
 
 ## Diagrams
