@@ -156,7 +156,7 @@ test.describe('manage my listings', () => {
     await listings.goto();
 
     await expect(listings.empty).toContainText('Nothing listed yet');
-    await expect(listings.empty).toContainText('List a pair of 12s or something in L.');
+    await expect(listings.empty).toContainText('List a dress, a leotard or anything she’s outgrown.');
     await expect(listings.empty.getByRole('link', { name: 'Sell an item' })).toHaveAttribute('href', '/sell');
     await expect(listings.filter).toHaveCount(0);
   });

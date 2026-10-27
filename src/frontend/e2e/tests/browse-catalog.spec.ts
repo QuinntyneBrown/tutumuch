@@ -151,7 +151,9 @@ test.describe('browse catalog', () => {
 
     await expect(catalog.count).toHaveText('0 items');
     await expect(catalog.emptyState.getByRole('heading', { level: 2 })).toHaveText('Nothing listed yet');
-    await expect(catalog.emptyState).toContainText('Be the first to list a pair of 12s or something in L.');
+    await expect(catalog.emptyState).toContainText(
+      'Be the first to list a dress, a pair of sneakers or anything your daughter has outgrown.',
+    );
     await expect(catalog.emptyState.getByRole('link', { name: 'Sell an item' })).toHaveAttribute('href', '/sell');
   });
 
