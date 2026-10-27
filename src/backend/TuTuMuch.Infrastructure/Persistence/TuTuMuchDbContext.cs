@@ -17,6 +17,10 @@ public sealed class TuTuMuchDbContext(DbContextOptions<TuTuMuchDbContext> option
 
     public DbSet<Session> Sessions => Set<Session>();
 
+    public DbSet<ExternalLogin> ExternalLogins => Set<ExternalLogin>();
+
+    public DbSet<PendingExternalJoin> PendingExternalJoins => Set<PendingExternalJoin>();
+
     public DbSet<Listing> Listings => Set<Listing>();
 
     public DbSet<ListingPhoto> ListingPhotos => Set<ListingPhoto>();

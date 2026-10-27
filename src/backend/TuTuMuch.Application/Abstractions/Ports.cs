@@ -18,6 +18,10 @@ public interface ITuTuMuchDbContext
 
     DbSet<Session> Sessions { get; }
 
+    DbSet<ExternalLogin> ExternalLogins { get; }
+
+    DbSet<PendingExternalJoin> PendingExternalJoins { get; }
+
     DbSet<Listing> Listings { get; }
 
     DbSet<ListingPhoto> ListingPhotos { get; }
@@ -59,6 +63,26 @@ public interface IPasswordHasher
     string Hash(string password);
 
     bool Verify(string hash, string password);
+}
+
+/// <summary>
+/// The identity Google asserted in a validated ID token: its stable subject, the email and whether
+/// Google verified it, and the nonce the token carries (L2-088).
+/// </summary>
+public sealed record GoogleIdentity(string Subject, string Email, bool EmailVerified, string? Nonce);
+
+/// <summary>
+/// Google as an OpenID Connect provider (L2-088, ADR accounts/0001). The adapter exchanges the
+/// authorization code with the PKCE verifier and validates the ID token's signature, issuer,
+/// audience and expiry against Google's published keys; tests use a fake.
+/// </summary>
+public interface IGoogleIdentityProvider
+{
+    /// <summary>The OAuth client ID, or null when no Google client is configured and the feature is off.</summary>
+    string? ClientId { get; }
+
+    /// <summary>The validated identity, or null when Google refuses the code or the token is invalid.</summary>
+    Task<GoogleIdentity?> ExchangeCodeAsync(string code, string codeVerifier, string redirectUri, CancellationToken cancellationToken);
 }
 
 /// <summary>Known breached passwords (L2-001).</summary>

@@ -1,6 +1,9 @@
 namespace TuTuMuch.Domain.Members;
 
-/// <summary>A registered person who can buy and sell once their email is verified (L2-001, L2-002, L2-003).</summary>
+/// <summary>
+/// A registered person who can buy and sell once their email is verified (L2-001, L2-002, L2-003).
+/// A member who joined with Google has no password (L2-088).
+/// </summary>
 public sealed class Member
 {
     private Member()
@@ -19,7 +22,8 @@ public sealed class Member
     /// <summary>Upper-cased email, unique, so addresses compare ignoring case.</summary>
     public string NormalizedEmail { get; private set; } = string.Empty;
 
-    public string PasswordHash { get; private set; } = string.Empty;
+    /// <summary>Null for a member who only signs in with a third-party account; a password sign-in then fails as a wrong password.</summary>
+    public string? PasswordHash { get; private set; }
 
     public DateTime CreatedAt { get; private set; }
 
@@ -47,6 +51,18 @@ public sealed class Member
         NormalizedEmail = Normalize(email),
         PasswordHash = passwordHash,
         CreatedAt = now,
+    };
+
+    /// <summary>A member joining with an email a third party has verified: no password, verified at once (L2-088).</summary>
+    public static Member JoinVerified(string displayName, string email, DateTime now) => new()
+    {
+        Id = Guid.NewGuid(),
+        DisplayName = displayName,
+        NormalizedDisplayName = Normalize(displayName),
+        Email = email,
+        NormalizedEmail = Normalize(email),
+        CreatedAt = now,
+        EmailVerifiedAt = now,
     };
 
     public static string Normalize(string value) => value.Trim().ToUpperInvariant();

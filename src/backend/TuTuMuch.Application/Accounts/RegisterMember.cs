@@ -25,14 +25,7 @@ public sealed partial class RegisterMemberCommandHandler(
         var password = command.Password ?? string.Empty;
         var errors = new Dictionary<string, FieldError>();
 
-        if (!DisplayNamePattern().IsMatch(displayName))
-        {
-            errors["displayName"] = new("DISPLAY_NAME_FORMAT", "Use 3 to 30 letters, numbers, _ or -");
-        }
-        else if (await db.Members.AnyAsync(m => m.NormalizedDisplayName == Member.Normalize(displayName), cancellationToken))
-        {
-            errors["displayName"] = new("DISPLAY_NAME_TAKEN", "That display name is taken");
-        }
+        await MemberRegistrationRules.ValidateDisplayNameAsync(db, displayName, errors, cancellationToken);
 
         if (email.Length > 254 || !EmailPattern().IsMatch(email))
         {
@@ -56,15 +49,7 @@ public sealed partial class RegisterMemberCommandHandler(
             errors["password"] = new("PASSWORD_BREACHED", "This password has appeared in a data breach. Choose another.");
         }
 
-        if (!command.AgeConfirmed)
-        {
-            errors["ageConfirmed"] = new("AGE_REQUIRED", "Confirm you're 18 or older");
-        }
-
-        if (!command.TermsAccepted)
-        {
-            errors["termsAccepted"] = new("TERMS_REQUIRED", "Accept the terms to continue");
-        }
+        MemberRegistrationRules.ValidateConsent(command.AgeConfirmed, command.TermsAccepted, errors);
 
         if (errors.Count > 0)
         {
@@ -77,9 +62,6 @@ public sealed partial class RegisterMemberCommandHandler(
         await verificationEmails.SendAsync(member, cancellationToken);
         return member.Id;
     }
-
-    [GeneratedRegex("^[A-Za-z0-9_-]{3,30}$")]
-    private static partial Regex DisplayNamePattern();
 
     [GeneratedRegex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$")]
     private static partial Regex EmailPattern();

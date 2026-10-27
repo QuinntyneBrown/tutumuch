@@ -30,6 +30,7 @@ public sealed class RegistrationTests : IDisposable
             var member = db.Members.Single();
             Assert.Equal("marcus_12", member.DisplayName);
             Assert.Null(member.EmailVerifiedAt);
+            Assert.NotNull(member.PasswordHash);
             Assert.NotEqual(Members.Password, member.PasswordHash);
         });
         var email = Assert.Single(await _factory.DispatchEmailsAsync());

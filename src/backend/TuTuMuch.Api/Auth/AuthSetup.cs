@@ -103,6 +103,13 @@ public static class AuthSetup
     {
         services.Configure<AuthOptions>(configuration.GetSection("Auth"));
         services.AddSingleton<SessionCookies>();
+        services.AddOptions<GoogleOptions>()
+            .Bind(configuration.GetSection(GoogleOptions.Section))
+            .Validate(o => o.IsConsistent, "Auth:Google needs both ClientId and ClientSecret, or neither")
+            .ValidateOnStart();
+        services.AddHttpClient(nameof(GoogleIdentityProvider));
+        services.AddSingleton<IGoogleIdentityProvider, GoogleIdentityProvider>();
+        services.AddSingleton<GoogleFlowCookie>();
         services.AddScoped<IAuthorizationHandler, VerifiedEmailHandler>();
         services.AddScoped<IAuthorizationHandler, AdministratorHandler>();
         services.AddSingleton<IAuthorizationMiddlewareResultHandler, ProblemAuthorizationResultHandler>();
