@@ -1,4 +1,4 @@
-"""Administrator problem detail, error pages, legal pages, cookies and system notices
+"""Administrator problem detail, showcase requests, error pages, legal pages, cookies and system notices
 (L1-008, L1-014, L1-018, L2-036, L2-056, L2-068)."""
 from mk import *
 
@@ -91,6 +91,65 @@ def _():
 @pr.state("error", "The problem failed to load.")
 def _():
     return admin_page(head("Order problem") + load_error("this problem", "5d10-be3c"))
+
+
+# ---------------------------------------------------------------------------
+# Showcase requests (L2-110, L2-111): the owner's list in the admin shell
+# ---------------------------------------------------------------------------
+SHOWCASE_REQUESTS = [
+    {"who": "TutuTessa", "email": "tessa.bell@example.com", "note": "Size 7 if you find one, for her spring recital.", "when": "Today 09:12"},
+    {"who": "PuddleJumperPia", "email": "pia.reyes@example.com", "note": "", "when": "Yesterday 18:40"},
+    {"who": "RainbowRosa", "email": "rosa.kim@example.com", "note": "Any colour but pink, please. <b>Thanks</b>", "when": "Fri 23 Oct"},
+]
+
+
+def showcase_request(r: dict) -> str:
+    it = ITEMS["gold-tutu"]
+    note_html = f'<p class="request__note">{esc(r["note"])}</p>' if r["note"] else '<p class="request__note text-sm text-muted">No note</p>'
+    return (f'<li class="request"><div class="request__head"><div class="stack stack--sm">'
+            f'<h2 class="request__title"><a href="{P("listing-detail", "showcase-own")}">{esc(it["title"])}</a></h2>'
+            f'<span class="text-sm text-muted">{it["id"]} · <time datetime="2026-10-25">{r["when"]}</time></span></div>'
+            f'<div class="stack stack--sm request__actions"><span class="text-label">{r["who"]}</span>'
+            f'<a class="text-sm" href="mailto:{r["email"]}">{r["email"]}</a></div></div>{note_html}</li>')
+
+
+def showcase_head(sub: str = "") -> str:
+    return head("Showcase requests", sub)
+
+
+sr = screen("showcase-requests", "page", "Showcase requests", route="/admin/requests", reqs=["L2-110", "L2-111", "L2-010", "L2-061", "L2-065"])
+
+
+@sr.state("default", "Three requests, most recently sent first: the listing, its reference, who asked, their email and their note.")
+def _():
+    body = f'<ul class="request-list" role="list">{"".join(showcase_request(r) for r in SHOWCASE_REQUESTS)}</ul>'
+    return admin_page(showcase_head("3 requests") + body,
+                      note("Only administrators see this page and the member emails on it (L2-111). A closed member's requests are gone at once.", "top: 10rem; right: 1rem;"))
+
+
+@sr.state("loading", "Skeleton requests shaped like the real ones.")
+def _():
+    one = ('<li class="request"><div class="request__head"><div class="stack stack--sm" style="flex: 1;">'
+           '<span class="skeleton skeleton--title" style="width: 40%;"></span><span class="skeleton skeleton--text" style="width: 25%;"></span></div>'
+           '<div class="stack stack--sm" style="width: 12rem;"><span class="skeleton skeleton--text"></span><span class="skeleton skeleton--text"></span></div></div>'
+           '<span class="skeleton skeleton--text" style="width: 70%;"></span></li>')
+    return admin_page(showcase_head() + f'<ul class="request-list" role="list" aria-busy="true" aria-label="Loading requests">{one * 3}</ul>')
+
+
+@sr.state("empty", "No requests yet: one line on when they appear.")
+def _():
+    return admin_page(showcase_head() + empty("heart", "No requests yet", "When a shopper asks for a showcase item, it shows up here."))
+
+
+@sr.state("error", "The list failed to load: a reference and Try again.")
+def _():
+    return admin_page(showcase_head() + empty("refresh", "Couldn’t load requests", 'Something went wrong on our side. <span class="ref">Ref 9a3c-11d0</span>',
+                                              btn("Try again", "primary", icon="refresh"), cls="empty--error"))
+
+
+@sr.state("forbidden", "A member without the Administrator role opens /admin/requests: the API answers 403 and the page says so (L2-010).")
+def _():
+    return admin_page(center("4<em>0</em>3", "You can’t open this", "Only TuTuMuch’s administrators can see requests.", btn("Shop the closet", "primary", P("catalog"))))
 
 
 # ---------------------------------------------------------------------------

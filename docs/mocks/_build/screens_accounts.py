@@ -60,7 +60,7 @@ def load_error(title: str, ref: str) -> str:
 # ---------------------------------------------------------------------------
 # Sign in (L2-006, L2-007, L2-026)
 # ---------------------------------------------------------------------------
-s = screen("sign-in", "page", "Sign in", route="/sign-in", reqs=["L2-006", "L2-007", "L2-026", "L2-065", "L2-088"],
+s = screen("sign-in", "page", "Sign in", route="/sign-in", reqs=["L2-006", "L2-007", "L2-026", "L2-065", "L2-088", "L2-109"],
            na={"loading": "The form renders without fetching data.", "empty": "A form, not a collection."})
 
 GOOGLE_START = P("sign-in", "google-busy")
@@ -91,6 +91,15 @@ def _():
 def _():
     pg = sign_in(title="Sign in to buy", lead="You’ll go straight back to the pink tulle tutu skirt.")
     pg.notes = note("Return URL /items/L-20931 is kept through sign in (L2-026).", "top: 6rem; right: 1rem;")
+    return pg
+
+
+@s.state("request", "Reached from “Request this item” on a showcase listing: after signing in the member is back on it with the request form open (L2-109).")
+def _():
+    pg = sign_in(title="Sign in to request this item", lead="You’ll go straight back to the gold sequin recital tutu and your request.")
+    pg.main = pg.main.replace(f'href="{P("register")}">Join', f'href="{P("register", "request")}">Join', 1)
+    pg.notes = note("URL: /sign-in?returnUrl=%2Fitems%2FL-20940%3Frequest%3D1. Join and Continue with Google keep the same returnUrl. Only a same-site path is followed; anything else goes to / (L2-109).",
+                    "top: 6rem; right: 1rem;")
     return pg
 
 
@@ -149,7 +158,7 @@ def _():
 # ---------------------------------------------------------------------------
 # Register (L2-001)
 # ---------------------------------------------------------------------------
-r = screen("register", "page", "Join", route="/join", reqs=["L2-001", "L2-002", "L2-051", "L2-065", "L2-088"],
+r = screen("register", "page", "Join", route="/join", reqs=["L2-001", "L2-002", "L2-051", "L2-065", "L2-088", "L2-109"],
            na={"loading": "The form renders without fetching data.", "empty": "A form, not a collection."})
 
 
@@ -197,6 +206,24 @@ def _():
     body = (f'<div class="empty__icon" style="margin: 0;">{ic("mail", "icon icon--lg")}</div>'
             f'<p>We sent a link to <strong>{ME_P["email"]}</strong>. It works for 24 hours.</p>'
             f'<div class="stack">{btn("Shop the closet while you wait", "primary lg block", P("catalog"))}'
+            f'<button class="btn btn--link" type="button">Resend email</button></div>')
+    return auth("Check your email", body)
+
+
+@r.state("request", "Reached from “Sign in to request this item”: the same form, a lead that says where the member goes next (L2-109).")
+def _():
+    pg = register()
+    pg.main = pg.main.replace("Buy and sell with one account.", "Join, verify your email, then sign in and we’ll take you back to your request.", 1)
+    pg.main = pg.main.replace(f'href="{P("sign-in")}">Sign in', f'href="{P("sign-in", "request")}">Sign in', 1)
+    pg.notes = note("URL: /join?returnUrl=%2Fitems%2FL-20940%3Frequest%3D1. Continue with Google carries the returnUrl and lands straight on the request form.", "top: 6rem; right: 1rem;")
+    return pg
+
+
+@r.state("request-success", "Joined from a request: the verification email is on its way and the next step is signing in to send the request (L2-109).")
+def _():
+    body = (f'<div class="empty__icon" style="margin: 0;">{ic("mail", "icon icon--lg")}</div>'
+            f'<p>We sent a link to <strong>{ME_P["email"]}</strong>. It works for 24 hours. You can send your request now and verify later.</p>'
+            f'<div class="stack">{btn("Sign in to send your request", "primary lg block", P("sign-in", "request"))}'
             f'<button class="btn btn--link" type="button">Resend email</button></div>')
     return auth("Check your email", body)
 
