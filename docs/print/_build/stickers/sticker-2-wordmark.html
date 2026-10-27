@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>TuTuMuch sticker 2: the wordmark</title>
+    <link rel="stylesheet" href="../print.css" />
+    <link rel="stylesheet" href="_stage.css" />
+    <style>
+      .face {
+        left: 50%; top: 150px; width: 280px; transform: translateX(-50%) rotate(-4deg);
+        border-radius: 22%; border: 9px solid var(--ink); box-shadow: 8px 10px 0 var(--raspberry);
+      }
+      .wordmark { left: 70px; top: 405px; width: 760px; }
+      .tag {
+        left: 50%; top: 640px; transform: translateX(-50%) rotate(2deg); padding: 14px 40px;
+        font-size: 50px; background: var(--sunny); color: var(--ink);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- The Gingham wordmark with Tilly's face mark above it: the brand on its own. -->
+    <div class="stage">
+      <img class="char face" src="../../characters/tilly-face-mark.png" alt="" />
+      <span class="wordmark" data-wordmark></span>
+      <div class="chip tag display">Twirl it forward.</div>
+      <!-- Edge URL: set in the white keyline by _rim.js, as on the TwinkleTune stickers. -->
+      <svg class="rim"><text data-under=".tag" data-shadow="5">TUTUMUCH.KIDS</text></svg>
+    </div>
+    <script src="../wordmark.js"></script>
+    <script src="_rim.js"></script>
+  </body>
+</html>

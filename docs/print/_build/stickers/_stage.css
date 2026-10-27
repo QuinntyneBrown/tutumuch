@@ -1,0 +1,19 @@
+/* Sticker stage: 900 x 900 CSS px = 3in x 3in at 300 DPI. render.mjs captures
+   .stage transparently, then adds the white die-cut keyline (60px, 0.2in) around
+   the union of everything opaque. Keep artwork inside the 760px safe square
+   (70px in from every edge) so the keyline never touches the canvas edge. */
+.stage { position: relative; width: 900px; height: 900px; overflow: hidden; }
+.stage > * { position: absolute; }
+body.guides .stage::after {
+  content: ""; position: absolute; inset: 70px; outline: 2px dashed #00b3ff; pointer-events: none;
+}
+
+/* The edge URL, as on the TwinkleTune stickers: TUTUMUCH.KIDS in Nunito 800
+   tracked caps, ink, set in the white keyline itself rather than on the
+   artwork. .rim is a full-stage SVG whose path _rim.js lays along one edge of
+   the artwork. render.mjs leaves .rim out when it builds the keyline, draws it
+   on top afterwards, and fails if any of it leaves the white rim. */
+.rim { left: 0; top: 0; width: 900px; height: 900px; overflow: visible; }
+.rim text { font: 800 28px var(--font-body); letter-spacing: 7px; fill: var(--ink); }
+body.art-only .rim { visibility: hidden; }
+body.rim-only .stage > :not(.rim) { visibility: hidden; }

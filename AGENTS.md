@@ -82,6 +82,8 @@ tutumuch/
 │   ├── detailed-designs/        {subsystem}/{feature}/README.md + diagrams/
 │   ├── estimates/               README.md + one file per subsystem
 │   ├── prompts/                 ready-to-run implementation prompts, NN-journey.md in build order
+│   ├── print/                   print collateral: business-cards/, stickers/, flyers/ (Letter, Half Letter, 5x7), characters/ (Tilly);
+│   │                            _build/ holds the HTML sources and render.mjs (ADR general/0007)
 │   └── adr/                     {category}/NNNN-title.md
 ├── src/
 │   ├── backend/                 .NET solution, namespace prefix TuTuMuch

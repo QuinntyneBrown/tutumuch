@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>TuTuMuch sticker 5: Outgrown? Pass it on!</title>
+    <link rel="stylesheet" href="../print.css" />
+    <link rel="stylesheet" href="_stage.css" />
+    <style>
+      .top {
+        left: 50%; top: 80px; transform: translateX(-50%) rotate(-3deg); padding: 14px 40px 18px;
+        font-size: 64px; background: var(--sunny); color: var(--ink);
+      }
+      .tilly { left: 50%; top: 205px; height: 470px; transform: translateX(-50%); }
+      .bottom {
+        left: 50%; top: 665px; transform: translateX(-50%) rotate(2deg); padding: 14px 44px 18px;
+        font-size: 72px; background: var(--raspberry); color: var(--white);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Tilly's soccer pose between the seller's two-line pitch. -->
+    <div class="stage">
+      <img class="char tilly" src="../../characters/tilly-soccer.png" alt="" />
+      <div class="chip top display">Outgrown?</div>
+      <div class="chip bottom display outlined">Pass it on!</div>
+      <!-- Edge URL: set in the white keyline by _rim.js, as on the TwinkleTune stickers. -->
+      <svg class="rim"><text data-under=".bottom" data-shadow="7">TUTUMUCH.KIDS</text></svg>
+    </div>
+    <script src="../wordmark.js"></script>
+    <script src="_rim.js"></script>
+  </body>
+</html>

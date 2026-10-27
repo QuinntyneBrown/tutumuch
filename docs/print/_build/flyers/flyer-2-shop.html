@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>TuTuMuch flyer 2: Shop new and gently loved</title>
+    <link rel="stylesheet" href="../print.css" />
+    <link rel="stylesheet" href="_flyer.css" />
+    <style>
+      .confetti { left: 0; right: 0; top: 0; height: 30px; background: var(--raspberry); }
+      .wordmark { left: 50%; top: 58px; width: 360px; transform: translateX(-50%); }
+      .eyebrow-top { left: 50%; top: 168px; transform: translateX(-50%) rotate(-1.5deg); }
+      .headline { left: 48px; right: 48px; top: 214px; margin: 0; text-align: center; font-size: 64px; color: var(--raspberry); line-height: 1; }
+      .lede-top { left: 110px; right: 110px; top: 360px; text-align: center; font-size: 19px; color: var(--ink); }
+      .tilly { left: 42px; top: 452px; height: 368px; }
+      .grid { left: 300px; top: 452px; width: 494px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px 16px; }
+      .tile {
+        position: relative; height: 158px; border: 4px solid var(--ink); border-radius: 24px; box-shadow: 5px 6px 0 var(--ink);
+        background: var(--white); display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 12px;
+      }
+      .tile:nth-child(3n+2) { background: var(--blush); }
+      .tile:nth-child(6n+1), .tile:nth-child(6n+6) { background: var(--lilac-200); }
+      .tile img { width: 98px; height: 98px; }
+      .tile span { font: 900 15px/1.15 var(--font-body); text-align: center; }
+      .promise { left: 48px; right: 48px; top: 820px; display: flex; justify-content: center; gap: 22px; margin: 0; padding: 0; list-style: none; font: 800 15px/1 var(--font-body); }
+      .promise li { display: flex; align-items: center; gap: 7px; }
+      .promise svg { width: 22px; height: 22px; }
+    </style>
+  </head>
+  <body>
+    <!-- For shoppers only: everything she needs, new and gently loved, every item for girls.
+         Categories are the six of ADR general/0006; item art is docs/mocks/assets/items. -->
+    <div class="sheet">
+      <div class="confetti dots" style="background-color: var(--raspberry); background-image: radial-gradient(var(--dot) 30%, transparent 34%); background-size: 22px 22px"></div>
+      <span class="wordmark" data-wordmark></span>
+      <div class="chip eyebrow eyebrow-top">New &amp; gently loved · all for girls</div>
+      <h1 class="headline display outlined">Her next favourite<br />thing is waiting.</h1>
+      <p class="lede lede-top">Clothes, shoes, dance and sports gear, bikes, cameras, toys and more, from families whose girls have moved up a size.</p>
+      <img class="char tilly" src="../../characters/tilly-show-and-tell.png" alt="" />
+      <div class="grid">
+        <div class="tile"><img src="../../../mocks/assets/items/party-dress.svg" alt="" /><span>Clothing</span></div>
+        <div class="tile"><img src="../../../mocks/assets/items/sneakers.svg" alt="" /><span>Shoes</span></div>
+        <div class="tile"><img src="../../../mocks/assets/items/tutu.svg" alt="" /><span>Dance</span></div>
+        <div class="tile"><img src="bike.svg" alt="" /><span>Sports, bikes<br />and scooters</span></div>
+        <div class="tile"><img src="../../../mocks/assets/items/camera.svg" alt="" /><span>Cameras and tech</span></div>
+        <div class="tile"><img src="../../../mocks/assets/items/doll.svg" alt="" /><span>Toys and crafts</span></div>
+      </div>
+      <ul class="promise">
+        <li><svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="13" fill="#F6C64B" stroke="#3A2233" stroke-width="3"/><path d="M9 15.5l4 4 8-9" fill="none" stroke="#3A2233" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Every listing is for girls</li>
+        <li><svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="13" fill="#F6C64B" stroke="#3A2233" stroke-width="3"/><path d="M9 15.5l4 4 8-9" fill="none" stroke="#3A2233" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Outgrown, not worn out</li>
+        <li><svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="13" fill="#F6C64B" stroke="#3A2233" stroke-width="3"/><path d="M9 15.5l4 4 8-9" fill="none" stroke="#3A2233" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Honest condition, flaws named</li>
+      </ul>
+
+      <section class="cta">
+        <div class="cta__qr"><img src="../qr-tutumuch-kids.svg" alt="QR code for www.tutumuch.kids" /></div>
+        <div class="cta__copy">
+          <p class="cta__head">Shop the catalog. <em>Come on in!</em></p>
+          <p class="cta__url">www.tutumuch.kids</p>
+          <p class="cta__small">New listings every day, every one for girls. Scan to start browsing.</p>
+        </div>
+      </section>
+    </div>
+    <script src="_flyer.js"></script>
+    <script src="../wordmark.js"></script>
+  </body>
+</html>

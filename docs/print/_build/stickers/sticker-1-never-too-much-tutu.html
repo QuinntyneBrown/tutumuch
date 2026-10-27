@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>TuTuMuch sticker 1: Never too much tutu!</title>
+    <link rel="stylesheet" href="../print.css" />
+    <link rel="stylesheet" href="_stage.css" />
+    <style>
+      .tilly { left: 50%; top: 118px; height: 530px; transform: translateX(-50%); }
+      .banner {
+        left: 85px; top: 638px; width: 730px; height: 116px; font-size: 58px;
+        background: var(--raspberry); color: var(--white); transform: rotate(-3deg);
+      }
+      .spark { width: 70px; height: 70px; }
+    </style>
+  </head>
+  <body>
+    <!-- Tilly's catchphrase from the brand kit, under her twirl-with-a-shopping-bag pose. -->
+    <div class="stage">
+      <svg class="spark" style="left: 150px; top: 198px" viewBox="0 0 100 100"><path d="M50 0 Q58 42 100 50 Q58 58 50 100 Q42 58 0 50 Q42 42 50 0Z" fill="#F6C64B" stroke="#3A2233" stroke-width="6" stroke-linejoin="round"/></svg>
+      <svg class="spark" style="left: 680px; top: 348px; width: 56px; height: 56px" viewBox="0 0 100 100"><path d="M50 0 Q58 42 100 50 Q58 58 50 100 Q42 58 0 50 Q42 42 50 0Z" fill="#9B7FD4" stroke="#3A2233" stroke-width="6" stroke-linejoin="round"/></svg>
+      <img class="char tilly" src="../../characters/tilly-twirl.png" alt="" />
+      <div class="chip banner display outlined">Never too much tutu!</div>
+      <!-- Edge URL: set in the white keyline by _rim.js, as on the TwinkleTune stickers. -->
+      <svg class="rim"><text data-under=".banner" data-shadow="6">TUTUMUCH.KIDS</text></svg>
+    </div>
+    <script src="../wordmark.js"></script>
+    <script src="_rim.js"></script>
+  </body>
+</html>

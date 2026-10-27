@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>TuTuMuch flyer 3: Shop bikes, sports and dance gear</title>
+    <link rel="stylesheet" href="../print.css" />
+    <link rel="stylesheet" href="_flyer.css" />
+    <style>
+      .hero { left: 0; right: 0; top: 0; height: 350px; background-color: var(--lilac); background-image: radial-gradient(#a991dc 16%, transparent 18%); background-size: 30px 30px; }
+      .wordmark { left: 50px; top: 50px; width: 300px; }
+      .hero-eyebrow { right: 56px; top: 62px; transform: rotate(2deg); }
+      .headline { left: 56px; right: 48px; top: 146px; margin: 0; font-size: 60px; color: var(--white); line-height: 1; }
+      .headline em { font-style: normal; color: var(--sunny); }
+      .hero-lede { left: 58px; right: 70px; top: 272px; font-size: 19px; color: var(--white); }
+      .grid { left: 72px; top: 384px; width: 696px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 34px 27px; }
+      .tile { position: relative; height: 200px; border: 4px solid var(--ink); border-radius: 26px; box-shadow: 5px 6px 0 var(--ink); overflow: visible; background: var(--cream); }
+      .tile .pic { width: 100%; height: 100%; border-radius: 22px; object-fit: cover; display: block; }
+      .tile .pic.bike { object-fit: contain; padding: 14px 20px 34px; background: var(--blush); }
+      .tile .label {
+        position: absolute; left: 50%; bottom: -17px; transform: translateX(-50%); padding: 6px 14px 7px;
+        font: 900 14px/1.1 var(--font-body); background: var(--white); color: var(--ink);
+      }
+      .tile:nth-child(odd) .label { background: var(--sunny); }
+    </style>
+  </head>
+  <body>
+    <!-- For shoppers: sports, dance and outdoor gear, with Tilly's sports poses from
+         the brand kit. Subcategories are the Sports and Dance rows of ADR general/0006. -->
+    <div class="sheet">
+      <div class="hero"></div>
+      <span class="wordmark" data-wordmark data-shadow="#3A2233"></span>
+      <div class="chip eyebrow hero-eyebrow">New &amp; gently loved</div>
+      <h1 class="headline display outlined">Gear for girls<br />who never <em>sit still.</em></h1>
+      <p class="lede hero-lede">Bikes and scooters, cleats and shin guards, leotards, swimsuits and dance bags, passed on by families whose girls have moved up a size.</p>
+      <div class="grid">
+        <div class="tile"><img class="pic" src="../characters-src/tilly-dance.jpg" alt="" /><span class="chip label">Tutus, leotards, dance shoes</span></div>
+        <div class="tile"><img class="pic" src="../characters-src/tilly-soccer.jpg" alt="" /><span class="chip label">Cleats, shin guards, kits</span></div>
+        <div class="tile"><img class="pic" src="../characters-src/tilly-volleyball.jpg" alt="" /><span class="chip label">Jerseys, knee pads</span></div>
+        <div class="tile"><img class="pic" src="../characters-src/tilly-gymnastics.jpg" alt="" /><span class="chip label">Leotards, grips, warm-ups</span></div>
+        <div class="tile"><img class="pic" src="../characters-src/tilly-swimming.jpg" alt="" /><span class="chip label">Swimsuits, caps, goggles</span></div>
+        <div class="tile"><img class="pic bike" src="bike.svg" alt="" /><span class="chip label">Bikes and scooters</span></div>
+      </div>
+
+      <section class="cta">
+        <div class="cta__qr"><img src="../qr-tutumuch-kids.svg" alt="QR code for www.tutumuch.kids" /></div>
+        <div class="cta__copy">
+          <p class="cta__head">Her next season <em>starts here.</em></p>
+          <p class="cta__url">www.tutumuch.kids</p>
+          <p class="cta__small">Sports and Dance, plus clothes, shoes, cameras, toys and more. All for girls.</p>
+        </div>
+      </section>
+    </div>
+    <script src="_flyer.js"></script>
+    <script src="../wordmark.js"></script>
+  </body>
+</html>

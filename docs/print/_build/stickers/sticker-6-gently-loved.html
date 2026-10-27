@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>TuTuMuch sticker 6: Gently loved, newly adored</title>
+    <link rel="stylesheet" href="../print.css" />
+    <link rel="stylesheet" href="_stage.css" />
+    <style>
+      .badge { left: 75px; top: 75px; width: 750px; height: 750px; }
+      .tilly { left: 50%; top: 215px; height: 490px; transform: translateX(-50%); }
+    </style>
+  </head>
+  <body>
+    <!-- A round badge: Tilly's "Show & Tell" pose holding up a dress, with the
+         promise of second-hand curved around the rim. -->
+    <div class="stage">
+      <svg class="badge" viewBox="0 0 750 750">
+        <defs>
+          <path id="top" d="M 95 375 A 280 280 0 0 1 655 375" />
+          <path id="bottom" d="M 72 375 A 303 303 0 0 0 678 375" />
+        </defs>
+        <circle cx="375" cy="375" r="368" fill="#D6336C" stroke="#3A2233" stroke-width="10" />
+        <circle cx="375" cy="375" r="255" fill="#FDE2EA" stroke="#3A2233" stroke-width="8" />
+        <text font-family="'Titan One'" font-size="62" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">
+          <textPath href="#top" startOffset="50%">GENTLY LOVED</textPath>
+        </text>
+        <text font-family="'Titan One'" font-size="62" fill="#F6C64B" text-anchor="middle" letter-spacing="2" dominant-baseline="hanging">
+          <textPath href="#bottom" startOffset="50%">NEWLY ADORED</textPath>
+        </text>
+        <g fill="#F6C64B" stroke="#3A2233" stroke-width="4">
+          <circle cx="62" cy="375" r="13" /><circle cx="688" cy="375" r="13" />
+        </g>
+      </svg>
+      <img class="char tilly" src="../../characters/tilly-show-and-tell.png" alt="" />
+      <!-- Edge URL: set in the white keyline by _rim.js, as on the TwinkleTune stickers. -->
+      <svg class="rim"><text data-ellipse="450 450 373 373" data-side="bottom">TUTUMUCH.KIDS</text></svg>
+    </div>
+    <script src="../wordmark.js"></script>
+    <script src="_rim.js"></script>
+  </body>
+</html>

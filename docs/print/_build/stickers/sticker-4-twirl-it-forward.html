@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>TuTuMuch sticker 4: Twirl it forward</title>
+    <link rel="stylesheet" href="../print.css" />
+    <link rel="stylesheet" href="_stage.css" />
+    <style>
+      .disc { left: 110px; top: 75px; width: 680px; height: 680px; border-radius: 50%; border: 10px solid var(--ink); }
+      .tilly { left: 50%; top: 95px; height: 560px; transform: translateX(-50%); }
+      .banner {
+        left: 80px; top: 640px; width: 740px; padding: 16px 0 20px; font-size: 72px;
+        background: var(--raspberry); color: var(--white); transform: rotate(-2deg);
+      }
+      .banner em { font-style: normal; color: var(--sunny); }
+    </style>
+  </head>
+  <body>
+    <!-- Tilly's dance pose on a polka-dot disc, with the TuTuMuch tagline. -->
+    <div class="stage">
+      <div class="disc dots" style="background-size: 54px 54px"></div>
+      <img class="char tilly" src="../../characters/tilly-dance.png" alt="" />
+      <div class="chip banner display outlined"><span>Twirl it&nbsp;<em>forward.</em></span></div>
+      <!-- Edge URL: set in the white keyline by _rim.js, as on the TwinkleTune stickers. -->
+      <svg class="rim"><text data-ellipse="450 415 340 340" data-side="top">TUTUMUCH.KIDS</text></svg>
+    </div>
+    <script src="../wordmark.js"></script>
+    <script src="_rim.js"></script>
+  </body>
+</html>
