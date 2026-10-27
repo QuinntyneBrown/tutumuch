@@ -17,15 +17,15 @@
   @if (state() === 'loading') {
     <div class="stack stack--lg" aria-busy="true" aria-label="Loading">
       <div>
-        <span class="skeleton skeleton--text google-join__skeleton-label"></span>
-        <span class="skeleton skeleton--rect google-join__skeleton-input"></span>
+        <tl-skeleton class="google-join__skeleton-label" />
+        <tl-skeleton shape="rect" class="google-join__skeleton-input" />
       </div>
       <div>
-        <span class="skeleton skeleton--text google-join__skeleton-label"></span>
-        <span class="skeleton skeleton--rect google-join__skeleton-input"></span>
+        <tl-skeleton class="google-join__skeleton-label" />
+        <tl-skeleton shape="rect" class="google-join__skeleton-input" />
       </div>
-      <span class="skeleton skeleton--text google-join__skeleton-line"></span>
-      <span class="skeleton skeleton--rect google-join__skeleton-button"></span>
+      <tl-skeleton class="google-join__skeleton-line" />
+      <tl-skeleton shape="rect" class="google-join__skeleton-button" />
     </div>
   } @else {
     <tl-error-summary [errors]="summary()" />

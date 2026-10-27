@@ -3,11 +3,12 @@
     @for (i of skeletons; track i) {
       <li>
         <div class="listing-card" aria-hidden="true">
-          <span class="skeleton skeleton--photo"></span>
+          <tl-skeleton shape="photo" />
           <div class="listing-card__meta">
-            <span class="skeleton skeleton--text skeleton--w40"></span>
-            <span class="skeleton skeleton--text skeleton--w85"></span>
-            <span class="skeleton skeleton--text skeleton--w55"></span>
+            <tl-skeleton width="85%" />
+            <tl-skeleton width="45%" />
+            <tl-skeleton width="60%" />
+            <tl-skeleton shape="title" width="30%" />
           </div>
         </div>
       </li>

@@ -128,7 +128,7 @@ test.describe('seller payouts', () => {
 
     await expect(payouts.empty).toContainText('No payouts yet');
     await expect(payouts.empty).toContainText('Your earnings show up here after your first sale.');
-    await expect(payouts.empty.getByRole('link', { name: 'Sell an item' })).toHaveAttribute('href', '/sell');
+    await expect(payouts.empty.getByRole('link', { name: 'Sell outgrown gear' })).toHaveAttribute('href', '/sell');
   });
 
   test('loading shows skeletons and a failure offers Try again', async ({ page }) => {

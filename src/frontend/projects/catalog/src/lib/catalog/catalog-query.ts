@@ -27,18 +27,8 @@ export interface CategoryOption extends Option {
 
 const option = (label: string): Option => ({ slug: label.toLowerCase().replace(/ /g, '-'), label });
 
-/** The L2-011 categories with their subcategories; the URL carries the slugs. */
+/** The six L2-011 categories in the guideline order of the top bar (ADR general/0009); the URL carries the slugs. */
 export const CATEGORIES: readonly CategoryOption[] = [
-  {
-    ...option('Clothing'),
-    sizeLabel: 'Girls',
-    subcategories: ['Dresses', 'Tops', 'Bottoms', 'Outerwear', 'Pajamas', 'Swimwear'].map(option),
-  },
-  {
-    ...option('Shoes'),
-    sizeLabel: 'Girls',
-    subcategories: ['Sneakers', 'Boots', 'Sandals', 'Dress shoes'].map(option),
-  },
   {
     ...option('Dance'),
     sizeLabel: 'Girls',
@@ -48,6 +38,16 @@ export const CATEGORIES: readonly CategoryOption[] = [
     ...option('Sports'),
     sizeLabel: 'Girls',
     subcategories: ['Soccer', 'Volleyball', 'Gymnastics', 'Swimming', 'Bikes and scooters'].map(option),
+  },
+  {
+    ...option('Clothing'),
+    sizeLabel: 'Girls',
+    subcategories: ['Dresses', 'Tops', 'Bottoms', 'Outerwear', 'Pajamas', 'Swimwear'].map(option),
+  },
+  {
+    ...option('Shoes'),
+    sizeLabel: 'Girls',
+    subcategories: ['Sneakers', 'Boots', 'Sandals', 'Dress shoes'].map(option),
   },
   {
     ...option('Cameras and tech'),

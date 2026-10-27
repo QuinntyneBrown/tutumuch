@@ -4,24 +4,27 @@
   lede="New and gently loved clothes and gear for girls. Shop her next favourite thing, or pass on what she has outgrown."
 >
   <ng-container title>Twirl it <em>forward.</em></ng-container>
+  <!-- The one primary button of the page (L2-096); every other call to action is secondary. -->
   <ng-container actions>
-    <a tlButton="primary" size="lg" routerLink="/">Shop the catalog</a>
+    <a tlButton="primary" size="lg" routerLink="/">Shop the closet</a>
     @if (launch.canSell()) {
       <a tlButton size="lg" [routerLink]="sellHref()">Start selling</a>
     } @else {
       <p class="marketing-hero__soon">Selling opens soon.</p>
     }
   </ng-container>
-  <tl-video-poster media poster="/media/tutumuch-pitch-poster.png" label="Play" duration="0:30" (watch)="openVideo()" />
+  <tl-tilly media pose="hero" size="hero" />
+  <tl-video-poster media poster="/media/tutumuch-pitch-poster.png" label="Play" duration="0:15" (watch)="openVideo()" />
 </tl-marketing-hero>
 
 <tl-feature-band
   headingId="shoppers-title"
   eyebrow="For shoppers"
   heading="Everything here is for girls."
+  tone="blush"
   [points]="shopperPoints"
 >
-  <a tlButton="primary" routerLink="/" actions>Browse the catalog</a>
+  <a tlButton routerLink="/" actions>Shop the closet</a>
 </tl-feature-band>
 
 @if (launch.canSell()) {
@@ -32,7 +35,7 @@
     tone="surface"
     [points]="sellerPoints"
   >
-    <a tlButton="primary" [routerLink]="sellHref()" actions>Start selling</a>
+    <a tlButton [routerLink]="sellHref()" actions>Start selling</a>
   </tl-feature-band>
 } @else {
   <tl-feature-band
@@ -53,7 +56,7 @@
 <tl-marketing-hero variant="closing" headingId="closing-title" lede="New listings every day, every one for girls.">
   <ng-container title>Her next favourite thing is <em>waiting.</em></ng-container>
   <ng-container actions>
-    <a tlButton="primary" size="lg" routerLink="/">Shop the catalog</a>
+    <a tlButton size="lg" routerLink="/">Shop the closet</a>
     @if (launch.canSell()) {
       <a tlButton size="lg" [routerLink]="sellHref()">Start selling</a>
     }

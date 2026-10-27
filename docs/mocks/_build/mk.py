@@ -170,14 +170,57 @@ def ic(name: str, cls: str = "icon", label: str | None = None) -> str:
     return f'<svg class="{cls}" {aria} viewBox="0 0 24 24">{ICONS[name]}</svg>'
 
 
-# The TuTuMuch logo supplied by the owner (docs/design-system/assets/logo.png, copied to
+# The TuTuMuch gingham wordmark supplied by the owner (docs/design-system/assets/logo.png, copied to
 # docs/mocks/assets/logo.png). Decorative: the surrounding link carries aria-label "TuTuMuch home".
-LOGO_IMG = '<img src="../../assets/logo.png" alt="" width="1200" height="274">'
+LOGO_IMG = '<img class="logo__wordmark" src="../../assets/logo.png" alt="" width="1200" height="274">'
+
+
+MARK_IDS = [0]
+
+
+def mark(cls: str = "") -> str:
+    """The mark (brand kit markScene tGingham): a gingham "T" turned -6 degrees on a blush circle, ink
+    outline, raspberry shadow. Kit geometry on a 100-unit box: cell 5, letter 76, baseline 46 + 0.35 x 76,
+    shadow 0.07/0.09 x 76, outline 0.1 x 76. Decorative; tl-mark draws the same SVG."""
+    MARK_IDS[0] += 1
+    gid = f"mark-gingham-{MARK_IDS[0]}"   # one id per instance: a pattern inside a hidden SVG does not paint
+    return (f'<svg class="mark {cls}" viewBox="0 0 100 100" aria-hidden="true" focusable="false">'
+            f'<defs><pattern id="{gid}" width="10" height="10" patternUnits="userSpaceOnUse">'
+            '<rect width="10" height="10" style="fill: var(--color-logo-gingham-light)"/>'
+            '<rect width="5" height="5" style="fill: var(--color-logo-gingham-dark)"/>'
+            '<rect x="5" y="5" width="5" height="5" style="fill: var(--color-logo-gingham-dark)"/></pattern></defs>'
+            '<circle cx="50" cy="50" r="50" style="fill: var(--color-mark-bg)"/>'
+            '<g transform="rotate(-6 50 50)" style="font-family: var(--font-family-logo); font-size: 76px; paint-order: stroke; stroke: var(--color-logo-outline); stroke-width: 7.6px; stroke-linejoin: round">'
+            '<text x="55.32" y="79.44" text-anchor="middle" style="fill: var(--color-logo-shadow)">T</text>'
+            f'<text x="50" y="72.6" text-anchor="middle" style="fill: url(#{gid})">T</text></g></svg>')
 
 
 def logo(href: str | None = None, cls: str = "") -> str:
+    """The one logo link of a page: the gingham wordmark, and in the app header (cls logo--responsive)
+    the mark instead under 640px, inside the same link."""
     href = href or P("catalog")
-    return f'<a class="logo {cls}" href="{href}" aria-label="TuTuMuch home">{LOGO_IMG}</a>'
+    m = mark("logo__mark") if "logo--responsive" in cls else ""
+    return f'<a class="logo {cls}" href="{href}" aria-label="TuTuMuch home">{LOGO_IMG}{m}</a>'
+
+
+# Tilly (docs/print/characters, copied to docs/mocks/assets/tilly). At most one per screen; the alt
+# text names her and what she is doing (L2-096).
+TILLY = {
+    "hero": ("tilly-twirl.webp", "Tilly twirling in a raspberry tutu with a shopping bag", 442, 600),
+    "dance": ("tilly-dance.webp", "Tilly dancing an arabesque in her tutu", 418, 600),
+    "soccer": ("tilly-soccer.webp", "Tilly kicking a soccer ball", 418, 600),
+    "volleyball": ("tilly-volleyball.webp", "Tilly bumping a volleyball", 414, 600),
+    "gymnastics": ("tilly-gymnastics.webp", "Tilly landing a gymnastics move on a mat", 465, 600),
+    "swimming": ("tilly-swimming-tile.webp", "Tilly ready to dive into the pool", 600, 600),
+    "show-and-tell": ("tilly-show-and-tell.webp", "Tilly holding up a yellow dress to pass it on", 391, 600),
+    "hello": ("tilly-hello.webp", "Tilly waving hello from a stack of folded clothes", 355, 600),
+}
+
+
+def tilly(pose: str, cls: str = "") -> str:
+    f, alt, w, h = TILLY[pose]
+    tile = " tilly--tile" if pose == "swimming" else ""
+    return f'<img class="tilly{tile} {cls}" src="{A}tilly/{f}" alt="{esc(alt)}" width="{w}" height="{h}">'
 
 
 # ---------------------------------------------------------------------------
@@ -212,27 +255,38 @@ def size_tag(item: dict | str, cls: str = "") -> str:
     return f'<span class="size-tag {cls}" aria-label="Size: {esc(s)}"><b>{esc(label)}</b></span>'
 
 
-def photo(key: str, cls: str = "", tag: bool = True, stamp: str | None = None, alt: str | None = None, n: int = 1, tone: int | None = None) -> str:
+def photo(key: str, cls: str = "", tag: bool = False, stamp: str | None = None, alt: str | None = None, n: int = 1, tone: int | None = None) -> str:
+    """A listing photo in a white 4:5 well. Sold greys the photo and shows the "Sold" badge (L2-096)."""
     it = ITEMS[key]
     alt = alt if alt is not None else (f"Photo {n} of {it['brand']} {it['title']}")
-    t = tone or it["tone"]
     st = ""
     if stamp:
         st = f'<span class="photo__stamp{" photo__stamp--sold" if stamp == "Sold" else ""}">{stamp}</span>'
+    sold = " photo--sold" if stamp == "Sold" else ""
     tg = size_tag(it) if tag else ""
-    return (f'<div class="photo photo--{t} {cls}"><img src="{A}items/{it["img"]}.svg" alt="{esc(alt)}" width="160" height="160" loading="lazy">'
+    return (f'<div class="photo{sold} {cls}"><img src="{A}items/{it["img"]}.svg" alt="{esc(alt)}" width="160" height="160" loading="lazy">'
             f'{st}{tg}</div>')
 
 
+CONDITION_BADGE = {"New with tags": "new", "New without tags": "like-new", "Used - Excellent": "like-new",
+                   "Used - Good": "loved", "Used - Fair": "well-loved"}
+
+
+def condition_badge(cond: str) -> str:
+    """Condition badge (design system: Condition badge): colour by the nearest guideline step."""
+    return f'<span class="condition-badge condition-badge--{CONDITION_BADGE[cond]}">{esc(cond)}</span>'
+
+
 def listing_card(key: str, href: str | None = None, stamp: str | None = None) -> str:
+    """Listing card anatomy (L2-096): photo, title on one line, brand, "Girls · condition", price pushed down."""
     it = ITEMS[key]
     stamp = stamp if stamp is not None else (it.get("status") if it.get("status") in ("Reserved", "Sold") else None)
     href = href or P("listing-detail")
     return (f'<li><a class="listing-card" href="{href}">{photo(key, stamp=stamp)}'
-            f'<div class="listing-card__meta"><span class="listing-card__brand">{esc(it["brand"])}</span>'
-            f'<span class="listing-card__title">{esc(it["title"])}</span>'
-            f'<span class="listing-card__foot"><span class="listing-card__condition">{esc(it["cond"])}</span>'
-            f'<span class="price">{price(it["price"])}</span></span></div></a></li>')
+            f'<div class="listing-card__meta"><span class="listing-card__title">{esc(it["title"])}</span>'
+            f'<span class="listing-card__brand">{esc(it["brand"])}</span>'
+            f'<span class="listing-card__facts">{esc(size_of(it).rstrip("\'"))} · {esc(it["cond"])}</span>'
+            f'<span class="listing-card__price"><span class="price">{price(it["price"])}</span></span></div></a></li>')
 
 
 def listing_grid(keys, **kw) -> str:
@@ -240,9 +294,11 @@ def listing_grid(keys, **kw) -> str:
 
 
 def skeleton_grid(n: int = 8) -> str:
+    """Blush skeleton cards shaped like the real card: photo, title, brand, facts, price."""
     card = ('<li><div class="listing-card" aria-hidden="true"><span class="skeleton skeleton--photo"></span>'
-            '<div class="listing-card__meta"><span class="skeleton skeleton--text" style="width: 40%;"></span>'
-            '<span class="skeleton skeleton--text" style="width: 85%;"></span><span class="skeleton skeleton--text" style="width: 55%;"></span></div></div></li>')
+            '<div class="listing-card__meta"><span class="skeleton skeleton--text" style="width: 85%;"></span>'
+            '<span class="skeleton skeleton--text" style="width: 45%;"></span><span class="skeleton skeleton--text" style="width: 60%;"></span>'
+            '<span class="skeleton skeleton--title" style="width: 30%;"></span></div></div></li>')
     return f'<ul class="listing-grid" role="list" aria-busy="true" aria-label="Loading listings">{card * n}</ul>'
 
 
@@ -296,10 +352,14 @@ def alert(kind: str, title: str, text: str = "", actions: str = "", icon: str | 
     return f'<div class="alert alert--{kind} {cls}"{r}>{ic(icon)}<div class="alert__body">{body}</div></div>'
 
 
-def empty(icon: str, title: str, text: str = "", actions: str = "", cls: str = "", heading: str = "h2") -> str:
+def empty(icon: str, title: str, text: str = "", actions: str = "", cls: str = "", heading: str = "h2", tilly_pose: bool | None = None) -> str:
+    """Empty state: Tilly's "Hello, friend" pose, one short line and one action (L2-096). Error states
+    (cls empty--error) and screens that already show Tilly keep the icon well instead."""
+    show = tilly_pose if tilly_pose is not None else "empty--error" not in cls
     t = f'<p class="empty__text">{text}</p>' if text else ""
     a = f'<div class="empty__actions">{actions}</div>' if actions else ""
-    return f'<div class="empty {cls}"><div class="empty__icon">{ic(icon, "icon icon--lg")}</div><{heading} class="empty__title">{title}</{heading}>{t}{a}</div>'
+    art = tilly("hello", "empty__tilly") if show else f'<div class="empty__icon">{ic(icon, "icon icon--lg")}</div>'
+    return f'<div class="empty {cls}">{art}<{heading} class="empty__title">{title}</{heading}>{t}{a}</div>'
 
 
 def error_summary(errors: list[tuple[str, str]], title: str = "Fix these to continue") -> str:
@@ -414,7 +474,9 @@ class Note:
     notes: str = ""
 
 
-NAV = [("clothing", "Clothing"), ("shoes", "Shoes"), ("dance", "Dance"), ("sports", "Sports"),
+# The six categories in the guideline order (ADR general/0009): Dance, the sports, everyday clothing, shoes,
+# then TuTuMuch's own categories.
+NAV = [("dance", "Dance"), ("sports", "Sports"), ("clothing", "Clothing"), ("shoes", "Shoes"),
        ("cameras-and-tech", "Cameras and tech"), ("toys-and-crafts", "Toys and crafts")]
 
 
@@ -434,7 +496,7 @@ def topbar(pg: Page) -> str:
     nav = "".join(
         f'<a class="nav-link" href="{nav_href(k)}"{" aria-current=\"page\"" if pg.nav == k else ""}>{label}</a>' for k, label in NAV) if menus else ""
     search = (f'<form class="search" role="search" action="{P("catalog", "search")}"><label class="visually-hidden" for="q">Search TuTuMuch</label>'
-              f'{ic("search")}<input class="input" id="q" name="q" type="search" placeholder="Search brands and items"></form>')
+              f'{ic("search")}<input class="input" id="q" name="q" type="search" placeholder="Search the closet"></form>')
     if pg.user == "guest":
         sell = f'<a class="btn btn--ghost topbar__sell" href="{P("sell")}">Sell</a>' if can_sell else ""
         right = (f'<a class="btn btn--ghost btn--icon topbar__search-btn" href="{P("catalog", "search")}" aria-label="Search">{ic("search")}</a>'
@@ -449,14 +511,16 @@ def topbar(pg: Page) -> str:
     menu = (f'<button class="btn btn--ghost btn--icon topbar__menu" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu">{ic("menu")}</button>'
             if menus else "")
     nav_el = f'<nav class="topbar__nav" aria-label="Primary">{nav}</nav>' if menus else ""
-    return (f'<header class="topbar">{menu}'
-            f'{logo()}{nav_el}<span class="topbar__spacer"></span>{search}'
-            f'<div class="topbar__actions">{right}</div></header>')
+    # Header skeleton (page guidelines 7): logo left, search in the middle, Sell and Account on the right,
+    # categories in a second row. TuTuMuch has no bag, so there is no Bag link (ADR general/0009).
+    return (f'<header class="topbar"><div class="topbar__row">{menu}'
+            f'{logo(cls="logo--responsive")}<span class="topbar__spacer"></span>{search}<span class="topbar__spacer"></span>'
+            f'<div class="topbar__actions">{right}</div></div>{nav_el}</header>')
 
 
 def admin_topbar(pg: Page) -> str:
-    return (f'<header class="topbar">{logo(P("catalog"))}<span class="topbar__admin">Admin</span><span class="topbar__spacer"></span>'
-            f'<span class="avatar avatar--sm" aria-label="Signed in as {ADMIN["name"]}" role="img">{ADMIN["initials"]}</span></header>')
+    return (f'<header class="topbar"><div class="topbar__row">{logo(P("catalog"), "logo--responsive")}<span class="topbar__admin">Admin</span><span class="topbar__spacer"></span>'
+            f'<span class="avatar avatar--sm" aria-label="Signed in as {ADMIN["name"]}" role="img">{ADMIN["initials"]}</span></div></header>')
 
 
 ACCOUNT_TABS = [("overview", "Overview", "account"), ("listings", "Listings", "my-listings"), ("purchases", "Purchases", "purchases"),
@@ -470,16 +534,17 @@ def account_nav(active: str) -> str:
 
 
 def footer() -> str:
-    return (f'<footer class="footer">{logo(cls="logo--sm")}<nav aria-label="Footer"><a href="{P("rules")}">Marketplace rules</a>'
+    """Footer skeleton (page guidelines 7): the mark (not a second logo link), short links, "© TuTuMuch"."""
+    return (f'<footer class="footer"><span class="footer__mark">{mark()}</span><nav aria-label="Footer"><a href="{P("rules")}">Marketplace rules</a>'
             f'<a href="{P("privacy")}">Privacy</a><a href="{P("terms")}">Terms</a><a href="{P("welcome")}">About TuTuMuch</a><a href="{D("cookie-settings")}">Cookie settings</a></nav>'
-            f'<span>© 2026 TuTuMuch</span></footer>')
+            f'<span>© TuTuMuch</span></footer>')
 
 
 def page_body(pg: Page) -> str:
     if pg.shell == "auth":
         return (f'{pg.top}<div class="auth-layout">{logo(cls="logo--lg")}<main id="main" class="auth-card">{pg.main}</main></div>{pg.after}')
     if pg.shell == "bare":
-        return f'{pg.top}<header class="topbar">{logo()}</header><main id="main" class="{pg.main_class}">{pg.main}</main>{pg.after}'
+        return f'{pg.top}<header class="topbar"><div class="topbar__row">{logo(cls="logo--responsive")}</div></header><main id="main" class="{pg.main_class}">{pg.main}</main>{pg.after}'
     head = admin_topbar(pg) if pg.shell == "admin" else topbar(pg)
     sub = account_nav(pg.account) if pg.account else ""
     main_inner = (f'<div class="container">{sub}</div>' if sub else "")
@@ -507,6 +572,7 @@ def mock_bar(s: Screen, current: str) -> str:
 
 
 def render(s: Screen, state: str) -> str:
+    MARK_IDS[0] = 0
     desc, fn = s.states[state]
     out = fn()
     notes = getattr(out, "notes", "")
@@ -537,6 +603,7 @@ def render(s: Screen, state: str) -> str:
 <meta name="mock:requirements" content="{reqs}">
 <meta name="description" content="{esc(desc)}">
 <link rel="icon" href="../../../design-system/assets/favicon.ico">
+<link rel="stylesheet" href="../../assets/fonts.css">
 <link rel="stylesheet" href="../../assets/tokens.css">
 <link rel="stylesheet" href="../../assets/ui.css">
 <link rel="stylesheet" href="../../assets/mock.css">

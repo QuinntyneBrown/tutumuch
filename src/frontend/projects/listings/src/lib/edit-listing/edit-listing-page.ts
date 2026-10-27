@@ -8,6 +8,7 @@ import {
   CenterStateComponent,
   ErrorSummaryComponent,
   IconComponent,
+  SkeletonComponent,
   StatusComponent,
   StatusTone,
 } from '@tutumuch/components';
@@ -36,6 +37,7 @@ type View = 'loading' | 'error' | 'form' | 'locked' | 'sold' | 'withdrawn';
     IconComponent,
     ListingFormComponent,
     StatusComponent,
+    SkeletonComponent,
   ],
   templateUrl: './edit-listing-page.html',
   styleUrl: './edit-listing-page.css',

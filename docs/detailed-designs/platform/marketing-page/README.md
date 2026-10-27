@@ -5,16 +5,16 @@
 TuTuMuch is a marketplace for all things young girls: new and gently loved clothes, dance and
 sports gear, cameras and more, every listing for girls. This feature, part of the `platform`
 subsystem, adds a public marketing page at `/welcome` that sells TuTuMuch to shoppers and
-sellers, with a 30-second pitch video. Anyone can open it, signed in or not. It refines
+sellers, with a short pitch video (under 30 seconds). Anyone can open it, signed in or not. It refines
 `L1-020` through `L2-078` to `L2-083`. `/` stays the catalog.
 
 Terms used below:
 
-- **showcase** — the ink (plum) surface with a gradient used by the hero, the closing band and
-  the video frame; ink in both themes, with cream text, pink headline emphasis and raspberry,
-  lilac and sunny shapes ([design system](../../../design-system/components/marketing-hero.html))
+- **showcase** — the solid blush panel of the hero and the closing band (a plum panel in the
+  dark theme), with no gradient or shapes since ADR general/0009
+  ([design system](../../../design-system/components/marketing-hero.html))
 - **pitch video** — `tutumuch-pitch.mp4` (H.264/AAC) and `tutumuch-pitch.webm` (VP9/Opus),
-  30.0 s, with `tutumuch-pitch.vtt` captions (off until turned on), `tutumuch-pitch-poster.png`
+  15.1 s (under 30 s, `L2-080`), with `tutumuch-pitch.vtt` captions (off until turned on), `tutumuch-pitch-poster.png`
   and `tutumuch-share.jpg`, the 1200×630 link-preview image
 
 The page calls no TuTuMuch API endpoint; the shell's `GET /api/auth/me` decides the seller
@@ -39,11 +39,20 @@ says everything is for girls and never promises boys' or adult sizes
 | Component | Inputs and outputs | Notes |
 |---|---|---|
 | `tl-marketing-hero` | `eyebrow`, `lede`, `variant: 'hero' \| 'closing'`, `headingId`; slots `[title]`, `[actions]`, `[media]` | h1 in the hero, h2 in the closing band; re-points semantic tokens to the showcase |
-| `tl-shapes` | `density: 'full' \| 'quiet'` | Rounded party-pop blobs and a polka-dot band; `aria-hidden`; drift stops under reduced motion |
+| `tl-shapes` | — | Retired by ADR general/0009: no decorative shapes |
 | `tl-feature-band` | `eyebrow`, `heading`, `headingId`, `points`, `tone: 'default' \| 'surface'`, `stacked`; slots `[actions]`, body | Section labelled by its h2 |
 | `tl-steps` | `steps: { title, text }[]` | Ordered list, h3 titles |
 | `tl-video-poster` | `poster`, `label`, `duration`; output `watch` | Native button; no `<video>` on the page |
 | `tl-video-player` | `label`, `sources`, `captions`, `poster`, `autoplay` | States: loading, ready, error; Play/Pause, Captions (`aria-pressed`, off by default); error when the last `<source>` fails |
+
+### Presentation (page guidelines)
+
+Since [ADR general/0009](../../../adr/general/0009-page-guidelines-on-the-angular-and-giddy-stack.md)
+the markup above is drawn to [`docs/page-guidelines.md`](../../../page-guidelines.md); see
+[page-guidelines-conformance](../page-guidelines-conformance/README.md). The hero and the closing band are solid
+blush panels: `tl-shapes`, the gradient and the shape motion are gone. Tilly twirls above the video
+poster in the hero; "Shop the closet" in the hero is the page's one primary button and every other
+call to action is secondary; the shopper band uses the `blush` tone.
 
 ### Feature (`@tutumuch/marketing`)
 
@@ -70,13 +79,17 @@ copied to `docs/mocks/assets/media/`. `docs/mocks/_build/video/build_video.py` b
 (rerun: `python -I docs/mocks/_build/video/build_video.py`; see its
 [README](../../../mocks/_build/video/README.md)):
 
-1. Narration: six lines, each with caption text and spoken text, synthesised by **Kokoro-82M**
-   from Hugging Face (`onnx-community/Kokoro-82M-v1.0-ONNX`), voice **`af_bella`** at speed
-   1.12, bright and upbeat. Model files download to the git-ignored `kokoro/` folder.
-2. Timing: gaps stretch so the video is exactly 30.0 s.
-3. Slides: six 1920×1080 slides in TuTuMuch tokens (plum gradient, cream text, raspberry,
-   lilac and sunny party-pop blobs and polka dots, Giddy's rounded type, the wordmark),
-   screenshotted by Playwright Chromium.
+1. Narration: four lines for shoppers only (launch Phase 1: only TuTuMuch sells, `L2-094`),
+   each with caption text and spoken text, synthesised by **Kokoro-82M** from Hugging Face
+   (`onnx-community/Kokoro-82M-v1.0-ONNX`, or the same weights from the `kokoro-onnx` GitHub
+   release when Hugging Face is unreachable), voice **`af_bella`** at speed 1.12, bright and
+   upbeat. Model files download to the git-ignored `kokoro/` folder; Python packages are pinned
+   in `requirements.txt`.
+2. Timing: 0.5 s before the first line, 0.45 s between lines and 1.4 s after the last, so the
+   video is as long as the narration needs (15.1 s); the build stops if it would reach 30 s.
+3. Slides: four 1920×1080 slides drawn to the page guidelines (cream and blush, Fraunces and
+   DM Sans, the wordmark, Tilly in approved poses, the condition-badge colours, no gradients or
+   shapes), screenshotted by Playwright Chromium.
 4. Music: _Upbeat Ukulele Kids_ by Cold_Fire (Pixabay Content Licence), committed as an
    excerpt, at −9 dB and ducked by a sidechain compressor keyed on the voice.
 5. Encode: MP4 (libx264, AAC, faststart) and WebM (VP9, Opus). The WebM exists because
@@ -101,7 +114,7 @@ member is an administrator, `WelcomePage` reads `LaunchState.canSell()` and repl
 "Start selling" with `<p class="marketing-hero__soon">Selling opens soon.</p>`, the seller band's
 heading with "Selling opens soon.", its points with "Pass it on soon" and "Join today", and its
 button with `<p class="feature-band__note">For now, every item is hand-picked by TuTuMuch.</p>`;
-the closing hero keeps only "Shop the catalog" (mock `pages/welcome/selling-opens-soon`). The page
+the closing hero keeps only "Shop the closet" (mock `pages/welcome/selling-opens-soon`). The page
 still calls no endpoint itself: `LaunchState` is loaded by the app initializer.
 
 ## Requirements
@@ -137,4 +150,5 @@ with
 ## Open questions
 
 - Deferred: SEO beyond the title, meta description and link-preview tags, analytics, A/B tests, newsletter
-  sign-up, making `/welcome` the home page, translations and other video lengths or cuts.
+  sign-up, making `/welcome` the home page, translations, and a video cut for sellers once selling
+  opens to members (Phase 3).

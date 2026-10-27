@@ -40,27 +40,10 @@
       </fieldset>
     }
   }
-  @if (shownBrands().length) {
-    <fieldset class="filters__group">
-      <legend>Brand</legend>
-      @for (brand of shownBrands(); track brand; let i = $index) {
-        <tl-choice [inputId]="idPrefix() + '-brand-' + i">
-          <input
-            #box
-            type="checkbox"
-            [id]="idPrefix() + '-brand-' + i"
-            [checked]="query().brands.includes(brand)"
-            (change)="toggle('brands', brand, box.checked)"
-          />{{ brand }}</tl-choice
-        >
-      }
-      @if (moreBrands()) {
-        <button tlButton="link" class="filters__more" type="button" (click)="allBrands.set(true)">
-          All {{ brands().length }} brands
-        </button>
-      }
-    </fieldset>
-  }
+  <div class="filters__group" role="group" [attr.aria-labelledby]="idPrefix() + '-size'">
+    <span class="field__label" [id]="idPrefix() + '-size'">Size</span>
+    <p class="filters__size">Every item is in Girls’ sizes.</p>
+  </div>
   <fieldset class="filters__group">
     <legend>Condition</legend>
     @for (option of conditions; track option.slug) {
@@ -75,41 +58,67 @@
       >
     }
   </fieldset>
-  <fieldset class="filters__group">
-    <legend>Price</legend>
-    <div class="filters__range">
-      <label class="visually-hidden" [for]="idPrefix() + '-min'">Minimum price in dollars</label>
-      <tl-input-group addon="$">
-        <input
-          #min
-          class="input"
-          [id]="idPrefix() + '-min'"
-          inputmode="decimal"
-          autocomplete="off"
-          [value]="query().min"
-          [attr.aria-invalid]="error() ? 'true' : null"
-          [attr.aria-describedby]="error() ? idPrefix() + '-price-error' : null"
-          (input)="setPrice('min', min.value)"
-        />
-      </tl-input-group>
-      <span class="text-muted" aria-hidden="true">–</span>
-      <label class="visually-hidden" [for]="idPrefix() + '-max'">Maximum price in dollars</label>
-      <tl-input-group addon="$">
-        <input
-          #max
-          class="input"
-          [id]="idPrefix() + '-max'"
-          inputmode="decimal"
-          autocomplete="off"
-          [value]="query().max"
-          [attr.aria-invalid]="error() ? 'true' : null"
-          [attr.aria-describedby]="error() ? idPrefix() + '-price-error' : null"
-          (input)="setPrice('max', max.value)"
-        />
-      </tl-input-group>
+  <details #more class="filters__more-group" [open]="moreOpen()" (toggle)="userOpened.set(more.open)">
+    <summary>More filters</summary>
+    <div class="filters__more-body">
+      @if (shownBrands().length) {
+        <fieldset class="filters__group">
+          <legend>Brand</legend>
+          @for (brand of shownBrands(); track brand; let i = $index) {
+            <tl-choice [inputId]="idPrefix() + '-brand-' + i">
+              <input
+                #box
+                type="checkbox"
+                [id]="idPrefix() + '-brand-' + i"
+                [checked]="query().brands.includes(brand)"
+                (change)="toggle('brands', brand, box.checked)"
+              />{{ brand }}</tl-choice
+            >
+          }
+          @if (moreBrands()) {
+            <button tlButton="link" class="filters__more" type="button" (click)="allBrands.set(true)">
+              All {{ brands().length }} brands
+            </button>
+          }
+        </fieldset>
+      }
+      <fieldset class="filters__group">
+        <legend>Price</legend>
+        <div class="filters__range">
+          <label class="visually-hidden" [for]="idPrefix() + '-min'">Minimum price in dollars</label>
+          <tl-input-group addon="$">
+            <input
+              #min
+              class="input"
+              [id]="idPrefix() + '-min'"
+              inputmode="decimal"
+              autocomplete="off"
+              [value]="query().min"
+              [attr.aria-invalid]="error() ? 'true' : null"
+              [attr.aria-describedby]="error() ? idPrefix() + '-price-error' : null"
+              (input)="setPrice('min', min.value)"
+            />
+          </tl-input-group>
+          <span class="text-muted" aria-hidden="true">–</span>
+          <label class="visually-hidden" [for]="idPrefix() + '-max'">Maximum price in dollars</label>
+          <tl-input-group addon="$">
+            <input
+              #max
+              class="input"
+              [id]="idPrefix() + '-max'"
+              inputmode="decimal"
+              autocomplete="off"
+              [value]="query().max"
+              [attr.aria-invalid]="error() ? 'true' : null"
+              [attr.aria-describedby]="error() ? idPrefix() + '-price-error' : null"
+              (input)="setPrice('max', max.value)"
+            />
+          </tl-input-group>
+        </div>
+        @if (error(); as error) {
+          <span class="field__error" [id]="idPrefix() + '-price-error'">{{ error }}</span>
+        }
+      </fieldset>
     </div>
-    @if (error(); as error) {
-      <span class="field__error" [id]="idPrefix() + '-price-error'">{{ error }}</span>
-    }
-  </fieldset>
+  </details>
 </form>

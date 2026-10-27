@@ -6,12 +6,14 @@ import {
   ButtonDirective,
   BuyBarComponent,
   CenterStateComponent,
+  ConditionBadgeComponent,
   DialogService,
   GalleryComponent,
   IconComponent,
   ListingGridComponent,
   SellerSummaryComponent,
   SizeTagComponent,
+  SkeletonComponent,
 } from '@tutumuch/components';
 
 import { toCardView } from '../card-view';
@@ -37,6 +39,7 @@ export function listedAgo(iso: string, now = Date.now()): string {
 /**
  * The listing detail page at /items/{reference} (mocks pages/listing-detail): gallery, details,
  * seller summary and the buy bar for the viewer, with the loading, unavailable and error states.
+ * A sold listing is greyed and stamped Sold and offers "Find similar" (page guidelines 9).
  * The seller of an Active listing gets "Edit listing" and "Withdraw" (edit-and-withdraw-listing).
  * One column with a sticky buy bar below 992 px, two columns from 992 px (L2-025, L2-063).
  * All listing text is bound as text, never as HTML.
@@ -49,11 +52,13 @@ export function listedAgo(iso: string, now = Date.now()): string {
     ButtonDirective,
     BuyBarComponent,
     CenterStateComponent,
+    ConditionBadgeComponent,
     GalleryComponent,
     IconComponent,
     ListingGridComponent,
     SellerSummaryComponent,
     SizeTagComponent,
+    SkeletonComponent,
   ],
   providers: [ListingDetailStore],
   templateUrl: './listing-detail-page.html',

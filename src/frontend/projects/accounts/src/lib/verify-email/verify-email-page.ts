@@ -1,14 +1,14 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, input, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AccountsApi, AuthState, LaunchState, shortRef } from '@tutumuch/api';
-import { AlertComponent, ButtonDirective, IconComponent, SpinnerComponent } from '@tutumuch/components';
+import { AlertComponent, ButtonDirective, IconComponent, MarkComponent } from '@tutumuch/components';
 
 type State = 'loading' | 'verified' | 'expired' | 'used' | 'error';
 
 /** Opens a verification link at /verify?token=… (L2-002, mocks pages/verify-email). */
 @Component({
   selector: 'tl-verify-email-page',
-  imports: [RouterLink, AlertComponent, ButtonDirective, IconComponent, SpinnerComponent],
+  imports: [RouterLink, AlertComponent, ButtonDirective, IconComponent, MarkComponent],
   templateUrl: './verify-email-page.html',
   styleUrl: './verify-email-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -12,6 +12,7 @@ import {
   ListingGridComponent,
   LoadMoreComponent,
   RatingSummaryComponent,
+  SkeletonComponent,
   StatComponent,
 } from '@tutumuch/components';
 
@@ -62,6 +63,7 @@ export function memberSince(iso: string): string {
     LoadMoreComponent,
     RatingSummaryComponent,
     StatComponent,
+    SkeletonComponent,
   ],
   providers: [MemberProfileStore],
   templateUrl: './member-profile-page.html',

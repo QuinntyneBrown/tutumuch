@@ -20,11 +20,11 @@ Screens, states and copy come from `docs/mocks/pages/my-listings/` and `docs/moc
 
 ### Frontend (`TuTuMuch Web`, `@tutumuch/listings` in `src/frontend/projects/listings/src/lib/my-listings/`)
 
-- **`MyListingsPage`** — routed standalone component at `/account/listings`, inside the app shell. The listings library is mounted at `/` and owns `/sell`, `/sell/{reference}` and `/account/listings`. A visitor gets the error state from the `401` until the account shell adds a guard. The header shows "Your listings", a subtitle such as "5 listings · 1 active", and a primary "Sell an item" button with a plus icon that links to `/sell`. States:
+- **`MyListingsPage`** — routed standalone component at `/account/listings`, inside the app shell. The listings library is mounted at `/` and owns `/sell`, `/sell/{reference}` and `/account/listings`. A visitor gets the error state from the `401` until the account shell adds a guard. The header shows "Your listings", a subtitle such as "5 listings · 1 active", and a primary "Sell outgrown gear" button with a plus icon that links to `/sell`. States:
   - `loading` — the filter chips plus 4 skeleton rows matching thumbnail, title and price, `aria-busy="true"`, `aria-label="Loading listings"`; no subtitle.
   - `default` — all listings, newest first.
   - `filtered` — one chip pressed, for example "Sold", with only the matching rows.
-  - `empty` — tag icon, "Nothing listed yet", "List a dress, a leotard or anything she’s outgrown." and a primary "Sell an item" action, without chips (`L2-021`).
+  - `empty` — tag icon, "Nothing listed yet", "List a dress, a leotard or anything she’s outgrown." and a primary "Sell outgrown gear" action, without chips (`L2-021`).
   - `error` — refresh icon, "Couldn't load your listings", "Try again in a moment." with the correlation reference ("Ref …") and a "Try again" button (`L2-068`).
   - A filter that matches nothing shows the chips with a count of 0 and no rows; its copy is `<TO SUPPLY>`.
 - **Status filter** — `tl-filter-chips` from `@tutumuch/components`: `role="group"` with `aria-label="Filter by status"`, 6 toggle chips ("All", "Draft", "Active", "Reserved", "Sold", "Removed"), each with its count and `aria-pressed`. The chosen status is kept in the URL query (`?status=sold`), so the filter survives reload and back navigation; each change asks the API again with that status.

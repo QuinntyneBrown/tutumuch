@@ -1,9 +1,9 @@
 // Acceptance Test
-// Traces to: L2-078, L2-079, L2-080, L2-081, L2-082, L2-083
+// Traces to: L2-078, L2-079, L2-080, L2-081, L2-082, L2-083, L2-096
 // Description: The public marketing page at /welcome: sections and CTA targets for visitors and
 // members, the footer link, the pitch video (poster first, keyboard play and pause, captions off
-// until turned on, error state), reduced motion, heading order, title, meta description and
-// link-preview tags.
+// until turned on, error state), a solid hero with Tilly and no decorative shapes, reduced motion,
+// heading order, title, meta description and link-preview tags.
 // The media files come from the static build; the error state fails their route.
 
 import { expect, marcus, serveCatalog, signInAs, test } from '../fixtures';
@@ -42,12 +42,12 @@ test.describe('marketing page', () => {
     for (const link of await welcome.sellLinks().all()) await expect(link).toHaveAttribute('href', '/sell');
   });
 
-  test('Shop the catalog goes to the catalog', async ({ page }) => {
+  test('Shop the closet goes to the catalog', async ({ page }) => {
     await serveCatalog(page, 0);
     const welcome = new WelcomePage(page);
     await welcome.goto();
 
-    await welcome.link('Shop the catalog').click();
+    await welcome.link('Shop the closet').click();
     await expect(page).toHaveURL(/\/$/);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Find something she’ll love.');
   });
@@ -66,29 +66,28 @@ test.describe('marketing page', () => {
     expect(await new ShellPage(page).hasHorizontalScroll()).toBe(false);
   });
 
-  test('decorative shapes are hidden and stop moving under reduced motion', async ({ page }) => {
+  test('the hero is a solid panel with no decorative shapes or gradients and Tilly twirling', async ({ page }) => {
+    const welcome = new WelcomePage(page);
+    await welcome.goto();
+
+    await expect(welcome.main.locator('.shapes, .shapes__shape')).toHaveCount(0);
+    const backgrounds = await welcome.main
+      .locator('.marketing-hero')
+      .evaluateAll((els) => els.map((el) => getComputedStyle(el).backgroundImage));
+    expect(backgrounds.length).toBe(2);
+    expect(backgrounds.every((image) => image === 'none')).toBe(true);
+    await expect(welcome.main.getByRole('img', { name: /^Tilly twirling/ })).toBeVisible();
+  });
+
+  test('nothing moves under reduced motion', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     const welcome = new WelcomePage(page);
     await welcome.goto();
 
-    const shapes = welcome.main.locator('.shapes').first();
-    await expect(shapes).toHaveAttribute('aria-hidden', 'true');
-    const animations = await welcome.main
-      .locator('.shapes__shape')
-      .evaluateAll((els) => els.map((el) => getComputedStyle(el).animationName));
-    expect(animations.length).toBeGreaterThan(0);
-    expect(animations.every((name) => name === 'none')).toBe(true);
-  });
-
-  test('the shapes drift when motion is allowed', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'no-preference' });
-    await new WelcomePage(page).goto();
-
-    const name = await page
-      .locator('.shapes__shape')
-      .first()
-      .evaluate((el) => getComputedStyle(el).animationName);
-    expect(name).toBe('shape-drift');
+    const durations = await welcome.main
+      .locator('a, button')
+      .evaluateAll((els) => els.map((el) => parseFloat(getComputedStyle(el).transitionDuration)));
+    expect(durations.every((d) => d < 0.02)).toBe(true);
   });
 
   test('the footer links to the marketing page', async ({ page }) => {
@@ -175,7 +174,7 @@ test.describe('pitch video', () => {
     await expect(welcome.dialog.getByRole('button', { name: 'Try again' })).toBeVisible();
 
     await welcome.dialog.getByRole('button', { name: 'Close' }).click();
-    await welcome.link('Shop the catalog').click();
+    await welcome.link('Shop the closet').click();
     await expect(page).toHaveURL(/\/$/);
   });
 });

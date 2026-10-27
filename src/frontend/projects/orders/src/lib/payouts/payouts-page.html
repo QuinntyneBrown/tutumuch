@@ -4,12 +4,12 @@
     <div class="stats payouts__stats" aria-busy="true">
       @for (stat of [1, 2]; track stat) {
         <div class="stat">
-          <span class="skeleton skeleton--text payouts__skeleton-label"></span>
-          <span class="skeleton skeleton--title payouts__skeleton-value"></span>
+          <tl-skeleton class="payouts__skeleton-label" />
+          <tl-skeleton shape="title" class="payouts__skeleton-value" />
         </div>
       }
     </div>
-    <span class="skeleton skeleton--rect payouts__skeleton-row"></span>
+    <tl-skeleton shape="rect" class="payouts__skeleton-row" />
   }
   @case ('error') {
     <tl-empty-state icon="alert" heading="Couldn’t load payouts" tone="error">
@@ -23,7 +23,7 @@
         <tl-empty-state icon="tag" heading="No payouts yet">
           Your earnings show up here after your first sale.
           @if (launch.canSell()) {
-            <a actions tlButton="primary" routerLink="/sell">Sell an item</a>
+            <a actions tlButton="primary" routerLink="/sell">Sell outgrown gear</a>
           }
         </tl-empty-state>
       } @else {

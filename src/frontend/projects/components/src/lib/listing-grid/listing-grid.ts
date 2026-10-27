@@ -1,14 +1,15 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 import { ListingCardComponent, ListingCardView } from '../listing-card/listing-card';
+import { SkeletonComponent } from '../skeleton/skeleton';
 
 /**
  * The responsive grid of listing cards: 2 columns below 768 px, 3 from 768 px and 4 from 992 px
- * (L2-061, design system: Listing card). While loading it shows 8 skeleton cards in the same shape.
+ * (L2-061, design system: Listing card). While loading it shows 8 blush skeleton cards in the same shape.
  */
 @Component({
   selector: 'tl-listing-grid',
-  imports: [ListingCardComponent],
+  imports: [ListingCardComponent, SkeletonComponent],
   templateUrl: './listing-grid.html',
   styleUrl: './listing-grid.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

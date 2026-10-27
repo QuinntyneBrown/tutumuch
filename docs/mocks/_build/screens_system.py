@@ -103,7 +103,7 @@ def simple(sid, title, route, reqs, desc, page_fn, na=None):
 
 
 simple("not-found", "Not found", "/*", ["L2-068"], "Unknown URL: say so plainly, offer the shop.",
-       lambda: Page(main=center("4<em>0</em>4", "Page not found", "The link may be old or mistyped.", btn("Back to shop", "primary", P("catalog")))),
+       lambda: Page(main=center("4<em>0</em>4", "Page not found", "The link may be old or mistyped.", btn("Shop the closet", "primary", P("catalog")))),
        na={"loading": "Shown after routing; nothing to load.", "empty": "Not a collection.", "error": "This page is itself the error."})
 
 simple("forbidden", "Forbidden", "/403", ["L2-010", "L2-068"], "Signed in but not allowed: who can see this and a way back.",
@@ -112,7 +112,7 @@ simple("forbidden", "Forbidden", "/403", ["L2-010", "L2-068"], "Signed in but no
 
 simple("server-error", "Server error", "/error", ["L2-068"], "Unhandled 500: “Something went wrong”, Try again and the correlation ID.",
        lambda: Page(main=center("5<em>0</em>0", "Something went wrong", "It’s on our side. Your data is safe.",
-                                btn("Try again", "primary", icon="refresh") + btn("Back to shop", href=P("catalog")), ref="Ref 3c8e-1d42-a7f0")),
+                                btn("Try again", "primary", icon="refresh") + btn("Shop the closet", href=P("catalog")), ref="Ref 3c8e-1d42-a7f0")),
        na={"loading": "Rendered from the error response; nothing to load.", "empty": "Not a collection.", "error": "This page is itself the error."})
 
 simple("offline", "Offline", "(any)", ["L2-068"], "The device lost its connection: “You’re offline”, retry when back.",
@@ -142,7 +142,7 @@ def rules_body() -> str:
              ("Ship in 5 business days", "Add tracking or the order is cancelled and refunded."),
              ("10% fee", "Taken from item plus shipping when the order completes."),
              ("US only", "Prices in US dollars, shipping within the United States."),
-             ("No counterfeits", "Fakes are removed from the catalog.")]
+             ("No counterfeits", "Fakes are removed from the closet.")]
     lst = "".join(f'<li class="settings-list__body" style="padding-block: var(--space-5); border-bottom: 1px solid var(--color-border-default);">'
                   f'<span class="settings-list__title">{t}</span><span class="settings-list__meta">{d}</span></li>' for t, d in rules)
     return f'<div class="stack stack--lg">{sizes}<ol class="rules-list" role="list">{lst}</ol></div>'

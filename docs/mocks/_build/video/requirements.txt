@@ -1,0 +1,8 @@
+# Python packages for build_video.py (the versions the committed media were built with).
+# python -m pip install -r docs/mocks/_build/video/requirements.txt
+# python -m playwright install chromium
+playwright==1.63.0
+kokoro-onnx==0.6.1
+onnxruntime==1.29.0
+huggingface_hub==2.3.0
+numpy==2.5.3

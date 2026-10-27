@@ -8,6 +8,7 @@ import {
   FilterChipsComponent,
   IconComponent,
   ItemRowComponent,
+  SkeletonComponent,
   StatusComponent,
   ToastService,
 } from '@tutumuch/components';
@@ -41,6 +42,7 @@ import {
     IconComponent,
     ItemRowComponent,
     StatusComponent,
+    SkeletonComponent,
   ],
   templateUrl: './my-listings-page.html',
   styleUrl: './my-listings-page.css',

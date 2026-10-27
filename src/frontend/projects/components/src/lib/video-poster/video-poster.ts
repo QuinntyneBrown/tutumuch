@@ -16,7 +16,7 @@ import { IconComponent } from '../icon/icon';
 export class VideoPosterComponent {
   readonly poster = input.required<string>();
   readonly label = input.required<string>();
-  /** Length shown in the corner, such as 0:30. */
+  /** Length shown in the corner, such as 0:15. */
   readonly duration = input('');
   readonly watch = output();
 }

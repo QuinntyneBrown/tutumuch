@@ -34,7 +34,7 @@ test.describe('empty guest shell', () => {
       await expect(shell.footerLink(name)).toBeVisible();
     }
     await expect(shell.footer.getByRole('button', { name: 'Cookie settings' })).toBeVisible();
-    await expect(shell.footer).toContainText(`© ${new Date().getFullYear()} TuTuMuch`);
+    await expect(shell.footer).toContainText('© TuTuMuch');
     expect(await shell.hasHorizontalScroll()).toBe(false);
     expect(unfixturedApiCalls).toEqual([]);
   });
@@ -48,10 +48,10 @@ test.describe('empty guest shell', () => {
     const menu = page.getByRole('dialog', { name: 'Menu' });
     await expect(shell.menuButton).toHaveAttribute('aria-expanded', 'true');
     await expect(menu.getByRole('link')).toHaveText([
-      'Clothing',
-      'Shoes',
       'Dance',
       'Sports',
+      'Clothing',
+      'Shoes',
       'Cameras and tech',
       'Toys and crafts',
     ]);

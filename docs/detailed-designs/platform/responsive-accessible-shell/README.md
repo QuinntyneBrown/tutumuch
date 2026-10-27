@@ -78,11 +78,22 @@ Per `AGENTS.md`, the application project holds `AppComponent`, the four shell co
   menu button through `SheetService` as a full-screen sheet with `id="menu"`,
   `role="dialog"`, `aria-modal="true"`, visually hidden heading "Menu", and a
   "Close menu" button that receives initial focus. Body: category links (large),
-  then for a member "Sell an item", "Your listings", "Purchases", "Sales",
-  "Settings" and a "Sign out" button; for a guest "Sell an item",
+  then for a member "Sell outgrown gear", "Your listings", "Purchases", "Sales",
+  "Settings" and a "Sign out" button; for a guest "Sell outgrown gear",
   "Marketplace rules" with "Sign in" and "Join TuTuMuch" buttons. States: `default`
   (member), `guest`. The sheet closes on navigation and on a resize to 768 px or
   wider.
+
+### Presentation (page guidelines)
+
+Since [ADR general/0009](../../../adr/general/0009-page-guidelines-on-the-angular-and-giddy-stack.md)
+the markup above is drawn to [`docs/page-guidelines.md`](../../../page-guidelines.md); see
+[page-guidelines-conformance](../page-guidelines-conformance/README.md). The top bar has two rows: `tl-logo`
+(the mark under 640px, inside the same home link), search and Sell and Account, then the six
+category links in the guideline order from 768px, with the menu button and sheet below 768px
+instead of below 1280px. The footer shows `tl-mark`, its links and "© TuTuMuch". Catalog routes
+use a `wide` shell (80rem container); other pages keep 72rem. Loading states are `tl-skeleton`
+blocks in blush.
 
 ### Frontend — shared behaviour (`src/frontend/projects/components/src/lib/`)
 

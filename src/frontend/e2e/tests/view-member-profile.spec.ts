@@ -87,7 +87,7 @@ test.describe('view member profile', () => {
 
     await expect(profile.heading).toHaveText('This member isn’t available');
     await expect(page.getByText('The account may have been closed.')).toBeVisible();
-    await expect(page.locator('main').getByRole('link', { name: 'Back to shop' })).toHaveAttribute('href', '/');
+    await expect(page.locator('main').getByRole('link', { name: 'Shop the closet' })).toHaveAttribute('href', '/');
   });
 
   test('a failure shows the reference and Try again loads the profile', async ({ page }) => {

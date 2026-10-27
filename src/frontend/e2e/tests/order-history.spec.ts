@@ -108,8 +108,8 @@ test.describe('order history', () => {
     await history.goto();
 
     await expect(history.empty).toContainText('Nothing bought yet');
-    await expect(history.empty).toContainText('Everything in the catalog already fits.');
-    await expect(history.empty.getByRole('link', { name: 'Browse the catalog' })).toHaveAttribute('href', '/');
+    await expect(history.empty).toContainText('Find her next favourite thing in the closet.');
+    await expect(history.empty.getByRole('link', { name: 'Shop the closet' })).toHaveAttribute('href', '/');
     await expect(history.subtitle).toHaveCount(0);
   });
 
@@ -120,7 +120,7 @@ test.describe('order history', () => {
 
     await expect(history.empty).toContainText('No sales yet');
     await expect(history.empty).toContainText('Sold items show up here with what to do next.');
-    await expect(history.empty.getByRole('link', { name: 'Sell an item' })).toHaveAttribute('href', '/sell');
+    await expect(history.empty.getByRole('link', { name: 'Sell outgrown gear' })).toHaveAttribute('href', '/sell');
   });
 
   test('a failed load shows the reference and tries again', async ({ page }) => {

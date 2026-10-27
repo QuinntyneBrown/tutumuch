@@ -72,7 +72,7 @@ account area next to "Profile" and "Settings". Composition follows
   a `GET` alone never changes state. States:
   - *working* — "Unsubscribing" with the spinner "Turning off news from TuTuMuch…".
   - *unsubscribed* — "You’re unsubscribed", "You won’t get news from TuTuMuch any more. Account
-    security and order emails still arrive.", "Back to shop" and "Manage your emails"
+    security and order emails still arrive.", "Shop the closet" and "Manage your emails"
     (`/account/emails`, to opt back in after signing in).
   - *invalid link* — "This link doesn’t work", "It may be incomplete. You can turn off news
     from TuTuMuch in your email settings." and "Manage your emails".

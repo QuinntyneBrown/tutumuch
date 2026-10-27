@@ -15,6 +15,8 @@ import { ListingCardPhoto } from '../listing-card/listing-card';
 })
 export class GalleryComponent {
   readonly photos = input.required<ListingCardPhoto[]>();
+  /** Sold out: every photo is greyed (page guidelines 9). */
+  readonly sold = input(false);
 
   readonly selected = signal(0);
   /** The main view is half the page from 992 px and the full width below it. */

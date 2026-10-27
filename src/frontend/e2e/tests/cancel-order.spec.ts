@@ -73,7 +73,7 @@ test.describe('cancel order: seller', () => {
 
     await expect(dialog.root).toBeVisible();
     await expect(dialog.root).toContainText(
-      'twirly_tara is refunded $48.15 in full. The listing stays off the catalog until you relist.',
+      'twirly_tara is refunded $48.15 in full. The listing stays out of the closet until you relist.',
     );
     await expect(dialog.reasons).toHaveCount(4);
     await expect(dialog.root.locator('fieldset label')).toHaveText([
@@ -92,7 +92,7 @@ test.describe('cancel order: seller', () => {
     expect(sent).toEqual([{ reason: 'ItemDamaged', note: 'Found a crack while packing.' }]);
     await expect(salePage.heading).toHaveText('Cancelled');
     await expect(salePage.alert).toContainText('Cancelled · Buyer refunded in full');
-    await expect(salePage.alert).toContainText('The listing stays off the catalog until you relist it.');
+    await expect(salePage.alert).toContainText('The listing stays out of the closet until you relist it.');
     await expect(salePage.relistItem).toBeVisible();
     await expect(salePage.addTracking).toHaveCount(0);
     await expect(salePage.cancelOrder).toHaveCount(0);
@@ -218,7 +218,7 @@ test.describe('cancel order: seller', () => {
     await salePage.relistItem.click();
     const dialog = new RelistDialog(page);
     await expect(dialog.root).toContainText(
-      'It goes back in the catalog with its original photos, price and description.',
+      'It goes back in the closet with its original photos, price and description.',
     );
     await expect(dialog.item).toContainText('Unicorn hoodie, lilac');
     await expect(dialog.item).toContainText('$38.00 · $7.00 shipping');
@@ -228,7 +228,7 @@ test.describe('cancel order: seller', () => {
     await expect(dialog.root).toBeHidden();
     expect(relisted).toBe(1);
     await expect(salePage.relistItem).toHaveCount(0);
-    await expect(salePage.alert).toContainText('The listing is back in the catalog.');
+    await expect(salePage.alert).toContainText('The listing is back in the closet.');
     expect(unfixturedApiCalls).toEqual([]);
   });
 
@@ -336,7 +336,7 @@ test.describe('cancel order: buyer', () => {
     await expect(orderPage.alert).toContainText('$102.34 back to Visa ending 4242. Allow 5–10 days.');
     await expect(orderPage.quote).toContainText('“Found a crack while packing.”');
     await expect(orderPage.quote).toContainText('tutu_tessa');
-    await expect(orderPage.shopSimilar).toHaveAttribute('href', '/');
+    await expect(orderPage.findSimilar).toHaveAttribute('href', '/');
   });
 
   test('a shipped order offers no cancellation', async ({ page }) => {

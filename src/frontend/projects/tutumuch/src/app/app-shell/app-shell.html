@@ -19,7 +19,13 @@
     [sellVisible]="launch.canSell()"
     (searched)="search($event)"
   />
-  <main id="main" [class]="shell() === 'marketing' ? 'marketing' : 'container page'" tabindex="-1">
+  <main
+    id="main"
+    [class]="
+      shell() === 'marketing' ? 'marketing' : shell() === 'wide' ? 'container container--wide page' : 'container page'
+    "
+    tabindex="-1"
+  >
     <router-outlet />
   </main>
   <tl-footer (cookieSettings)="cookieSettings.open()" />

@@ -1,7 +1,10 @@
 @switch (state()) {
   @case ('loading') {
     <div><h1>Verifying</h1></div>
-    <tl-spinner label="Checking your link…" />
+    <div class="cluster" aria-busy="true">
+      <tl-mark />
+      <span class="text-muted" role="status">Checking your link…</span>
+    </div>
   }
   @case ('verified') {
     <div>
@@ -11,7 +14,7 @@
     <div class="stack">
       <a tlButton="primary" size="lg" [block]="true" routerLink="/">Start shopping</a>
       @if (launch.canSell()) {
-        <a tlButton size="lg" [block]="true" routerLink="/sell">Sell an item</a>
+        <a tlButton size="lg" [block]="true" routerLink="/sell">Sell outgrown gear</a>
       }
     </div>
   }
