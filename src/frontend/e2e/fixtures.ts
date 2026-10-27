@@ -365,6 +365,7 @@ export function listingDetail(fields: Record<string, unknown> = {}, photos = 3):
     photos: Array.from({ length: photos }, (_, i) => photo(i + 1)),
     seller: { displayName: 'tutu_tessa', completedSalesCount: 0, ratingAverage: null, publishedReviewCount: 0 },
     viewer: { relation: 'OtherMember' },
+    showcase: false,
     ...fields,
   };
 }
@@ -771,4 +772,28 @@ export function itemRequest(fields: Record<string, unknown> = {}): Record<string
 /** GET /api/me/item-requests: the requests, how many are open and the limit of 20 (L2-098). */
 export function myItemRequests(items: Record<string, unknown>[], openCount = items.length): Record<string, unknown> {
   return { items, openCount, limit: 20 };
+}
+
+/** The member's request for the showcase listing L-10001 (L2-109). */
+export function showcaseRequest(fields: Record<string, unknown> = {}): Record<string, unknown> {
+  return {
+    listingReference: 'L-10001',
+    note: 'Size 7 if you find one, for her spring recital.',
+    requestedAt: '2026-10-24T15:00:00Z',
+    updatedAt: '2026-10-24T15:00:00Z',
+    ...fields,
+  };
+}
+
+/** A request on the administrator's list at /admin/requests (L2-110). */
+export function adminShowcaseRequest(fields: Record<string, unknown> = {}): Record<string, unknown> {
+  return {
+    listingReference: 'L-10001',
+    listingTitle: 'Gold sequin recital tutu',
+    memberDisplayName: 'tutu_tessa',
+    memberEmail: 'tessa.bell@example.com',
+    note: 'Size 7 if you find one, for her spring recital.',
+    requestedAt: '2026-10-25T09:12:00Z',
+    ...fields,
+  };
 }

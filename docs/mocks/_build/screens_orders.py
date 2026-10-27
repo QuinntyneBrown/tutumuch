@@ -154,7 +154,7 @@ def _():
 
 @c.state("showcase", "Checkout opened for a showcase listing: the API refused it (409 LISTING_SHOWCASE); no address or card is asked for (L2-108).")
 def _():
-    main = (f'<div class="center-state"><span class="photo__stamp photo__stamp--sold" style="position: static;">Sold</span><h1>This one has already found a home</h1>'
+    main = (f'<div class="center-state">{ic("heart", "icon icon--lg")}<h1>This one has already found a home</h1>'
             f'<p class="text-muted">We can look for another one like it.</p>'
             f'<div class="actions">{btn("Request this item", "primary", P("listing-detail", "showcase-sold"))}{btn("Keep shopping", href=P("catalog"))}</div></div>')
     return Page(main=main)

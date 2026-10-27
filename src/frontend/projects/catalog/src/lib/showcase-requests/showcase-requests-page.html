@@ -1,0 +1,72 @@
+@if (view() === 'forbidden') {
+  <tl-center-state code="403" heading="You can’t open this">
+    <p class="text-muted">Only TuTuMuch’s administrators can see requests.</p>
+    <a actions tlButton="primary" routerLink="/">Shop the closet</a>
+  </tl-center-state>
+} @else {
+  <div class="page-header">
+    <div>
+      <h1>Showcase requests</h1>
+      @if (view() === 'loaded' && requests().length) {
+        <p class="subtitle">{{ subtitle() }}</p>
+      }
+    </div>
+  </div>
+  @switch (view()) {
+    @case ('loading') {
+      <ul class="request-list" role="list" aria-busy="true" aria-label="Loading requests">
+        @for (row of [1, 2, 3]; track row) {
+          <li class="request">
+            <div class="request__head">
+              <div class="stack stack--sm showcase-requests__skeleton">
+                <tl-skeleton shape="title" width="40%" />
+                <tl-skeleton width="25%" />
+              </div>
+            </div>
+            <tl-skeleton width="70%" />
+          </li>
+        }
+      </ul>
+    }
+    @case ('error') {
+      <tl-empty-state icon="refresh" heading="Couldn’t load requests" tone="error">
+        Something went wrong on our side. <span class="ref">{{ errorRef() }}</span>
+        <button actions tlButton="primary" type="button" (click)="load()"><tl-icon name="refresh" />Try again</button>
+      </tl-empty-state>
+    }
+    @default {
+      @if (!requests().length) {
+        <tl-empty-state icon="heart" heading="No requests yet">
+          When a shopper asks for a showcase item, it shows up here.
+        </tl-empty-state>
+      } @else {
+        <ul class="request-list" role="list">
+          @for (request of requests(); track request.listingReference + request.memberEmail) {
+            <li class="request">
+              <div class="request__head">
+                <div class="stack stack--sm">
+                  <h2 class="request__title">
+                    <a [routerLink]="['/items', request.listingReference]">{{ request.listingTitle }}</a>
+                  </h2>
+                  <span class="text-sm text-muted"
+                    >{{ request.listingReference }} ·
+                    <time [attr.datetime]="request.requestedAt">{{ when(request.requestedAt) }}</time></span
+                  >
+                </div>
+                <div class="stack stack--sm showcase-requests__who">
+                  <span class="text-label">{{ request.memberDisplayName }}</span>
+                  <a class="text-sm" [href]="'mailto:' + request.memberEmail">{{ request.memberEmail }}</a>
+                </div>
+              </div>
+              @if (request.note) {
+                <p class="request__note">{{ request.note }}</p>
+              } @else {
+                <p class="request__note text-sm text-muted">No note</p>
+              }
+            </li>
+          }
+        </ul>
+      }
+    }
+  }
+}

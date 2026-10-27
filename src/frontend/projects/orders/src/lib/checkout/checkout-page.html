@@ -29,6 +29,15 @@
       <a actions tlButton routerLink="/">Keep shopping</a>
     </tl-center-state>
   }
+  @case ('showcase') {
+    <tl-center-state icon="heart" heading="This one has already found a home">
+      <p class="text-muted">We can look for another one like it.</p>
+      <a actions tlButton="primary" [routerLink]="['/items', reference()]" [queryParams]="{ request: 1 }"
+        >Request this item</a
+      >
+      <a actions tlButton routerLink="/">Keep shopping</a>
+    </tl-center-state>
+  }
   @case ('expired') {
     <tl-center-state icon="clock" heading="Your reservation ended">
       <p class="text-muted">

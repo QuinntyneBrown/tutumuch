@@ -1,4 +1,9 @@
-@if (toBuy()) {
+@if (toRequest()) {
+  <div>
+    <h1>Sign in to request this item</h1>
+    <p class="text-muted sign-in__lead">You’ll go straight back to the item and your request.</p>
+  </div>
+} @else if (toBuy()) {
   <div>
     <h1>Sign in to buy</h1>
     <p class="text-muted sign-in__lead">You’ll go straight back to the item.</p>
@@ -75,4 +80,4 @@
     </button>
   </div>
 </form>
-<p class="text-sm text-muted">New to TuTuMuch? <a routerLink="/join">Join</a></p>
+<p class="text-sm text-muted">New to TuTuMuch? <a routerLink="/join" [queryParams]="joinParams()">Join</a></p>

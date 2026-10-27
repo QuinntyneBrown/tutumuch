@@ -22,9 +22,16 @@ export {
   type ListingDetail,
   type ViewerRelation,
 } from './lib/catalog/catalog-api';
+export {
+  ShowcaseApi,
+  type AdminShowcaseRequest,
+  type SentShowcaseRequest,
+  type ShowcaseRequest,
+} from './lib/catalog/showcase-api';
 export { API_BASE_URL } from './lib/api-base-url';
 export { shortRef, toResult, type ApiProblem, type ApiResult, type FieldProblem } from './lib/api-result';
 export { AuthState, type CurrentMember } from './lib/auth/auth-state';
+export { isShowcaseRequestUrl, safeReturnUrl, showcaseRequestUrl } from './lib/auth/return-url';
 export { LaunchState, type Launch } from './lib/launch/launch-state';
 export {
   ListingsApi,

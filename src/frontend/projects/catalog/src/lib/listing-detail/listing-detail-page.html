@@ -88,6 +88,24 @@
                 >
               </tl-buy-bar>
             }
+            @case ('showcase') {
+              @if (store.soldNoticeShown()) {
+                <tl-sold-notice>
+                  @if (requestedOn(); as date) {
+                    You asked for this on {{ date }}. Add a note or change it any time.
+                  } @else {
+                    We can look for another one like it. Tell us what you’re after.
+                  }
+                  <button actions tlButton="primary" size="lg" type="button" (click)="requestItem()">
+                    {{ requestedOn() ? 'Update your request' : 'Request this item' }}
+                  </button>
+                </tl-sold-notice>
+              } @else {
+                <tl-buy-bar [total]="money(listing.total)">
+                  <button tlButton="primary" size="lg" type="button" (click)="buyShowcase()">Buy now</button>
+                </tl-buy-bar>
+              }
+            }
             @case ('manage') {
               <tl-buy-bar [total]="money(listing.total)">
                 <a tlButton="primary" size="lg" [routerLink]="['/items', listing.reference, 'edit']"
@@ -96,6 +114,19 @@
                 <button tlButton size="lg" type="button" (click)="withdraw()">Withdraw</button>
               </tl-buy-bar>
             }
+          }
+          @if (showcaseSwitch()) {
+            <div class="cluster listing-detail__showcase">
+              <tl-switch
+                label="Showcase"
+                hint="Buy now shows Sold and Request this item"
+                [(checked)]="showcaseOn"
+                (checkedChange)="toggleShowcase($event)"
+              />
+              @if (listing.showcase) {
+                <a tlButton="ghost" routerLink="/admin/requests">See requests</a>
+              }
+            </div>
           }
           @if (listing.status === 'Sold') {
             <div class="cluster">

@@ -1,0 +1,39 @@
+:host {
+  display: block;
+}
+.request-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--color-border-default);
+}
+.request {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding-block: var(--space-8);
+  border-bottom: 1px solid var(--color-border-default);
+}
+.request__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+.request__title {
+  font: var(--text-h4);
+  letter-spacing: var(--letter-spacing-tight);
+  overflow-wrap: anywhere;
+}
+.request__note {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.showcase-requests__who {
+  flex: none;
+  overflow-wrap: anywhere;
+}
+.showcase-requests__skeleton {
+  flex: 1;
+}

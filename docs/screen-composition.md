@@ -254,7 +254,7 @@ back to `/items/{id}`, and a visitor goes to sign in with checkout as the return
   Country), `tl-order-summary`, `tlButton` (primary lg block "Pay $102.34", or "Continue" before
   a total exists, busy while submitting and disabled at zero; ghost "Cancel and release item"),
   `tl-center-state` (conflict: icon `lock`; expired: icon `clock`; showcase, on 409
-  `LISTING_SHOWCASE` (`L2-108`): heading "This one has already found a home", "We can look for
+  `LISTING_SHOWCASE` (`L2-108`): icon `heart`, heading "This one has already found a home", "We can look for
   another one like it.", primary "Request this item" to `/items/{id}?request=1` and "Keep
   shopping", no address or card field; error: reference and "Try again" with icon `refresh`),
   `tl-icon`

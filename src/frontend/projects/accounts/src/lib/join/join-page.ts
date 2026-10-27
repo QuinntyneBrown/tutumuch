@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject, input, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { AccountsApi, ApiProblem, shortRef } from '@tutumuch/api';
+import { AccountsApi, ApiProblem, isShowcaseRequestUrl, safeReturnUrl, shortRef } from '@tutumuch/api';
 import {
   AlertComponent,
   ButtonDirective,
@@ -28,6 +28,8 @@ type FieldId = (typeof FIELDS)[keyof typeof FIELDS];
 /**
  * Join TuTuMuch at /join (L2-001, L2-088, mocks pages/register). Client checks mirror TuTuMuch API and
  * are never trusted. "Continue with Google" sits above the form when a Google client is configured.
+ * A same-site returnUrl is kept by Google and by Sign in; from a showcase request the success state
+ * leads to signing in and back to the request (L2-109).
  */
 @Component({
   selector: 'tl-join-page',
@@ -50,6 +52,13 @@ type FieldId = (typeof FIELDS)[keyof typeof FIELDS];
 export class JoinPage implements OnInit {
   private readonly api = inject(AccountsApi);
 
+  /** Where to go after joining and signing in, bound from the query string; only same-site paths are followed. */
+  readonly returnUrl = input<string>('');
+  /** Joining from "Request this item" on a showcase listing (L2-109). */
+  readonly toRequest = computed(() => isShowcaseRequestUrl(this.returnUrl()));
+  /** The Sign in links keep the return URL. */
+  readonly signInParams = computed(() => (this.returnUrl() ? { returnUrl: safeReturnUrl(this.returnUrl()) } : null));
+
   readonly form = inject(NonNullableFormBuilder).group({
     displayName: '',
     email: '',
@@ -66,7 +75,7 @@ export class JoinPage implements OnInit {
   /** True once TuTuMuch API said a Google client is configured; the button renders only then. */
   readonly googleOffered = signal(false);
   readonly leavingForGoogle = signal(false);
-  readonly googleStartUrl = this.api.googleStartUrl('/');
+  readonly googleStartUrl = computed(() => this.api.googleStartUrl(safeReturnUrl(this.returnUrl())));
 
   readonly summary = computed<SummaryError[]>(() =>
     Object.values(FIELDS)

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, input, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AccountsApi, AuthState, shortRef } from '@tutumuch/api';
+import { AccountsApi, AuthState, isShowcaseRequestUrl, safeReturnUrl, shortRef } from '@tutumuch/api';
 import {
   AlertComponent,
   ButtonDirective,
@@ -42,6 +42,10 @@ export class SignInPage implements OnInit {
   readonly ref = input<string>('');
   /** Buy now on a listing sends a visitor here with the listing as returnUrl (L2-026). */
   readonly toBuy = computed(() => /^\/items\/[^/]+$/.test(this.returnUrl() ?? ''));
+  /** "Request this item" on a showcase listing sends a visitor here to come back to the request (L2-109). */
+  readonly toRequest = computed(() => isShowcaseRequestUrl(this.returnUrl()));
+  /** The Join link keeps the return URL, so a new member comes back to it too. */
+  readonly joinParams = computed(() => (this.returnUrl() ? { returnUrl: safeReturnUrl(this.returnUrl()) } : null));
 
   readonly form = inject(NonNullableFormBuilder).group({ email: '', password: '' });
   readonly busy = signal(false);
@@ -90,7 +94,6 @@ export class SignInPage implements OnInit {
 
   private safeReturnUrl(): string {
     // The router binds undefined, not the default, when the query parameter is absent.
-    const url = this.returnUrl() ?? '';
-    return url.startsWith('/') && !url.startsWith('//') ? url : '/';
+    return safeReturnUrl(this.returnUrl());
   }
 }

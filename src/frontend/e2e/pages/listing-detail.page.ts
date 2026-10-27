@@ -20,6 +20,17 @@ export class ListingDetailPage {
   readonly reservedAlert: Locator;
   readonly similar: Locator;
   readonly loading: Locator;
+  /** Buy now on a showcase listing: a button, not a link to checkout (L2-108). */
+  readonly buyNowButton: Locator;
+  /** The Sold notice that replaces the buy bar after Buy now on a showcase listing. */
+  readonly soldNotice: Locator;
+  readonly soldNoticeHeading: Locator;
+  readonly requestItem: Locator;
+  readonly updateRequest: Locator;
+  /** The owner's Showcase switch and See requests link (L2-107). */
+  readonly showcaseSwitch: Locator;
+  readonly seeRequests: Locator;
+  readonly toast: Locator;
 
   constructor(private readonly page: Page) {
     this.heading = page.locator('main').getByRole('heading', { level: 1 });
@@ -40,10 +51,18 @@ export class ListingDetailPage {
     this.reservedAlert = this.info.locator('.alert');
     this.similar = page.getByRole('region', { name: 'Similar in the closet' });
     this.loading = page.locator('[aria-busy="true"][aria-label="Loading listing"]');
+    this.buyNowButton = page.getByRole('button', { name: 'Buy now' });
+    this.soldNotice = page.locator('.sold-notice');
+    this.soldNoticeHeading = this.soldNotice.getByRole('heading', { name: 'This one has already found a home' });
+    this.requestItem = this.soldNotice.getByRole('button', { name: 'Request this item' });
+    this.updateRequest = this.soldNotice.getByRole('button', { name: 'Update your request' });
+    this.showcaseSwitch = page.getByRole('switch', { name: 'Showcase' });
+    this.seeRequests = page.getByRole('link', { name: 'See requests' });
+    this.toast = page.locator('.toast-region .toast');
   }
 
-  async goto(reference = 'L-10001'): Promise<void> {
-    await this.page.goto(`/items/${reference}`);
+  async goto(reference = 'L-10001', query = ''): Promise<void> {
+    await this.page.goto(`/items/${reference}${query}`);
   }
 
   /** The photo shown in the main view: the one scrolled into the track. */

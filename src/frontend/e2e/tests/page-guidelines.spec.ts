@@ -10,6 +10,7 @@ import { Page } from '@playwright/test';
 
 import {
   administrator,
+  adminShowcaseRequest,
   buyerOrder,
   catalogCard,
   expect,
@@ -209,6 +210,33 @@ const cases: GuidelineCase[] = [
     path: '/account/requests/new?category=dance&q=ballet%20slippers',
     setup: (p) => signInAs(p, marcus),
     heading: 'Request an item',
+  },
+  {
+    name: 'showcase listing after Buy now',
+    path: '/items/L-10001?request=1',
+    setup: async (p) => {
+      await serveListing(p, listingDetail({ showcase: true, viewer: { relation: 'Anonymous' } }));
+    },
+    heading: 'Floral party dress, pink',
+  },
+  {
+    name: 'showcase requests (admin)',
+    path: '/admin/requests',
+    setup: async (p) => {
+      await signInAs(p, administrator);
+      await p.route('**/api/admin/showcase-requests', (route) => route.fulfill({ json: [adminShowcaseRequest()] }));
+    },
+    heading: 'Showcase requests',
+  },
+  {
+    name: 'no showcase requests yet (admin)',
+    path: '/admin/requests',
+    setup: async (p) => {
+      await signInAs(p, administrator);
+      await p.route('**/api/admin/showcase-requests', (route) => route.fulfill({ json: [] }));
+    },
+    heading: 'Showcase requests',
+    tilly: /^Tilly waving hello/,
   },
   {
     name: 'member profile',
