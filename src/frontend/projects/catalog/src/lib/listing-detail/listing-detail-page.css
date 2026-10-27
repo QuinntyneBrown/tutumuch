@@ -14,21 +14,6 @@
 .listing-detail__description {
   white-space: pre-line;
 }
-.listing-detail__bar-skeleton {
-  height: 3rem;
-}
 .listing-detail__similar {
   margin-top: var(--space-20);
-}
-.skeleton--w20 {
-  width: 20%;
-}
-.skeleton--w30 {
-  width: 30%;
-}
-.skeleton--w35 {
-  width: 35%;
-}
-.skeleton--w80 {
-  width: 80%;
 }

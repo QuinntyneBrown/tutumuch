@@ -9,6 +9,7 @@ import {
   MarketingHeroComponent,
   Step,
   StepsComponent,
+  TillyComponent,
   VideoPosterComponent,
 } from '@tutumuch/components';
 
@@ -20,7 +21,8 @@ import { PitchVideoDialog } from './pitch-video-dialog';
  * scripts. Static copy, no TuTuMuch API call of its own;
  * Start selling goes to /join for a visitor and /sell for a member; in launch Phases 1 and 2 only an
  * administrator sees it and everyone else reads "Selling opens soon." (L2-094). Copy follows ADR general/0005:
- * every listing is for girls; never promise boys' or adult sizes.
+ * every listing is for girls; never promise boys' or adult sizes. Tilly twirls in the hero, the one
+ * Tilly and the one primary button of the page (L2-096).
  */
 @Component({
   selector: 'tl-welcome-page',
@@ -30,6 +32,7 @@ import { PitchVideoDialog } from './pitch-video-dialog';
     MarketingHeroComponent,
     FeatureBandComponent,
     StepsComponent,
+    TillyComponent,
     VideoPosterComponent,
   ],
   templateUrl: './welcome-page.html',

@@ -12,9 +12,9 @@ import { ButtonDirective, CenterStateComponent } from '@tutumuch/components';
   template: `
     <tl-center-state icon="tag" heading="Selling opens soon">
       <p class="text-muted">
-        For now, every item is hand-picked by TuTuMuch. You can still shop everything in the catalog.
+        For now, every item is hand-picked by TuTuMuch. You can still shop everything in the closet.
       </p>
-      <a actions tlButton="primary" routerLink="/">Shop the catalog</a>
+      <a actions tlButton="primary" routerLink="/">Shop the closet</a>
     </tl-center-state>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

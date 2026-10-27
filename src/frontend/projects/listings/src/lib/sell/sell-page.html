@@ -37,7 +37,7 @@
   }
   @case ('success') {
     @if (published(); as item) {
-      <tl-center-state icon="check" heading="It’s live">
+      <tl-center-state tilly="show-and-tell" heading="It’s live">
         <div class="panel sell__panel"><tl-item-row [title]="item.title" [meta]="item.meta" /></div>
         @if (item.payoutOnboardingRequired) {
           <p class="text-muted"><a routerLink="/account/payouts">Set up payouts</a> so you’re paid when it sells.</p>
@@ -51,7 +51,7 @@
     <tl-center-state icon="mail" heading="Verify your email to sell">
       <p class="text-muted">We sent a link to {{ email() }}.</p>
       <button actions tlButton="primary" type="button" (click)="openVerifyPrompt()">Resend link</button>
-      <a actions tlButton routerLink="/">Back to shop</a>
+      <a actions tlButton routerLink="/">Shop the closet</a>
     </tl-center-state>
   }
   @case ('limited') {
@@ -61,12 +61,12 @@
     </tl-center-state>
   }
   @case ('product-limit') {
-    <tl-center-state icon="info" heading="The catalog is full for now">
+    <tl-center-state icon="info" heading="The closet is full for now">
       <p class="text-muted">
-        This launch phase keeps the catalog small. Withdraw a listing, or move to the next phase, to list more.
+        This launch phase keeps the closet small. Withdraw a listing, or move to the next phase, to list more.
       </p>
       <a actions tlButton="primary" routerLink="/account/listings">Your listings</a>
-      <a actions tlButton routerLink="/">Back to shop</a>
+      <a actions tlButton routerLink="/">Shop the closet</a>
     </tl-center-state>
   }
   @case ('not-open') {
@@ -78,7 +78,7 @@
         Something went wrong on our side. <span class="ref">{{ loadRef() }}</span>
       </p>
       <button actions tlButton="primary" type="button" (click)="open()"><tl-icon name="refresh" />Try again</button>
-      <a actions tlButton routerLink="/">Back to shop</a>
+      <a actions tlButton routerLink="/">Shop the closet</a>
     </tl-center-state>
   }
 }

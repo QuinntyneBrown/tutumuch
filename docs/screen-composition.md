@@ -19,7 +19,14 @@ added (chip, `tl-sheet` with `SheetService`, the `search` icon) and the componen
 manage-notification-preferences added (switch, and `ToastService` behind `tl-toast-region`) and
 the components manage-cookie-consent added (consent banner, the hint of the switch) and the components the
 marketing page added (marketing hero, shapes, feature band, steps, video poster, video player) and the
-components sign-in-with-google added (provider button with its "or" divider). Feature screens not built yet are inventoried below
+components sign-in-with-google added (provider button with its "or" divider) and the components
+page-guidelines conformance added ([ADR general/0009](adr/general/0009-page-guidelines-on-the-angular-and-giddy-stack.md):
+`tl-mark`, `tl-tilly`, `tl-condition-badge`, `tl-skeleton`, the `tone` and `responsive` inputs of
+`tl-logo`, the `tilly` input of `tl-empty-state` and `tl-center-state`, the `sold` state of
+`tl-listing-card` and `tl-gallery`, the `blush` tone of `tl-feature-band`; `tl-shapes` is retired).
+Every screen follows [`docs/page-guidelines.md`](page-guidelines.md) (`L2-096`): one `h1`, one logo
+link, one primary button per view, loading states built from `tl-skeleton` (never a spinner),
+empty states with Tilly's hello pose, at most one Tilly per screen. Feature screens not built yet are inventoried below
 with their states and marked **not yet composed**; each is composed when its journey is
 implemented, and the catalogue grows in the same change.
 
@@ -27,12 +34,12 @@ implemented, and the catalogue grows in the same change.
 
 | Part | Library components | Local UI |
 |---|---|---|
-| App shell (`shell: 'app'`) | `tl-skip-link`, `tl-top-bar` (guest, member; six category links inline from 1280px, menu button and nav-menu sheet below; `[categoryLinksVisible]` from `LaunchState.categoryMenusVisible()` hides the links and the menu button in launch Phase 1, `[sellVisible]` from `LaunchState.canSell()` hides Sell from non-administrators in Phases 1 and 2, `pages/catalog`: phase-one, phase-one-admin, phase-two), `tl-footer` (its `cookieSettings` opens `CookieSettingsDialogService`), `tl-toast-region`, `@tutumuch/privacy` `tl-cookie-consent` in the root component | `<main id="main" tabindex="-1">` with the router outlet, in `projects/tutumuch` |
+| App shell (`shell: 'app'`, and `shell: 'wide'` for the catalog's product grids with an 80rem container) | `tl-skip-link`, `tl-top-bar` (guest, member; page skeleton: `tl-logo` with `responsive` (the mark under 640px, inside the one home link) left, search "Search the closet" in the middle, Sell and Account right, the six category links in a second row from 768px in the guideline order Dance, Sports, Clothing, Shoes, Cameras and tech, Toys and crafts, menu button and nav-menu sheet below 768px; no Bag, as TuTuMuch has no cart; `[categoryLinksVisible]` from `LaunchState.categoryMenusVisible()` hides the links and the menu button in launch Phase 1, `[sellVisible]` from `LaunchState.canSell()` hides Sell from non-administrators in Phases 1 and 2, `pages/catalog`: phase-one, phase-one-admin, phase-two), `tl-footer` (`tl-mark`, short links, "© TuTuMuch"; its `cookieSettings` opens `CookieSettingsDialogService`), `tl-toast-region`, `@tutumuch/privacy` `tl-cookie-consent` in the root component | `<main id="main" tabindex="-1">` with the router outlet (`.container`, `.container--wide` for `shell: 'wide'`), in `projects/tutumuch` |
 | Auth shell (`shell: 'auth'`) | `tl-skip-link`, `tl-logo` (lg), `tl-toast-region` | `.auth-layout` with `<main id="main" class="auth-card" tabindex="-1">` and the router outlet, in `projects/tutumuch`; chosen by route `data.shell = 'auth'` |
-| Admin shell (`shell: 'admin'`) | `tl-skip-link`, `tl-top-bar` (`variant="admin"`: logo, "Admin" label, the member's initials), `tl-toast-region` | `<main id="main" class="container page" tabindex="-1">` with the router outlet and no footer, in `projects/tutumuch`; chosen by route `data.shell = 'admin'` |
+| Admin shell (`shell: 'admin'`) | `tl-skip-link`, `tl-top-bar` (`variant="admin"`: responsive logo, "Admin" label, the member's initials), `tl-toast-region` | `<main id="main" class="container page" tabindex="-1">` with the router outlet and no footer, in `projects/tutumuch`; chosen by route `data.shell = 'admin'` |
 | Marketing shell (`shell: 'marketing'`) | `tl-skip-link`, `tl-top-bar` (guest, member), `tl-footer` (with "About TuTuMuch" to `/welcome`), `tl-toast-region` | `<main id="main" class="marketing" tabindex="-1">` with the router outlet and no container, in `projects/tutumuch`; chosen by route `data.shell = 'marketing'` ([ADR platform/0011](adr/platform/0011-marketing-feature-library.md)) |
 | Bare shell (`shell: 'bare'`) | `tl-skip-link`, `tl-top-bar` (bare variant), `tl-toast-region` | Not yet composed |
-| Nav-menu sheet (`dialogs/nav-menu`: default, guest, phase-two) | `tl-sheet`, `tl-button`, `tl-link` | The six category links (Clothing, Shoes, Dance, Sports, Cameras and tech, Toys and crafts) at `/clothing`, `/shoes`, `/dance`, `/sports`, `/cameras-and-tech`, `/toys-and-crafts`; the top bar shows them inline only from 1280px (`--layout-breakpoint-xl`) and the menu button opens this sheet below that. Composed as `tl-nav-menu` in `@tutumuch/components` (opened by `tl-top-bar` through `SheetService`) with the six category links; the member links, Sign out and the row chevrons of the mock are not composed yet. Never opened in launch Phase 1: the top bar has no menu button then (L2-093) |
+| Nav-menu sheet (`dialogs/nav-menu`: default, guest, phase-two) | `tl-sheet`, `tl-button`, `tl-link`, `tl-mark` (in the mock's sheet head, never a second logo) | The six category links in the guideline order (Dance, Sports, Clothing, Shoes, Cameras and tech, Toys and crafts) at `/dance`, `/sports`, `/clothing`, `/shoes`, `/cameras-and-tech`, `/toys-and-crafts`; the top bar shows them in its second row from 768px (`--layout-breakpoint-md`) and the menu button opens this sheet below that. Composed as `tl-nav-menu` in `@tutumuch/components` (opened by `tl-top-bar` through `SheetService`) with the six category links; the member links, Sign out and the row chevrons of the mock are not composed yet. Never opened in launch Phase 1: the top bar has no menu button then (L2-093) |
 | Toast region (`notifications/toast`: info, success, warning, danger, with-action, stacked) | `tl-toast-region`, `tl-toast`, `ToastService` | None |
 | System banner (`notifications/system-banner`: info, success, warning, danger) | `tl-system-banner` (not in the catalogue yet) | Not yet composed |
 
@@ -40,7 +47,8 @@ implemented, and the catalogue grows in the same change.
 
 | Item | Used by | Notes |
 |---|---|---|
-| Logo (inline SVG) | top bar, footer, sheet, auth shell | Lives in `@tutumuch/components` as `tl-logo`; sizes sm, md, lg |
+| Logo and mark | top bar, auth shell (logo); compact header, footer, short waits (mark) | Live in `@tutumuch/components` as `tl-logo` (sizes sm, md, lg, never under 28px; `tone` color or reversed; `responsive`) and `tl-mark` (the gingham "T", at least 16px) |
+| Tilly | marketing hero, Dance and Sports headers, empty states, "It's live" | `tl-tilly` in `@tutumuch/components` with the art in `public/tilly/`; at most one per screen |
 
 ## Pages
 
@@ -72,7 +80,7 @@ account overview journey.
   with the reference), `tl-icon` (`refresh`), `ToastService` (danger "Something went wrong" with
   the reference and "Try again" when a save fails; warning when the settings changed elsewhere)
 - Local: the page header with its subtitle, the `.settings-list` rows with title and
-  description, the `.form-actions` row, and the loading skeleton rows
+  description, the `.form-actions` row, and the loading skeleton (`tl-skeleton`) rows
 
 ### Unsubscribe — `/emails/unsubscribe?token=…` (not mocked: working, unsubscribed, invalid, error)
 
@@ -80,7 +88,7 @@ Auth shell. `@tutumuch/accounts` `UnsubscribePage` (`src/lib/unsubscribe/`), bui
 manage-notification-preferences; the mocks have no screen for it, so it follows the verify-email
 layout.
 
-- Library: `tl-spinner` (working), `tlButton` ("Back to shop", "Manage your emails", "Try again"),
+- Library: `tl-mark` beside the polite "Turning off news from TuTuMuch…" status (working, no page-load spinner), `tlButton` ("Shop the closet", "Manage your emails", "Try again"),
   `tl-icon` (`refresh`)
 - Local: the `h1` and lead of each state and the `.stack` of actions
 
@@ -92,13 +100,13 @@ profile" until edit-profile exists, and avatar, location and bio show only when 
 them (ADR reviews/0001).
 
 - Library: `tl-rating-summary` (header; "No reviews yet" with no reviews), `tl-stat` (Sales,
-  Member since), `tl-listing-grid` (For sale cards; loading skeleton), `tl-load-more` (long:
+  Member since), `tl-listing-grid` (For sale cards; loading skeleton (`tl-skeleton`)), `tl-load-more` (long:
   "Showing {n} of {total}", 24 per page), `tl-empty-state` (empty: `compact`, icon `tag`, "No
   items for sale"), `tl-alert` (danger "Couldn’t load more items"), `tl-center-state`
-  (unavailable: code "404", "Back to shop"; error: reference, "Try again" with icon `refresh`
-  and "Back to shop"), `tlButton`, `tl-icon` (`map-pin`, `refresh`)
+  (unavailable: code "404", "Shop the closet"; error: reference, "Try again" with icon `refresh`
+  and "Shop the closet"), `tlButton`, `tl-icon` (`map-pin`, `refresh`)
 - Local: `.profile-head` with the `avatar--xl` initials or photo, `h1` and bio; the `.stats`
-  row; the For sale and Reviews `.section-head` blocks; the header loading skeleton
+  row; the For sale and Reviews `.section-head` blocks; the header loading skeleton (`tl-skeleton`)
 
 ### Join — `/join` (`pages/register`: default, invalid, submitting, success, error)
 
@@ -149,7 +157,7 @@ password reset.
 
 Auth shell. `@tutumuch/accounts` `VerifyEmailPage` reads `token` from the query string.
 
-- Library: `tl-spinner` (loading), `tl-button` (Start shopping, Sell an item only while `LaunchState.canSell()` (the lead then reads "Buying is open."), Send a new link, Sign in, Try again), `tl-alert` (Link sent, Too many requests), `tl-icon` (refresh)
+- Library: `tl-mark` beside the polite "Checking your link…" status (loading), `tl-button` (Start shopping, Sell outgrown gear only while `LaunchState.canSell()` (the lead then reads "Buying is open."), Send a new link, Sign in, Try again), `tl-alert` (Link sent, Too many requests), `tl-icon` (refresh)
 - Local: heading block with the lead line; the reference line of the error state
 
 ### Catalog — `/` (`pages/catalog`: default, guest, category, search, filtered, loading, empty, no-results, error, offline, phase-one, phase-one-admin, phase-two)
@@ -160,19 +168,23 @@ and search-and-filter-catalog (search, filtered, no-results, the filter sidebar,
 toggle, the chips and the sort select). The URL holds the result set (`q`, `category`,
 `subcategory`, `brand`, `condition`, `min`, `max`, `sort`).
 
-- Library: `tl-listing-grid` (cards and the 8-card loading skeleton) with `tl-listing-card`,
-  `tl-size-tag` (lg, category header), `tl-load-more`, `tl-empty-state` (empty: icon `tag`,
-  "Sell an item" as `tlButton="primary"`; no-results: icon `search`, "No items match", "Clear
-  search and filters"; error: tone error, icon `refresh`, "Try again"), `tl-alert` (warning
+- Library: `tl-listing-grid` (cards and the 8-card `tl-skeleton` loading grid) with `tl-listing-card`
+  (photo, title, brand, "Girls · {condition}", price), `tl-size-tag` (lg, category header),
+  `tl-tilly` (category header of Dance: dance pose; Sports: soccer pose), `tl-skeleton` (item
+  count), `tl-load-more`, `tl-empty-state` (empty: Tilly, "The closet is empty for now", "Sell
+  outgrown gear" as `tlButton="primary"`; no-results: Tilly, "No items match", "Clear search and
+  filters"; both drop Tilly under a sport header; error: tone error, icon `refresh`, "Try again"), `tl-alert` (warning
   banner with icon `wifi-off` for offline; danger "Couldn’t load more items" with a
   `tlButton="link"` Try again when a next page fails), `tl-chip` (one per active filter value),
   `tlButton` (Filters toggle, "Clear all" link button), `tl-choice` and `tl-input-group` (inside
   the filter form), `SheetService` (opens the Filters sheet below 992px), `tl-icon`
 - Local: the hero (`.hero`, h1 "Find something *she’ll love.*" and lead "Clothes, dance and sports gear, cameras, toys and more, from families whose girls have outgrown them."), the page header
-  (category name with size tag; eyebrow "Search" with “{q}”; "Shop" for other filters), the
-  `.catalog-layout` grid, the `.toolbar` with the polite item count and its text skeleton, the
-  `.sort` select, `FilterForm` (`tl-filter-form`, fieldsets Category, subcategories, Brand with
-  "All {n} brands", Condition, Price) and `FiltersSidebar` (`tl-filters-sidebar`,
+  (`.category-head` blush panel with the category name, size tag and Tilly; eyebrow "Search" with “{q}”; "Shop" for other filters), the
+  `.catalog-layout` grid, the `.toolbar` with the polite item count, the
+  `.sort` select, `FilterForm` (`tl-filter-form`: Category in the guideline order with its
+  subcategories, the Size note "Every item is in Girls’ sizes." and Condition first, then a
+  `details.filters__more-group` "More filters" with Brand ("All {n} brands") and Price, open
+  while either is set) and `FiltersSidebar` (`tl-filters-sidebar`,
   `<aside class="filters" aria-label="Filters">`). The offline banner renders at the top of
   `main`, not above the top bar as in the mock, until `tl-system-banner` exists. A failed next
   page shows an inline danger alert instead of the toast in the design, until `ToastService`
@@ -181,7 +193,7 @@ toggle, the chips and the sort select). The URL holds the result set (`q`, `cate
 - Launch phases ([ADR platform/0014](adr/platform/0014-launch-phase-configuration.md)): in Phase 1
   (`LaunchState.categoryMenusVisible()` false) `FilterForm` has no Category fieldset (so no
   subcategory group either) and the six category routes redirect to `/` through the
-  `categoryMenusOpen` guard of `catalog.routes.ts` (phase-one). The empty state's "Sell an item"
+  `categoryMenusOpen` guard of `catalog.routes.ts` (phase-one). The empty state's "Sell outgrown gear"
   shows only while `LaunchState.canSell()` (phase-one-admin, phase-two).
 
 ### Listing detail — `/items/{id}` (`pages/listing-detail`: default, guest, new-seller, reserved, sold, own, loading, error, unavailable)
@@ -191,16 +203,18 @@ the own state edit-and-withdraw-listing adds "Withdraw", which opens the Withdra
 (`src/lib/withdraw-listing/`, ADR listings/0003). Sellers show no city until members can edit
 their profile.
 
-- Library: `tl-gallery` (main photo track, dots, thumbnails), `tl-size-tag` (lg), `tl-buy-bar`
+- Library: `tl-gallery` (main photo track, dots, thumbnails; `sold` greys the photos), `tl-size-tag` (lg),
+  `tl-condition-badge`, `tl-skeleton` (loading), `tl-buy-bar`
   (default and guest: "Buy now" as `tlButton="primary"` lg; own: "Edit listing" with icon
   `edit` and secondary lg "Withdraw" through `DialogService`; absent for Reserved and Sold), `tl-alert` (reserved: warning, icon `clock`, "In
   someone’s checkout"), `tl-seller-summary` (rating or "New seller"), `tl-listing-grid` (sold:
-  "More for girls"), `tl-center-state` (unavailable: code "404" and "Shop
-  similar items"; error: reference, "Try again" with icon `refresh` and "Back to shop"),
+  "Similar in the closet"), `tlButton="primary"` "Find similar" to the category (sold),
+  `tl-center-state` (unavailable: code "404" and "Find similar"; error: reference, "Try again"
+  with icon `refresh` and "Shop the closet"),
   `tlButton`, `tl-icon`
 - Local: the breadcrumb, the info column (`.photo__stamp` Reserved or Sold, `.eyebrow` brand,
   `h1.detail__title`, `.detail__price` line, `.flaws`, description, `dl.facts` with the
-  relative `time`), the two-column `.detail` layout and the loading skeleton
+  relative `time`), the two-column `.detail` layout
 
 ### Checkout — `/checkout/{id}` (`pages/checkout`: default, new-address, invalid, non-us, submitting, declined, expired, conflict, loading, error)
 
@@ -220,7 +234,7 @@ back to `/items/{id}`, and a visitor goes to sign in with checkout as the return
 - Local: `.page-header`, the `.split` layout, the `.checkout-step` sections, the saved-address
   radios (`.option`, `address.address`), `HostedCardFieldsComponent` (the "Card" field, the
   provider's hosted fields from `PAYMENT_FIELDS` in `@tutumuch/api` and the `.secure-note`), the
-  "Confirming with your bank…" status line and the loading skeleton
+  "Confirming with your bank…" status line and the loading skeleton (`tl-skeleton`)
 
 ### Order confirmed — `/orders/{id}/confirmed` (`pages/order-confirmation`: default, loading, error)
 
@@ -232,7 +246,7 @@ confirmed" toast of `notifications/reservation-timer` success waits for `ToastSe
   "Keep shopping"), `tl-center-state` (error: reference, "Try again" and "Go to purchases"),
   `tl-icon` (`check`, `refresh`)
 - Local: the `.confirm` block (mark, `.eyebrow` order reference, heading), the
-  `ol.next-steps` list and the loading center state with the large spinner
+  `ol.next-steps` list and the loading center state with `tl-mark` (48px) above "Confirming your payment"
 
 ### Order (buyer) — `/orders/{id}` (`pages/order-detail`: default, paid, cancel-requested, cancel-declined, delivered, completed, cancelled, refunded, problem, loading, error)
 
@@ -261,7 +275,7 @@ built: the API has no expected date.
   {seller} to cancel. They haven’t answered yet." or "{seller} declined to cancel. They still ship
   by {date}."), the completion note ("Completes automatically on {date} unless you report a
   problem."), `OrderPartyComponent` (avatar, "Seller", profile link) projected into the summary,
-  and the two-column loading skeleton. "Shop similar items" opens the catalog home, because the
+  and the two-column loading skeleton (`tl-skeleton`). "Find similar" opens the catalog home, because the
   order does not carry the item's category.
 
 ### Purchases — `/account/purchases` (`pages/purchases`: default, loading, empty, error)
@@ -272,10 +286,10 @@ overview journey.
 
 - Library: `tl-item-row` (title, "from {seller} · {date}", thumbnail), `tl-status` (info; active
   when Completed; removed when Cancelled or Refunded), `tl-empty-state` (icon `bag`, "Nothing
-  bought yet" with primary `tl-button` "Browse the catalog"; error tone, icon `refresh`, "Couldn’t
+  bought yet" with primary `tl-button` "Shop the closet"; error tone, icon `refresh`, "Couldn’t
   load purchases" with the reference and primary "Try again" with icon `refresh`)
 - Local: the page header with the counts subtitle, the `.order-list` rows linking to `/orders/{id}`
-  with the price, and the three skeleton rows
+  with the price, and the three skeleton rows (`tl-skeleton`)
 
 ### Sale (seller) — `/sales/{id}` (`pages/sale-detail`: default, shipped, cancel-requested, problem, completed, address-hidden, cancelled, loading, error)
 
@@ -298,7 +312,7 @@ address-hidden (`tl-icon` `eye-off`, "Removed 30 days after the order ended.").
   `tl-button` ("Send reply" with busy, "Try again" after a failure) until the seller has replied
 - Local: the breadcrumb, eyebrow and heading block, "Ship by {date}." lead, the "Ship to"
   address block with its caption, `OrderPartyComponent` ("Buyer") projected into the summary, the
-  loading skeleton, and (completed, by seller-payouts) the sunken "Payout" panel with its
+  loading skeleton (`tl-skeleton`), and (completed, by seller-payouts) the sunken "Payout" panel with its
   `.totals` list ("Item and shipping", "TuTuMuch fee (10%)", "Your payout") and "Sent {date} to {bank}." caption
 
 ### Sales — `/account/sales` (`pages/sales`: default, loading, empty, error)
@@ -306,10 +320,10 @@ address-hidden (`tl-icon` `eye-off`, "Removed 30 days after the order ended.").
 App shell. The same `OrderHistoryPage` with route data `list: 'sales'`, built by order-history.
 
 - Library: `tl-item-row` ("to {buyer} · ship by {date} · {date}" while Paid, else "to {buyer} ·
-  {date}"), `tl-status`, `tl-empty-state` (icon `tag`, "No sales yet" with primary "Sell an item" only while `LaunchState.canSell()`;
+  {date}"), `tl-status`, `tl-empty-state` (icon `tag`, "No sales yet" with primary "Sell outgrown gear" only while `LaunchState.canSell()`;
   error tone "Couldn’t load sales" with the reference and "Try again")
 - Local: the page header with "{n} to ship", the `.order-list` rows linking to `/sales/{id}`, and
-  the skeleton rows
+  the skeleton rows (`tl-skeleton`)
 
 ### Edit listing — `/items/{id}/edit` (`pages/edit-listing`: default, loading, error, invalid, submitting, success, locked, changed, sold, withdrawn)
 
@@ -342,16 +356,16 @@ The status is kept in the URL query (`?status=sold`). The payout banner stays in
 the account overview journey.
 
 - Library: `ToastService` (info "Drafts older than 90 days are deleted", "We’ll email you a
-  week before.", once per visit for a seller with drafts), `tl-button` (primary "Sell an item"
+  week before.", once per visit for a seller with drafts), `tl-button` (primary "Sell outgrown gear"
   with icon `plus`), `tl-filter-chips` ("Filter by
   status": All, Draft, Active, Reserved, Sold, Removed with counts), `tl-item-row` (title or
   "Untitled draft · {category}", thumbnail, with `tl-status` projected under the title in the
   tone of the listing status), `tl-icon` (`image` placeholder for a listing without photo),
-  `tl-empty-state` (icon `tag`, "Nothing listed yet" with primary "Sell an item"; error tone, icon
+  `tl-empty-state` (icon `tag`, "Nothing listed yet" with primary "Sell outgrown gear"; error tone, icon
   `refresh`, "Couldn’t load your listings" with the reference and primary "Try again")
 - Local: the page header with "{n} listings · {n} active", the `.order-list` rows linking to
   `/sell/{reference}` (Draft), `/sales/{orderId}` (Sold) or `/items/{reference}` with the price
-  ("$60" or "—") and the date ("Today", "Yesterday", "Sat 24 Oct"), and the four skeleton rows
+  ("$60" or "—") and the date ("Today", "Yesterday", "Sat 24 Oct"), and the four skeleton rows (`tl-skeleton`)
 
 ### Payouts — `/account/payouts` (`pages/payouts`: default, not-onboarded, loading, empty, error)
 
@@ -359,13 +373,13 @@ App shell. `@tutumuch/orders` `PayoutsPage` (`src/lib/payouts/`), built by selle
 sub-navigation of the mocks is composed with the account overview journey.
 
 - Library: `tl-stat` ("Paid out", "Pending"), `tl-button` ("Change" and primary "Set up payouts",
-  both with icon `external`; "Try again" with icon `refresh`; primary "Sell an item", only while `LaunchState.canSell()`), `tl-alert`
+  both with icon `external`; "Try again" with icon `refresh`; primary "Sell outgrown gear", only while `LaunchState.canSell()`), `tl-alert`
   (warning "Set up payouts to get paid" with the button projected as `actions`; danger for a
   provider failure), `tl-item-row` (each history row), `tl-empty-state` (empty with icon `tag`;
   error tone with the reference), `tl-icon`
 - Local: the page header, the `.stats` row, the payout method `.settings-list` row, the
   `.section-head` ("History" or "Held"), the `.order-list` rows with their thumbnail, amount and
-  status caption, and the loading skeleton
+  status caption, and the loading skeleton (`tl-skeleton`)
 
 ### Sell an item — `/sell` (`pages/sell`: default, filled, invalid, submitting, draft-saved, success, unverified, limited, error, selling-not-open, product-limit)
 
@@ -373,9 +387,9 @@ App shell. `@tutumuch/listings` `SellPage` at `/sell` and `/sell/{reference}` (c
 Visitors are sent to `/sign-in?returnUrl=/sell`. The Photos section comes first; each chosen file
 uploads at once and a save sends the photo IDs in order. The footer stays visible under the form.
 
-- Library: `tl-photo-uploader` (photos with cover, uploading and rejected tiles, add tile, help and error), `tl-error-summary` (invalid), `tl-alert` (draft-saved success, save or publish failure), `tl-form-field` (category, type, title with counter, brand, flaws, description with counter, price, shipping), `tl-input-group` (`$` addon), `tl-fixed-size` with `tl-size-tag` (after a category is chosen), `tl-segmented` (condition), `tl-earnings`, `tl-button` (Save draft, Publish with busy), `tl-center-state` (success, unverified, limited, error) with `tl-item-row` (success panel) and `tl-icon`, `DialogService` (opens the verify-email prompt)
+- Library: `tl-photo-uploader` (photos with cover, uploading and rejected tiles, add tile, help and error), `tl-error-summary` (invalid), `tl-alert` (draft-saved success, save or publish failure), `tl-form-field` (category, type, title with counter, brand, flaws, description with counter, price, shipping), `tl-input-group` (`$` addon), `tl-fixed-size` with `tl-size-tag` (after a category is chosen), `tl-segmented` (condition), `tl-earnings`, `tl-button` (Save draft, Publish with busy), `tl-center-state` (success "It’s live" with `tilly="show-and-tell"`, the big moment of page guidelines 6; unverified, limited, error with their icons) with `tl-item-row` (success panel) and `tl-icon`, `DialogService` (opens the verify-email prompt)
 - Local: `.page-header` with the h1, `.sell-form` sections (Photos, Item, Price, confirmation: `.form-section`, `.form-row`), the upload state of each tile and its client size check, the brand `<datalist>`, the sticky `.form-actions` bar, the success panel wrapper and the payouts line
-- Launch phases ([ADR platform/0014](adr/platform/0014-launch-phase-configuration.md)): `listings.routes.ts` guards `/sell`, `/sell/{reference}`, `/items/{reference}/edit` and `/account/listings` with `sellingOpen` (`LaunchState.canSell()` after `AuthState.load()`); when it does not match, the same paths load `SellingNotOpenPage` (selling-not-open): `tl-center-state` (icon `tag`, "Selling opens soon", "For now, every item is hand-picked by TuTuMuch. You can still shop everything in the catalog.") with primary `tlButton` "Shop the catalog" to `/`. A save answered 409 `PRODUCT_LIMIT_REACHED` shows the product-limit state: `tl-center-state` (icon `info`, "The catalog is full for now", the API's limit in the text) with primary "Your listings" and "Back to shop".
+- Launch phases ([ADR platform/0014](adr/platform/0014-launch-phase-configuration.md)): `listings.routes.ts` guards `/sell`, `/sell/{reference}`, `/items/{reference}/edit` and `/account/listings` with `sellingOpen` (`LaunchState.canSell()` after `AuthState.load()`); when it does not match, the same paths load `SellingNotOpenPage` (selling-not-open): `tl-center-state` (icon `tag`, "Selling opens soon", "For now, every item is hand-picked by TuTuMuch. You can still shop everything in the closet.") with primary `tlButton` "Shop the closet" to `/`. A save answered 409 `PRODUCT_LIMIT_REACHED` shows the product-limit state: `tl-center-state` (icon `info`, "The closet is full for now", the API's limit in the text) with primary "Your listings" and "Shop the closet".
 
 ### Forbidden — `/403` (`pages/forbidden`: default)
 
@@ -407,19 +421,20 @@ girls and never promises boys' or adult sizes ([ADR general/0005](adr/general/00
 - Library: `tl-marketing-hero` (hero: eyebrow "Clothes · Dance · Sports · Gear, all for
   girls", h1 "Twirl it *forward.*", lede, actions; closing: h2 "Her next favourite thing is
   *waiting.*", lede "New listings every day, every one for girls.", `variant="closing"`),
-  `tl-shapes` (party-pop blobs and polka dots inside the hero; `quiet` in the closing band),
-  `tl-video-poster` (media slot, "Play", 0:30), `tl-feature-band` (For
-  shoppers "Everything here is for girls." with three points and "Browse the catalog"; For
-  sellers "Pass it on to the next girl.", `surface`, with two points and "Start selling";
+  a solid blush panel with no shapes or gradients, `tl-tilly` (hero pose, the one Tilly of the
+  page, above the poster in the media slot), `tl-video-poster` (media slot, "Play", 0:30),
+  `tl-feature-band` (For shoppers "Everything here is for girls.", `blush`, with three points
+  and secondary "Shop the closet"; For sellers "Pass it on to the next girl.", `surface`, with
+  two points and secondary "Start selling";
   How it works "Three steps. That’s it.", `stacked`), `tl-steps` (List it, Sell it, Get
-  paid), `tlButton` (primary "Shop the catalog" to `/`; "Start selling" to `/join`, or `/sell`
-  for a member), `DialogService` (opens the pitch video dialog)
+  paid), `tlButton` (the page's one primary, "Shop the closet" to `/` in the hero; "Start selling" to
+  `/join`, or `/sell` for a member; the closing band's two actions are secondary), `DialogService` (opens the pitch video dialog)
 - Launch Phases 1 and 2 for anyone but an administrator (`LaunchState.canSell()` false,
-  selling-opens-soon): the hero's actions hold "Shop the catalog" and
+  selling-opens-soon): the hero's actions hold "Shop the closet" and
   `<p class="marketing-hero__soon">Selling opens soon.</p>`; the seller band's heading is
   "Selling opens soon." with the two points "Pass it on soon" and "Join today", and its
   actions slot holds `<p class="feature-band__note">For now, every item is hand-picked by TuTuMuch.</p>`;
-  the closing hero keeps only "Shop the catalog".
+  the closing hero keeps only "Shop the closet".
 - Local: `WelcomePage` (copy, CTA targets from `AuthState.member()` and `LaunchState.canSell()`) and
   `PitchVideoDialog`.
 
@@ -440,7 +455,7 @@ Built by resolve-order-problems in `@tutumuch/orders` (`src/lib/problem-detail/`
   resolved), `tl-empty-state` (error "Couldn’t load this problem" with the reference and "Try again")
 - Local: the `.page-header` with the reason as heading and "Order problem {reference} · opened
   {day}", the sunken `aside` panel with its eyebrow, the resolution reason line, and the
-  two-column loading skeleton
+  two-column loading skeleton (`tl-skeleton`)
 
 ### Marketplace rules — `/rules` (`pages/rules`: default)
 

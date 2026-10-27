@@ -1,7 +1,10 @@
 @switch (state()) {
   @case ('working') {
     <div><h1>Unsubscribing</h1></div>
-    <tl-spinner label="Turning off news from TuTuMuch…" />
+    <div class="cluster" aria-busy="true">
+      <tl-mark />
+      <span class="text-muted" role="status">Turning off news from TuTuMuch…</span>
+    </div>
   }
   @case ('unsubscribed') {
     <div>
@@ -11,7 +14,7 @@
       </p>
     </div>
     <div class="stack">
-      <a tlButton="primary" size="lg" [block]="true" routerLink="/">Back to shop</a>
+      <a tlButton="primary" size="lg" [block]="true" routerLink="/">Shop the closet</a>
       <a tlButton size="lg" [block]="true" routerLink="/account/emails">Manage your emails</a>
     </div>
   }

@@ -1,7 +1,7 @@
 @switch (view()) {
   @case ('loading') {
     <div class="center-state" aria-busy="true">
-      <span class="spinner spinner--lg" aria-hidden="true"></span>
+      <tl-mark [size]="48" />
       <h1>Confirming your payment</h1>
       <p class="text-muted" role="status">This usually takes a few seconds. Don’t close this page.</p>
     </div>

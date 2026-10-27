@@ -62,7 +62,7 @@ Source mocks: `docs/mocks/pages/server-error/`, `docs/mocks/pages/not-found/`,
   is safe.", primary "Try again" (re-navigates to `retryUrl`), secondary "Back
   to shop", reference "Ref {correlationId}".
 - **`NotFoundPageComponent`** — route `**`: "404", "Page not found", "The link
-  may be old or mistyped.", "Back to shop". Feature pages also show it when the
+  may be old or mistyped.", "Shop the closet". Feature pages also show it when the
   API returns 404 for a resource the caller may not see (`L2-010`).
 - **`ForbiddenPageComponent`** — route `/403`: "403", "You can’t open this",
   "It belongs to another member’s account.", "Go to your account". Used by role

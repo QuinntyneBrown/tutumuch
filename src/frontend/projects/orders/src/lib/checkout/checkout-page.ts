@@ -23,6 +23,7 @@ import {
   OrderSummaryItem,
   ReservationPhase,
   ReservationTimerComponent,
+  SkeletonComponent,
   SummaryError,
 } from '@tutumuch/components';
 
@@ -50,6 +51,7 @@ import { COUNTRIES, US_STATES } from './us-states';
     OrderSummaryComponent,
     ReservationTimerComponent,
     HostedCardFieldsComponent,
+    SkeletonComponent,
   ],
   providers: [CheckoutStore],
   templateUrl: './checkout-page.html',

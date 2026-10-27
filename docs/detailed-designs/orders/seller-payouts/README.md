@@ -35,7 +35,7 @@ summary. Decisions taken while building are in
   - `default` (onboarding `Complete`) — `tl-stat` "Paid out" and "Pending", a payout method row ("Chase •••• 6021", "Managed by our payment provider", "Change", which opens the provider's onboarding again), and a "History" list. Each row shows the item, a meta line ("TM-48302 · Held until the order completes", "Held until you set up payouts", or "Fee $3.70 · Mon 5 Oct" / "On its way" / "Releasing soon" / "Returned by the bank"), the amount and "Pending", "Paid" or "Failed", and links to `/sales/:id`.
   - `not-onboarded` — warning `tl-alert` "Set up payouts to get paid" / "{pending} is waiting for you." with primary "Set up payouts", then a "Held" list. A provider failure shows a danger alert with the API's message and keeps the seller on the page.
   - `loading` — skeleton stats and a row.
-  - `empty` — "No payouts yet", "Your earnings show up here after your first sale.", "Sell an item".
+  - `empty` — "No payouts yet", "Your earnings show up here after your first sale.", "Sell outgrown gear".
   - `error` — "Couldn't load payouts", reference code, "Try again".
 - **`PayoutBannerComponent`** (`@tutumuch/orders`, exported for the app shell; mock `docs/mocks/notifications/payout-banner/`) — `tl-alert` banner above the top bar for verified members, from `PayoutSummaryDto.banner`:
   - `info` — "{amount of Sent payouts} is on its way to {bank}." with a "Payouts" link; dismissible.

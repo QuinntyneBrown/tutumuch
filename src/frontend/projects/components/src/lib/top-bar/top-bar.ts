@@ -13,11 +13,13 @@ export interface TopBarMember {
 }
 
 /**
- * App-shell top bar in its guest and member states (design system: Top bar). The application
- * passes the member from AuthState and the current keyword, and navigates on (searched). Under
- * 1280px the inline category links give way to the menu button, which opens the navigation menu
- * sheet listing every category. Under 992px the
- * search button reveals the search form. In launch Phase 1 the application sets
+ * App-shell top bar in its guest and member states (design system: Top bar), drawn to the page
+ * skeleton of the page guidelines: the logo left (the mark under 640px), search in the middle,
+ * Sell and Account on the right and the six categories in a second row in the guideline order
+ * (ADR general/0009). TuTuMuch has no bag, so there is no Bag link. The application passes the
+ * member from AuthState and the current keyword, and navigates on (searched). Under 768px the
+ * category row gives way to the menu button, which opens the navigation menu sheet listing every
+ * category. Under 992px the search button reveals the search form. In launch Phase 1 the application sets
  * categoryLinksVisible false: no category links and no menu button (the sheet holds only
  * categories). sellVisible false hides Sell from anyone the launch phase does not let sell
  * (ADR platform/0014). The admin variant (admin shell) shows only the logo, the
@@ -52,11 +54,12 @@ export class TopBarComponent {
 
   readonly initials = computed(() => this.member()?.displayName.slice(0, 2).toUpperCase() ?? '');
 
+  /** Guideline order: Dance, the sports, everyday clothing, shoes, then TuTuMuch's own categories. */
   readonly categories = [
-    { label: 'Clothing', path: '/clothing' },
-    { label: 'Shoes', path: '/shoes' },
     { label: 'Dance', path: '/dance' },
     { label: 'Sports', path: '/sports' },
+    { label: 'Clothing', path: '/clothing' },
+    { label: 'Shoes', path: '/shoes' },
     { label: 'Cameras and tech', path: '/cameras-and-tech' },
     { label: 'Toys and crafts', path: '/toys-and-crafts' },
   ] as const;

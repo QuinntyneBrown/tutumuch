@@ -7,14 +7,14 @@ import { FooterComponent, LogoComponent, TopBarComponent } from '@tutumuch/compo
 import { PayoutBannerComponent } from '@tutumuch/orders';
 import { CookieSettingsDialogService } from '@tutumuch/privacy';
 
-/** Shell named by the deepest route's data.shell: 'app' (default), 'auth' or 'admin'. */
-type Shell = 'app' | 'auth' | 'admin' | 'marketing';
+/** Shell named by the deepest route's data.shell: 'app' (default), 'wide', 'auth', 'admin' or 'marketing'. */
+type Shell = 'app' | 'wide' | 'auth' | 'admin' | 'marketing';
 
 function shellOf(route: ActivatedRouteSnapshot): Shell {
   let deepest = route;
   while (deepest.firstChild) deepest = deepest.firstChild;
   const shell = deepest.data['shell'];
-  return shell === 'auth' || shell === 'admin' || shell === 'marketing' ? shell : 'app';
+  return shell === 'wide' || shell === 'auth' || shell === 'admin' || shell === 'marketing' ? shell : 'app';
 }
 
 /**
@@ -22,6 +22,7 @@ function shellOf(route: ActivatedRouteSnapshot): Shell {
  * outlet and the footer; the top bar follows the launch phase (LaunchState), whose "Cookie settings" opens the dialog; a top-bar search navigates to the catalog. Routes with data.shell 'auth' render in the auth shell: large logo above a centred card.
  * Routes with data.shell 'admin' render in the admin shell: the admin top bar and no footer.
  * Routes with data.shell 'marketing' get the app shell with a full-width main.marketing (ADR platform/0011).
+ * Routes with data.shell 'wide' (the catalog's product grids) get the wider container of the page guidelines.
  */
 @Component({
   selector: 'tl-app-shell',

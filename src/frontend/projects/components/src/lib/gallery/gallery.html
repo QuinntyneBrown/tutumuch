@@ -2,7 +2,7 @@
   <div class="gallery__main">
     <div class="gallery__track" #track (scroll)="onScroll()">
       @for (photo of photos(); track $index; let i = $index) {
-        <div class="photo">
+        <div class="photo" [class.photo--sold]="sold()">
           <picture>
             <source type="image/webp" [attr.srcset]="photo.webp" [attr.sizes]="sizes" />
             <img

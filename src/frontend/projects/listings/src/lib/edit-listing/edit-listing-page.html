@@ -5,13 +5,13 @@
       <div class="stack stack--lg" aria-busy="true" aria-label="Loading listing">
         <div class="uploader">
           @for (tile of [1, 2, 3]; track tile) {
-            <span class="skeleton skeleton--rect edit__tile"></span>
+            <tl-skeleton shape="rect" class="edit__tile" />
           }
         </div>
         @for (field of [1, 2, 3, 4]; track field) {
           <div class="stack stack--sm">
-            <span class="skeleton skeleton--text edit__label"></span>
-            <span class="skeleton skeleton--rect edit__control"></span>
+            <tl-skeleton class="edit__label" />
+            <tl-skeleton shape="rect" class="edit__control" />
           </div>
         }
       </div>

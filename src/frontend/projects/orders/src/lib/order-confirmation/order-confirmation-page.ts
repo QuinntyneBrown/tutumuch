@@ -1,7 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal, untracked } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CheckoutApi, Purchase, shortRef } from '@tutumuch/api';
-import { ButtonDirective, CenterStateComponent, IconComponent, ItemRowComponent } from '@tutumuch/components';
+import {
+  ButtonDirective,
+  CenterStateComponent,
+  IconComponent,
+  ItemRowComponent,
+  MarkComponent,
+} from '@tutumuch/components';
 
 import { formatMoney } from '../money';
 
@@ -11,7 +17,7 @@ import { formatMoney } from '../money';
  */
 @Component({
   selector: 'tl-order-confirmation-page',
-  imports: [RouterLink, ButtonDirective, CenterStateComponent, IconComponent, ItemRowComponent],
+  imports: [RouterLink, ButtonDirective, CenterStateComponent, IconComponent, ItemRowComponent, MarkComponent],
   templateUrl: './order-confirmation-page.html',
   styleUrl: './order-confirmation-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

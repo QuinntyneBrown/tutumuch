@@ -3,22 +3,22 @@
     <h1 class="visually-hidden">Loading checkout</h1>
     <div class="split checkout__skeleton" aria-busy="true" aria-label="Loading checkout">
       <div class="stack stack--lg">
-        <span class="skeleton skeleton--title skeleton--w45"></span>
-        <span class="skeleton skeleton--rect checkout__block"></span>
-        <span class="skeleton skeleton--rect checkout__block"></span>
-        <span class="skeleton skeleton--rect checkout__button skeleton--w50"></span>
+        <tl-skeleton shape="title" class="skeleton--w45" />
+        <tl-skeleton shape="rect" class="checkout__block" />
+        <tl-skeleton shape="rect" class="checkout__block" />
+        <tl-skeleton shape="rect" class="checkout__button skeleton--w50" />
       </div>
       <div class="panel stack">
         <div class="item-row">
-          <span class="skeleton skeleton--rect thumb checkout__thumb"></span>
+          <tl-skeleton shape="rect" class="thumb checkout__thumb" />
           <div class="item-row__body">
-            <span class="skeleton skeleton--text skeleton--w70"></span>
-            <span class="skeleton skeleton--text skeleton--w40"></span>
+            <tl-skeleton class="skeleton--w70" />
+            <tl-skeleton class="skeleton--w40" />
           </div>
         </div>
-        <span class="skeleton skeleton--text"></span>
-        <span class="skeleton skeleton--text"></span>
-        <span class="skeleton skeleton--text skeleton--w50"></span>
+        <tl-skeleton />
+        <tl-skeleton />
+        <tl-skeleton class="skeleton--w50" />
       </div>
     </div>
   }

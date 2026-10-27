@@ -39,11 +39,20 @@ says everything is for girls and never promises boys' or adult sizes
 | Component | Inputs and outputs | Notes |
 |---|---|---|
 | `tl-marketing-hero` | `eyebrow`, `lede`, `variant: 'hero' \| 'closing'`, `headingId`; slots `[title]`, `[actions]`, `[media]` | h1 in the hero, h2 in the closing band; re-points semantic tokens to the showcase |
-| `tl-shapes` | `density: 'full' \| 'quiet'` | Rounded party-pop blobs and a polka-dot band; `aria-hidden`; drift stops under reduced motion |
+| `tl-shapes` | — | Retired by ADR general/0009: no decorative shapes |
 | `tl-feature-band` | `eyebrow`, `heading`, `headingId`, `points`, `tone: 'default' \| 'surface'`, `stacked`; slots `[actions]`, body | Section labelled by its h2 |
 | `tl-steps` | `steps: { title, text }[]` | Ordered list, h3 titles |
 | `tl-video-poster` | `poster`, `label`, `duration`; output `watch` | Native button; no `<video>` on the page |
 | `tl-video-player` | `label`, `sources`, `captions`, `poster`, `autoplay` | States: loading, ready, error; Play/Pause, Captions (`aria-pressed`, off by default); error when the last `<source>` fails |
+
+### Presentation (page guidelines)
+
+Since [ADR general/0009](../../../adr/general/0009-page-guidelines-on-the-angular-and-giddy-stack.md)
+the markup above is drawn to [`docs/page-guidelines.md`](../../../page-guidelines.md); see
+[page-guidelines-conformance](../page-guidelines-conformance/README.md). The hero and the closing band are solid
+blush panels: `tl-shapes`, the gradient and the shape motion are gone. Tilly twirls above the video
+poster in the hero; "Shop the closet" in the hero is the page's one primary button and every other
+call to action is secondary; the shopper band uses the `blush` tone.
 
 ### Feature (`@tutumuch/marketing`)
 
@@ -101,7 +110,7 @@ member is an administrator, `WelcomePage` reads `LaunchState.canSell()` and repl
 "Start selling" with `<p class="marketing-hero__soon">Selling opens soon.</p>`, the seller band's
 heading with "Selling opens soon.", its points with "Pass it on soon" and "Join today", and its
 button with `<p class="feature-band__note">For now, every item is hand-picked by TuTuMuch.</p>`;
-the closing hero keeps only "Shop the catalog" (mock `pages/welcome/selling-opens-soon`). The page
+the closing hero keeps only "Shop the closet" (mock `pages/welcome/selling-opens-soon`). The page
 still calls no endpoint itself: `LaunchState` is loaded by the app initializer.
 
 ## Requirements

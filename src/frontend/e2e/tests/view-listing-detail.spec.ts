@@ -156,7 +156,7 @@ test.describe('view listing detail', () => {
 
     await expect(detail.heading).toHaveText('This item isn’t available');
     await expect(page.locator('main')).toContainText('It may have been sold or taken down.');
-    await expect(page.getByRole('link', { name: 'Shop similar items' })).toHaveAttribute('href', '/');
+    await expect(page.getByRole('link', { name: 'Find similar' })).toHaveAttribute('href', '/');
   });
 
   test('a server error shows the reference and Try again loads the listing', async ({ page }) => {
@@ -173,7 +173,7 @@ test.describe('view listing detail', () => {
 
     await expect(detail.heading).toHaveText('Couldn’t load this item');
     await expect(page.locator('main')).toContainText('Ref 5c1d-0e7a');
-    await expect(page.getByRole('link', { name: 'Back to shop' })).toHaveAttribute('href', '/');
+    await expect(page.getByRole('link', { name: 'Shop the closet' })).toHaveAttribute('href', '/');
 
     await page.getByRole('button', { name: 'Try again' }).click();
 

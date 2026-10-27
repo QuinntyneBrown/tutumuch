@@ -51,7 +51,7 @@ direction (`L2-095`).
 | `GET /api/auth/me` | `CurrentMemberDto` gains `IsAdministrator` |
 | `CanSell` policy | Adds `SellingOpenRequirement`; `SellingOpenHandler` succeeds when `LaunchRules.CanSell(phase, Members.IsAdministrator)`, read from TuTuMuch database like `AdministratorHandler`, else fails with reason `SELLING_NOT_OPEN` |
 | `ProblemAuthorizationResultHandler` | 403 `SELLING_NOT_OPEN` "Selling opens soon", checked before `EMAIL_NOT_VERIFIED` (`L2-091`) |
-| `CreateListingDraftCommand` | Before any rule: in Phase 1, `COUNT(Listings) + 1 >= limit` → 409 `PRODUCT_LIMIT_REACHED` "The catalog is full for now" (`L2-092`) |
+| `CreateListingDraftCommand` | Before any rule: in Phase 1, `COUNT(Listings) + 1 >= limit` → 409 `PRODUCT_LIMIT_REACHED` "The closet is full for now" (`L2-092`) |
 | `PublishListingCommand` | After the draft checks: in Phase 1, `COUNT(Listings) >= limit` → the same 409 |
 
 `CanSell` already guards `ListingsController` (create, save, publish, withdraw, relist, My
@@ -73,15 +73,15 @@ never changes the count and is not limited.
   `sellVisible` false removes Sell for guests and members (`L2-093`, `L2-094`).
 - **`@tutumuch/catalog`** — `categoryMenusOpen` (`CanActivateFn`) on the six category routes
   returns `router.createUrlTree(['/'])` in Phase 1; `FilterForm` drops the Category fieldset;
-  the empty state shows "Sell an item" only while `canSell()`.
+  the empty state shows "Sell outgrown gear" only while `canSell()`.
 - **`@tutumuch/listings`** — `sellingOpen` (`CanMatchFn`, awaits `AuthState.load()`) on `/sell`,
   `/sell/:reference`, `/items/:reference/edit` and `/account/listings`; the same paths follow
   without the guard and load `SellingNotOpenPage` (`tl-center-state` "Selling opens soon" with
-  "Shop the catalog"). `SellPage` shows the product-limit `tl-center-state` when a save answers
+  "Shop the closet"). `SellPage` shows the product-limit `tl-center-state` when a save answers
   409 `PRODUCT_LIMIT_REACHED`; `MyListingsPage` hides nothing else.
 - **`@tutumuch/orders`** — `PayoutBannerComponent` shows nothing and requests nothing while
-  `canSell()` is false; the empty sales and payouts states drop "Sell an item".
-- **`@tutumuch/accounts`** — `VerifyEmailPage` drops "Sell an item" and reads "Buying is open."
+  `canSell()` is false; the empty sales and payouts states drop "Sell outgrown gear".
+- **`@tutumuch/accounts`** — `VerifyEmailPage` drops "Sell outgrown gear" and reads "Buying is open."
   while `canSell()` is false.
 - **`@tutumuch/marketing`** — `WelcomePage` replaces the three "Start selling" links with
   "Selling opens soon." and the seller band copy of the `selling-opens-soon` mock.

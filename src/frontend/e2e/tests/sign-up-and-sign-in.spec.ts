@@ -98,7 +98,7 @@ test.describe('verify email', () => {
     await verify.goto('abc123');
 
     await expect(verify.heading).toHaveText('You’re verified');
-    await expect(verify.sellAnItem).toHaveAttribute('href', '/sell');
+    await expect(verify.sellOutgrownGear).toHaveAttribute('href', '/sell');
     expect(token).toBe('abc123');
   });
 

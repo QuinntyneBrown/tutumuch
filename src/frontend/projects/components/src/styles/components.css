@@ -1,6 +1,8 @@
 /* ==========================================================================
-   components.css — the TuTuMuch component stylesheet, extracted from
-   docs/mocks/assets/ui.css on 2026-10-25.
+   components.css — the TuTuMuch component stylesheet, a copy of
+   docs/design-system/assets/components.css (extracted from
+   docs/mocks/assets/ui.css on 2026-10-25, redrawn to the page guidelines on
+   2026-10-27, ADR general/0009). Change the design system first, then copy.
 
    Every colour, size and duration comes from ../tokens/tokens.css. Each
    component has its states wired for real interaction (:hover,
@@ -81,7 +83,6 @@ small,
 .overline {
   font: var(--text-overline);
   letter-spacing: var(--letter-spacing-wide);
-  text-transform: uppercase;
   color: var(--color-fg-muted);
 }
 a {
@@ -670,10 +671,6 @@ hr,
   opacity: 0.5;
   cursor: not-allowed;
 }
-.switch--labelled {
-  justify-content: space-between;
-  width: 100%;
-}
 fieldset {
   border: 0;
   padding: 0;
@@ -784,7 +781,6 @@ legend {
   border-radius: var(--radius-sm);
   font: var(--text-overline);
   letter-spacing: var(--letter-spacing-wide);
-  text-transform: uppercase;
   background: var(--color-bg-subtle);
   color: var(--color-fg-muted);
   white-space: nowrap;
@@ -941,7 +937,7 @@ legend {
   .topbar__menu {
     display: none;
   }
-}
+} /* six category links need the xl width */
 .topbar .search {
   flex: 1;
   min-width: 0;
@@ -1002,7 +998,6 @@ legend {
 .sidebar__group {
   font: var(--text-overline);
   letter-spacing: var(--letter-spacing-wide);
-  text-transform: uppercase;
   color: var(--color-fg-subtle);
   padding: var(--space-4) var(--space-3) var(--space-1);
 }
@@ -1770,15 +1765,8 @@ a.tab {
 }
 .skeleton {
   display: block;
-  background: linear-gradient(
-    90deg,
-    var(--color-bg-subtle) 25%,
-    var(--color-bg-subtle-hover) 37%,
-    var(--color-bg-subtle) 63%
-  );
-  background-size: 400% 100%;
+  background: var(--color-skeleton);
   border-radius: var(--radius-sm);
-  animation: shimmer 1.4s var(--ease-standard) infinite;
   min-height: 1em;
 }
 .skeleton--text {
@@ -1986,14 +1974,6 @@ a.tab {
     translate: -100% 0;
   }
 }
-@keyframes shimmer {
-  from {
-    background-position: 100% 0;
-  }
-  to {
-    background-position: 0 0;
-  }
-}
 @keyframes indeterminate {
   from {
     translate: -100% 0;
@@ -2018,9 +1998,6 @@ a.tab {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-  }
-  .skeleton {
-    animation: none;
   }
   .progress--indeterminate .progress__bar {
     animation: none;
@@ -2055,8 +2032,8 @@ a.tab {
 }
 
 /* ==========================================================================
-   TuTuMuch brand layer — components specific to the marketplace. Geometry follows
-   the logo: square corners, solid ink blocks, one 45° chamfer, a red accent.
+   TuTuMuch layer — components specific to the marketplace, drawn in the Giddy
+   look: rounded type, pill controls, soft corners, a raspberry accent on cream.
    ========================================================================== */
 
 /* ---------- Logo ---------------------------------------------------------- */
@@ -2065,6 +2042,19 @@ a.tab {
   align-items: center;
   color: var(--color-fg-default);
   text-decoration: none;
+}
+/* The supplied TuTuMuch logo image (plum outline, bubblegum dots, lavender checks) reads on both themes. */
+.logo img {
+  display: block;
+  height: 1.75rem;
+  width: auto;
+  max-width: 100%;
+}
+.logo--lg img {
+  height: 3rem;
+}
+.logo--sm img {
+  height: 1.25rem;
 }
 
 /* ---------- Shell ---------------------------------------------------------- */
@@ -2108,10 +2098,10 @@ a.tab {
 .topbar__admin {
   font: var(--text-overline);
   letter-spacing: var(--letter-spacing-wide);
-  text-transform: uppercase;
   padding: var(--space-1) var(--space-2);
-  background: var(--color-brand);
-  color: var(--palette-white);
+  background: var(--color-accent);
+  color: var(--color-fg-on-accent);
+  border-radius: var(--radius-full);
 }
 .page {
   padding-bottom: var(--space-16);
@@ -2136,76 +2126,6 @@ a.tab {
 .footer a:hover {
   text-decoration: underline;
 }
-.footer__link {
-  appearance: none;
-  border: 0;
-  padding: 0;
-  background: none;
-  font: inherit;
-  color: inherit;
-  cursor: pointer;
-  text-decoration: none;
-}
-.footer__link:hover {
-  text-decoration: underline;
-}
-.consent {
-  position: fixed;
-  z-index: var(--z-toast);
-  left: var(--space-4);
-  right: var(--space-4);
-  bottom: var(--space-4);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  padding: var(--space-6);
-  background: var(--color-bg-inverse);
-  color: var(--color-fg-inverse);
-  box-shadow: var(--shadow-4);
-  animation: slide-up var(--duration-slow) var(--ease-enter);
-}
-@media (min-width: 48rem) {
-  .consent {
-    left: auto;
-    width: 26rem;
-    right: var(--space-6);
-    bottom: var(--space-6);
-  }
-}
-.consent__title {
-  font: var(--text-h4);
-}
-.consent__link {
-  align-self: flex-start;
-  appearance: none;
-  border: 0;
-  padding: 0;
-  background: none;
-  font: var(--text-body-sm);
-  color: inherit;
-  text-decoration: underline;
-  cursor: pointer;
-}
-.consent__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-}
-.consent .btn {
-  --btn-bg: transparent;
-  --btn-fg: var(--color-fg-inverse);
-  --btn-border: var(--color-border-inverse);
-  --btn-bg-hover: color-mix(in srgb, currentColor 12%, transparent);
-}
-.consent .btn--primary {
-  --btn-bg: var(--color-fg-inverse);
-  --btn-fg: var(--color-bg-inverse);
-  --btn-border: var(--color-fg-inverse);
-  --btn-bg-hover: var(--color-fg-inverse);
-}
-.consent :focus-visible {
-  outline-color: var(--color-fg-inverse);
-}
 .subnav {
   display: flex;
   gap: var(--space-4);
@@ -2224,7 +2144,6 @@ a.tab {
 .eyebrow {
   font: var(--text-overline);
   letter-spacing: var(--letter-spacing-wide);
-  text-transform: uppercase;
   color: var(--color-fg-muted);
 }
 .display {
@@ -2260,34 +2179,27 @@ a.tab {
   font-variant-numeric: tabular-nums;
 }
 
-/* ---------- Size tag: the 12 / L block, cut like the logo's L ------------ */
+/* ---------- Size tag: the "Girls" pill on photos and category tiles ------ */
 .size-tag {
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
-  padding: var(--space-0-5) calc(var(--space-2) + var(--chamfer) * 0.4) var(--space-0-5) var(--space-2);
-  background: var(--palette-ink-950);
-  color: var(--palette-paper-100);
+  padding: var(--space-0-5) var(--space-3);
+  background: var(--color-accent);
+  color: var(--color-fg-on-accent);
+  border-radius: var(--radius-full);
   font: var(--text-overline);
   letter-spacing: var(--letter-spacing-wide);
-  text-transform: uppercase;
-  clip-path: polygon(
-    0 0,
-    100% 0,
-    100% calc(100% - var(--chamfer) * 0.7),
-    calc(100% - var(--chamfer) * 0.7) 100%,
-    0 100%
-  );
   white-space: nowrap;
 }
 .size-tag b {
-  font-weight: var(--font-weight-black);
+  font-weight: var(--font-weight-heavy);
   font-size: var(--font-size-sm);
   letter-spacing: 0;
 }
 .size-tag--lg {
   font-size: var(--font-size-sm);
-  padding: var(--space-1) calc(var(--space-3) + var(--chamfer) * 0.5) var(--space-1) var(--space-3);
+  padding: var(--space-1) var(--space-4);
 }
 .size-tag--lg b {
   font-size: var(--font-size-lg);
@@ -2297,7 +2209,8 @@ a.tab {
 .photo {
   position: relative;
   aspect-ratio: 4 / 5;
-  background: var(--photo-bg-1);
+  background: var(--color-photo-bg);
+  border-radius: var(--radius-lg);
   overflow: hidden;
   display: grid;
   place-items: center;
@@ -2306,31 +2219,13 @@ a.tab {
   width: 78%;
   height: auto;
 }
-.photo--1 {
-  background: var(--photo-bg-1);
-}
-.photo--2 {
-  background: var(--photo-bg-2);
-}
-.photo--3 {
-  background: var(--photo-bg-3);
-}
-.photo--4 {
-  background: var(--photo-bg-4);
-}
-.photo--5 {
-  background: var(--photo-bg-5);
-}
-.photo--6 {
-  background: var(--photo-bg-6);
-}
 .photo--square {
   aspect-ratio: 1;
 }
 .photo .size-tag {
   position: absolute;
-  left: 0;
-  bottom: 0;
+  left: var(--space-2);
+  bottom: var(--space-2);
 }
 .photo__stamp {
   position: absolute;
@@ -2339,14 +2234,14 @@ a.tab {
   padding: var(--space-1) var(--space-2);
   font: var(--text-overline);
   letter-spacing: var(--letter-spacing-wide);
-  text-transform: uppercase;
-  background: var(--palette-paper-100);
-  color: var(--palette-ink-950);
+  background: var(--color-bg-surface);
+  color: var(--color-fg-default);
+  border-radius: var(--radius-full);
   box-shadow: var(--shadow-1);
 }
 .photo__stamp--sold {
-  background: var(--palette-ink-950);
-  color: var(--palette-paper-100);
+  background: var(--color-bg-inverse);
+  color: var(--color-fg-inverse);
 }
 .thumb {
   width: 3.5rem;
@@ -2354,6 +2249,7 @@ a.tab {
 }
 .thumb .photo {
   aspect-ratio: 1;
+  border-radius: var(--radius-md);
 }
 .thumb--lg {
   width: 5rem;
@@ -2386,7 +2282,7 @@ a.tab {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
-@media (min-width: 80rem) {
+@media (min-width: 75rem) {
   .catalog-layout .listing-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
@@ -2419,7 +2315,6 @@ a.tab {
 .listing-card__brand {
   font: var(--text-overline);
   letter-spacing: var(--letter-spacing-wide);
-  text-transform: uppercase;
   color: var(--color-fg-muted);
 }
 .listing-card__title {
@@ -2456,7 +2351,7 @@ a.tab {
 }
 .skeleton--photo {
   aspect-ratio: 4 / 5;
-  border-radius: 0;
+  border-radius: var(--radius-lg);
 }
 
 /* ---------- Catalog layout: filters sidebar at lg ---------------------------- */
@@ -2495,7 +2390,6 @@ a.tab {
 .filters__group legend {
   font: var(--text-overline);
   letter-spacing: var(--letter-spacing-wide);
-  text-transform: uppercase;
   color: var(--color-fg-muted);
   margin-bottom: var(--space-3);
 }
@@ -2638,11 +2532,15 @@ a.tab {
   flex: none;
   outline-offset: 2px;
 }
+.gallery__thumbs button {
+  border-radius: var(--radius-md);
+}
 .gallery__thumbs button[aria-current='true'] {
-  box-shadow: 0 0 0 2px var(--color-fg-default);
+  box-shadow: 0 0 0 2px var(--color-accent);
 }
 .gallery__thumbs .photo {
   aspect-ratio: 1;
+  border-radius: var(--radius-md);
 }
 .gallery__dots {
   display: flex;
@@ -2652,10 +2550,11 @@ a.tab {
 .gallery__dots span {
   width: 0.375rem;
   height: 0.375rem;
+  border-radius: var(--radius-full);
   background: var(--color-border-strong);
 }
 .gallery__dots span[aria-current='true'] {
-  background: var(--color-fg-default);
+  background: var(--color-accent);
   width: 1.25rem;
 }
 @media (min-width: 62rem) {
@@ -2757,6 +2656,7 @@ a.tab {
   background: var(--color-warning-bg);
   color: var(--color-warning-fg);
   border-left: 3px solid var(--color-warning-solid);
+  border-radius: var(--radius-md);
   font: var(--text-body-sm);
 }
 
@@ -2910,37 +2810,6 @@ a.tab {
 .uploader__progress {
   position: absolute;
   inset: auto var(--space-2) var(--space-2);
-}
-.uploader__rejected {
-  aspect-ratio: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-1);
-  padding: var(--space-2);
-  border: 1px solid var(--color-danger-solid);
-  background: var(--color-danger-bg);
-  color: var(--color-danger-fg);
-  font: var(--text-caption);
-  text-align: center;
-  overflow-wrap: anywhere;
-}
-.uploader__tile[draggable='true'] {
-  cursor: grab;
-}
-.uploader__tile:focus-visible {
-  outline: var(--focus-ring-width) solid var(--color-focus-ring);
-  outline-offset: 2px;
-}
-.uploader .photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.uploader__add[aria-disabled='true'] {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
 .fixed-size {
   display: flex;
@@ -3491,7 +3360,7 @@ a.tab {
 }
 .toast {
   border-left: 3px solid var(--color-brand);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-lg);
 }
 .toast--success {
   border-left-color: var(--color-inverse-success);
@@ -3528,6 +3397,13 @@ a.tab {
 
 /* ---------- Module additions (one block per screen module) ------------------ */
 /* @@accounts */
+.uploader__tile[draggable='true'] {
+  cursor: grab;
+}
+.uploader__tile:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
 .uploader__rejected {
   aspect-ratio: 1;
   display: flex;
@@ -3652,7 +3528,7 @@ a.tab {
   height: 3.5rem;
   background: var(--color-accent);
   color: var(--color-fg-on-accent);
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--chamfer)), calc(100% - var(--chamfer)) 100%, 0 100%);
+  border-radius: var(--radius-full);
 }
 .confirm__mark .icon {
   width: 1.75rem;
@@ -3766,11 +3642,12 @@ a.tab {
 /* @@system */
 
 /* ==========================================================================
-   Giddy look — TuTuMuch keeps the 12L components and draws them in the Giddy
-   design system: rounded display type, pill controls with a pressable lip,
-   soft corners and round avatars and icon wells, with the raspberry accent
-   on cream. Mirrors docs/design-system/assets/components.css. Every value is
-   a token.
+   Page guidelines look — TuTuMuch keeps the 12L components and draws them to
+   docs/page-guidelines.md (ADR general/0009): Fraunces headings and prices,
+   DM Sans text, sentence case, raspberry pill buttons that hover to ink, a
+   ringed surface secondary button, lilac selected chips, condition badges,
+   surface photo wells, no card shadows, thin ink/10 lines, blush skeletons,
+   Tilly in empty states and quick ease-out motion. Every value is a token.
    ========================================================================== */
 h1,
 h2,
@@ -3782,33 +3659,165 @@ h4,
 .drawer__title,
 .empty__title,
 .detail__title,
+.price,
 .price--lg,
-.center-state .code {
+.stat__value,
+.center-state .code,
+.menu-sheet__links a,
+.steps__title,
+.feature-band__title,
+.marketing-hero__title {
   font-family: var(--font-family-display);
+  font-variation-settings: var(--font-variation-display);
+  font-optical-sizing: auto;
 }
+h1,
+h2,
+.display,
+.detail__title {
+  letter-spacing: var(--letter-spacing-tight);
+}
+body {
+  font-optical-sizing: auto;
+}
+
+/* Sentence case everywhere: no all-caps letterspaced labels. */
+.overline,
+.eyebrow,
+.badge,
+.sidebar__group,
+.topbar__admin,
+.size-tag,
+.photo__stamp,
+.listing-card__brand,
+.filters__group legend,
+.marketing-hero__eyebrow,
+.feature-band__eyebrow,
+.or-divider,
+.steps__item::before {
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+/* Buttons: primary raspberry, hover ink; secondary on the surface with a 2px inset raspberry ring, hover
+   raspberry with light text; text links raspberry, hover ink and underlined. No lip, no lift. */
 .btn {
+  --btn-bg: var(--color-bg-surface);
+  --btn-fg: var(--color-fg-accent);
+  --btn-border: transparent;
+  --btn-ring: var(--color-accent);
+  --btn-bg-hover: var(--color-accent);
+  --btn-fg-hover: var(--color-fg-on-accent);
+  --btn-bg-active: var(--color-accent-active);
   border-radius: var(--radius-full);
-  font-weight: var(--font-weight-bold);
+  padding-inline: var(--space-6);
+  font-weight: var(--font-weight-semibold);
+  box-shadow: inset 0 0 0 var(--border-width-thick) var(--btn-ring);
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+.btn:hover,
+.btn[data-state='hover'] {
+  background: var(--btn-bg-hover);
+  color: var(--btn-fg-hover);
+  --btn-ring: var(--btn-bg-hover);
+}
+.btn:active,
+.btn[data-state='active'] {
+  background: var(--btn-bg-active);
+  color: var(--btn-fg-hover);
+  transform: none;
+}
+.btn:focus-visible,
+.btn[data-state='focus'] {
+  border-radius: var(--radius-full);
 }
 .btn--primary {
-  box-shadow: var(--shadow-press);
+  --btn-bg: var(--color-accent);
+  --btn-fg: var(--color-fg-on-accent);
+  --btn-border: var(--color-accent);
+  --btn-ring: transparent;
+  --btn-bg-hover: var(--color-accent-hover);
+  --btn-fg-hover: var(--color-fg-on-accent);
+  --btn-bg-active: var(--color-accent-active);
 }
 .btn--primary:hover,
 .btn--primary[data-state='hover'] {
-  box-shadow: var(--shadow-press);
-  transform: translateY(-1px);
+  border-color: var(--color-accent-hover);
+  --btn-ring: transparent;
 }
-.btn--primary:active,
-.btn--primary[data-state='active'] {
-  box-shadow: none;
-  transform: translateY(0.25rem);
+.btn--danger {
+  --btn-bg: var(--color-danger-solid);
+  --btn-fg: var(--color-fg-on-danger);
+  --btn-border: var(--color-danger-solid);
+  --btn-ring: transparent;
+  --btn-bg-hover: var(--color-danger-solid-hover);
+  --btn-fg-hover: var(--color-fg-on-danger);
+  --btn-bg-active: var(--color-danger-solid-hover);
 }
-.btn--primary:disabled,
-.btn--primary[aria-busy='true'],
-.btn--primary[data-state='loading'],
-.btn--primary[data-state='disabled'] {
-  box-shadow: none;
-  transform: none;
+.btn--danger:hover,
+.btn--danger[data-state='hover'] {
+  border-color: var(--color-danger-solid-hover);
+  --btn-ring: transparent;
+}
+.btn--ghost {
+  --btn-bg: transparent;
+  --btn-fg: var(--color-fg-default);
+  --btn-border: transparent;
+  --btn-ring: transparent;
+  --btn-bg-hover: var(--color-bg-subtle);
+  --btn-fg-hover: var(--color-fg-default);
+  --btn-bg-active: var(--color-bg-subtle-hover);
+}
+.btn--ghost:hover,
+.btn--ghost[data-state='hover'] {
+  --btn-ring: transparent;
+}
+.btn--link {
+  --btn-bg: transparent;
+  --btn-fg: var(--color-fg-link);
+  --btn-border: transparent;
+  --btn-ring: transparent;
+  --btn-bg-hover: transparent;
+  --btn-fg-hover: var(--color-fg-link-hover);
+  --btn-bg-active: transparent;
+  padding-inline: var(--space-1);
+  text-decoration: none;
+  text-underline-offset: 4px;
+}
+.btn--link:hover,
+.btn--link[data-state='hover'] {
+  --btn-ring: transparent;
+  text-decoration: underline;
+}
+.btn--provider {
+  --btn-fg: var(--color-fg-default);
+  --btn-ring: var(--color-border-strong);
+  --btn-bg-hover: var(--color-bg-subtle);
+  --btn-fg-hover: var(--color-fg-default);
+  --btn-bg-active: var(--color-bg-subtle-hover);
+}
+.btn--provider:hover,
+.btn--provider[data-state='hover'] {
+  --btn-ring: var(--color-fg-default);
+}
+.btn--icon {
+  padding: 0;
+}
+.btn--sm {
+  padding-inline: var(--space-4);
+}
+.btn--lg {
+  padding-inline: var(--space-8);
+}
+.btn:disabled,
+.btn[aria-disabled='true'],
+.btn[data-state='disabled'] {
+  background: var(--btn-bg);
+  color: var(--btn-fg);
 }
 .btn-group .btn {
   border-radius: 0;
@@ -3819,6 +3828,26 @@ h4,
 .btn-group .btn:last-child {
   border-radius: 0 var(--radius-full) var(--radius-full) 0;
 }
+.consent .btn {
+  --btn-ring: var(--color-border-inverse);
+  --btn-fg-hover: var(--color-fg-inverse);
+}
+.consent .btn--primary {
+  --btn-ring: transparent;
+  --btn-fg-hover: var(--color-bg-inverse);
+}
+a.link {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-fg-link);
+  text-decoration: none;
+  text-underline-offset: 4px;
+}
+a.link:hover {
+  color: var(--color-fg-link-hover);
+  text-decoration: underline;
+}
+
+/* Pills: chips, badges, avatars, icon wells. Selected chips are lilac at 15% with a lilac ring. */
 .chip,
 .badge,
 .avatar,
@@ -3831,6 +3860,71 @@ h4,
 .switch input::before {
   border-radius: 50%;
 }
+.chip {
+  border-color: var(--color-border-ring);
+}
+.chip[aria-pressed='true'],
+.chip[aria-selected='true'],
+.chip[data-state='selected'],
+.chip--selected {
+  background: var(--color-selected-bg);
+  border-color: var(--color-selected-border);
+  color: var(--color-fg-default);
+}
+.badge {
+  font: var(--text-label);
+  padding-inline: var(--space-3);
+}
+
+/* Condition badge: New with tags raspberry, Like new sunny, Gently loved blush, Well loved white. */
+.condition-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font: var(--text-label);
+  white-space: nowrap;
+  background: var(--color-condition-well-loved-bg);
+  color: var(--color-condition-well-loved-fg);
+  box-shadow: inset 0 0 0 1px var(--color-condition-well-loved-ring);
+}
+.condition-badge--new {
+  background: var(--color-condition-new-bg);
+  color: var(--color-condition-new-fg);
+  box-shadow: none;
+}
+.condition-badge--like-new {
+  background: var(--color-condition-like-new-bg);
+  color: var(--color-condition-like-new-fg);
+  box-shadow: none;
+}
+.condition-badge--loved {
+  background: var(--color-condition-loved-bg);
+  color: var(--color-condition-loved-fg);
+  box-shadow: none;
+}
+
+/* Surfaces: no card shadows; group with thin ink/10 lines. */
+.card,
+.card--interactive:hover,
+.card--interactive[data-state='hover'] {
+  box-shadow: none;
+  transform: none;
+}
+.card,
+.panel,
+.table-wrap,
+.accordion {
+  border-radius: var(--radius-card);
+}
+.dialog__panel {
+  border-radius: var(--radius-panel) var(--radius-panel) 0 0;
+}
+@media (min-width: 36rem) {
+  .dialog__panel {
+    border-radius: var(--radius-panel);
+  }
+}
 .tab::after {
   border-radius: var(--radius-xs) var(--radius-xs) 0 0;
 }
@@ -3840,7 +3934,7 @@ h4,
   color: var(--color-fg-accent);
 }
 .category-tile {
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-card);
 }
 .category-tile:hover {
   border-color: var(--color-accent);
@@ -3851,7 +3945,7 @@ h4,
   border-radius: var(--radius-full);
 }
 
-/* Size tag: the "Girls" pill on photos and category headers. */
+/* Size tag: the "Girls" pill on category headers and the listing detail. */
 .size-tag {
   padding: var(--space-0-5) var(--space-3);
   background: var(--color-accent);
@@ -3860,34 +3954,49 @@ h4,
   clip-path: none;
 }
 .size-tag b {
-  font-weight: var(--font-weight-heavy);
+  font-weight: var(--font-weight-semibold);
 }
 .size-tag--lg {
   padding: var(--space-1) var(--space-4);
 }
 
+/* Photos: white wells with 1.5rem corners, the whole item visible. */
 .photo,
+.photo--1,
+.photo--2,
+.photo--3,
+.photo--4,
+.photo--5,
+.photo--6,
 .skeleton--photo {
-  border-radius: var(--radius-lg);
+  background: var(--color-photo-bg);
+  border-radius: var(--radius-card);
+}
+.photo--none {
+  background: var(--color-bg-subtle);
 }
 .thumb .photo,
 .gallery__thumbs button,
 .gallery__thumbs .photo {
-  border-radius: var(--radius-md);
-}
-.photo .size-tag {
-  left: var(--space-2);
-  bottom: var(--space-2);
+  border-radius: var(--radius-sm);
 }
 .photo__stamp {
   background: var(--color-bg-surface);
   color: var(--color-fg-default);
   border-radius: var(--radius-full);
+  box-shadow: inset 0 0 0 1px var(--color-border-ring);
   clip-path: none;
+  font: var(--text-label);
 }
 .photo__stamp--sold {
   background: var(--color-bg-inverse);
   color: var(--color-fg-inverse);
+  box-shadow: none;
+}
+/* Sold out: grey the photo and show the "Sold" badge. */
+.photo--sold img,
+.photo--sold picture {
+  opacity: 0.6;
 }
 .gallery__thumbs button[aria-current='true'] {
   box-shadow: 0 0 0 2px var(--color-accent);
@@ -3899,14 +4008,305 @@ h4,
   background: var(--color-accent);
 }
 .flaws {
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-input);
 }
 .toast {
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-card);
 }
 .confirm__mark {
   border-radius: var(--radius-full);
   clip-path: none;
+}
+
+/* Listing grid and card: 2, 3, then 4 columns; photo, title, brand, size and condition, price.
+   Every card fills its row and pushes the price down, so the price rows line up. */
+.listing-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (min-width: 48rem) {
+  .listing-grid,
+  .catalog-layout .listing-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (min-width: 62rem) {
+  .listing-grid,
+  .catalog-layout .listing-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+.listing-grid > li {
+  display: flex;
+}
+.listing-card {
+  flex: 1;
+  min-width: 0;
+}
+.listing-card:hover .photo img,
+.listing-card[data-state='hover'] .photo img {
+  transform: none;
+}
+.listing-card:hover .listing-card__title,
+.listing-card[data-state='hover'] .listing-card__title {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.listing-card__meta {
+  flex: 1;
+  gap: var(--space-0-5);
+}
+.listing-card__title {
+  order: -1;
+  font: var(--text-body);
+  font-weight: var(--font-weight-medium);
+}
+.listing-card__brand {
+  font: var(--text-body-sm);
+  color: var(--color-fg-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.listing-card__facts,
+.listing-card__condition {
+  font: var(--text-body-sm);
+  color: var(--color-fg-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.listing-card__foot,
+.listing-card__price {
+  margin-top: auto;
+  padding-top: var(--space-1);
+}
+.price {
+  font: var(--text-price);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-fg-default);
+}
+.price--lg {
+  font: var(--text-h2);
+}
+.price--muted {
+  font: var(--text-body-sm);
+  color: var(--color-fg-muted);
+}
+.price--original {
+  font: var(--text-price-original);
+  color: var(--color-fg-muted);
+  text-decoration: line-through;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Loading: blush skeleton blocks shaped like the content; no shimmer, no spinner. */
+.skeleton {
+  background: var(--color-skeleton);
+  animation: none;
+}
+.skeleton--photo {
+  background: var(--color-skeleton);
+}
+
+/* Tilly: at most one per screen, never cropped, flipped or stretched. */
+.tilly {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+}
+.tilly--hero {
+  height: var(--size-illustration-xl);
+  justify-self: center;
+}
+.tilly--header {
+  height: var(--size-illustration-lg);
+}
+.tilly--confirm {
+  height: var(--size-illustration-lg);
+}
+.tilly--tile {
+  height: var(--size-illustration-lg);
+  border-radius: var(--radius-card);
+}
+
+/* Empty state: Tilly waving hello, one short line and one action. */
+.tilly.empty__tilly {
+  display: block;
+  width: auto;
+  height: var(--size-illustration-lg);
+  margin-bottom: var(--space-2);
+}
+.empty__text {
+  color: var(--color-fg-muted);
+}
+
+/* Category header: H1, the size tag and the matching sport pose on a blush panel. */
+.category-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  margin-block: var(--space-8);
+  padding: var(--space-6) var(--space-8);
+  background: var(--color-bg-blush);
+  border-radius: var(--radius-panel);
+}
+.category-head .tilly {
+  height: 8rem;
+  flex: none;
+}
+@media (min-width: 48rem) {
+  .category-head .tilly {
+    height: var(--size-illustration-lg);
+  }
+}
+
+/* Mark: the gingham "T" on a blush circle (brand kit markScene tGingham). */
+.mark {
+  display: inline-block;
+  flex: none;
+  width: var(--size-illustration-sm);
+  height: var(--size-illustration-sm);
+}
+.mark--sm {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+/* Header: the wordmark from 640px, the mark below, inside the same home link. */
+.logo__mark {
+  display: none;
+}
+@media (max-width: 39.99rem) {
+  .logo--responsive .logo__wordmark,
+  .logo--responsive img {
+    display: none;
+  }
+  .logo--responsive .logo__mark {
+    display: inline-block;
+  }
+}
+
+/* Footer: mark, short links, "© TuTuMuch". */
+.footer__mark {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* Filters: Category, Size and Condition first; Brand and Price behind "More filters". */
+.filters__more-group {
+  border-top: 1px solid var(--color-border-default);
+  padding-top: var(--space-4);
+}
+.filters__more-group > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--target-comfortable);
+  font: var(--text-label);
+  color: var(--color-fg-link);
+  cursor: pointer;
+  list-style: none;
+}
+.filters__more-group > summary::-webkit-details-marker {
+  display: none;
+}
+.filters__more-group > summary::after {
+  content: '+';
+  font-size: var(--font-size-xl);
+  transition: rotate var(--duration-base) var(--ease-out);
+}
+.filters__more-group[open] > summary::after {
+  rotate: 45deg;
+}
+.filters__more-group[open] > summary {
+  margin-bottom: var(--space-4);
+}
+.filters__more-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+.filters__size {
+  font: var(--text-body-sm);
+  color: var(--color-fg-muted);
+}
+
+/* Steps and feature bands: separated by spacing and thin lines, no decorative dots. */
+.steps__item {
+  border-top: 1px solid var(--color-border-default);
+}
+.feature-band__eyebrow::before {
+  content: none;
+}
+.feature-band--blush {
+  background: var(--color-bg-blush);
+}
+.feature-band--blush .feature-band__point span {
+  color: var(--color-fg-subtle);
+}
+
+/* Header skeleton: logo left, search in the middle, Sell and Account right; the categories in a
+   second row from 768px, behind the menu button below. */
+.topbar {
+  display: block;
+  padding-inline: 0;
+}
+.topbar__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--layout-topbar-height);
+  max-width: var(--layout-container-wide);
+  margin-inline: auto;
+  padding-inline: var(--layout-margin);
+}
+@media (min-width: 48rem) {
+  .topbar__row {
+    gap: var(--space-6);
+  }
+}
+.topbar__nav {
+  display: none;
+  max-width: var(--layout-container-wide);
+  margin: 0 auto;
+  padding-inline: var(--layout-margin);
+  gap: var(--space-2);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.topbar__nav .nav-link {
+  min-height: var(--target-comfortable);
+  padding-inline: var(--space-2);
+}
+@media (min-width: 48rem) {
+  .topbar__nav {
+    display: flex;
+  }
+  .topbar__menu {
+    display: none;
+  }
+}
+.topbar .search {
+  flex: 1 1 22rem;
+  max-width: 28rem;
+}
+.topbar .search .input {
+  border-radius: var(--radius-full);
+}
+
+/* Product grids may use the wider container (max-w-7xl); content stays at max-w-6xl. */
+.container--wide {
+  max-width: var(--layout-container-wide);
+}
+
+/* Marketing hero media: Tilly twirling above the video poster. */
+.marketing-hero__media {
+  display: grid;
+  gap: var(--space-6);
+  justify-items: center;
 }
 
 /* ---------- Marketing: page, hero, shapes, feature band, steps, video ---------- */
@@ -3914,30 +4314,16 @@ h4,
 .marketing {
   display: block;
 }
-/* Showcase surface: the hero, the closing band and the video frame stay ink in both themes.
-   Semantic tokens are re-pointed here so buttons, links and focus rings read on ink. */
-.marketing-hero,
-.video-player__frame {
-  --color-fg-default: var(--color-fg-showcase);
-  --color-fg-muted: var(--color-fg-showcase-muted);
-  --color-accent: var(--color-fg-showcase);
-  --color-accent-hover: var(--color-fg-showcase-muted);
-  --color-accent-active: var(--color-fg-showcase-muted);
-  --color-fg-on-accent: var(--color-showcase-start);
-  --color-bg-surface: transparent;
-  --color-bg-subtle: var(--color-showcase-subtle);
-  --color-bg-subtle-hover: var(--color-shape-tone);
-  --color-border-strong: var(--color-fg-showcase);
-  --color-fg-link: var(--color-fg-showcase);
-  --color-focus-ring: var(--color-fg-showcase);
-  --color-focus-ring-offset: var(--color-showcase-start);
-  color: var(--color-fg-showcase);
-}
+/* Showcase surface: the hero and the closing band are a solid blush panel (no gradient, no shapes); the video frame is ink. */
 .marketing-hero {
   position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  background: var(--gradient-showcase);
+  background: var(--color-showcase-start);
+  color: var(--color-fg-showcase);
+  --color-fg-muted: var(--color-fg-showcase-muted);
+  --color-focus-ring-offset: var(--color-showcase-start);
+}
+.video-player__frame {
+  color: var(--color-fg-inverse);
 }
 .marketing-hero__inner {
   position: relative;
@@ -3964,7 +4350,6 @@ h4,
 .marketing-hero__eyebrow {
   font: var(--text-overline);
   letter-spacing: var(--letter-spacing-wide);
-  text-transform: uppercase;
   color: var(--color-fg-showcase-muted);
   margin: 0 0 var(--space-4);
 }
@@ -4003,85 +4388,6 @@ h4,
   position: relative;
   min-width: 0;
 }
-.marketing-hero__soon {
-  align-self: center;
-  font: var(--text-body-lg);
-  color: var(--color-fg-showcase-muted);
-  margin: 0;
-}
-
-/* ---------- Shapes: decorative party-pop blobs and a polka-dot band ------------ */
-.shapes {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-.shapes__shape {
-  position: absolute;
-  animation: shape-drift var(--duration-drift) var(--ease-standard) infinite alternate;
-}
-.shapes__shape--brand {
-  top: calc(var(--space-16) * -1);
-  right: calc(var(--space-12) * -1);
-  width: min(40vw, 28rem);
-  aspect-ratio: 6 / 5;
-  background: var(--color-shape-brand);
-  border-radius: 58% 42% 46% 54% / 52% 44% 56% 48%;
-  opacity: 0.45;
-}
-.shapes__shape--tone {
-  bottom: calc(var(--space-20) * -1);
-  right: 22%;
-  width: min(26vw, 16rem);
-  aspect-ratio: 1;
-  background: var(--color-shape-tone);
-  border-radius: 50%;
-  animation-delay: -8s;
-}
-.shapes__shape--light {
-  display: none;
-  bottom: 14%;
-  right: 4%;
-  width: min(10vw, 7rem);
-  aspect-ratio: 1;
-  background: var(--color-shape-light);
-  border-radius: 50%;
-  animation-delay: -16s;
-}
-.shapes__stripes {
-  position: absolute;
-  inset: auto 0 0;
-  height: var(--space-3);
-  background: radial-gradient(circle, var(--color-shape-brand) 30%, transparent 32%) 0 50% / var(--space-6)
-    var(--space-3) repeat-x;
-}
-.shapes--quiet .shapes__shape--brand,
-.shapes--quiet .shapes__shape--light {
-  display: none;
-}
-@media (min-width: 62rem) {
-  .shapes__shape--brand {
-    opacity: 1;
-  }
-  .shapes__shape--light {
-    display: block;
-  }
-}
-@keyframes shape-drift {
-  from {
-    translate: 0 0;
-  }
-  to {
-    translate: calc(var(--space-6) * -1) var(--space-4);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .shapes__shape {
-    animation: none;
-  }
-}
 
 /* ---------- Feature band: eyebrow, short headline, points or a projected body -- */
 .feature-band {
@@ -4117,18 +4423,10 @@ h4,
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font: var(--text-overline);
+  font: var(--text-label);
   letter-spacing: var(--letter-spacing-wide);
-  text-transform: uppercase;
   color: var(--color-fg-muted);
   margin: 0;
-}
-.feature-band__eyebrow::before {
-  content: '';
-  width: var(--space-3);
-  height: var(--space-3);
-  background: var(--color-brand);
-  border-radius: 50%;
 }
 .feature-band__title {
   font: var(--text-h1);
@@ -4143,11 +4441,6 @@ h4,
   flex-wrap: wrap;
   gap: var(--space-3);
   margin-top: var(--space-8);
-}
-.feature-band__note {
-  font: var(--text-body);
-  color: var(--color-fg-muted);
-  margin: 0;
 }
 .feature-band__points {
   list-style: none;
@@ -4186,7 +4479,7 @@ h4,
 }
 .steps__item {
   counter-increment: step;
-  border-top: var(--space-1) solid var(--color-brand);
+  border-top: 1px solid var(--color-border-default);
   padding-top: var(--space-5);
 }
 .steps__item::before {
@@ -4213,13 +4506,12 @@ h4,
   width: 100%;
   aspect-ratio: 16 / 9;
   padding: 0;
-  border: 1px solid var(--color-shape-tone);
-  border-radius: var(--radius-lg);
-  background: var(--color-showcase-start);
-  color: var(--color-fg-showcase);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-card);
+  background: var(--color-bg-inverse);
+  color: var(--color-fg-inverse);
   overflow: hidden;
   cursor: pointer;
-  box-shadow: var(--shadow-4);
 }
 .video-poster img {
   display: block;
@@ -4238,25 +4530,26 @@ h4,
   padding: 0 var(--space-5);
   font: var(--text-label);
   font-size: var(--font-size-md);
-  font-weight: var(--font-weight-bold);
-  background: var(--color-fg-showcase);
-  color: var(--color-showcase-start);
-  border-radius: var(--radius-md);
-  transition: background-color var(--duration-fast) var(--ease-standard);
+  font-weight: var(--font-weight-semibold);
+  background: var(--color-accent);
+  color: var(--color-fg-on-accent);
+  border-radius: var(--radius-full);
+  transition: background-color var(--duration-fast) var(--ease-out);
 }
 .video-poster__meta {
   position: absolute;
   right: var(--space-4);
   bottom: var(--space-4);
-  padding: var(--space-1) var(--space-2);
+  padding: var(--space-1) var(--space-3);
   font: var(--text-caption);
-  font-weight: var(--font-weight-bold);
-  background: var(--color-showcase-start);
-  color: var(--color-fg-showcase);
+  font-weight: var(--font-weight-semibold);
+  background: var(--color-bg-inverse);
+  color: var(--color-fg-inverse);
+  border-radius: var(--radius-full);
 }
 .video-poster:hover .video-poster__play,
 .video-poster[data-state='hover'] .video-poster__play {
-  background: var(--color-fg-showcase-muted);
+  background: var(--color-accent-hover);
 }
 .video-poster:focus-visible,
 .video-poster[data-state='focus'] {
@@ -4272,7 +4565,8 @@ h4,
 .video-player__frame {
   position: relative;
   aspect-ratio: 16 / 9;
-  background: var(--color-showcase-start);
+  background: var(--color-bg-inverse);
+  border-radius: var(--radius-card);
   overflow: hidden;
 }
 .video-player__frame video {
@@ -4289,7 +4583,7 @@ h4,
   gap: var(--space-3);
   padding: var(--space-6);
   text-align: center;
-  background: var(--color-showcase-start);
+  background: var(--color-bg-inverse);
 }
 .video-player__state strong {
   font: var(--text-h4);
@@ -4297,7 +4591,7 @@ h4,
 .video-player__state p {
   max-width: 28rem;
   margin: 0;
-  color: var(--color-fg-showcase-muted);
+  color: var(--color-fg-inverse);
 }
 .video-player__controls {
   display: flex;
@@ -4327,8 +4621,6 @@ h4,
   margin: 0;
   color: var(--color-fg-muted);
   font: var(--text-caption);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
 }
 .or-divider::before,
 .or-divider::after {

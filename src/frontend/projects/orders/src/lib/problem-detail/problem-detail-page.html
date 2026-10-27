@@ -3,13 +3,13 @@
     <h1 class="visually-hidden">Loading problem</h1>
     <div class="split problem__loading" aria-busy="true" aria-label="Loading">
       <div class="stack stack--lg">
-        <span class="skeleton skeleton--title"></span>
-        <span class="skeleton skeleton--rect problem__skeleton-block"></span>
-        <div><span class="skeleton skeleton--text"></span><span class="skeleton skeleton--text"></span></div>
+        <tl-skeleton shape="title" />
+        <tl-skeleton shape="rect" class="problem__skeleton-block" />
+        <div><tl-skeleton /><tl-skeleton /></div>
       </div>
       <div class="panel panel--sunken stack">
-        <span class="skeleton skeleton--text"></span>
-        <span class="skeleton skeleton--rect"></span>
+        <tl-skeleton />
+        <tl-skeleton shape="rect" />
       </div>
     </div>
   }

@@ -1,8 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { SizeTagComponent } from '../size-tag/size-tag';
-
 /** A listing photo as a picture: WebP and JPEG srcsets with the original dimensions (L2-059). */
 export interface ListingCardPhoto {
   width: number;
@@ -22,17 +20,20 @@ export interface ListingCardView {
   condition: string;
   price: string;
   reserved: boolean;
+  /** Sold out: the photo is greyed and stamped "Sold" (page guidelines 9). */
+  sold?: boolean;
   photo: ListingCardPhoto | null;
 }
 
 /**
- * One listing in a grid: cover photo with the size tag, brand, title, condition and price, and a
- * "Reserved" stamp when the item is in a checkout (design system: Listing card). Text is bound
- * as text, never as HTML.
+ * One listing in a grid (design system: Listing card, L2-096): the photo in a white 4:5 well, the
+ * title on one line, the brand (L2-022), "{size} · {condition}" and the price, pushed to the bottom
+ * so the price rows of a grid row line up. A "Reserved" stamp marks an item in a checkout; a sold
+ * item is greyed and stamped "Sold". Text is bound as text, never as HTML.
  */
 @Component({
   selector: 'tl-listing-card',
-  imports: [RouterLink, SizeTagComponent],
+  imports: [RouterLink],
   templateUrl: './listing-card.html',
   styleUrl: './listing-card.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

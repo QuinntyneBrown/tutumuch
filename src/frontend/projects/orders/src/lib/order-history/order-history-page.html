@@ -12,12 +12,12 @@
       @for (row of [1, 2, 3]; track row) {
         <li>
           <div class="item-row history__skeleton-row">
-            <span class="skeleton skeleton--rect thumb history__skeleton-thumb"></span>
+            <tl-skeleton shape="rect" class="thumb history__skeleton-thumb" />
             <div class="item-row__body">
-              <span class="skeleton skeleton--text history__skeleton-title"></span>
-              <span class="skeleton skeleton--text history__skeleton-meta"></span>
+              <tl-skeleton class="history__skeleton-title" />
+              <tl-skeleton class="history__skeleton-meta" />
             </div>
-            <span class="skeleton skeleton--text history__skeleton-price"></span>
+            <tl-skeleton class="history__skeleton-price" />
           </div>
         </li>
       }
@@ -34,14 +34,14 @@
       @if (orders.items.length === 0) {
         @if (list === 'purchases') {
           <tl-empty-state icon="bag" heading="Nothing bought yet">
-            Everything in the catalog already fits.
-            <a actions tlButton="primary" routerLink="/">Browse the catalog</a>
+            Find her next favourite thing in the closet.
+            <a actions tlButton="primary" routerLink="/">Shop the closet</a>
           </tl-empty-state>
         } @else {
           <tl-empty-state icon="tag" heading="No sales yet">
             Sold items show up here with what to do next.
             @if (launch.canSell()) {
-              <a actions tlButton="primary" routerLink="/sell">Sell an item</a>
+              <a actions tlButton="primary" routerLink="/sell">Sell outgrown gear</a>
             }
           </tl-empty-state>
         }

@@ -6,6 +6,7 @@ import {
   EmptyStateComponent,
   IconComponent,
   ItemRowComponent,
+  SkeletonComponent,
   StatusComponent,
 } from '@tutumuch/components';
 
@@ -19,7 +20,15 @@ import { OrderHistoryList, orderMeta, orderSubtitle, statusTone } from './order-
  */
 @Component({
   selector: 'tl-order-history-page',
-  imports: [RouterLink, ButtonDirective, EmptyStateComponent, IconComponent, ItemRowComponent, StatusComponent],
+  imports: [
+    RouterLink,
+    ButtonDirective,
+    EmptyStateComponent,
+    IconComponent,
+    ItemRowComponent,
+    StatusComponent,
+    SkeletonComponent,
+  ],
   templateUrl: './order-history-page.html',
   styleUrl: './order-history-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,0 +1,21 @@
+<svg
+  class="mark"
+  viewBox="0 0 100 100"
+  aria-hidden="true"
+  focusable="false"
+  [style.width.px]="px()"
+  [style.height.px]="px()"
+>
+  <defs>
+    <pattern [attr.id]="patternId" width="10" height="10" patternUnits="userSpaceOnUse">
+      <rect class="mark__light" width="10" height="10" />
+      <rect class="mark__dark" width="5" height="5" />
+      <rect class="mark__dark" x="5" y="5" width="5" height="5" />
+    </pattern>
+  </defs>
+  <circle class="mark__bg" cx="50" cy="50" r="50" />
+  <g class="mark__letter" transform="rotate(-6 50 50)">
+    <text class="mark__shadow" x="55.32" y="79.44" text-anchor="middle">T</text>
+    <text x="50" y="72.6" text-anchor="middle" [attr.fill]="'url(#' + patternId + ')'">T</text>
+  </g>
+</svg>

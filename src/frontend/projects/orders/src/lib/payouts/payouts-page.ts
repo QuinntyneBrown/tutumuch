@@ -7,6 +7,7 @@ import {
   EmptyStateComponent,
   IconComponent,
   ItemRowComponent,
+  SkeletonComponent,
   StatComponent,
 } from '@tutumuch/components';
 
@@ -29,6 +30,7 @@ import { PayoutBannerState } from './payout-banner-state';
     IconComponent,
     ItemRowComponent,
     StatComponent,
+    SkeletonComponent,
   ],
   templateUrl: './payouts-page.html',
   styleUrl: './payouts-page.css',

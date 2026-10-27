@@ -11,11 +11,14 @@
     </div>
   </div>
 } @else if (categoryHeader(); as category) {
-  <div class="page-header">
+  <div class="category-head">
     <div class="stack stack--sm">
       <h1>{{ category.label }}</h1>
       <div><tl-size-tag [label]="category.sizeLabel" [large]="true" /></div>
     </div>
+    @if (headerPose(); as pose) {
+      <tl-tilly [pose]="pose" size="header" />
+    }
   </div>
 } @else if (filtered()) {
   <div class="page-header"><h1>Shop</h1></div>
@@ -36,7 +39,7 @@
         <span class="text-muted text-sm" aria-live="polite">
           @switch (store.view()) {
             @case ('loading') {
-              <span class="skeleton skeleton--text catalog__count-skeleton"></span>
+              <tl-skeleton class="catalog__count-skeleton" />
             }
             @case ('offline') {
               {{ store.totalCount() | number }} saved items
@@ -66,15 +69,15 @@
     @switch (store.view()) {
       @case ('empty') {
         @if (filtered()) {
-          <tl-empty-state icon="search" heading="No items match">
+          <tl-empty-state icon="search" heading="No items match" [tilly]="!headerPose()">
             Try fewer filters or a different word.
             <button actions tlButton="primary" type="button" (click)="clearAll()">Clear search and filters</button>
           </tl-empty-state>
         } @else {
-          <tl-empty-state icon="tag" heading="Nothing listed yet">
-            Be the first to list a dress, a pair of sneakers or anything your daughter has outgrown.
+          <tl-empty-state icon="tag" heading="The closet is empty for now" [tilly]="!headerPose()">
+            Be the first to pass on something she has outgrown.
             @if (launch.canSell()) {
-              <a actions tlButton="primary" routerLink="/sell">Sell an item</a>
+              <a actions tlButton="primary" routerLink="/sell">Sell outgrown gear</a>
             }
           </tl-empty-state>
         }

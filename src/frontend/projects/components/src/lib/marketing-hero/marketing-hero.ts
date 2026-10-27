@@ -1,16 +1,15 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
-import { ShapesComponent } from '../shapes/shapes';
-
 /**
- * Ink showcase band of the marketing page (design system: Marketing hero): shapes, eyebrow, a
- * headline projected as `[title]` (h1 for `hero`, h2 for `closing`), one lede line, `[actions]`
- * and, in the hero, `[media]` in the second column.
+ * Showcase band of the marketing page (design system: Marketing hero), a solid blush panel with
+ * no shapes or gradients (L2-096): eyebrow, a headline projected as `[title]` (h1 for `hero`, h2
+ * for `closing`), one lede line, `[actions]` and, in the hero, `[media]` (Tilly and the video
+ * poster) in the second column.
  */
 @Component({
   selector: 'tl-marketing-hero',
-  imports: [NgTemplateOutlet, ShapesComponent],
+  imports: [NgTemplateOutlet],
   templateUrl: './marketing-hero.html',
   styleUrl: './marketing-hero.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

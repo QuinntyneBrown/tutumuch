@@ -3,7 +3,7 @@
 // Description: The app reads the launch phase before its first render. Phase 1 has no category
 // links, menu button, Category filter or category pages; in Phases 1 and 2 only an administrator
 // is offered selling (top bar, sell routes, welcome page, payout banner); Phase 1 at the product
-// limit shows "The catalog is full for now". A failed launch call behaves as Phase 1.
+// limit shows "The closet is full for now". A failed launch call behaves as Phase 1.
 
 import {
   administrator,
@@ -20,7 +20,8 @@ import {
 } from '../fixtures';
 import { ShellPage } from '../pages/shell.page';
 
-const CATEGORIES = ['Clothing', 'Shoes', 'Dance', 'Sports', 'Cameras and tech', 'Toys and crafts'];
+/** The six categories in the guideline order of the top bar (ADR general/0009). */
+const CATEGORIES = ['Dance', 'Sports', 'Clothing', 'Shoes', 'Cameras and tech', 'Toys and crafts'];
 
 test.describe('launch phase 1', () => {
   test.beforeEach(async ({ page }) => {
@@ -80,7 +81,7 @@ test.describe('launch phase 1', () => {
       await page.goto(path);
 
       await expect(page.getByRole('heading', { level: 1 })).toHaveText('Selling opens soon');
-      await expect(page.getByRole('main').getByRole('link', { name: 'Shop the catalog' })).toHaveAttribute('href', '/');
+      await expect(page.getByRole('main').getByRole('link', { name: 'Shop the closet' })).toHaveAttribute('href', '/');
       await expect(page.getByLabel('Title')).toHaveCount(0);
     }
     await expect(page).toHaveTitle('Selling opens soon · TuTuMuch');
@@ -106,7 +107,7 @@ test.describe('launch phase 1', () => {
     await page.getByLabel('Category').selectOption('Dance');
     await page.getByRole('button', { name: 'Save draft' }).click();
 
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('The catalog is full for now');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('The closet is full for now');
     await expect(page.getByRole('main').getByRole('link', { name: 'Your listings' })).toHaveAttribute(
       'href',
       '/account/listings',
@@ -121,7 +122,7 @@ test.describe('launch phase 1', () => {
     await expect(page.getByRole('heading', { level: 2, name: 'Selling opens soon.' })).toBeVisible();
     await expect(page.getByText('Selling opens soon.', { exact: true }).first()).toBeVisible();
     await expect(page.getByText('For now, every item is hand-picked by TuTuMuch.')).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Shop the catalog' }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Shop the closet' }).first()).toBeVisible();
   });
 
   test('the administrator still sees Start selling on the welcome page', async ({ page }) => {

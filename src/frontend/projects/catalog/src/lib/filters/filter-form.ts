@@ -8,8 +8,10 @@ import { CATEGORIES, CONDITIONS, CatalogQuery, categoryOf, priceError } from '..
 const TOP_BRANDS = 6;
 
 /**
- * The filter fields shared by the sidebar and the filter sheet (mocks dialogs/filters): Category,
- * the chosen category's subcategories, Brand, Condition and Price. It is controlled: every change
+ * The filter fields shared by the sidebar and the filter sheet (mocks dialogs/filters). The three
+ * most useful come first and open (page guidelines 8): Category with the chosen category's
+ * subcategories, Size (the one accepted size, L2-013) and Condition; Brand and Price sit behind
+ * "More filters", which opens by itself while either is set. It is controlled: every change
  * emits the edited query and the host decides when to apply it. In launch Phase 1 there is no
  * Category group, so no subcategories either (L2-093).
  */
@@ -42,6 +44,13 @@ export class FilterForm {
     return [...top, ...this.query().brands.filter((b) => !top.includes(b))];
   });
   readonly moreBrands = computed(() => !this.allBrands() && this.brands().length > TOP_BRANDS);
+  /** Whether the visitor opened "More filters" themself, so clearing a brand does not fold it away. */
+  readonly userOpened = signal(false);
+  /** "More filters" is open while the visitor opened it, a brand or price is set, or the price is invalid. */
+  readonly moreOpen = computed(() => {
+    const query = this.query();
+    return this.userOpened() || query.brands.length > 0 || !!query.min || !!query.max || !!this.error();
+  });
 
   setCategory(slug: string | null): void {
     this.changed.emit({ ...this.query(), category: slug, subcategories: [] });

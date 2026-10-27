@@ -21,7 +21,7 @@ test.describe('browse catalog', () => {
     await expect(card).toContainText('Gymboree');
     await expect(card).toContainText('Used - Excellent');
     await expect(card).toContainText('$85');
-    await expect(card.getByLabel('Size Girls')).toBeVisible();
+    await expect(card.locator('.listing-card__facts')).toHaveText(/^Girls · /);
     await expect(catalog.shown).toHaveText('Showing 24 of 30');
 
     await catalog.loadMore.click();
@@ -52,7 +52,7 @@ test.describe('browse catalog', () => {
 
     await expect(catalog.card('Floral party dress no. 1')).toContainText('Reserved');
     await expect(catalog.card('Glitter sneakers no. 2')).toContainText('$18.50');
-    await expect(catalog.card('Glitter sneakers no. 2').getByLabel('Size Girls')).toBeVisible();
+    await expect(catalog.card('Glitter sneakers no. 2').locator('.listing-card__facts')).toHaveText(/^Girls · /);
     await expect(catalog.card('Pink tulle tutu no. 3')).toContainText('$1,200');
     await expect(catalog.loadMore).toBeHidden();
   });
@@ -109,7 +109,7 @@ test.describe('browse catalog', () => {
 
     await expect(page).toHaveURL(/\/cameras-and-tech$/);
     await expect(catalog.heading).toHaveText('Cameras and tech');
-    await expect(page.locator('main .page-header').getByLabel('Size Girls')).toBeVisible();
+    await expect(page.locator('main .category-head').getByLabel('Size Girls')).toBeVisible();
     await expect.poll(() => requests.at(-1)?.get('category')).toBe('cameras-and-tech');
   });
 
@@ -122,7 +122,7 @@ test.describe('browse catalog', () => {
     await expect(catalog.heading).toHaveText('Cameras and tech');
     await expect(catalog.cards).toHaveCount(6);
     for (const card of await catalog.cards.all()) {
-      await expect(card.getByLabel('Size Girls')).toBeVisible();
+      await expect(card.locator('.listing-card__facts')).toHaveText(/^Girls · /);
     }
     expect(requests.at(-1)?.get('category')).toBe('cameras-and-tech');
   });
@@ -150,11 +150,9 @@ test.describe('browse catalog', () => {
     await catalog.goto();
 
     await expect(catalog.count).toHaveText('0 items');
-    await expect(catalog.emptyState.getByRole('heading', { level: 2 })).toHaveText('Nothing listed yet');
-    await expect(catalog.emptyState).toContainText(
-      'Be the first to list a dress, a pair of sneakers or anything your daughter has outgrown.',
-    );
-    await expect(catalog.emptyState.getByRole('link', { name: 'Sell an item' })).toHaveAttribute('href', '/sell');
+    await expect(catalog.emptyState.getByRole('heading', { level: 2 })).toHaveText('The closet is empty for now');
+    await expect(catalog.emptyState).toContainText('Be the first to pass on something she has outgrown.');
+    await expect(catalog.emptyState.getByRole('link', { name: 'Sell outgrown gear' })).toHaveAttribute('href', '/sell');
   });
 
   test('a server error shows the reference and Try again repeats the request', async ({ page }) => {
