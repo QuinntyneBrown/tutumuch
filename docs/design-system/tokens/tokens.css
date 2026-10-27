@@ -27,7 +27,8 @@
    ========================================================================== */
 
 /* Light is the default; [data-theme="light"] re-applies it inside a dark page (theme previews, forced-light regions). */
-:root, [data-theme="light"] {
+:root,
+[data-theme='light'] {
   /* ---------- Primitives: colour --------------------------------------- */
   --palette-white: #ffffff;
   --palette-black: #000000;
@@ -84,7 +85,7 @@
   --palette-plum-900: #241620;
   --palette-plum-950: #1c1119;
   --palette-plum-990: #150c12;
-  --palette-ink-alpha-10: rgb(58 34 51 / 0.1);  /* thin separators (ink/10) */
+  --palette-ink-alpha-10: rgb(58 34 51 / 0.1); /* thin separators (ink/10) */
   --palette-ink-alpha-15: rgb(58 34 51 / 0.15); /* Well loved badge ring (ink/15) */
   --palette-ink-alpha-55: rgb(58 34 51 / 0.55); /* modal scrim */
   --palette-cream-alpha-12: rgb(255 248 245 / 0.12); /* dark theme separators */
@@ -97,29 +98,30 @@
   --palette-green-950: #0b2918;
 
   /* Logo art (brand kit): only inside tl-logo and tl-mark, never page colours. */
-  --palette-logo-lilac: #b9a3e8;    /* gingham, dark cells */
+  --palette-logo-lilac: #b9a3e8; /* gingham, dark cells */
   --palette-logo-lavender: #e3d8fa; /* gingham, light cells */
   --palette-logo-grape: #8a5cd6;
-  --palette-logo-pink: #f29bbc;     /* polka dots */
+  --palette-logo-pink: #f29bbc; /* polka dots */
   --palette-logo-pink-reversed: #f7b8cf; /* polka dots on raspberry */
 
   /* ---------- Primitives: typography ----------------------------------- */
-  --font-family-sans: "DM Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-family-display: "Fraunces", ui-serif, Georgia, "Times New Roman", serif;
-  --font-family-logo: "Titan One", "Arial Rounded MT Bold", ui-rounded, sans-serif;
-  --font-family-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
-  --font-variation-display: "SOFT" 100, "WONK" 0; /* the kit's soft Fraunces */
+  --font-family-sans:
+    'DM Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-family-display: 'Fraunces', ui-serif, Georgia, 'Times New Roman', serif;
+  --font-family-logo: 'Titan One', 'Arial Rounded MT Bold', ui-rounded, sans-serif;
+  --font-family-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, 'Liberation Mono', monospace;
+  --font-variation-display: 'SOFT' 100, 'WONK' 0; /* the kit's soft Fraunces */
 
-  --font-size-xs: 0.75rem;    /* 12px  captions */
-  --font-size-sm: 0.875rem;   /* 14px  secondary text, labels, badges */
-  --font-size-md: 1rem;       /* 16px  body on phones */
-  --font-size-lg: 1.125rem;   /* 18px  body from 768px, h4 */
-  --font-size-xl: 1.25rem;    /* 20px  price */
-  --font-size-2xl: 1.375rem;  /* 22px  h3 (subheading) */
-  --font-size-3xl: 1.875rem;  /* 30px  h2 */
-  --font-size-4xl: 2.25rem;   /* 36px  h1 */
-  --font-size-5xl: 3rem;      /* 48px  h1 from 768px */
-  --font-size-6xl: 4rem;      /* 64px  display */
+  --font-size-xs: 0.75rem; /* 12px  captions */
+  --font-size-sm: 0.875rem; /* 14px  secondary text, labels, badges */
+  --font-size-md: 1rem; /* 16px  body on phones */
+  --font-size-lg: 1.125rem; /* 18px  body from 768px, h4 */
+  --font-size-xl: 1.25rem; /* 20px  price */
+  --font-size-2xl: 1.375rem; /* 22px  h3 (subheading) */
+  --font-size-3xl: 1.875rem; /* 30px  h2 */
+  --font-size-4xl: 2.25rem; /* 36px  h1 */
+  --font-size-5xl: 3rem; /* 48px  h1 from 768px */
+  --font-size-6xl: 4rem; /* 64px  display */
   --font-size-h1: var(--font-size-4xl);
   --font-size-body: var(--font-size-md);
 
@@ -129,14 +131,14 @@
   --font-weight-bold: 700;
   --font-weight-heavy: 700;
 
-  --line-height-tight: 1.1;   /* display, h1-h2 */
-  --line-height-snug: 1.27;   /* h3 (22/28) */
-  --line-height-normal: 1.5;  /* UI text */
-  --line-height-relaxed: 1.75;/* body (16/28) */
+  --line-height-tight: 1.1; /* display, h1-h2 */
+  --line-height-snug: 1.27; /* h3 (22/28) */
+  --line-height-normal: 1.5; /* UI text */
+  --line-height-relaxed: 1.75; /* body (16/28) */
 
   --letter-spacing-tight: -0.025em; /* headings (tracking-tight) */
   --letter-spacing-normal: 0;
-  --letter-spacing-wide: 0;   /* no letterspaced all-caps labels */
+  --letter-spacing-wide: 0; /* no letterspaced all-caps labels */
 
   /* ---------- Semantic: colour (light) --------------------------------- */
   --color-bg-canvas: var(--palette-cream-50); /* page background (Cream) */
@@ -219,68 +221,68 @@
   --color-mark-bg: var(--palette-raspberry-100); /* the mark's blush circle */
 
   /* ---------- Semantic: typography roles (brand kit typeScale) --------- */
-  --text-display: var(--font-weight-semibold) clamp(2.5rem, 6vw, var(--font-size-6xl)) / 1 var(--font-family-display);      /* 64/64 */
-  --text-h1: var(--font-weight-semibold) var(--font-size-h1) / var(--line-height-tight) var(--font-family-display);            /* 36/40, 48 from 768px */
-  --text-h2: var(--font-weight-semibold) var(--font-size-3xl) / 1.2 var(--font-family-display);                               /* 30 */
-  --text-h3: var(--font-weight-medium) var(--font-size-2xl) / 1.75rem var(--font-family-display);                             /* 22/28 */
-  --text-h4: var(--font-weight-semibold) var(--font-size-lg) / 1.5rem var(--font-family-display);                             /* 18/24 card and dialog titles */
-  --text-body-lg: var(--font-weight-regular) var(--font-size-lg) / 1.75rem var(--font-family-sans);                           /* 18/28 */
-  --text-body: var(--font-weight-regular) var(--font-size-body) / 1.75rem var(--font-family-sans);                            /* 16/28, 18/28 from 768px */
-  --text-body-sm: var(--font-weight-regular) var(--font-size-sm) / 1.25rem var(--font-family-sans);                           /* 14/20 secondary */
+  --text-display: var(--font-weight-semibold) clamp(2.5rem, 6vw, var(--font-size-6xl)) / 1 var(--font-family-display); /* 64/64 */
+  --text-h1: var(--font-weight-semibold) var(--font-size-h1) / var(--line-height-tight) var(--font-family-display); /* 36/40, 48 from 768px */
+  --text-h2: var(--font-weight-semibold) var(--font-size-3xl) / 1.2 var(--font-family-display); /* 30 */
+  --text-h3: var(--font-weight-medium) var(--font-size-2xl) / 1.75rem var(--font-family-display); /* 22/28 */
+  --text-h4: var(--font-weight-semibold) var(--font-size-lg) / 1.5rem var(--font-family-display); /* 18/24 card and dialog titles */
+  --text-body-lg: var(--font-weight-regular) var(--font-size-lg) / 1.75rem var(--font-family-sans); /* 18/28 */
+  --text-body: var(--font-weight-regular) var(--font-size-body) / 1.75rem var(--font-family-sans); /* 16/28, 18/28 from 768px */
+  --text-body-sm: var(--font-weight-regular) var(--font-size-sm) / 1.25rem var(--font-family-sans); /* 14/20 secondary */
   --text-caption: var(--font-weight-regular) var(--font-size-xs) / 1rem var(--font-family-sans);
-  --text-label: var(--font-weight-semibold) var(--font-size-sm) / 1.25rem var(--font-family-sans);                            /* 14/20 */
-  --text-overline: var(--font-weight-semibold) var(--font-size-sm) / 1.25rem var(--font-family-sans);                         /* sentence case, never all caps */
-  --text-price: var(--font-weight-semibold) var(--font-size-xl) / 1.4 var(--font-family-display);                             /* 20, tabular figures */
-  --text-price-original: var(--font-weight-regular) var(--font-size-sm) / 1.25rem var(--font-family-sans);                    /* 14, muted, struck */
+  --text-label: var(--font-weight-semibold) var(--font-size-sm) / 1.25rem var(--font-family-sans); /* 14/20 */
+  --text-overline: var(--font-weight-semibold) var(--font-size-sm) / 1.25rem var(--font-family-sans); /* sentence case, never all caps */
+  --text-price: var(--font-weight-semibold) var(--font-size-xl) / 1.4 var(--font-family-display); /* 20, tabular figures */
+  --text-price-original: var(--font-weight-regular) var(--font-size-sm) / 1.25rem var(--font-family-sans); /* 14, muted, struck */
   --text-code: var(--font-weight-regular) var(--font-size-sm) / var(--line-height-normal) var(--font-family-mono);
 
   /* ---------- Semantic: spacing (4px base) ----------------------------- */
   --space-0: 0;
   --space-0-5: 0.125rem; /* 2px  hairline gaps */
-  --space-1: 0.25rem;    /* 4px  icon-to-label */
-  --space-2: 0.5rem;     /* 8px  inside chips, between inline items */
-  --space-3: 0.75rem;    /* 12px compact padding, badge x-padding */
-  --space-4: 1rem;       /* 16px default padding, stack gap */
-  --space-5: 1.25rem;    /* 20px */
-  --space-6: 1.5rem;     /* 24px button x-padding, page gutter on phones */
-  --space-8: 2rem;       /* 32px section gap */
-  --space-10: 2.5rem;    /* 40px page gutter from 768px */
-  --space-12: 3rem;      /* 48px */
-  --space-16: 4rem;      /* 64px section spacing (py-16) */
-  --space-20: 5rem;      /* 80px section spacing from 768px (py-20) */
-  --space-24: 6rem;      /* 96px */
+  --space-1: 0.25rem; /* 4px  icon-to-label */
+  --space-2: 0.5rem; /* 8px  inside chips, between inline items */
+  --space-3: 0.75rem; /* 12px compact padding, badge x-padding */
+  --space-4: 1rem; /* 16px default padding, stack gap */
+  --space-5: 1.25rem; /* 20px */
+  --space-6: 1.5rem; /* 24px button x-padding, page gutter on phones */
+  --space-8: 2rem; /* 32px section gap */
+  --space-10: 2.5rem; /* 40px page gutter from 768px */
+  --space-12: 3rem; /* 48px */
+  --space-16: 4rem; /* 64px section spacing (py-16) */
+  --space-20: 5rem; /* 80px section spacing from 768px (py-20) */
+  --space-24: 6rem; /* 96px */
 
   /* ---------- Semantic: layout ----------------------------------------- */
-  --layout-breakpoint-sm: 40rem;   /* 640px  large phones; the header swaps the mark for the wordmark */
-  --layout-breakpoint-md: 48rem;   /* 768px  tablets */
-  --layout-breakpoint-lg: 64rem;   /* 1024px small laptops */
-  --layout-breakpoint-xl: 80rem;   /* 1280px desktops */
-  --layout-breakpoint-2xl: 96rem;  /* 1536px wide screens */
+  --layout-breakpoint-sm: 40rem; /* 640px  large phones; the header swaps the mark for the wordmark */
+  --layout-breakpoint-md: 48rem; /* 768px  tablets */
+  --layout-breakpoint-lg: 64rem; /* 1024px small laptops */
+  --layout-breakpoint-xl: 80rem; /* 1280px desktops */
+  --layout-breakpoint-2xl: 96rem; /* 1536px wide screens */
 
-  --layout-columns: 4;              /* grid columns at the current breakpoint */
-  --layout-gutter: var(--space-4);  /* gap between columns */
-  --layout-margin: var(--space-6);  /* page edge to content (px-6) */
-  --layout-container-max: 72rem;    /* 1152px content width (max-w-6xl) */
-  --layout-container-wide: 80rem;   /* 1280px product grids (max-w-7xl) */
-  --layout-measure: 42rem;          /* about 70 characters (max-w-2xl) */
-  --layout-sidebar-width: 16rem;    /* 256px */
-  --layout-topbar-height: 4rem;     /* 64px */
+  --layout-columns: 4; /* grid columns at the current breakpoint */
+  --layout-gutter: var(--space-4); /* gap between columns */
+  --layout-margin: var(--space-6); /* page edge to content (px-6) */
+  --layout-container-max: 72rem; /* 1152px content width (max-w-6xl) */
+  --layout-container-wide: 80rem; /* 1280px product grids (max-w-7xl) */
+  --layout-measure: 42rem; /* about 70 characters (max-w-2xl) */
+  --layout-sidebar-width: 16rem; /* 256px */
+  --layout-topbar-height: 4rem; /* 64px */
   --layout-bottom-nav-height: 4.5rem; /* 72px mobile tab bar */
-  --layout-aside-width: 22rem;      /* 352px right-hand column in .split */
+  --layout-aside-width: 22rem; /* 352px right-hand column in .split */
 
   /* Illustration sizes: Tilly and empty-state artwork */
-  --size-illustration-sm: 2.25rem;  /* 36px  mark in the compact header */
-  --size-illustration-md: 6rem;     /* 96px  Tilly in a dialog */
-  --size-illustration-lg: 10rem;    /* 160px Tilly in an empty state */
-  --size-illustration-xl: 18rem;    /* 288px Tilly in a hero or category header */
+  --size-illustration-sm: 2.25rem; /* 36px  mark in the compact header */
+  --size-illustration-md: 6rem; /* 96px  Tilly in a dialog */
+  --size-illustration-lg: 10rem; /* 160px Tilly in an empty state */
+  --size-illustration-xl: 18rem; /* 288px Tilly in a hero or category header */
 
   /* ---------- Semantic: shape ------------------------------------------ */
-  --radius-xs: 0.25rem;   /* 4px  checkbox */
-  --radius-sm: 0.75rem;   /* 12px compact controls, thumbnails */
-  --radius-md: 1rem;      /* 16px inputs, swatches, wells (rounded-2xl) */
-  --radius-lg: 1.5rem;    /* 24px cards and images */
-  --radius-xl: 2rem;      /* 32px large panels, dialogs, sheets */
-  --radius-full: 9999px;  /* buttons, chips, badges, avatars */
+  --radius-xs: 0.25rem; /* 4px  checkbox */
+  --radius-sm: 0.75rem; /* 12px compact controls, thumbnails */
+  --radius-md: 1rem; /* 16px inputs, swatches, wells (rounded-2xl) */
+  --radius-lg: 1.5rem; /* 24px cards and images */
+  --radius-xl: 2rem; /* 32px large panels, dialogs, sheets */
+  --radius-full: 9999px; /* buttons, chips, badges, avatars */
   --radius-input: var(--radius-md);
   --radius-card: var(--radius-lg);
   --radius-panel: var(--radius-xl);
@@ -291,21 +293,23 @@
   /* ---------- Semantic: elevation -------------------------------------- */
   /* No shadows on cards. Floating elements (menus, toasts, dialogs, sheets) get a soft one. */
   --shadow-color: 58 34 51;
-  --shadow-1: none;  /* cards: none */
-  --shadow-2: none;  /* raised cards: none */
-  --shadow-3: 0 8px 24px rgb(var(--shadow-color) / 0.12), 0 2px 6px rgb(var(--shadow-color) / 0.06); /* menus, popovers, toasts */
-  --shadow-4: 0 20px 48px rgb(var(--shadow-color) / 0.18), 0 4px 12px rgb(var(--shadow-color) / 0.08); /* dialogs, sheets */
+  --shadow-1: none; /* cards: none */
+  --shadow-2: none; /* raised cards: none */
+  --shadow-3:
+    0 8px 24px rgb(var(--shadow-color) / 0.12), 0 2px 6px rgb(var(--shadow-color) / 0.06); /* menus, popovers, toasts */
+  --shadow-4:
+    0 20px 48px rgb(var(--shadow-color) / 0.18), 0 4px 12px rgb(var(--shadow-color) / 0.08); /* dialogs, sheets */
   --shadow-focus: 0 0 0 2px var(--color-focus-ring-offset), 0 0 0 4px var(--color-focus-ring);
 
   /* ---------- Semantic: motion ----------------------------------------- */
   /* Quick and ease-out: 150-250ms, cubic-bezier(0.23, 1, 0.32, 1). Name the properties; never `all`. */
   --duration-instant: 0ms;
-  --duration-fast: 150ms;     /* hover, colour changes */
-  --duration-base: 200ms;     /* reveal, menus, a heart filling */
-  --duration-slow: 250ms;     /* dialogs, sheets, drawers */
+  --duration-fast: 150ms; /* hover, colour changes */
+  --duration-base: 200ms; /* reveal, menus, a heart filling */
+  --duration-slow: 250ms; /* dialogs, sheets, drawers */
   --duration-deliberate: 250ms;
-  --duration-spin: 800ms;     /* one turn of an in-place spinner (status loop) */
-  --duration-loop: 1.4s;      /* indeterminate bar (status loop) */
+  --duration-spin: 800ms; /* one turn of an in-place spinner (status loop) */
+  --duration-loop: 1.4s; /* indeterminate bar (status loop) */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-standard: var(--ease-out);
   --ease-enter: var(--ease-out);
@@ -324,13 +328,13 @@
   --z-tooltip: 1600;
 
   /* ---------- Semantic: interaction ------------------------------------ */
-  --target-min: 1.5rem;      /* 24px  WCAG 2.2 AA minimum target size */
+  --target-min: 1.5rem; /* 24px  WCAG 2.2 AA minimum target size */
   --target-comfortable: 2.75rem; /* 44px recommended touch target */
   --focus-ring-width: 2px;
   --focus-ring-offset: 2px;
-  --control-height-sm: 2rem;    /* 32px */
+  --control-height-sm: 2rem; /* 32px */
   --control-height-md: 2.75rem; /* 44px */
-  --control-height-lg: 3rem;    /* 48px */
+  --control-height-lg: 3rem; /* 48px */
 
   /* ---------- Logo and mark (brand kit) -------------------------------- */
   /* Titan One, ink outline, raspberry shadow, polka-dot "TuTu", gingham "Much".
@@ -351,7 +355,8 @@
 
 /* Responsive tokens: columns, gutters, margins and type grow with the viewport. */
 @media (min-width: 48rem) {
-  :root, [data-theme] {
+  :root,
+  [data-theme] {
     --layout-columns: 8;
     --layout-gutter: var(--space-6);
     --layout-margin: var(--space-10);
@@ -361,7 +366,8 @@
 }
 
 @media (min-width: 64rem) {
-  :root, [data-theme] {
+  :root,
+  [data-theme] {
     --layout-columns: 12;
     --layout-gutter: var(--space-8);
   }
@@ -369,7 +375,7 @@
 
 /* ---------- Dark theme ----------------------------------------------------- */
 /* The guidelines define light only; dark is a plum night with a lighter raspberry accent. */
-[data-theme="dark"] {
+[data-theme='dark'] {
   --color-bg-canvas: var(--palette-plum-950);
   --color-bg-surface: var(--palette-plum-900);
   --color-bg-surface-raised: var(--palette-plum-850);
@@ -457,7 +463,7 @@
 
 /* Follow the OS preference unless the page has explicitly chosen light. */
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
+  :root:not([data-theme='light']) {
     --color-bg-canvas: var(--palette-plum-950);
     --color-bg-surface: var(--palette-plum-900);
     --color-bg-surface-raised: var(--palette-plum-850);
@@ -579,7 +585,8 @@
    uses; each one aliases a token above, so there is one source of the look.
    ========================================================================== */
 
-:root, [data-theme="light"] {
+:root,
+[data-theme='light'] {
   /* 12L primitive names mapped onto the palette. */
   --palette-ink-950: var(--palette-plum-990);
   --palette-ink-900: var(--palette-plum-950);
