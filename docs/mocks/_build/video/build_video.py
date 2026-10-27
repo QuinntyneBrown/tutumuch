@@ -16,8 +16,8 @@ Outputs tutumuch-pitch.mp4 (H.264/AAC), tutumuch-pitch.webm (VP9/Opus), tutumuch
         tutumuch-pitch-poster.png, tutumuch-share.jpg (1200x630 link preview) and ATTRIBUTION.md, written to the app's public media folder
         (src/frontend/projects/tutumuch/public/media/) and copied to docs/mocks/assets/media/.
 
-Needs: ffmpeg/ffprobe, python playwright (chromium); for narration also kokoro-onnx, onnxruntime,
-huggingface_hub and numpy.
+Needs: ffmpeg/ffprobe and the packages in requirements.txt (python -m pip install -r
+docs/mocks/_build/video/requirements.txt; python -m playwright install chromium).
 Run:   python -I docs/mocks/_build/video/build_video.py            full build: narration and music
        python -I docs/mocks/_build/video/build_video.py --silent   no narration; music only if the file exists
 """

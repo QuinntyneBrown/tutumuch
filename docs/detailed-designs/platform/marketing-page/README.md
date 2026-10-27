@@ -10,11 +10,11 @@ sellers, with a short pitch video (under 30 seconds). Anyone can open it, signed
 
 Terms used below:
 
-- **showcase** — the ink (plum) surface with a gradient used by the hero, the closing band and
-  the video frame; ink in both themes, with cream text, pink headline emphasis and raspberry,
-  lilac and sunny shapes ([design system](../../../design-system/components/marketing-hero.html))
+- **showcase** — the solid blush panel of the hero and the closing band (a plum panel in the
+  dark theme), with no gradient or shapes since ADR general/0009
+  ([design system](../../../design-system/components/marketing-hero.html))
 - **pitch video** — `tutumuch-pitch.mp4` (H.264/AAC) and `tutumuch-pitch.webm` (VP9/Opus),
-  30.0 s, with `tutumuch-pitch.vtt` captions (off until turned on), `tutumuch-pitch-poster.png`
+  15.1 s (under 30 s, `L2-080`), with `tutumuch-pitch.vtt` captions (off until turned on), `tutumuch-pitch-poster.png`
   and `tutumuch-share.jpg`, the 1200×630 link-preview image
 
 The page calls no TuTuMuch API endpoint; the shell's `GET /api/auth/me` decides the seller
@@ -79,13 +79,17 @@ copied to `docs/mocks/assets/media/`. `docs/mocks/_build/video/build_video.py` b
 (rerun: `python -I docs/mocks/_build/video/build_video.py`; see its
 [README](../../../mocks/_build/video/README.md)):
 
-1. Narration: six lines, each with caption text and spoken text, synthesised by **Kokoro-82M**
-   from Hugging Face (`onnx-community/Kokoro-82M-v1.0-ONNX`), voice **`af_bella`** at speed
-   1.12, bright and upbeat. Model files download to the git-ignored `kokoro/` folder.
-2. Timing: gaps stretch so the video is exactly 30.0 s.
-3. Slides: six 1920×1080 slides in TuTuMuch tokens (plum gradient, cream text, raspberry,
-   lilac and sunny party-pop blobs and polka dots, Giddy's rounded type, the wordmark),
-   screenshotted by Playwright Chromium.
+1. Narration: four lines for shoppers only (launch Phase 1: only TuTuMuch sells, `L2-094`),
+   each with caption text and spoken text, synthesised by **Kokoro-82M** from Hugging Face
+   (`onnx-community/Kokoro-82M-v1.0-ONNX`, or the same weights from the `kokoro-onnx` GitHub
+   release when Hugging Face is unreachable), voice **`af_bella`** at speed 1.12, bright and
+   upbeat. Model files download to the git-ignored `kokoro/` folder; Python packages are pinned
+   in `requirements.txt`.
+2. Timing: 0.5 s before the first line, 0.45 s between lines and 1.4 s after the last, so the
+   video is as long as the narration needs (15.1 s); the build stops if it would reach 30 s.
+3. Slides: four 1920×1080 slides drawn to the page guidelines (cream and blush, Fraunces and
+   DM Sans, the wordmark, Tilly in approved poses, the condition-badge colours, no gradients or
+   shapes), screenshotted by Playwright Chromium.
 4. Music: _Upbeat Ukulele Kids_ by Cold_Fire (Pixabay Content Licence), committed as an
    excerpt, at −9 dB and ducked by a sidechain compressor keyed on the voice.
 5. Encode: MP4 (libx264, AAC, faststart) and WebM (VP9, Opus). The WebM exists because
@@ -146,4 +150,5 @@ with
 ## Open questions
 
 - Deferred: SEO beyond the title, meta description and link-preview tags, analytics, A/B tests, newsletter
-  sign-up, making `/welcome` the home page, translations and other video lengths or cuts.
+  sign-up, making `/welcome` the home page, translations, and a video cut for sellers once selling
+  opens to members (Phase 3).
