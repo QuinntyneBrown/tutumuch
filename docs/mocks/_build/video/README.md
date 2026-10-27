@@ -1,6 +1,6 @@
 # TuTuMuch pitch video build
 
-`build_video.py` builds the 30-second pitch video that plays on the marketing page (`/welcome`).
+`build_video.py` builds the short pitch video (under 30 seconds, `L2-080`) that plays on the marketing page (`/welcome`).
 The narration lines, the slide markup and the slide styles are in the script.
 
 The video speaks to shoppers only. In launch Phase 1 (the default) only TuTuMuch sells, so it says
@@ -34,8 +34,9 @@ chromium`); narration also needs `kokoro-onnx`, `onnxruntime`, `huggingface_hub`
   It was cut from the track on its Pixabay page, starting on the beat at 4.25 s, with
   `ffmpeg -ss 4.25 -t 34 -i upbeat-ukulele-kids-187874.mp3 -af "afade=t=out:st=32:d=2" -b:a 160k music/upbeat-ukulele-kids-excerpt.mp3`.
   A sidechain compressor ducks it under the voice.
-- **Length**: the gaps between lines stretch so the video is exactly 30 s. The script stops if
-  the narration no longer fits.
+- **Length**: four slides with short fixed gaps; the video is as long as the narration needs and
+  shorter than 30 s (`L2-080`). The script stops if it would reach 30 s. Update the poster's length
+  label (`duration` on `tl-video-poster` in the welcome page, and the mock) after a rebuild.
 - **Wording**: everything is for girls; the copy never promises boys' or adult sizes
   ([ADR general/0005](../../../adr/general/0005-marketing-wording.md)).
 

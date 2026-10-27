@@ -5,7 +5,7 @@
 TuTuMuch is a marketplace for all things young girls: new and gently loved clothes, dance and
 sports gear, cameras and more, every listing for girls. This feature, part of the `platform`
 subsystem, adds a public marketing page at `/welcome` that sells TuTuMuch to shoppers and
-sellers, with a 30-second pitch video. Anyone can open it, signed in or not. It refines
+sellers, with a short pitch video (under 30 seconds). Anyone can open it, signed in or not. It refines
 `L1-020` through `L2-078` to `L2-083`. `/` stays the catalog.
 
 Terms used below:

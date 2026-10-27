@@ -1,4 +1,4 @@
-"""Build the 30-second TuTuMuch pitch video.
+"""Build the short TuTuMuch pitch video: four slides, no filler (L2-080).
 
 The video speaks to shoppers only: in launch Phase 1 (the default) only TuTuMuch sells, so it
 promises no member selling (L2-094, ADR platform/0014). The slides follow the page guidelines
@@ -31,21 +31,17 @@ OUT_DIRS = [REPO / "src/frontend/projects/tutumuch/public/media", REPO / "docs/m
 NAME = "tutumuch-pitch"
 HF_REPO, VOICE, SPEED = "onnx-community/Kokoro-82M-v1.0-ONNX", "af_bella", 1.12
 MUSIC, MUSIC_DB = HERE / "music/upbeat-ukulele-kids-excerpt.mp3", -9
-TARGET, LEAD, TAIL, MIN_GAP = 30.0, 0.6, 1.8, 0.25  # total length; seconds before the first line and after the last
+LEAD, GAP, TAIL = 0.5, 0.45, 1.4  # seconds before the first line, between lines and after the last; the length follows the narration
 SILENT_WPS = 2.6  # words per second used to time captions when there is no narration
 
 # (caption text, text the narrator speaks). Shopping only: nothing promises that a member can sell.
+# One line per slide, nothing that only fills time.
 LINES = [
-    ("Growing fast? Outgrowing everything? Welcome to TuTuMuch.",
-     "Growing fast? Outgrowing everything? Welcome to Tutu Much!"),
-    ("New and gently loved clothes and gear, all for girls.",
-     "New and gently loved clothes and gear. All for girls."),
-    ("Clothes, shoes, dance and sports gear, cameras, toys and more.",
-     "Clothes, shoes, dance and sports gear, cameras, toys and more."),
-    ("Every piece is hand-picked by TuTuMuch, with its condition named up front.",
-     "Every piece is hand-picked by Tutu Much, with its condition named up front."),
-    ("Find it. Buy it. It ships to your door.", "Find it. Buy it. It ships to your door."),
-    ("TuTuMuch. Twirl it forward. Shop the closet.", "Tutu Much. Twirl it forward! Shop the closet."),
+    ("Outgrown already? Welcome to TuTuMuch.", "Outgrown already? Welcome to Tutu Much!"),
+    ("New and gently loved clothes, shoes, dance and sports gear for girls.",
+     "New and gently loved clothes, shoes, dance and sports gear for girls."),
+    ("Every piece hand-picked, its condition named up front.", "Every piece hand-picked, its condition named up front."),
+    ("Find it, buy it, it ships to you. Shop the closet.", "Find it, buy it, it ships to you. Shop the closet!"),
 ]
 
 ASSETS = REPO / "docs/design-system/assets"
@@ -64,20 +60,18 @@ def tilly(pose, cls):
 
 # One Tilly per slide at most, in an approved pose (page guidelines 6).
 SLIDES = [
-    '<div class="copy"><p class="k">Clothes · Dance · Sports · Gear</p><h1>Growing fast?<br>Outgrowing <em>everything?</em></h1>'
-    '<p class="sub">Welcome to <b>TuTuMuch</b>.</p></div>' + tilly("hello", "right"),
-    f'<div class="copy">{LOGO}<h1 style="margin-top:56px">New and gently loved,<br><em>all for girls.</em></h1></div>',
-    '<div class="copy"><p class="k">For shoppers</p><h1>Everything here<br><em>is for girls.</em></h1>'
+    '<div class="copy"><h1>Outgrown<br><em>already?</em></h1><p class="sub">Welcome to <b>TuTuMuch</b>.</p></div>'
+    + tilly("hello", "right"),
+    '<div class="copy"><p class="k">New and gently loved</p><h1>Everything here<br><em>is for girls.</em></h1>'
     '<div class="tags"><span>Clothes</span><span>Shoes</span><span>Dance</span><span>Sports</span><span>Cameras</span><span>Toys</span></div></div>'
     + tilly("soccer", "right"),
     '<div class="copy"><p class="k">Hand-picked by TuTuMuch</p><h1>Honest about<br><em>condition.</em></h1>'
     '<div class="badges"><span class="new">New with tags</span><span class="like">Used - Excellent</span>'
     '<span class="loved">Used - Good</span><span class="well">Used - Fair</span></div></div>',
-    '<ol class="steps"><li><b>1</b>Find it</li><li><b>2</b>Buy it</li><li><b>3</b>It ships to you</li></ol>',
-    f'<div class="copy">{LOGO}<h1 style="margin-top:48px">Twirl it <em>forward.</em></h1>'
+    f'<div class="copy">{LOGO}<h1 style="margin-top:48px">Find it. Buy it.<br><em>It ships to you.</em></h1>'
     '<p class="cta">Shop the closet →</p></div>' + tilly("twirl", "right"),
 ]
-BLUSH = {1, 4}  # slides on a blush panel: sections change background, never use gradients
+BLUSH = {0}  # slides on a blush panel: sections change background, never use gradients
 # Page-guideline tokens (docs/design-system/tokens/tokens.css): Cream #fff8f5 page, Blush #fde2ea panels,
 # Ink #3a2233 text, Muted #7a6370, raspberry 700 #c2255c emphasis, Raspberry #d6336c pills, Sunny #f6c64b
 # and the condition-badge colours; Fraunces (SOFT 100) for headings, DM Sans for text; no gradients or shapes.
@@ -101,10 +95,7 @@ em{font-style:normal;color:#c2255c}
 .tags span,.badges span{font:600 40px 'DM Sans',sans-serif;padding:18px 36px;border-radius:999px}
 .tags span{background:#fde2ea;color:#3a2233}
 .badges .new{background:#d6336c;color:#fff}.badges .like{background:#f6c64b;color:#3a2233}
-.badges .loved{background:#fde2ea;color:#3a2233}.badges .well{background:#fff;color:#3a2233;box-shadow:inset 0 0 0 3px rgb(58 34 51/.15)}
-.steps{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:64px;margin:0;padding:0;width:100%}
-.steps li{font:600 80px/1.1 Fraunces,serif;font-variation-settings:'SOFT' 100,'WONK' 0;letter-spacing:-.025em;border-top:3px solid rgb(58 34 51/.1);padding-top:40px}
-.steps b{display:grid;place-items:center;width:96px;height:96px;border-radius:50%;background:#f6c64b;color:#3a2233;font:600 48px 'DM Sans',sans-serif;margin-bottom:32px}"""
+.badges .loved{background:#fde2ea;color:#3a2233}.badges .well{background:#fff;color:#3a2233;box-shadow:inset 0 0 0 3px rgb(58 34 51/.15)}"""
 
 
 def dur(p):
@@ -178,16 +169,16 @@ def main():
             narrator.say(spoken, out)
             voices.append((out, dur(out)))
 
-    # Timeline: the gaps between lines stretch so the video lands on TARGET seconds.
+    # Timeline: short fixed gaps; the video is as long as the narration needs.
     speech = sum(d for _, d in voices)
-    gap = (TARGET - LEAD - TAIL - speech) / (len(voices) - 1)
-    if gap < MIN_GAP:
-        raise SystemExit(f"narration is {speech:.1f}s; shorten LINES or raise SPEED to fit {TARGET:.0f}s")
+    gap = GAP
     starts, t = [], LEAD
     for _, d in voices:
         starts.append(t)
         t += d + gap
-    total = TARGET
+    total = round(t - gap + TAIL, 3)
+    if total >= 30:
+        raise SystemExit(f"the video would be {total:.1f}s; L2-080 asks for under 30 s, so shorten LINES")
     slide_d = [(starts[i + 1] if i + 1 < len(starts) else total) - (0 if i == 0 else starts[i]) for i in range(len(starts))]
 
     with sync_playwright() as pw:
@@ -246,7 +237,7 @@ def main():
                            "-map", "[v1]", "-map", "[aout]", "-t", f"{total:.3f}", "-r", "30",
                            "-c:v", "libvpx-vp9", "-b:v", "0", "-crf", "38", "-row-mt", "1", "-deadline", "good",
                            "-c:a", "libopus", "-b:a", "96k", str(out / f"{NAME}.webm")])
-    shutil.copy(tmp / "s5.png", out / f"{NAME}-poster.png")
+    shutil.copy(tmp / f"s{len(SLIDES) - 1}.png", out / f"{NAME}-poster.png")
 
     vtt = ["WEBVTT", ""]
     for i, ((caption, _), (_, d)) in enumerate(zip(LINES, voices)):
