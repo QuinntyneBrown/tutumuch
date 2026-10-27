@@ -1,0 +1,30 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Sign in with Google
+
+Container(web, "TuTuMuch Web", "Angular", "SignInPage and JoinPage with tl-provider-button, GoogleJoinPage, AccountsApi, AuthState")
+System_Ext(google, "Google", "OpenID Connect provider: consent page, token endpoint, published keys")
+Container_Boundary(api, "TuTuMuch API") {
+  Component(ctrl, "GoogleSignInController", "ASP.NET Core controller", "/api/auth/google: start, callback, pending, finish; /api/auth/providers")
+  Component(flow, "GoogleFlowCookie", "API service", "Signs and reads tl_google_flow (state, nonce, PKCE verifier, returnUrl)")
+  Component(cookies, "SessionCookies", "API service", "Writes tl_access and tl_refresh")
+  Component(adapter, "GoogleIdentityProvider", "API adapter", "Exchanges the code with PKCE and validates the ID token against Google's keys")
+  Component(handlers, "Google handlers", "MediatR handlers", "GoogleCallback, GetPendingGoogleJoin, FinishGoogleJoin")
+  Component(rules, "MemberRegistrationRules", "Application service", "Display name, age and terms rules shared with registration")
+  Component(port, "IGoogleIdentityProvider", "Application port", "ClientId; ExchangeCodeAsync")
+  ComponentDb(db, "TuTuMuchDbContext", "EF Core", "Members, ExternalLogins, PendingExternalJoins, Sessions")
+}
+
+Rel(web, ctrl, "Navigates to start; calls pending and finish", "HTTPS")
+Rel(ctrl, google, "Redirects the browser to consent", "HTTPS")
+Rel(google, ctrl, "Redirects the browser to callback with code and state", "HTTPS")
+Rel(ctrl, flow, "Writes on start, reads on callback")
+Rel(ctrl, handlers, "Sends commands")
+Rel(ctrl, cookies, "Writes cookies after a sign-in")
+Rel(handlers, port, "Exchanges the code")
+Rel(adapter, port, "Implements")
+Rel(adapter, google, "Token endpoint and discovery document", "HTTPS")
+Rel(handlers, rules, "Validates the finish step")
+Rel(handlers, db, "Reads and writes")
+@enduml

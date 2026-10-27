@@ -1,0 +1,61 @@
+@startuml
+title UML sequence behaviour — An existing member signs in with Google
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Member" as actor
+box "Frontend — @tutumuch/accounts" #E0F2FE
+  participant "SignInPage" as page
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "GoogleSignInController" as ctrl
+  participant "GoogleFlowCookie" as flow
+  participant "SessionCookies" as cookies
+end box
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
+  participant "GoogleCallbackCommandHandler" as handler
+  participant "IGoogleIdentityProvider" as port
+end box
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
+end box
+participant "Google" as google <<external>>
+actor -> page : Choose "Continue with Google" (returnUrl=/items/L-20931)
+page -> ctrl : GET /api/auth/google/start?returnUrl=/items/L-20931
+ctrl -> flow : Write tl_google_flow (state, nonce, verifier, safe returnUrl; Lax, 10 min)
+ctrl --> actor : 302 to Google (client_id, state, nonce, code_challenge S256)
+actor -> google : Consent
+google --> actor : 302 to /api/auth/google/callback?state&code
+actor -> ctrl : GET /api/auth/google/callback?state&code (tl_google_flow)
+ctrl -> flow : Read and clear; state must match
+ctrl -> handler : GoogleCallbackCommand(code, verifier, redirectUri, nonce)
+handler -> port : ExchangeCodeAsync(code, verifier, redirectUri)
+port -> google : POST token endpoint; validate ID token (signature, issuer, audience, expiry)
+port --> handler : GoogleIdentity(sub, email, email_verified, nonce)
+handler -> handler : nonce and email_verified checked
+handler -> db : ExternalLogins by (google, sub)
+alt linked member
+  handler -> db : Insert session (new family, 14 days)
+  handler --> ctrl : SignedIn
+  ctrl -> cookies : Write tl_access and tl_refresh
+  ctrl --> actor : 302 to /items/L-20931
+else verified member with the same email (L2-088 AC5)
+  handler -> db : Insert ExternalLogin, insert session
+  handler --> ctrl : SignedIn
+  ctrl --> actor : 302 to /items/L-20931, cookies set
+else unverified member with the same email (AC6)
+  handler --> ctrl : 409 GOOGLE_ACCOUNT_EXISTS
+  ctrl --> actor : 302 to /sign-in?google=existing, no session
+end
+@enduml

@@ -50,6 +50,10 @@ static checks stop regressions.
   - `Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https://<photo CDN host> data:; connect-src 'self' https://<API host>; frame-src https://<payment provider host>; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'` (hosts `<TO SUPPLY>`; `style-src 'unsafe-inline'` is required for Angular component styles and is allowed because `L2-048` restricts scripts only)
   - `X-Content-Type-Options: nosniff`
   - `Referrer-Policy: strict-origin-when-cross-origin`
+  Sign in with Google ([sign-in-with-google](../../accounts/sign-in-with-google/README.md), `L2-088`)
+  needs no change here: the browser reaches Google through a link to the API's start endpoint and
+  comes back through the API's callback, so no Google script, frame or request runs in the page and
+  `script-src 'self'`, `connect-src` and `form-action 'self'` stay as listed.
 - **`AntiforgeryTokenService`** — root-provided Angular service. It calls
   `GET /api/antiforgery/token` once after start and after each sign-in, holds
   the returned token in a signal in memory and never writes it to web storage.
