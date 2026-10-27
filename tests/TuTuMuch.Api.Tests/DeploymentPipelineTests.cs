@@ -1,8 +1,8 @@
 // Architecture Test
-// Traces to: L2-084, L2-085, L2-086, L2-087
+// Traces to: L2-084, L2-085, L2-086, L2-087, L2-095
 // Description: The deploy workflow, compose stack and Caddyfile deploy only green pushes to main, migrate before
 // the restart, fail on a bad health check, keep secrets scoped, fit a small VM, never cache index.html and serve the
-// full application on the uat host from the same image.
+// full application on the uat host from the same image, and pass the launch phase (default 1) to api and worker.
 
 using System.Text.RegularExpressions;
 
@@ -123,6 +123,24 @@ public sealed partial class DeploymentPipelineTests
         Assert.Contains("printf 'SITE_ADDRESS=%s, www.%s, uat.%s\\n'", Workflow);
         Assert.Contains("curl -fsS -o /dev/null \"https://uat.${SITE_HOST}/\" && exit 0", Workflow);
         Assert.Contains("echo \"uat check failed\" && exit 1", Workflow);
+    }
+
+    [Theory]
+    [InlineData("api")]
+    [InlineData("worker")]
+    public void The_launch_phase_comes_from_the_environment_and_defaults_to_1(string service)
+    {
+        Assert.Contains("Launch__Phase: ${Launch__Phase:-1}", Service(service));
+    }
+
+    [Fact]
+    public void The_operator_guide_says_how_to_change_the_launch_phase()
+    {
+        var guide = Read("docs/deployment.md");
+
+        Assert.Contains("## Changing the launch phase", guide);
+        Assert.Contains("Launch__Phase=", guide);
+        Assert.Contains("docker compose up -d api worker", guide);
     }
 
     private static string Job(string name)

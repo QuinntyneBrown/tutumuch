@@ -1,0 +1,53 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Launch phases
+
+Person(owner, "Owner (Administrator)", "Lists every item in Phases 1 and 2")
+Person(member, "Visitor or member", "Shops in every phase; sells in Phase 3")
+Person(operator, "Operator", "Sets Launch__Phase and restarts api")
+
+System_Boundary(spa, "tutumuch application") {
+  Component(init, "app.config.ts", "provideAppInitializer", "Awaits LaunchState.load() before the first render")
+  Component(shell, "AppShellComponent", "Shell", "tl-top-bar [categoryLinksVisible] [sellVisible]; payout banner")
+  Component(catalog, "@tutumuch/catalog", "Feature library", "categoryMenusOpen guard: category URLs redirect to / in Phase 1; FilterForm hides Category")
+  Component(listings, "@tutumuch/listings", "Feature library", "sellingOpen guard; SellingNotOpenPage; product-limit state")
+  Component(marketing, "@tutumuch/marketing", "Feature library", "WelcomePage seller band follows canSell()")
+  Component(launchState, "LaunchState", "@tutumuch/api signal store", "phase, categoryMenusVisible, memberSellingOpen, canSell = memberSellingOpen || isAdministrator")
+  Component(auth, "AuthState", "@tutumuch/api signal store", "member(), isAdministrator from /api/auth/me")
+}
+
+System_Boundary(api, "TuTuMuch.Api") {
+  Component(launchCtl, "LaunchController", "GET /api/launch", "Anonymous; Cache-Control public, max-age=60")
+  Component(policy, "CanSell policy", "ASP.NET Core authorization", "VerifiedEmailRequirement + SellingOpenRequirement → 403 SELLING_NOT_OPEN")
+  Component(listingsCtl, "ListingsController, PhotoUploadsController", "Controllers", "Every action behind CanSell")
+  Component(handlers, "ListingCommandHandlers", "MediatR", "Create and publish check the Phase 1 product limit → 409 PRODUCT_LIMIT_REACHED")
+  Component(options, "LaunchOptions", "IOptions + IValidateOptions, ValidateOnStart", "Launch:Phase (default 1), Launch:PhaseOneProductLimit (40)")
+  Component(rules, "LaunchPhase, LaunchRules", "TuTuMuch.Domain", "Pure rules per phase")
+}
+ContainerDb(db, "TuTuMuch database", "SQL Server", "Listings, Members.IsAdministrator")
+System_Ext(config, "appsettings.json + environment", "Launch section; Launch__Phase from deploy/docker-compose.yml")
+
+Rel(operator, config, "Sets Launch__Phase")
+Rel(config, options, "Binds at startup")
+Rel(member, init, "Opens the app")
+Rel(owner, listings, "Sells with the existing screens")
+Rel(init, launchState, "load()")
+Rel(launchState, launchCtl, "GET /api/launch")
+Rel(auth, api, "GET /api/auth/me (isAdministrator)")
+Rel(shell, launchState, "Reads")
+Rel(catalog, launchState, "Reads")
+Rel(listings, launchState, "Reads")
+Rel(marketing, launchState, "Reads")
+Rel(launchState, auth, "member().isAdministrator")
+Rel(launchCtl, options, "Reads")
+Rel(policy, options, "Reads phase")
+Rel(policy, db, "Members.IsAdministrator")
+Rel(listingsCtl, policy, "[Authorize(CanSell)]")
+Rel(listingsCtl, handlers, "ISender")
+Rel(handlers, options, "Reads phase and limit")
+Rel(handlers, db, "COUNT(Listings)")
+Rel(options, rules, "CurrentPhase")
+Rel(policy, rules, "CanSell(phase, isAdministrator)")
+Rel(handlers, rules, "CanAddListing / CanPublish")
+@enduml

@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
-import { CatalogBrand } from '@tutumuch/api';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
+import { CatalogBrand, LaunchState } from '@tutumuch/api';
 import { ButtonDirective, ChoiceComponent, InputGroupComponent } from '@tutumuch/components';
 
 import { CATEGORIES, CONDITIONS, CatalogQuery, categoryOf, priceError } from '../catalog/catalog-query';
@@ -10,7 +10,8 @@ const TOP_BRANDS = 6;
 /**
  * The filter fields shared by the sidebar and the filter sheet (mocks dialogs/filters): Category,
  * the chosen category's subcategories, Brand, Condition and Price. It is controlled: every change
- * emits the edited query and the host decides when to apply it.
+ * emits the edited query and the host decides when to apply it. In launch Phase 1 there is no
+ * Category group, so no subcategories either (L2-093).
  */
 @Component({
   selector: 'tl-filter-form',
@@ -26,6 +27,7 @@ export class FilterForm {
   readonly idPrefix = input.required<string>();
   readonly changed = output<CatalogQuery>();
 
+  readonly launch = inject(LaunchState);
   readonly categories = CATEGORIES;
   readonly conditions = CONDITIONS;
   readonly allBrands = signal(false);

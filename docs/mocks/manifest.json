@@ -282,7 +282,9 @@
         "L2-024",
         "L2-059",
         "L2-061",
-        "L2-062"
+        "L2-062",
+        "L2-093",
+        "L2-094"
       ],
       "states": [
         "default",
@@ -292,6 +294,9 @@
         "filtered",
         "loading",
         "empty",
+        "phase-one",
+        "phase-one-admin",
+        "phase-two",
         "no-results",
         "error",
         "offline"
@@ -336,11 +341,13 @@
         "L2-080",
         "L2-081",
         "L2-082",
-        "L2-083"
+        "L2-083",
+        "L2-094"
       ],
       "states": [
         "default",
-        "signed-in"
+        "signed-in",
+        "selling-opens-soon"
       ],
       "not_applicable": {
         "loading": "Static content ships with the app; the page calls no TuTuMuch API endpoint.",
@@ -561,7 +568,10 @@
         "L2-019",
         "L2-031",
         "L2-051",
-        "L2-063"
+        "L2-063",
+        "L2-091",
+        "L2-092",
+        "L2-094"
       ],
       "states": [
         "default",
@@ -570,6 +580,8 @@
         "submitting",
         "draft-saved",
         "success",
+        "selling-not-open",
+        "product-limit",
         "unverified",
         "limited",
         "error"
@@ -832,11 +844,14 @@
       "opens_from": "catalog",
       "requirements": [
         "L2-062",
-        "L2-065"
+        "L2-065",
+        "L2-093",
+        "L2-094"
       ],
       "states": [
         "default",
-        "guest"
+        "guest",
+        "phase-two"
       ],
       "not_applicable": {
         "busy": "Opening the menu makes no request.",

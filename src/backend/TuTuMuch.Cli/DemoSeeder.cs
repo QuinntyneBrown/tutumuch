@@ -25,6 +25,9 @@ public sealed class DemoSeeder(ISender sender, TuTuMuchDbContext db, SeedClock c
     /// <summary>The listings are published over this many days before the seed, oldest first.</summary>
     public static readonly TimeSpan ListingsSpread = TimeSpan.FromDays(30);
 
+    /// <summary>The launch phase the demo targets: every member sells (L2-095).</summary>
+    public const Domain.Launch.LaunchPhase LaunchPhase = Domain.Launch.LaunchPhase.Three;
+
     private const string SuppressionReason = "Demo member verified by TuTuMuch.Cli";
 
     /// <summary>Where the seed photos are: Seed:PhotosPath, or SeedPhotos next to the tool.</summary>
@@ -68,6 +71,7 @@ public sealed class DemoSeeder(ISender sender, TuTuMuchDbContext db, SeedClock c
         }
 
         output.WriteLine($"Seeded {DemoCatalogue.Members.Count} members and {DemoCatalogue.Listings.Count} listings.");
+        output.WriteLine($"Demo data targets launch phase {LaunchPhase:D}.");
     }
 
     /// <summary>Registers the member, verifies them with the link from their queued email, then suppresses that email.</summary>

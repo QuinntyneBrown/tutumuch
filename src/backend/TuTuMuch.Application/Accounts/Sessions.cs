@@ -116,8 +116,8 @@ public sealed class SignOutCommandHandler(ITuTuMuchDbContext db, TimeProvider cl
     }
 }
 
-/// <summary>The signed-in member as the app shell needs it.</summary>
-public sealed record CurrentMemberDto(string DisplayName, string Email, bool EmailVerified);
+/// <summary>The signed-in member as the app shell needs it; IsAdministrator decides seller entry points in launch Phases 1 and 2 (L2-090).</summary>
+public sealed record CurrentMemberDto(string DisplayName, string Email, bool EmailVerified, bool IsAdministrator);
 
 public sealed record GetCurrentMemberQuery(Guid MemberId) : IRequest<Result<CurrentMemberDto>>;
 
@@ -127,7 +127,7 @@ public sealed class GetCurrentMemberQueryHandler(ITuTuMuchDbContext db) : IReque
     {
         var member = await db.Members.AsNoTracking()
             .Where(m => m.Id == query.MemberId)
-            .Select(m => new CurrentMemberDto(m.DisplayName, m.Email, m.EmailVerifiedAt != null))
+            .Select(m => new CurrentMemberDto(m.DisplayName, m.Email, m.EmailVerifiedAt != null, m.IsAdministrator))
             .SingleOrDefaultAsync(cancellationToken);
         return member is null ? new Error(401, "SESSION_EXPIRED", "Sign in again") : member;
     }

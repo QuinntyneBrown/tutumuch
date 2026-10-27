@@ -15,9 +15,10 @@ import {
 import { ListingFormComponent } from '../listing-form/listing-form';
 import { ListingFormModel } from '../listing-form/listing-form-model';
 import { formatUsd } from '../listing-form/listing-rules';
+import { SellingNotOpenPage } from '../selling-not-open/selling-not-open-page';
 import { VerifyEmailPromptComponent } from '../verify-email-prompt/verify-email-prompt';
 
-type View = 'loading' | 'form' | 'success' | 'unverified' | 'limited' | 'error';
+type View = 'loading' | 'form' | 'success' | 'unverified' | 'limited' | 'product-limit' | 'not-open' | 'error';
 
 /** What the success panel shows after publishing. */
 interface Published {
@@ -38,6 +39,7 @@ interface Published {
   imports: [
     ReactiveFormsModule,
     RouterLink,
+    SellingNotOpenPage,
     AlertComponent,
     ButtonDirective,
     CenterStateComponent,
@@ -182,6 +184,10 @@ export class SellPage implements OnInit {
       this.model.showFieldErrors(problem);
     } else if (problem.status === 429) {
       this.view.set('limited');
+    } else if (problem.status === 409 && problem.code === 'PRODUCT_LIMIT_REACHED') {
+      this.view.set('product-limit');
+    } else if (problem.status === 403 && problem.code === 'SELLING_NOT_OPEN') {
+      this.view.set('not-open');
     } else if (problem.status === 403 && problem.code === 'EMAIL_NOT_VERIFIED') {
       this.view.set('unverified');
     } else if (problem.status === 401) {

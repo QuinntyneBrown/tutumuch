@@ -2,6 +2,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using TuTuMuch.Application;
+using TuTuMuch.Application.Launch;
 using TuTuMuch.Infrastructure;
 
 namespace TuTuMuch.Cli;
@@ -91,6 +92,9 @@ public static class CliApp
         services.AddLogging();
         services.AddApplication();
         services.AddInfrastructure(configuration);
+        // The demo holds 48 to 80 listings by many sellers, so it is seeded for launch Phase 3 whatever
+        // Launch:Phase says; the API may then run in any phase over it (L2-095, ADR platform/0014).
+        services.PostConfigure<LaunchOptions>(launch => launch.Phase = DemoSeeder.LaunchPhase.ToString("D"));
         services.RemoveAll<TimeProvider>();
         services.AddSingleton<SeedClock>();
         services.AddSingleton<TimeProvider>(sp => sp.GetRequiredService<SeedClock>());

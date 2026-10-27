@@ -40,7 +40,9 @@
         } @else {
           <tl-empty-state icon="tag" heading="No sales yet">
             Sold items show up here with what to do next.
-            <a actions tlButton="primary" routerLink="/sell">Sell an item</a>
+            @if (launch.canSell()) {
+              <a actions tlButton="primary" routerLink="/sell">Sell an item</a>
+            }
           </tl-empty-state>
         }
       } @else {

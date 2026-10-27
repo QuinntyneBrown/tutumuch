@@ -1,0 +1,101 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Launch phases
+
+package "TuTuMuch.Domain.Launch" {
+  enum LaunchPhase {
+    One = 1
+    Two = 2
+    Three = 3
+  }
+  class LaunchRules <<static>> {
+    +bool CategoryMenusVisible(LaunchPhase)
+    +bool MemberSellingOpen(LaunchPhase)
+    +bool CanSell(LaunchPhase, bool isAdministrator)
+    +bool CanAddListing(LaunchPhase, int listings, int limit)
+    +bool CanPublish(LaunchPhase, int listings, int limit)
+  }
+}
+
+package "TuTuMuch.Application.Launch" {
+  class LaunchOptions {
+    +const string Section = "Launch"
+    +string? Phase
+    +int PhaseOneProductLimit = 40
+    +LaunchPhase CurrentPhase
+    +{static} bool TryParsePhase(string?, out LaunchPhase)
+  }
+  class LaunchOptionsValidator {
+    +ValidateOptionsResult Validate(string?, LaunchOptions)
+  }
+  class LaunchDto <<record>> {
+    +int Phase
+    +bool CategoryMenusVisible
+    +bool MemberSellingOpen
+  }
+  class GetLaunchQuery <<record>>
+  class GetLaunchQueryHandler
+}
+
+package "TuTuMuch.Application.Listings" {
+  class ListingCommandHandlers {
+    -IOptions<LaunchOptions> launch
+    +Handle(CreateListingDraftCommand)
+    +Handle(PublishListingCommand)
+    -Task<bool> UnderProductLimitAsync(bool adding)
+  }
+  class ListingRefusals <<static>> {
+    +Error ProductLimitReached  // 409 PRODUCT_LIMIT_REACHED
+  }
+}
+
+package "TuTuMuch.Api" {
+  class LaunchController {
+    +IActionResult Get()  // GET /api/launch
+  }
+  class SellingOpenRequirement
+  class SellingOpenHandler {
+    -IOptions<LaunchOptions> launch
+    -ITuTuMuchDbContext db
+  }
+  class ProblemAuthorizationResultHandler {
+    SELLING_NOT_OPEN before EMAIL_NOT_VERIFIED
+  }
+}
+
+package "@tutumuch/api (Angular)" {
+  class LaunchState {
+    +phase: Signal<1|2|3>
+    +categoryMenusVisible: Signal<boolean>
+    +memberSellingOpen: Signal<boolean>
+    +canSell: Signal<boolean>
+    +load(): Promise<void>
+  }
+  class AuthState {
+    +member: Signal<CurrentMember|null>
+  }
+}
+
+LaunchOptions ..> LaunchPhase
+LaunchOptionsValidator ..> LaunchOptions
+GetLaunchQueryHandler ..> LaunchOptions
+GetLaunchQueryHandler ..> LaunchRules
+GetLaunchQueryHandler --> LaunchDto
+ListingCommandHandlers ..> LaunchOptions
+ListingCommandHandlers ..> LaunchRules
+ListingCommandHandlers ..> ListingRefusals
+LaunchController ..> GetLaunchQuery
+SellingOpenHandler ..> SellingOpenRequirement
+SellingOpenHandler ..> LaunchRules
+LaunchState ..> AuthState
+LaunchState ..> LaunchDto : GET /api/launch
+@enduml

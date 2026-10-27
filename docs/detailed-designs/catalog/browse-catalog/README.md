@@ -75,6 +75,14 @@ Feature library `@tutumuch/catalog` (`src/frontend/projects/catalog/src/lib/`), 
 - The anonymous rate limit of `L2-060` on this endpoint, and HTTP caching of anonymous catalog pages.
 - The next-page failure uses an inline alert, and the offline banner sits at the top of `main`, until `ToastService` and `tl-system-banner` exist (responsive-accessible-shell).
 
+### Launch phases
+
+In launch Phase 1 ([launch-phases](../../platform/launch-phases/README.md), `L2-093`) the six
+category routes carry the `categoryMenusOpen` guard, which redirects to `/`; `FilterForm` has no
+Category fieldset; the top bar shows no category links or menu button; and the empty state's
+"Sell an item" shows only while `LaunchState.canSell()`. The API is unchanged: the catalog lists
+every Active and Reserved listing in every phase.
+
 ### Error codes
 
 | Code | HTTP | Raised when |

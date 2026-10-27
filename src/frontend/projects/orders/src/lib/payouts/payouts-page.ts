@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { PayoutsApi, PayoutSummary, shortRef } from '@tutumuch/api';
+import { LaunchState, PayoutsApi, PayoutSummary, shortRef } from '@tutumuch/api';
 import {
   AlertComponent,
   ButtonDirective,
@@ -36,6 +36,7 @@ import { PayoutBannerState } from './payout-banner-state';
 })
 export class PayoutsPage {
   private readonly api = inject(PayoutsApi);
+  readonly launch = inject(LaunchState);
   private readonly bannerState = inject(PayoutBannerState);
 
   readonly summary = signal<PayoutSummary | null>(null);

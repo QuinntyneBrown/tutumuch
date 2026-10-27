@@ -152,6 +152,34 @@ docker compose up -d                      # restart with the tags in .env
 Photos live in the `tutumuch_photos` Docker volume. Back it up with
 `docker run --rm -v tutumuch_photos:/data -v "$PWD":/backup alpine tar czf /backup/photos.tgz -C /data .`.
 
+
+## Changing the launch phase
+
+TuTuMuch opens in three launch phases ([ADR platform/0014](adr/platform/0014-launch-phase-configuration.md),
+`L2-089` to `L2-095`). `deploy/docker-compose.yml` passes `Launch__Phase` to `api` and `worker`
+with default `1`, so a VM whose `.env` does not set it runs in Phase 1.
+
+| Phase | Who can list | Category menus | Catalog size |
+| --- | --- | --- | --- |
+| 1 (default) | The owner (an `Administrator`) only | Hidden; one flat catalog at `/` | Fewer than 40 listings |
+| 2 | The owner only | All six | No limit |
+| 3 | Every verified member | All six | No limit |
+
+To move to another phase (or back), on the VM:
+
+```bash
+cd /opt/tutumuch
+grep -q '^Launch__Phase=' .env && sed -i 's/^Launch__Phase=.*/Launch__Phase=2/' .env || echo 'Launch__Phase=2' >> .env
+docker compose up -d api worker           # recreate both with the new value
+curl -fsS https://<SITE_HOST>/api/launch  # {"phase":2,...}
+```
+
+No image, migration or data changes: listings made in any phase stay as they are. A value
+other than 1, 2 or 3 stops `api` at startup with `Launch:Phase must be 1, 2 or 3`; set a valid
+value and run `docker compose up -d api worker` again. The browser may keep the previous answer
+of `/api/launch` for up to 60 seconds. The owner sells with the usual sell and edit screens,
+signed in with an account that holds the `Administrator` role.
+
 ## Current resources
 
 Created with the Azure CLI on 2026-10-26 in the Pay-As-You-Go subscription, region Canada Central:

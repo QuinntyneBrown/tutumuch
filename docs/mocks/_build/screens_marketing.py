@@ -16,6 +16,9 @@ SHOPPER_POINTS = [("Every listing is for girls", "Clothes, dance and sports gear
                   ("Honest condition", "Five grades, and flaws named up front.")]
 SELLER_POINTS = [("List in minutes", "Photos, a price and the condition. That’s it."),
                  ("Families are already looking", "Sell to parents who need exactly what she has outgrown.")]
+# The seller band in launch Phases 1 and 2 (L2-094): nothing promises that a member can list today.
+SELLER_POINTS_SOON = [("Pass it on soon", "Selling opens to every member in the next phase."),
+                      ("Join today", "Your account is ready to sell the day selling opens.")]
 STEPS = [("List it", "Add photos, a price and the condition."),
          ("Sell it", "A buyer pays. You ship within 5 business days."),
          ("Get paid", "The order completes and your payout is on its way.")]
@@ -38,8 +41,11 @@ def poster() -> str:
             '<span class="video-poster__meta" aria-hidden="true">0:30</span></a>')
 
 
-def hero(member: bool) -> str:
-    actions = btn("Shop the catalog", "primary lg", P("catalog")) + btn("Start selling", "lg", seller_href(member))
+SOON = '<p class="marketing-hero__soon">Selling opens soon.</p>'
+
+
+def hero(member: bool, selling: bool = True) -> str:
+    actions = btn("Shop the catalog", "primary lg", P("catalog")) + (btn("Start selling", "lg", seller_href(member)) if selling else SOON)
     return (f'<section class="marketing-hero" aria-labelledby="welcome-title">{shapes()}<div class="marketing-hero__inner">'
             '<div><p class="marketing-hero__eyebrow">Clothes · Dance · Sports · Gear, all for girls</p>'
             '<h1 class="marketing-hero__title" id="welcome-title">Twirl it <em>forward.</em></h1>'
@@ -65,27 +71,30 @@ def steps() -> str:
         f'<li class="steps__item"><h3 class="steps__title">{t}</h3><p class="steps__text">{d}</p></li>' for t, d in STEPS) + "</ol>"
 
 
-def closing(member: bool) -> str:
-    actions = btn("Shop the catalog", "primary lg", P("catalog")) + btn("Start selling", "lg", seller_href(member))
+def closing(member: bool, selling: bool = True) -> str:
+    actions = btn("Shop the catalog", "primary lg", P("catalog")) + (btn("Start selling", "lg", seller_href(member)) if selling else "")
     return (f'<section class="marketing-hero marketing-hero--closing" aria-labelledby="closing-title">{shapes(quiet=True)}'
             '<div class="marketing-hero__inner"><div><h2 class="marketing-hero__title" id="closing-title">Her next favourite thing is <em>waiting.</em></h2>'
             f'<p class="marketing-hero__lede">New listings every day, every one for girls.</p>'
             f'<div class="marketing-hero__actions">{actions}</div></div></div></section>')
 
 
-def welcome(member: bool) -> Page:
-    main = (hero(member)
+def welcome(member: bool, selling: bool = True) -> Page:
+    sellers = (band("sellers-title", "For sellers", "Pass it on to the next girl.", points(SELLER_POINTS),
+                    btn("Start selling", "primary", seller_href(member)), "feature-band--surface") if selling else
+               band("sellers-title", "For sellers", "Selling opens soon.", points(SELLER_POINTS_SOON),
+                    '<p class="feature-band__note">For now, every item is hand-picked by TuTuMuch.</p>', "feature-band--surface"))
+    main = (hero(member, selling)
             + band("shoppers-title", "For shoppers", "Everything here is for girls.", points(SHOPPER_POINTS),
                    btn("Browse the catalog", "primary", P("catalog")))
-            + band("sellers-title", "For sellers", "Pass it on to the next girl.", points(SELLER_POINTS),
-                   btn("Start selling", "primary", seller_href(member)), "feature-band--surface")
+            + sellers
             + band("how-title", "How it works", "Three steps. That’s it.", steps(), mod="feature-band--stacked")
-            + closing(member))
-    return Page(main=main, user="member" if member else "guest", main_class="marketing")
+            + closing(member, selling))
+    return Page(main=main, user="member" if member else "guest", main_class="marketing", phase=3 if selling else 1)
 
 
 wl = screen("welcome", "page", "Marketing page", route="/welcome",
-            reqs=["L2-078", "L2-079", "L2-080", "L2-081", "L2-082", "L2-083"], na=STATIC_NA)
+            reqs=["L2-078", "L2-079", "L2-080", "L2-081", "L2-082", "L2-083", "L2-094"], na=STATIC_NA)
 
 
 @wl.state("default", "Signed out: hero with the video poster, shoppers, sellers, three steps and a closing CTA; Start selling goes to /join.")
@@ -99,6 +108,13 @@ def _():
 @wl.state("signed-in", "Signed in: the same page; Start selling goes to /sell.")
 def _():
     return welcome(True)
+
+
+@wl.state("selling-opens-soon", "Launch Phases 1 and 2, signed out: no Start selling link; the hero and the seller band say selling opens soon.")
+def _():
+    pg = welcome(False, selling=False)
+    pg.notes = note("An administrator still sees Start selling (L2-094). The shopper band, steps and video are unchanged.", "top: 6rem; right: 1rem;")
+    return pg
 
 
 # ---------------------------------------------------------------------------

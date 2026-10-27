@@ -4,7 +4,7 @@ from mk import *
 # ---------------------------------------------------------------------------
 # Shared pieces
 # ---------------------------------------------------------------------------
-def filters_form(p: str = "f", *, cat: str = "", brands=(), conds=(), lo: str = "", hi: str = "", invalid: bool = False) -> str:
+def filters_form(p: str = "f", *, cat: str = "", brands=(), conds=(), lo: str = "", hi: str = "", invalid: bool = False, categories: bool = True) -> str:
     def cb(name, label, checked):
         return f'<label class="choice"><input type="checkbox" name="{name}"{" checked" if checked else ""}><span>{esc(label)}</span></label>'
     cats = "".join(
@@ -26,7 +26,8 @@ def filters_form(p: str = "f", *, cat: str = "", brands=(), conds=(), lo: str = 
                   f'<label class="visually-hidden" for="{p}-max">Maximum price in dollars</label>'
                   f'<div class="input-group"><span class="addon">$</span><input class="input" id="{p}-max" inputmode="decimal" value="{hi}"{err}></div>'
                   f'</div>{perr}</fieldset>')
-    return (f'<fieldset class="filters__group"><legend>Category</legend>{cats}</fieldset>{subs}'
+    cat_group = f'<fieldset class="filters__group"><legend>Category</legend>{cats}</fieldset>{subs}' if categories else ""  # none in Phase 1 (L2-093)
+    return (f'{cat_group}'
             f'<fieldset class="filters__group"><legend>Brand</legend>{br}<a href="{D("filters")}" class="text-sm">All 10 brands</a></fieldset>'
             f'<fieldset class="filters__group"><legend>Condition</legend>{co}</fieldset>{price_html}')
 
@@ -52,11 +53,11 @@ def hero() -> str:
 
 
 def catalog_page(grid: str, *, head: str | None = None, count: str = "1,284 items", chips: str = "", side=None, after_grid: str = "",
-                 user: str = "member", nav: str = "", top: str = "", sort: str = "Newest") -> Page:
+                 user: str = "member", nav: str = "", top: str = "", sort: str = "Newest", phase: int = 3) -> Page:
     head = hero() if head is None else head
     side_html = sidebar(**(side or {}))
     main = (f'{head}<div class="catalog-layout">{side_html}<section aria-label="Listings">{toolbar(count, chips, sort)}{grid}{after_grid}</section></div>')
-    return Page(main=main, user=user, nav=nav, top=top)
+    return Page(main=main, user=user, nav=nav, top=top, phase=phase)
 
 
 def load_more(shown: int = 16, total: str = "1,284") -> str:
@@ -67,7 +68,7 @@ def load_more(shown: int = 16, total: str = "1,284") -> str:
 # ---------------------------------------------------------------------------
 # Catalog
 # ---------------------------------------------------------------------------
-s = screen("catalog", "page", "Catalog", route="/", reqs=["L2-022", "L2-023", "L2-024", "L2-059", "L2-061", "L2-062"])
+s = screen("catalog", "page", "Catalog", route="/", reqs=["L2-022", "L2-023", "L2-024", "L2-059", "L2-061", "L2-062", "L2-093", "L2-094"])
 
 
 @s.state("default", "Home catalog for a signed-in member: newest listings, filters beside the grid on large screens.")
@@ -117,6 +118,28 @@ def _():
 def _():
     grid = empty("tag", "Nothing listed yet", "Be the first to list a dress, a pair of sneakers or anything your daughter has outgrown.", btn("Sell an item", "primary", P("sell")))
     return catalog_page(grid, count="0 items")
+
+
+@s.state("phase-one", "Launch Phase 1 for a visitor: no category links or menu button, no Category filter, no Sell link; one flat catalog of the owner's items.")
+def _():
+    keys = CATALOG[:12]
+    pg = catalog_page(listing_grid(keys), count="36 items", user="guest", phase=1, side={"categories": False})
+    pg.notes = note("Phase 1 (L2-093, L2-094): at every width the top bar has only the logo, search and Sign in. /clothing, /dance and the other category URLs redirect here.",
+                    "top: 6rem; right: 1rem;")
+    return pg
+
+
+@s.state("phase-one-admin", "Launch Phase 1 for the owner signed in as an administrator: the same flat catalog with the Sell link.")
+def _():
+    keys = CATALOG[:12]
+    pg = catalog_page(listing_grid(keys), count="36 items", user="admin", phase=1, side={"categories": False})
+    pg.notes = note("Only an administrator sells in Phases 1 and 2 (L2-091); the Sell link and seller screens are offered to them alone.", "top: 6rem; right: 1rem;")
+    return pg
+
+
+@s.state("phase-two", "Launch Phase 2 for a member: all six category links and the menu, but no Sell link (selling opens to members in Phase 3).")
+def _():
+    return catalog_page(listing_grid(CATALOG), after_grid=load_more(), phase=2)
 
 
 @s.state("no-results", "Search and filters matched nothing; filters stay visible and clearable.")
@@ -270,17 +293,21 @@ def _():
 # ---------------------------------------------------------------------------
 # Menu sheet (category links collapse into it under 1280px, L2-062)
 # ---------------------------------------------------------------------------
-m = screen("nav-menu", "dialog", "Menu", opens_from="catalog", reqs=["L2-062", "L2-065"],
+m = screen("nav-menu", "dialog", "Menu", opens_from="catalog", reqs=["L2-062", "L2-065", "L2-093", "L2-094"],
            na={"busy": "Opening the menu makes no request.", "invalid": "The menu has no inputs."})
 
 
-def menu_sheet(guest: bool) -> str:
+def menu_sheet(guest: bool, selling: bool = True) -> str:
     cats = "".join(f'<li><a href="{nav_href(k)}">{t}{ic("chevron-right")}</a></li>' for k, t in NAV)
     if guest:
-        small = f'<li><a href="{P("sell")}">Sell an item</a></li><li><a href="{P("rules")}">Marketplace rules</a></li>'
+        sell = f'<li><a href="{P("sell")}">Sell an item</a></li>' if selling else ""
+        small = f'{sell}<li><a href="{P("rules")}">Marketplace rules</a></li>'
         foot = btn("Sign in", href=P("sign-in")) + btn("Join TuTuMuch", "primary", P("register"))
     else:
-        small = "".join(f'<li><a href="{P(pid)}">{t}</a></li>' for t, pid in [("Sell an item", "sell"), ("Your listings", "my-listings"), ("Purchases", "purchases"), ("Sales", "sales"), ("Settings", "settings")])
+        links = [("Sell an item", "sell"), ("Your listings", "my-listings"), ("Purchases", "purchases"), ("Sales", "sales"), ("Settings", "settings")]
+        if not selling:
+            links = [(t, pid) for t, pid in links if pid not in ("sell", "my-listings", "sales")]
+        small = "".join(f'<li><a href="{P(pid)}">{t}</a></li>' for t, pid in links)
         foot = btn("Sign out", icon="log-out")
     return (f'<div class="menu-sheet" id="menu" role="dialog" aria-modal="true" aria-labelledby="dlg-title" data-dismiss-on-escape>'
             f'<div class="menu-sheet__head"><span class="logo">{LOGO_IMG}</span>'
@@ -297,6 +324,13 @@ def _():
 @m.state("guest", "Menu for an anonymous visitor with Sign in and Join.")
 def _():
     return Dialog(bg=("catalog", "guest"), html=menu_sheet(True))
+
+
+@m.state("phase-two", "Launch Phase 2 for a member: every category, no seller links (L2-094). In Phase 1 the top bar has no menu button at all.")
+def _():
+    d = Dialog(bg=("catalog", "phase-two"), html=menu_sheet(False, selling=False))
+    d.notes = note("Phase 1 offers no menu sheet: it would hold no category (L2-093).", "top: 1rem; left: 1rem;")
+    return d
 
 
 # ---------------------------------------------------------------------------

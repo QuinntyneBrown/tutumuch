@@ -106,10 +106,10 @@ def sell_page(form: str, title: str = "Sell an item") -> Page:
     return Page(main=head + form, nav="sell", main_class="container page page--form", footer=False)
 
 
-def blocked(icon: str, title: str, text: str, actions: str, code: str | None = None) -> Page:
+def blocked(icon: str, title: str, text: str, actions: str, code: str | None = None, **page) -> Page:
     c = f'<span class="code" aria-hidden="true">{code}</span>' if code else f'<div class="empty__icon">{ic(icon, "icon icon--lg")}</div>'
     main = f'<div class="center-state">{c}<h1>{title}</h1><p class="text-muted">{text}</p><div class="actions">{actions}</div></div>'
-    return Page(main=main, nav="sell")
+    return Page(main=main, **{"nav": "sell", **page})
 
 
 FILLED_PHOTOS = [("pink-tutu", 6), ("pink-tutu", 1), ("pink-tutu", 4)]
@@ -118,7 +118,7 @@ FILLED_PHOTOS = [("pink-tutu", 6), ("pink-tutu", 1), ("pink-tutu", 4)]
 # Sell
 # ---------------------------------------------------------------------------
 s = screen("sell", "page", "Sell an item", route="/sell",
-           reqs=["L2-003", "L2-011", "L2-012", "L2-015", "L2-016", "L2-017", "L2-018", "L2-019", "L2-031", "L2-051", "L2-063"],
+           reqs=["L2-003", "L2-011", "L2-012", "L2-015", "L2-016", "L2-017", "L2-018", "L2-019", "L2-031", "L2-051", "L2-063", "L2-091", "L2-092", "L2-094"],
            na={"loading": "A new listing form needs no data; categories ship with the app shell.",
                "empty": "The form is the page; an empty form is the default state."})
 
@@ -166,6 +166,23 @@ def _():
             f'<p class="text-muted"><a href="{P("payouts", "not-onboarded")}">Set up payouts</a> so you’re paid when it sells.</p>'
             f'<div class="actions">{btn("View listing", "primary", P("listing-detail", "own"))}{btn("Sell another", href=P("sell"))}</div></div>')
     return Page(main=main, nav="sell")
+
+
+@s.state("selling-not-open", "Launch Phase 1 or 2, a member who is not an administrator: selling opens soon; no form (HTTP 403 SELLING_NOT_OPEN).")
+def _():
+    pg = blocked("tag", "Selling opens soon", "For now, every item is hand-picked by TuTuMuch. You can still shop everything in the catalog.",
+                 btn("Shop the catalog", "primary", P("catalog")), nav="", phase=1)
+    pg.notes = note("Shown for /sell, /sell/{reference}, /items/{reference}/edit and /account/listings in Phases 1 and 2 (L2-094). No Sell link in the top bar.",
+                    "top: 6rem; right: 1rem;")
+    return pg
+
+
+@s.state("product-limit", "Launch Phase 1, the administrator at the product limit: the catalog is full for now (HTTP 409 PRODUCT_LIMIT_REACHED).")
+def _():
+    pg = blocked("info", "The catalog is full for now", "This launch phase keeps the catalog small. Withdraw a listing, or move to the next phase, to list more.",
+                 btn("Your listings", "primary", P("my-listings")) + btn("Back to shop", href=P("catalog")), user="admin", phase=1)
+    pg.notes = note("Fewer than Launch:PhaseOneProductLimit (40) listings in any status (L2-092). Editing existing listings still works.", "top: 6rem; right: 1rem;")
+    return pg
 
 
 @s.state("unverified", "Unverified member: listing is blocked until the email is verified (HTTP 403).")

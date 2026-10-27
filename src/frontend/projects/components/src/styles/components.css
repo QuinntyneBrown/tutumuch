@@ -4003,6 +4003,12 @@ h4,
   position: relative;
   min-width: 0;
 }
+.marketing-hero__soon {
+  align-self: center;
+  font: var(--text-body-lg);
+  color: var(--color-fg-showcase-muted);
+  margin: 0;
+}
 
 /* ---------- Shapes: decorative party-pop blobs and a polka-dot band ------------ */
 .shapes {
@@ -4137,6 +4143,11 @@ h4,
   flex-wrap: wrap;
   gap: var(--space-3);
   margin-top: var(--space-8);
+}
+.feature-band__note {
+  font: var(--text-body);
+  color: var(--color-fg-muted);
+  margin: 0;
 }
 .feature-band__points {
   list-style: none;

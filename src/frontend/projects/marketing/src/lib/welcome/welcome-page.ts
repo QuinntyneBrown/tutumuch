@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { AuthState } from '@tutumuch/api';
+import { AuthState, LaunchState } from '@tutumuch/api';
 import {
   ButtonDirective,
   DialogService,
@@ -18,7 +18,8 @@ import { PitchVideoDialog } from './pitch-video-dialog';
  * Public marketing page at /welcome (L2-078 to L2-083). The meta description and link-preview tags
  * are static in index.html (index.marketing.html for the marketing build) because crawlers do not run
  * scripts. Static copy, no TuTuMuch API call of its own;
- * Start selling goes to /join for a visitor and /sell for a member. Copy follows ADR general/0005:
+ * Start selling goes to /join for a visitor and /sell for a member; in launch Phases 1 and 2 only an
+ * administrator sees it and everyone else reads "Selling opens soon." (L2-094). Copy follows ADR general/0005:
  * every listing is for girls; never promise boys' or adult sizes.
  */
 @Component({
@@ -38,6 +39,7 @@ import { PitchVideoDialog } from './pitch-video-dialog';
 export class WelcomePage {
   private readonly auth = inject(AuthState);
   private readonly dialogs = inject(DialogService);
+  readonly launch = inject(LaunchState);
 
   readonly sellHref = computed(() => (this.auth.member() ? '/sell' : '/join'));
 
@@ -52,6 +54,11 @@ export class WelcomePage {
   readonly sellerPoints: FeaturePoint[] = [
     { title: 'List in minutes', text: 'Photos, a price and the condition. That’s it.' },
     { title: 'Families are already looking', text: 'Sell to parents who need exactly what she has outgrown.' },
+  ];
+  /** The seller band while selling is not open to the visitor (launch Phases 1 and 2). */
+  readonly sellerPointsSoon: FeaturePoint[] = [
+    { title: 'Pass it on soon', text: 'Selling opens to every member in the next phase.' },
+    { title: 'Join today', text: 'Your account is ready to sell the day selling opens.' },
   ];
   readonly steps: Step[] = [
     { title: 'List it', text: 'Add photos, a price and the condition.' },

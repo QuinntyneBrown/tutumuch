@@ -17,7 +17,10 @@ export interface TopBarMember {
  * passes the member from AuthState and the current keyword, and navigates on (searched). Under
  * 1280px the inline category links give way to the menu button, which opens the navigation menu
  * sheet listing every category. Under 992px the
- * search button reveals the search form. The admin variant (admin shell) shows only the logo, the
+ * search button reveals the search form. In launch Phase 1 the application sets
+ * categoryLinksVisible false: no category links and no menu button (the sheet holds only
+ * categories). sellVisible false hides Sell from anyone the launch phase does not let sell
+ * (ADR platform/0014). The admin variant (admin shell) shows only the logo, the
  * "Admin" label and the signed-in member's initials.
  */
 @Component({
@@ -33,6 +36,10 @@ export class TopBarComponent {
 
   readonly member = input<TopBarMember | null>(null);
   readonly variant = input<'app' | 'admin'>('app');
+  /** The six category links and the menu button (L2-093). */
+  readonly categoryLinksVisible = input(true);
+  /** The Sell link or button (L2-094). */
+  readonly sellVisible = input(true);
   /** The keyword of the result set shown, so the box keeps it. */
   readonly query = input('');
   /** A trimmed keyword of at most 100 characters; empty clears the search. */

@@ -1,42 +1,44 @@
 <form class="stack stack--lg" (submit)="$event.preventDefault()">
-  <fieldset class="filters__group">
-    <legend>Category</legend>
-    <tl-choice [inputId]="idPrefix() + '-cat-all'">
-      <input
-        type="radio"
-        [id]="idPrefix() + '-cat-all'"
-        [name]="idPrefix() + '-cat'"
-        [checked]="!query().category"
-        (change)="setCategory(null)"
-      />All</tl-choice
-    >
-    @for (option of categories; track option.slug) {
-      <tl-choice [inputId]="idPrefix() + '-cat-' + option.slug">
+  @if (launch.categoryMenusVisible()) {
+    <fieldset class="filters__group">
+      <legend>Category</legend>
+      <tl-choice [inputId]="idPrefix() + '-cat-all'">
         <input
           type="radio"
-          [id]="idPrefix() + '-cat-' + option.slug"
+          [id]="idPrefix() + '-cat-all'"
           [name]="idPrefix() + '-cat'"
-          [checked]="query().category === option.slug"
-          (change)="setCategory(option.slug)"
-        />{{ option.label }}</tl-choice
+          [checked]="!query().category"
+          (change)="setCategory(null)"
+        />All</tl-choice
       >
-    }
-  </fieldset>
-  @if (category(); as category) {
-    <fieldset class="filters__group">
-      <legend>{{ category.label }}</legend>
-      @for (option of category.subcategories; track option.slug) {
-        <tl-choice [inputId]="idPrefix() + '-sub-' + option.slug">
+      @for (option of categories; track option.slug) {
+        <tl-choice [inputId]="idPrefix() + '-cat-' + option.slug">
           <input
-            #box
-            type="checkbox"
-            [id]="idPrefix() + '-sub-' + option.slug"
-            [checked]="query().subcategories.includes(option.slug)"
-            (change)="toggle('subcategories', option.slug, box.checked)"
+            type="radio"
+            [id]="idPrefix() + '-cat-' + option.slug"
+            [name]="idPrefix() + '-cat'"
+            [checked]="query().category === option.slug"
+            (change)="setCategory(option.slug)"
           />{{ option.label }}</tl-choice
         >
       }
     </fieldset>
+    @if (category(); as category) {
+      <fieldset class="filters__group">
+        <legend>{{ category.label }}</legend>
+        @for (option of category.subcategories; track option.slug) {
+          <tl-choice [inputId]="idPrefix() + '-sub-' + option.slug">
+            <input
+              #box
+              type="checkbox"
+              [id]="idPrefix() + '-sub-' + option.slug"
+              [checked]="query().subcategories.includes(option.slug)"
+              (change)="toggle('subcategories', option.slug, box.checked)"
+            />{{ option.label }}</tl-choice
+          >
+        }
+      </fieldset>
+    }
   }
   @if (shownBrands().length) {
     <fieldset class="filters__group">

@@ -6,11 +6,13 @@
   @case ('verified') {
     <div>
       <h1>You’re verified</h1>
-      <p class="text-muted verify__lead">Buying and selling are open.</p>
+      <p class="text-muted verify__lead">{{ launch.canSell() ? 'Buying and selling are open.' : 'Buying is open.' }}</p>
     </div>
     <div class="stack">
       <a tlButton="primary" size="lg" [block]="true" routerLink="/">Start shopping</a>
-      <a tlButton size="lg" [block]="true" routerLink="/sell">Sell an item</a>
+      @if (launch.canSell()) {
+        <a tlButton size="lg" [block]="true" routerLink="/sell">Sell an item</a>
+      }
     </div>
   }
   @case ('expired') {

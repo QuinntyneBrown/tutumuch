@@ -60,6 +60,18 @@
       <a actions tlButton="primary" routerLink="/account/listings">Your listings</a>
     </tl-center-state>
   }
+  @case ('product-limit') {
+    <tl-center-state icon="info" heading="The catalog is full for now">
+      <p class="text-muted">
+        This launch phase keeps the catalog small. Withdraw a listing, or move to the next phase, to list more.
+      </p>
+      <a actions tlButton="primary" routerLink="/account/listings">Your listings</a>
+      <a actions tlButton routerLink="/">Back to shop</a>
+    </tl-center-state>
+  }
+  @case ('not-open') {
+    <tl-selling-not-open-page />
+  }
   @case ('error') {
     <tl-center-state icon="refresh" heading="Couldn’t open the form">
       <p class="text-muted">

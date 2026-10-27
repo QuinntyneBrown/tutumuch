@@ -19,6 +19,9 @@ public static class ListingRefusals
     public static readonly Error Changed = new(412, "LISTING_CHANGED", "This listing changed since you opened it");
     public static readonly Error PreconditionRequired = new(428, "PRECONDITION_REQUIRED", "Send the version you read in If-Match");
 
+    /// <summary>Launch Phase 1 holds fewer listings than Launch:PhaseOneProductLimit (L2-092).</summary>
+    public static readonly Error ProductLimitReached = new(409, "PRODUCT_LIMIT_REACHED", "The catalog is full for now");
+
     public static Error? For(Listing listing) => listing.EditRefusal switch
     {
         "LISTING_RESERVED" => Reserved,

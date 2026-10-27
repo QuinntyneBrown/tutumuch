@@ -1,6 +1,6 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { ApplicationConfig, inject, provideAppInitializer, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
-import { provideApi } from '@tutumuch/api';
+import { LaunchState, provideApi } from '@tutumuch/api';
 import { provideAnalytics } from '@tutumuch/privacy';
 
 import { environment } from '../environments/environment';
@@ -12,5 +12,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withComponentInputBinding()),
     provideApi(environment.apiBaseUrl),
     provideAnalytics(environment.analytics),
+    // The launch phase decides menus and seller entry points, so it is known before the first render (L2-090).
+    provideAppInitializer(() => inject(LaunchState).load()),
   ],
 };

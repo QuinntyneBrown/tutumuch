@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, untracked
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter, map } from 'rxjs';
-import { AuthState, PayoutsApi } from '@tutumuch/api';
+import { AuthState, LaunchState, PayoutsApi } from '@tutumuch/api';
 import { AlertComponent } from '@tutumuch/components';
 
 import { formatMoney } from '../money';
@@ -15,7 +15,8 @@ type BannerKind = 'info' | 'success' | 'warning' | 'danger';
  * The payout banner above the top bar (mocks notifications/payout-banner, L2-031): info while a
  * payout is on its way, success once on return from completed onboarding, warning while money waits
  * for onboarding, danger when the last payout was returned. Info and success can be dismissed.
- * On the payouts page only success shows, because the page itself carries the rest.
+ * On the payouts page only success shows, because the page itself carries the rest. Nothing shows,
+ * and nothing is requested, while the launch phase does not let the member sell (L2-094).
  */
 @Component({
   selector: 'tl-payout-banner',
@@ -27,6 +28,7 @@ type BannerKind = 'info' | 'success' | 'warning' | 'danger';
 export class PayoutBannerComponent {
   private readonly api = inject(PayoutsApi);
   private readonly auth = inject(AuthState);
+  private readonly launch = inject(LaunchState);
   private readonly router = inject(Router);
   private readonly state = inject(PayoutBannerState);
   private requested = false;
@@ -42,7 +44,7 @@ export class PayoutBannerComponent {
 
   readonly kind = computed<BannerKind | null>(() => {
     const summary = this.state.summary();
-    if (!summary || !this.auth.isVerified()) return null;
+    if (!summary || !this.auth.isVerified() || !this.launch.canSell()) return null;
     const kind: BannerKind | null = this.onPayoutsPage()
       ? (this.url()?.includes('onboarding=return') ?? false) && summary.onboarding === 'Complete'
         ? 'success'
@@ -57,7 +59,13 @@ export class PayoutBannerComponent {
   constructor() {
     effect(() => {
       // Waits for the first navigation, so a page that loads the summary itself is not asked twice.
-      if (this.url() !== null && this.auth.isVerified() && !this.onPayoutsPage() && !this.requested) {
+      if (
+        this.url() !== null &&
+        this.auth.isVerified() &&
+        this.launch.canSell() &&
+        !this.onPayoutsPage() &&
+        !this.requested
+      ) {
         this.requested = true;
         untracked(() => void this.load());
       }

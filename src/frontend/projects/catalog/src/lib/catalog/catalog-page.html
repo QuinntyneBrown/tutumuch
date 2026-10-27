@@ -73,7 +73,9 @@
         } @else {
           <tl-empty-state icon="tag" heading="Nothing listed yet">
             Be the first to list a pair of 12s or something in L.
-            <a actions tlButton="primary" routerLink="/sell">Sell an item</a>
+            @if (launch.canSell()) {
+              <a actions tlButton="primary" routerLink="/sell">Sell an item</a>
+            }
           </tl-empty-state>
         }
       }
