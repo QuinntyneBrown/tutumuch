@@ -18,7 +18,8 @@ state, listing card with listing grid, load more) and the components search-and-
 added (chip, `tl-sheet` with `SheetService`, the `search` icon) and the components
 manage-notification-preferences added (switch, and `ToastService` behind `tl-toast-region`) and
 the components manage-cookie-consent added (consent banner, the hint of the switch) and the components the
-marketing page added (marketing hero, shapes, feature band, steps, video poster, video player). Feature screens not built yet are inventoried below
+marketing page added (marketing hero, shapes, feature band, steps, video poster, video player) and the
+components sign-in-with-google added (provider button with its "or" divider). Feature screens not built yet are inventoried below
 with their states and marked **not yet composed**; each is composed when its journey is
 implemented, and the catalogue grows in the same change.
 
@@ -101,10 +102,20 @@ them (ADR reviews/0001).
 
 ### Join — `/join` (`pages/register`: default, invalid, submitting, success, error)
 
-Auth shell. `@tutumuch/accounts` `JoinPage`.
+Auth shell. `@tutumuch/accounts` `JoinPage`. "Continue with Google" sits above the form when
+`GET /api/auth/providers` says Google is configured ([ADR accounts/0001](adr/accounts/0001-sign-in-with-google.md), `L2-088`).
 
-- Library: `tl-form-field` (display name, email, password), `tl-choice` (age, terms), `tl-error-summary` (invalid), `tl-alert` (error with reference; success "Link sent" and warning "Too many requests" after Resend email), `tl-button` (Join TuTuMuch primary lg block with busy; Browse while you wait; Resend email link), `tl-icon` (mail)
+- Library: `tl-provider-button` (google, to `/api/auth/google/start`, busy while leaving) and `tl-or-divider`, `tl-form-field` (display name, email, password), `tl-choice` (age, terms), `tl-error-summary` (invalid), `tl-alert` (error with reference; success "Link sent" and warning "Too many requests" after Resend email), `tl-button` (Join TuTuMuch primary lg block with busy; Browse while you wait; Resend email link), `tl-icon` (mail)
 - Local: heading block with the lead line; the mail icon circle and "We sent a link to …" paragraph of the success state
+
+### Finish joining with Google — `/join/google` (`pages/join-google`: loading, default, invalid, submitting, expired, error)
+
+Auth shell. `@tutumuch/accounts` `GoogleJoinPage`. Reached from the Google callback with a pending
+join held server-side for 10 minutes; the page reads the Google email from
+`GET /api/auth/google/pending` and finishes with `POST /api/auth/google/finish` (`L2-088`).
+
+- Library: `tl-form-field` (Google email read-only with help "From your Google account. It counts as verified."; display name), `tl-choice` (age, terms), `tl-error-summary` (invalid), `tl-alert` (error with reference), `tl-button` (Join TuTuMuch primary lg block with busy; expired: Continue with Google again primary lg block and Back to sign in lg block)
+- Local: heading block with the lead line; the form-shaped skeleton of the loading state; "Not you? Back to sign in" line
 
 ### Reset password — `/reset-password` (`pages/reset-password`: default, invalid, submitting, success, expired, error)
 
@@ -121,14 +132,17 @@ Auth shell. `@tutumuch/accounts` `JoinPage`.
 - Library: not yet composed
 - Local: not yet composed
 
-### Sign in — `/sign-in` (`pages/sign-in`: default, return, invalid, submitting, locked, error)
+### Sign in — `/sign-in` (`pages/sign-in`: default, return, invalid, submitting, locked, error, google-busy, google-cancelled, google-existing, google-failed)
 
 Auth shell. `@tutumuch/accounts` `SignInPage`; `returnUrl` keeps the page the member came from.
 When `returnUrl` is a listing (`/items/{id}`) the heading reads "Sign in to buy" with the line
-"You’ll go straight back to the item." (state return). The
-`locked` state and the "Forgot password?" link arrive with account lockout and password reset.
+"You’ll go straight back to the item." (state return). "Continue with Google" sits first, above an
+"or" divider, when `GET /api/auth/providers` says Google is configured; the `google` query
+parameter the callback sends back (`cancelled`, `existing`, `failed` with `ref`) picks the alert
+(`L2-088`). The `locked` state and the "Forgot password?" link arrive with account lockout and
+password reset.
 
-- Library: `tl-form-field` (email, password), `tl-alert` (invalid: "Email or password is incorrect"; error with reference), `tl-button` (Sign in primary lg block with busy)
+- Library: `tl-provider-button` (google, to `/api/auth/google/start?returnUrl=…`, busy while leaving) and `tl-or-divider`, `tl-form-field` (email, password), `tl-alert` (invalid: "Email or password is incorrect"; error with reference; google-cancelled info "Google sign-in was cancelled" as status; google-existing warning "An account with this email already exists" with the lock icon; google-failed danger "Couldn’t sign in with Google" with reference), `tl-button` (Sign in primary lg block with busy)
 - Local: heading block; "New to TuTuMuch? Join" line
 
 ### Verify email — `/verify` (`pages/verify-email`: default, loading, expired, used, error)

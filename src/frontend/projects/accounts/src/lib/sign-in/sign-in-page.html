@@ -6,6 +6,25 @@
 } @else {
   <div><h1>Sign in</h1></div>
 }
+@switch (googleResult()) {
+  @case ('cancelled') {
+    <tl-alert tone="info" heading="Google sign-in was cancelled" live="polite"
+      >Nothing was changed. Try again, or sign in with your email and password.</tl-alert
+    >
+  }
+  @case ('existing') {
+    <tl-alert tone="warning" heading="An account with this email already exists" icon="lock"
+      >Sign in with your password and verify your email first. After that, Google will sign you in to the same
+      account.</tl-alert
+    >
+  }
+  @case ('failed') {
+    <tl-alert tone="danger" heading="Couldn’t sign in with Google"
+      >Try again in a moment, or sign in with your email and password.
+      <span class="ref">{{ googleRef() }}</span></tl-alert
+    >
+  }
+}
 @if (failure(); as failure) {
   @if (failure.kind === 'incorrect') {
     <tl-alert tone="danger" heading="Email or password is incorrect">Check both and try again.</tl-alert>
@@ -15,9 +34,28 @@
     >
   }
 }
+@if (googleOffered()) {
+  <div class="stack">
+    <tl-provider-button
+      provider="google"
+      [href]="googleStartUrl()"
+      [busy]="leavingForGoogle()"
+      (pressed)="leavingForGoogle.set(true)"
+      >Continue with Google</tl-provider-button
+    >
+    <tl-or-divider />
+  </div>
+}
 <form class="stack stack--lg" novalidate [formGroup]="form" (ngSubmit)="submit()">
   <tl-form-field fieldId="email" label="Email">
-    <input class="input" id="email" type="email" autocomplete="email" formControlName="email" [readonly]="busy()" />
+    <input
+      class="input"
+      id="email"
+      type="email"
+      autocomplete="email"
+      formControlName="email"
+      [readonly]="busy() || leavingForGoogle()"
+    />
   </tl-form-field>
   <div class="stack stack--sm">
     <tl-form-field fieldId="password" label="Password">
@@ -27,12 +65,14 @@
         type="password"
         autocomplete="current-password"
         formControlName="password"
-        [readonly]="busy()"
+        [readonly]="busy() || leavingForGoogle()"
       />
     </tl-form-field>
   </div>
   <div class="stack">
-    <button tlButton="primary" size="lg" [block]="true" type="submit" [busy]="busy()">Sign in</button>
+    <button tlButton="primary" size="lg" [block]="true" type="submit" [busy]="busy()" [disabled]="leavingForGoogle()">
+      Sign in
+    </button>
   </div>
 </form>
 <p class="text-sm text-muted">New to TuTuMuch? <a routerLink="/join">Join</a></p>

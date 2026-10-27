@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TuTuMuch.Api.Auth;
 using TuTuMuch.Api.Http;
+using TuTuMuch.Application.Abstractions;
 using TuTuMuch.Application.Accounts;
 
 namespace TuTuMuch.Api.Controllers;
@@ -10,8 +11,12 @@ namespace TuTuMuch.Api.Controllers;
 /// <summary>Registration, email verification, sign-in and sessions (L2-001, L2-002, L2-006, L2-008).</summary>
 [ApiController]
 [Route("api/auth")]
-public sealed class AuthController(ISender sender, SessionCookies cookies) : ControllerBase
+public sealed class AuthController(ISender sender, SessionCookies cookies, IGoogleIdentityProvider google) : ControllerBase
 {
+    /// <summary>Which third-party sign-ins are configured, so the pages know whether to offer them (L2-088).</summary>
+    [HttpGet("providers")]
+    public IActionResult Providers() => Ok(new SignInProvidersDto(google.ClientId is not null));
+
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterRequest request, CancellationToken cancellationToken)
     {
@@ -88,3 +93,5 @@ public sealed record VerifyEmailRequest(string? Token);
 public sealed record VerificationEmailRequest(string? Email);
 
 public sealed record SignInRequest(string? Email, string? Password);
+
+public sealed record SignInProvidersDto(bool Google);

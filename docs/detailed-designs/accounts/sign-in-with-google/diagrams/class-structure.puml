@@ -1,0 +1,120 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Sign in with Google
+
+package "TuTuMuch.Domain" {
+  class Member {
+    +Guid Id
+    +string DisplayName
+    +string Email
+    +string? PasswordHash
+    +DateTime? EmailVerifiedAt
+    +DateTime? ClosedAt
+    +static Register(displayName, email, passwordHash, now): Member
+    +static JoinVerified(displayName, email, now): Member
+  }
+  class ExternalLogin {
+    +Guid Id
+    +Guid MemberId
+    +string Provider
+    +string Subject
+    +DateTime CreatedAt
+    +static Link(memberId, provider, subject, now): ExternalLogin
+  }
+  class PendingExternalJoin {
+    +Guid Id
+    +string Provider
+    +string Subject
+    +string Email
+    +string TokenHash
+    +DateTime CreatedAt
+    +DateTime ExpiresAt
+    +DateTime? UsedAt
+    +static Start(provider, subject, email, tokenHash, now)
+    +IsUsable(now): bool
+    +MarkUsed(now): void
+  }
+  class Session {
+    +Guid MemberId
+    +Guid FamilyId
+    +string TokenHash
+  }
+}
+
+package "TuTuMuch.Application" {
+  interface IGoogleIdentityProvider {
+    +string? ClientId
+    +ExchangeCodeAsync(code, codeVerifier, redirectUri): GoogleIdentity?
+  }
+  class GoogleIdentity <<record>> {
+    +string Subject
+    +string Email
+    +bool EmailVerified
+    +string? Nonce
+  }
+  class GoogleCallbackCommandHandler {
+    +Handle(command): Result<GoogleSignInOutcome>
+  }
+  class GoogleSignInOutcome <<record>> {
+    +SignedIn? SignedIn
+    +string? JoinToken
+  }
+  class GetPendingGoogleJoinQueryHandler
+  class FinishGoogleJoinCommandHandler {
+    +Handle(command): Result<SignedIn>
+  }
+  class MemberRegistrationRules <<static>> {
+    +ValidateDisplayNameAsync(db, displayName, errors)
+    +ValidateConsent(ageConfirmed, termsAccepted, errors)
+  }
+  class SessionIssuer <<static>> {
+    +StartAsync(db, memberId, now): SignedIn
+  }
+}
+
+package "TuTuMuch.Api" {
+  class GoogleSignInController {
+    +Start(returnUrl)
+    +Callback(state, code, error)
+    +Pending()
+    +Finish(request)
+  }
+  class GoogleFlowCookie {
+    +Write(response, flow)
+    +Read(request): GoogleFlow?
+  }
+  class GoogleIdentityProvider
+  class GoogleOptions {
+    +string ClientId
+    +string ClientSecret
+    +string? RedirectUri
+  }
+}
+
+Member "1" o-- "0..*" ExternalLogin
+Member "1" o-- "0..*" Session
+IGoogleIdentityProvider ..> GoogleIdentity
+GoogleIdentityProvider ..|> IGoogleIdentityProvider
+GoogleIdentityProvider --> GoogleOptions
+GoogleCallbackCommandHandler --> IGoogleIdentityProvider
+GoogleCallbackCommandHandler ..> GoogleSignInOutcome
+GoogleCallbackCommandHandler ..> PendingExternalJoin
+GoogleCallbackCommandHandler ..> ExternalLogin
+GoogleCallbackCommandHandler --> SessionIssuer
+FinishGoogleJoinCommandHandler --> MemberRegistrationRules
+FinishGoogleJoinCommandHandler --> SessionIssuer
+FinishGoogleJoinCommandHandler ..> Member
+GoogleSignInController --> GoogleFlowCookie
+GoogleSignInController ..> GoogleCallbackCommandHandler
+GoogleSignInController ..> FinishGoogleJoinCommandHandler
+GoogleSignInController ..> GetPendingGoogleJoinQueryHandler
+@enduml

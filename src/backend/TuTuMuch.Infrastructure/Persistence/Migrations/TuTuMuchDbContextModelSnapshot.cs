@@ -246,6 +246,40 @@ namespace TuTuMuch.Infrastructure.Persistence.Migrations
                     b.ToTable("EmailVerificationTokens", (string)null);
                 });
 
+            modelBuilder.Entity("TuTuMuch.Domain.Members.ExternalLogin", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("MemberId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MemberId")
+                        .HasDatabaseName("IX_ExternalLogins_MemberId");
+
+                    b.HasIndex("Provider", "Subject")
+                        .IsUnique()
+                        .HasDatabaseName("UX_ExternalLogins_Provider_Subject");
+
+                    b.ToTable("ExternalLogins", (string)null);
+                });
+
             modelBuilder.Entity("TuTuMuch.Domain.Members.Member", b =>
                 {
                     b.Property<Guid>("Id")
@@ -285,7 +319,6 @@ namespace TuTuMuch.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(254)");
 
                     b.Property<string>("PasswordHash")
-                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -300,6 +333,50 @@ namespace TuTuMuch.Infrastructure.Persistence.Migrations
                         .HasDatabaseName("UX_Members_NormalizedEmail");
 
                     b.ToTable("Members", (string)null);
+                });
+
+            modelBuilder.Entity("TuTuMuch.Domain.Members.PendingExternalJoin", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(254)
+                        .HasColumnType("nvarchar(254)");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<DateTime?>("UsedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TokenHash")
+                        .IsUnique()
+                        .HasDatabaseName("UX_PendingExternalJoins_TokenHash");
+
+                    b.ToTable("PendingExternalJoins", (string)null);
                 });
 
             modelBuilder.Entity("TuTuMuch.Domain.Members.Session", b =>
@@ -1100,6 +1177,15 @@ namespace TuTuMuch.Infrastructure.Persistence.Migrations
                 });
 
             modelBuilder.Entity("TuTuMuch.Domain.Members.EmailVerificationToken", b =>
+                {
+                    b.HasOne("TuTuMuch.Domain.Members.Member", null)
+                        .WithMany()
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("TuTuMuch.Domain.Members.ExternalLogin", b =>
                 {
                     b.HasOne("TuTuMuch.Domain.Members.Member", null)
                         .WithMany()

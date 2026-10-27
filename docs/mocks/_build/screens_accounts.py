@@ -60,21 +60,31 @@ def load_error(title: str, ref: str) -> str:
 # ---------------------------------------------------------------------------
 # Sign in (L2-006, L2-007, L2-026)
 # ---------------------------------------------------------------------------
-s = screen("sign-in", "page", "Sign in", route="/sign-in", reqs=["L2-006", "L2-007", "L2-026", "L2-065"],
+s = screen("sign-in", "page", "Sign in", route="/sign-in", reqs=["L2-006", "L2-007", "L2-026", "L2-065", "L2-088"],
            na={"loading": "The form renders without fetching data.", "empty": "A form, not a collection."})
 
+GOOGLE_START = P("sign-in", "google-busy")
 
-def sign_in(*, email: str = "", err: str | None = None, busy: bool = False, top: str = "", title: str = "Sign in", lead: str = "") -> Page:
-    e = field("email", "Email", value=email, type="email", attrs=f'autocomplete="email" autofocus{ro(busy)}')
+
+def google_option(return_url: str = "/", busy: bool = False) -> str:
+    """"Continue with Google" above an "or" divider; first in keyboard order (L2-088)."""
+    return f'<div class="stack">{provider_btn("Continue with Google", GOOGLE_START, busy)}{or_divider()}</div>'
+
+
+def sign_in(*, email: str = "", err: str | None = None, busy: bool = False, top: str = "", title: str = "Sign in", lead: str = "",
+            google_busy: bool = False) -> Page:
+    e = field("email", "Email", value=email, type="email", attrs=f'autocomplete="email"{ro(busy or google_busy)}')
     p = pw("password", "Password", value=email)
     forgot = f'<a class="text-sm" href="{P("forgot-password")}" style="align-self: flex-start;">Forgot password?</a>'
-    body = form(e + f'<div class="stack stack--sm">{p}{forgot}</div>', submit("Sign in", busy))
+    body = google_option(busy=google_busy) + form(e + f'<div class="stack stack--sm">{p}{forgot}</div>', submit("Sign in", busy, disabled=google_busy))
     return auth(title, body, lead, f'New to TuTuMuch? <a href="{P("register")}">Join</a>', top)
 
 
-@s.state("default", "Sign in with email and password, focus on email.")
+@s.state("default", "Continue with Google first, then email and password.")
 def _():
-    return sign_in()
+    pg = sign_in()
+    pg.notes = note("Keyboard order: Continue with Google, email, password, Forgot password?, Sign in. The Google button only renders when a Google client is configured (L2-088).", "top: 6rem; right: 1rem;")
+    return pg
 
 
 @s.state("return", "Reached from Buy now as a visitor: after signing in the member returns to the listing.")
@@ -108,10 +118,38 @@ def _():
     return sign_in(email=ME_P["email"], top=top)
 
 
+@s.state("google-busy", "Continue with Google chosen: the button is busy while the browser leaves for Google; the form waits.")
+def _():
+    pg = sign_in(google_busy=True)
+    pg.notes = note("The browser is navigating to /api/auth/google/start; Google's consent page opens next. Nothing from Google runs in this page (L2-088).", "top: 6rem; right: 1rem;")
+    return pg
+
+
+@s.state("google-cancelled", "Back from Google without consent: a calm notice, no session, both ways to sign in still offered.")
+def _():
+    top = alert("info", "Google sign-in was cancelled", "Nothing was changed. Try again, or sign in with your email and password.", role="status")
+    return sign_in(top=top)
+
+
+@s.state("google-existing", "Google's email matches a member whose email is not verified: refused, so an account registered with someone else's email cannot be taken over.")
+def _():
+    top = alert("warning", "An account with this email already exists",
+                "Sign in with your password and verify your email first. After that, Google will sign you in to the same account.", icon="lock")
+    pg = sign_in(email=ME_P["email"], top=top)
+    pg.notes = note("A verified matching email links and signs in instead (L2-088 AC5, AC6).", "top: 6rem; right: 1rem;")
+    return pg
+
+
+@s.state("google-failed", "Google answered with something TuTuMuch could not accept: reference code, no session.")
+def _():
+    top = alert("danger", "Couldn’t sign in with Google", 'Try again in a moment, or sign in with your email and password. <span class="ref">Ref 7e3b-41c9</span>')
+    return sign_in(top=top)
+
+
 # ---------------------------------------------------------------------------
 # Register (L2-001)
 # ---------------------------------------------------------------------------
-r = screen("register", "page", "Join", route="/join", reqs=["L2-001", "L2-002", "L2-051", "L2-065"],
+r = screen("register", "page", "Join", route="/join", reqs=["L2-001", "L2-002", "L2-051", "L2-065", "L2-088"],
            na={"loading": "The form renders without fetching data.", "empty": "A form, not a collection."})
 
 
@@ -130,13 +168,15 @@ def register(*, filled: bool = False, errs: dict | None = None, busy: bool = Fal
         msg = f'<span class="field__error" id="{fid}-error">{e}</span>' if e else ""
         return f'<div class="field"><label class="choice"><input type="checkbox" id="{fid}"{chk}{inv}><span>{label}</span></label>{msg}</div>'
     ticks = tick("age", "I’m 18 or older") + tick("terms", f'I accept the <a href="{P("terms")}">terms</a> and <a href="{P("rules")}">marketplace rules</a>')
-    body = form(name + email + pwd + f'<div class="stack stack--sm">{ticks}</div>', submit("Join TuTuMuch", busy))
+    body = google_option() + form(name + email + pwd + f'<div class="stack stack--sm">{ticks}</div>', submit("Join TuTuMuch", busy))
     return auth("Join TuTuMuch", body, "Buy and sell with one account.", f'Already a member? <a href="{P("sign-in")}">Sign in</a>', top)
 
 
-@r.state("default", "Join with display name, email and password; 18+ and terms ticks.")
+@r.state("default", "Continue with Google, or join with display name, email and password; 18+ and terms ticks.")
 def _():
-    return register()
+    pg = register()
+    pg.notes = note("A Google join skips the password and the verification email: Google's verified email counts (L2-088). The display name, 18+ and terms are still asked on /join/google.", "top: 6rem; right: 1rem;")
+    return pg
 
 
 @r.state("invalid", "Every error at once: taken name, existing email, short password, unticked boxes; summary first.")
@@ -164,6 +204,71 @@ def _():
 @r.state("error", "Registration failed on the server: input kept, retry with a reference.")
 def _():
     return register(filled=True, top=alert("danger", "Couldn’t create your account", 'Try again in a moment. <span class="ref">Ref 0c4e-7b21</span>'))
+
+
+# ---------------------------------------------------------------------------
+# Finish joining with Google (L2-088)
+# ---------------------------------------------------------------------------
+jg = screen("join-google", "page", "Finish joining with Google", route="/join/google", reqs=["L2-088", "L2-001", "L2-065"],
+            na={"empty": "A form, not a collection."})
+
+
+def join_google(*, errs: dict | None = None, busy: bool = False, top: str = "", filled: bool = False) -> Page:
+    errs = errs or {}
+    email = field("email", "Google email", value=ME_P["email"], type="email", attrs='readonly aria-describedby="email-help"',
+                  help="From your Google account. It counts as verified.")
+    name = field("display-name", "Display name", value="TutuTessa" if filled else "", error=errs.get("display-name"),
+                 help="3–30 letters, numbers, _ or -. Shown publicly.", attrs=f'autocomplete="username" autofocus{ro(busy)}')
+
+    def tick(fid, label):
+        e = errs.get(fid)
+        chk = "" if e or not filled else " checked"
+        inv = f' aria-invalid="true" aria-describedby="{fid}-error"' if e else ""
+        msg = f'<span class="field__error" id="{fid}-error">{e}</span>' if e else ""
+        return f'<div class="field"><label class="choice"><input type="checkbox" id="{fid}"{chk}{inv}><span>{label}</span></label>{msg}</div>'
+    ticks = tick("age", "I’m 18 or older") + tick("terms", f'I accept the <a href="{P("terms")}">terms</a> and <a href="{P("rules")}">marketplace rules</a>')
+    body = form(email + name + f'<div class="stack stack--sm">{ticks}</div>', submit("Join TuTuMuch", busy))
+    foot = f'Not you? <a href="{P("sign-in")}">Back to sign in</a>'
+    return auth("Almost there", body, "Pick a display name to finish joining with Google.", foot, top)
+
+
+@jg.state("loading", "Reading the pending Google sign-in: skeleton in the form's shape.")
+def _():
+    body = ('<div class="stack stack--lg" aria-busy="true" aria-label="Loading">'
+            '<div><span class="skeleton skeleton--text" style="width: 30%;"></span><span class="skeleton skeleton--rect" style="height: 2.75rem;"></span></div>'
+            '<div><span class="skeleton skeleton--text" style="width: 35%;"></span><span class="skeleton skeleton--rect" style="height: 2.75rem;"></span></div>'
+            '<span class="skeleton skeleton--text" style="width: 40%;"></span><span class="skeleton skeleton--text" style="width: 70%;"></span>'
+            '<span class="skeleton skeleton--rect" style="height: 3rem;"></span></div>')
+    return auth("Almost there", body, "Pick a display name to finish joining with Google.")
+
+
+@jg.state("default", "Email read-only from Google; display name, 18+ and terms to fill; focus on the display name.")
+def _():
+    pg = join_google()
+    pg.notes = note("The pending Google sign-in is held server-side for 10 minutes and used once; this page never sees a Google token (L2-088).", "top: 6rem; right: 1rem;")
+    return pg
+
+
+@jg.state("invalid", "Taken display name and unticked boxes: summary first, then inline.")
+def _():
+    errs = {"display-name": "That display name is taken", "age": "Confirm you’re 18 or older", "terms": "Accept the terms to continue"}
+    return join_google(filled=True, errs=errs, top=error_summary([(k, v) for k, v in errs.items()]))
+
+
+@jg.state("submitting", "Creating the account: button busy, fields read-only.")
+def _():
+    return join_google(filled=True, busy=True)
+
+
+@jg.state("expired", "The pending Google sign-in timed out or was already used: start again from sign in.")
+def _():
+    body = f'<div class="stack">{btn("Continue with Google again", "primary lg block", P("sign-in"))}{btn("Back to sign in", "lg block", P("sign-in"))}</div>'
+    return auth("That took a little too long", body, "Google sign-ins have to be finished within 10 minutes. Nothing was created.")
+
+
+@jg.state("error", "Finishing failed on the server: input kept, retry with a reference.")
+def _():
+    return join_google(filled=True, top=alert("danger", "Couldn’t create your account", 'Try again in a moment. <span class="ref">Ref 2b7f-90d4</span>'))
 
 
 # ---------------------------------------------------------------------------

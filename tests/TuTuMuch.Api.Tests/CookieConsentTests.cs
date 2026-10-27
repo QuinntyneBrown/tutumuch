@@ -15,7 +15,7 @@ namespace TuTuMuch.Api.Tests;
 
 public sealed class CookieConsentTests : IDisposable
 {
-    private static readonly string[] StrictlyNecessary = ["tl_access", "tl_refresh"];
+    private static readonly string[] StrictlyNecessary = ["tl_access", "tl_refresh", "tl_google_flow", "tl_google_join"];
 
     private readonly TuTuMuchApiFactory _factory = new();
 
@@ -33,6 +33,8 @@ public sealed class CookieConsentTests : IDisposable
         names.AddRange(await CookieNamesAsync(await client.PostAsync("/api/auth/refresh", null)));
         names.AddRange(await CookieNamesAsync(await client.GetAsync("/api/me/notification-preferences")));
         names.AddRange(await CookieNamesAsync(await client.PostAsync("/api/auth/sign-out", null)));
+        using var noRedirects = _factory.CreateMemberClient(followRedirects: false);
+        names.AddRange(await CookieNamesAsync(await noRedirects.GetAsync("/api/auth/google/start")));
 
         Assert.NotEmpty(names);
         Assert.All(names, name => Assert.Contains(name, StrictlyNecessary));

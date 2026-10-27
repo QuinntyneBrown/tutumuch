@@ -9,7 +9,23 @@ namespace TuTuMuch.Application.Accounts;
 /// <summary>A started or renewed session: the member and the raw refresh token for the cookie.</summary>
 public sealed record SignedIn(Guid MemberId, string RefreshToken, DateTime RefreshExpiresAt);
 
-/// <summary>Signs a member in with email and password; one answer for unknown email and wrong password (L2-006).</summary>
+/// <summary>Starts a session for a member who has just proved who they are, by password or by Google (L2-008).</summary>
+public static class SessionIssuer
+{
+    public static async Task<SignedIn> StartAsync(ITuTuMuchDbContext db, Guid memberId, DateTime now, CancellationToken cancellationToken)
+    {
+        var token = SecureTokens.Create();
+        var session = Session.Start(memberId, SecureTokens.Hash(token), now);
+        db.Sessions.Add(session);
+        await db.SaveChangesAsync(cancellationToken);
+        return new SignedIn(memberId, token, session.ExpiresAt);
+    }
+}
+
+/// <summary>
+/// Signs a member in with email and password; one answer for an unknown email, a wrong password and
+/// a member who only signs in with Google (L2-006, L2-088).
+/// </summary>
 public sealed record SignInCommand(string? Email, string? Password) : IRequest<Result<SignedIn>>;
 
 public sealed class SignInCommandHandler(ITuTuMuchDbContext db, IPasswordHasher hasher, TimeProvider clock)
@@ -21,16 +37,12 @@ public sealed class SignInCommandHandler(ITuTuMuchDbContext db, IPasswordHasher 
     {
         var normalized = Member.Normalize(command.Email ?? string.Empty);
         var member = await db.Members.SingleOrDefaultAsync(m => m.NormalizedEmail == normalized, cancellationToken);
-        if (member is null || !hasher.Verify(member.PasswordHash, command.Password ?? string.Empty))
+        if (member is null || member.PasswordHash is null || !hasher.Verify(member.PasswordHash, command.Password ?? string.Empty))
         {
             return Incorrect;
         }
 
-        var token = SecureTokens.Create();
-        var session = Session.Start(member.Id, SecureTokens.Hash(token), clock.GetUtcNow().UtcDateTime);
-        db.Sessions.Add(session);
-        await db.SaveChangesAsync(cancellationToken);
-        return new SignedIn(member.Id, token, session.ExpiresAt);
+        return await SessionIssuer.StartAsync(db, member.Id, clock.GetUtcNow().UtcDateTime, cancellationToken);
     }
 }
 

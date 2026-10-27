@@ -17,7 +17,7 @@ namespace TuTuMuch.Api.Tests.Support;
 
 /// <summary>
 /// Hosts TuTuMuch.Api in memory with SQLite in-memory in place of SQL Server, a captured email
-/// sender, in-memory photo storage, a fake payment provider, a fake carrier tracking service, a fake payout provider and a controllable clock. No real database or external system is touched (AGENTS.md).
+/// sender, in-memory photo storage, a fake payment provider, a fake carrier tracking service, a fake payout provider, a fake Google and a controllable clock. No real database or external system is touched (AGENTS.md).
 /// </summary>
 public sealed class TuTuMuchApiFactory : WebApplicationFactory<Program>
 {
@@ -50,6 +50,8 @@ public sealed class TuTuMuchApiFactory : WebApplicationFactory<Program>
     public FakePayoutProvider PayoutProvider { get; } = new();
 
     public RecordingOrderCompleted Completed { get; } = new();
+
+    public FakeGoogleIdentityProvider Google { get; } = new();
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -85,6 +87,8 @@ public sealed class TuTuMuchApiFactory : WebApplicationFactory<Program>
             services.RemoveAll<IPayoutProvider>();
             services.AddSingleton<IPayoutProvider>(PayoutProvider);
             services.AddSingleton<INotificationHandler<OrderCompleted>>(Completed);
+            services.RemoveAll<IGoogleIdentityProvider>();
+            services.AddSingleton<IGoogleIdentityProvider>(Google);
         });
     }
 
@@ -95,11 +99,14 @@ public sealed class TuTuMuchApiFactory : WebApplicationFactory<Program>
         scope.ServiceProvider.GetRequiredService<TuTuMuchDbContext>().Database.EnsureCreated();
     }
 
-    /// <summary>An HTTPS client that keeps cookies, so Secure session cookies round-trip.</summary>
-    public HttpClient CreateMemberClient()
+    /// <summary>
+    /// An HTTPS client that keeps cookies, so Secure session cookies round-trip. Without
+    /// <paramref name="followRedirects"/> each hop of a redirect flow can be asserted.
+    /// </summary>
+    public HttpClient CreateMemberClient(bool followRedirects = true)
     {
         EnsureDatabase();
-        return CreateClient(new WebApplicationFactoryClientOptions { BaseAddress = new Uri("https://localhost") });
+        return CreateClient(new WebApplicationFactoryClientOptions { BaseAddress = new Uri("https://localhost"), AllowAutoRedirect = followRedirects });
     }
 
     /// <summary>One dispatcher pass, as the worker runs it; returns the emails it sent.</summary>

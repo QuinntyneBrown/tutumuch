@@ -1,4 +1,9 @@
-export { AccountsApi, type Registration } from './lib/accounts/accounts-api';
+export {
+  AccountsApi,
+  type PendingGoogleJoin,
+  type Registration,
+  type SignInProviders,
+} from './lib/accounts/accounts-api';
 export {
   NotificationPreferencesApi,
   type NotificationCategory,

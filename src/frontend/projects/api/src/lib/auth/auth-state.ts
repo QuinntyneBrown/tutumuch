@@ -54,6 +54,23 @@ export class AuthState {
     return result;
   }
 
+  /** Finishes a Google join (L2-088): the member is created, linked and signed in at once. */
+  async finishGoogleJoin(
+    displayName: string,
+    ageConfirmed: boolean,
+    termsAccepted: boolean,
+  ): Promise<ApiResult<CurrentMember>> {
+    const result = await toResult(
+      this.http.post<CurrentMember>(`${this.baseUrl}/auth/google/finish`, { displayName, ageConfirmed, termsAccepted }),
+    );
+    if (result.ok) {
+      this.current.set(result.value);
+      this.loaded.set(true);
+      this.loading = Promise.resolve();
+    }
+    return result;
+  }
+
   async signOut(): Promise<void> {
     await toResult(this.http.post(`${this.baseUrl}/auth/sign-out`, null));
     this.current.set(null);

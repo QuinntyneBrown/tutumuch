@@ -79,6 +79,28 @@
       }
     },
     {
+      "id": "join-google",
+      "kind": "page",
+      "title": "Finish joining with Google",
+      "route": "/join/google",
+      "requirements": [
+        "L2-088",
+        "L2-001",
+        "L2-065"
+      ],
+      "states": [
+        "loading",
+        "default",
+        "invalid",
+        "submitting",
+        "expired",
+        "error"
+      ],
+      "not_applicable": {
+        "empty": "A form, not a collection."
+      }
+    },
+    {
       "id": "notification-settings",
       "kind": "page",
       "title": "Email settings",
@@ -127,7 +149,8 @@
         "L2-001",
         "L2-002",
         "L2-051",
-        "L2-065"
+        "L2-065",
+        "L2-088"
       ],
       "states": [
         "default",
@@ -209,7 +232,8 @@
         "L2-006",
         "L2-007",
         "L2-026",
-        "L2-065"
+        "L2-065",
+        "L2-088"
       ],
       "states": [
         "default",
@@ -217,7 +241,11 @@
         "invalid",
         "submitting",
         "locked",
-        "error"
+        "error",
+        "google-busy",
+        "google-cancelled",
+        "google-existing",
+        "google-failed"
       ],
       "not_applicable": {
         "loading": "The form renders without fetching data.",

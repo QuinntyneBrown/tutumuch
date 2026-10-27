@@ -27,6 +27,18 @@
       >Try again in a moment. <span class="ref">{{ failure() }}</span></tl-alert
     >
   }
+  @if (googleOffered()) {
+    <div class="stack">
+      <tl-provider-button
+        provider="google"
+        [href]="googleStartUrl"
+        [busy]="leavingForGoogle()"
+        (pressed)="leavingForGoogle.set(true)"
+        >Continue with Google</tl-provider-button
+      >
+      <tl-or-divider />
+    </div>
+  }
   <form class="stack stack--lg" novalidate [formGroup]="form" (ngSubmit)="submit()">
     <tl-form-field
       #name

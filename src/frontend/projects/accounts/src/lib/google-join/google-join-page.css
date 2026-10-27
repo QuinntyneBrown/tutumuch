@@ -1,0 +1,18 @@
+:host {
+  display: contents;
+}
+.google-join__lead {
+  margin-top: var(--space-2);
+}
+.google-join__skeleton-label {
+  width: 30%;
+}
+.google-join__skeleton-input {
+  height: 2.75rem;
+}
+.google-join__skeleton-line {
+  width: 60%;
+}
+.google-join__skeleton-button {
+  height: 3rem;
+}

@@ -28,7 +28,7 @@ public static class ProblemResults
         return context.Response.WriteAsJsonAsync(Body(context, error), (System.Text.Json.JsonSerializerOptions?)null, "application/problem+json");
     }
 
-    private static string CorrelationId(HttpContext context) =>
+    public static string CorrelationId(HttpContext context) =>
         Activity.Current?.TraceId.ToString() ?? context.TraceIdentifier;
 }
 

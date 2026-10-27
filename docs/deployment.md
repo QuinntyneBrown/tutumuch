@@ -64,8 +64,57 @@ Secrets, in the repository's `production` environment only (never committed or p
 | `DEPLOY_SSH_KEY` | Private key whose public half is in `azureuser`'s `authorized_keys` |
 | `SITE_HOST`      | `tutumuch.kids` (the `www` and `uat` hosts are derived from it) |
 
-Application secrets (connection string, signing keys) live only in `/opt/tutumuch/.env` on
-the VM.
+Application secrets (connection string, signing keys, the Google OAuth client) live only in
+`/opt/tutumuch/.env` on the VM.
+
+## Sign in with Google
+
+"Continue with Google" on `https://uat.tutumuch.kids/sign-in` and `/join` ([ADR accounts/0001](adr/accounts/0001-sign-in-with-google.md),
+`L2-088`) is off until the API has a Google OAuth client. Nothing in the repository changes to
+turn it on; the steps below are the owner's, outside the repository.
+
+1. In the [Google Cloud Console](https://console.cloud.google.com/), create or pick a project and
+   open **APIs & Services → OAuth consent screen**. Choose *External*, give the app the name
+   TuTuMuch, a support email and the `tutumuch.kids` domain, and add the `email` and `openid`
+   scopes. While the app is in *Testing*, only the test users you list can sign in; publish it to
+   let anyone sign in (Google may ask to verify the domain).
+2. Open **APIs & Services → Credentials → Create credentials → OAuth client ID**, type
+   *Web application*, name `TuTuMuch UAT`. Add:
+   - Authorised JavaScript origins: `https://uat.tutumuch.kids`
+   - Authorised redirect URIs: `https://uat.tutumuch.kids/api/auth/google/callback`
+
+   For local development add `http://localhost:4200` as an origin and
+   `http://localhost:4200/api/auth/google/callback` as a redirect URI (the Angular dev server
+   proxies `/api` to the API, so the browser only ever sees port 4200). The marketing host
+   `www.tutumuch.kids` has no sign-in and gets no entry.
+3. Copy the client ID and secret into `/opt/tutumuch/.env` on the VM:
+
+   ```bash
+   ssh azureuser@20.104.204.145
+   cd /opt/tutumuch
+   printf 'Auth__Google__ClientId=%s\n' '<client id>' >> .env
+   printf 'Auth__Google__ClientSecret=%s\n' '<client secret>' >> .env
+   docker compose up -d api
+   ```
+
+   `env_file: .env` already passes every variable to the `api` container, so nothing else
+   changes. The API refuses to start with only one of the two values set.
+4. Check it: `curl -s https://uat.tutumuch.kids/api/auth/providers` answers `{"google":true}`,
+   `/sign-in` shows "Continue with Google", and pressing it reaches Google's consent page
+   (the API builds the redirect URI from the request host and `X-Forwarded-Proto`; set
+   `Auth__Google__RedirectUri=https://uat.tutumuch.kids/api/auth/google/callback` in `.env` if
+   Google reports a redirect URI mismatch).
+
+To turn the feature off, remove both lines and restart `api`; existing Google-linked members then
+need a password reset (`L2-009`, not built yet) to sign in.
+
+Locally, keep the values out of `appsettings*.json` and use user secrets from `src/backend/TuTuMuch.Api`:
+
+```bash
+dotnet user-secrets init
+dotnet user-secrets set "Auth:Google:ClientId" "<client id>"
+dotnet user-secrets set "Auth:Google:ClientSecret" "<client secret>"
+```
 
 ## Rolling back
 
