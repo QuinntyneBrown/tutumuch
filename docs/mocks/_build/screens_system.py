@@ -150,7 +150,7 @@ def rules_body() -> str:
 
 simple("rules", "Marketplace rules", "/rules", ["L2-011", "L2-016", "L2-031", "L2-033"],
        "The rules on one short page: sizes, age, condition, shipping, fee, US only, counterfeits.",
-       lambda: doc_page("Marketplace rules", "Short, because it only has to cover girls’ clothing.", rules_body()))
+       lambda: doc_page("Marketplace rules", "Short, because it only has to cover girls’ things.", rules_body()))
 
 
 def privacy_body() -> str:
@@ -170,7 +170,7 @@ simple("privacy", "Privacy", "/privacy", ["L2-054", "L2-056", "L2-005"], "What T
 
 def terms_body() -> str:
     terms = ["You must be 18 or older to hold an account.",
-             "List only girls’ clothing you own.",
+             "List only girls’ items you own.",
              "Describe condition and flaws honestly; photos must be of the actual item.",
              "Payment goes through our payment provider. Sellers are paid when the order completes.",
              "Buyers can report a problem until 3 days after delivery.",

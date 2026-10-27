@@ -1,0 +1,16 @@
+<div class="page--narrow">
+  <div class="page-header">
+    <div class="stack stack--sm">
+      <h1>Terms of service</h1>
+      <p class="subtitle">Effective 1 Oct 2026</p>
+    </div>
+  </div>
+  <ol class="terms-list">
+    @for (term of terms; track term) {
+      <li>{{ term }}</li>
+    }
+  </ol>
+  <p class="text-sm text-muted terms__see-also">
+    See also the <a routerLink="/rules">marketplace rules</a> and <a routerLink="/privacy">privacy</a>.
+  </p>
+</div>

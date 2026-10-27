@@ -1,1 +1,1 @@
-export { routes } from './lib/marketing.routes';
+export { infoRoutes, routes } from './lib/marketing.routes';

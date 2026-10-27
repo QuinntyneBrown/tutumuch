@@ -1,0 +1,41 @@
+<div class="page--narrow">
+  <div class="page-header">
+    <div class="stack stack--sm">
+      <h1>Marketplace rules</h1>
+      <p class="subtitle">Short, because it only has to cover girls’ things.</p>
+    </div>
+  </div>
+  <div class="stack stack--lg">
+    <div class="table-wrap">
+      <table class="table">
+        <caption class="visually-hidden">
+          Accepted categories and sizes
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Category</th>
+            <th scope="col">Includes</th>
+            <th scope="col">Size</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (category of categories; track category.name) {
+            <tr>
+              <th scope="row">{{ category.name }}</th>
+              <td>{{ category.includes }}</td>
+              <td><tl-size-tag label="Girls" /></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <ol class="rules-list" role="list">
+      @for (rule of rules; track rule.title) {
+        <li class="settings-list__body">
+          <span class="settings-list__title">{{ rule.title }}</span>
+          <span class="settings-list__meta">{{ rule.detail }}</span>
+        </li>
+      }
+    </ol>
+  </div>
+</div>
