@@ -85,7 +85,7 @@ def load_more(shown: int = 16, total: str = "1,284") -> str:
 # ---------------------------------------------------------------------------
 # Catalog
 # ---------------------------------------------------------------------------
-s = screen("catalog", "page", "Catalog", route="/", reqs=["L2-022", "L2-023", "L2-024", "L2-059", "L2-061", "L2-062", "L2-093", "L2-094"])
+s = screen("catalog", "page", "Catalog", route="/", reqs=["L2-022", "L2-023", "L2-024", "L2-059", "L2-061", "L2-062", "L2-093", "L2-094", "L2-104"])
 
 
 @s.state("default", "Home catalog for a signed-in member: newest listings, filters beside the grid on large screens.")
@@ -172,10 +172,20 @@ def _():
 @s.state("no-results", "Search and filters matched nothing; filters stay visible and clearable.")
 def _():
     chips = chip("Dance") + chip("New with tags")
-    grid = empty("search", "No items match", "Try fewer filters or a different word.", btn("Clear search and filters", "primary"), cls="empty--compact")
+    request = f'<a href="{P("request-form", "prefilled")}">Can’t find it? Request it</a>'
+    grid = empty("search", "No items match", f"Try fewer filters or a different word. {request}", btn("Clear search and filters", "primary"), cls="empty--compact")
     pg = catalog_page(grid, head='<div class="page-header"><div><p class="eyebrow">Search</p><h1>“sequin cape”</h1></div></div>',
                       count="0 items", chips=chips, side={"cat": "Dance", "conds": ["New with tags"]})
+    pg.notes = note("“Request it” opens /account/requests/new?category=dance&amp;q=sequin+cape; a visitor signs in first (L2-104, L2-105).", "top: 22rem; right: 1rem;")
     return pg
+
+
+@s.state("category-empty", "The Dance page with nothing in it: Tilly already dances in the header, so the empty state keeps its icon and offers “Request it”.")
+def _():
+    request = f'<a href="{P("request-form", "prefilled")}">Can’t find it? Request it</a>'
+    grid = empty("tag", "Nothing in Dance right now", f"New items arrive every day. {request}", btn("Shop the closet", "primary", P("catalog")),
+                 cls="empty--compact", tilly_pose=False)
+    return catalog_page(grid, head=category_head("Dance"), count="0 items", side={"cat": "Dance"}, nav="dance")
 
 
 @s.state("error", "The listings request failed: chrome and filters stay, retry with a reference code.")
