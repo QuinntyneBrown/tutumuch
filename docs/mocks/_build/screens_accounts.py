@@ -196,7 +196,7 @@ def _():
 def _():
     body = (f'<div class="empty__icon" style="margin: 0;">{ic("mail", "icon icon--lg")}</div>'
             f'<p>We sent a link to <strong>{ME_P["email"]}</strong>. It works for 24 hours.</p>'
-            f'<div class="stack">{btn("Browse while you wait", "primary lg block", P("catalog"))}'
+            f'<div class="stack">{btn("Shop the closet while you wait", "primary lg block", P("catalog"))}'
             f'<button class="btn btn--link" type="button">Resend email</button></div>')
     return auth("Check your email", body)
 
@@ -280,13 +280,13 @@ v = screen("verify-email", "page", "Verify email", route="/verify", reqs=["L2-00
 
 @v.state("default", "Link opened within 24 hours: email verified, ready to buy and sell.")
 def _():
-    body = f'<div class="stack">{btn("Start shopping", "primary lg block", P("catalog"))}{btn("Sell an item", "lg block", P("sell"))}</div>'
+    body = f'<div class="stack">{btn("Start shopping", "primary lg block", P("catalog"))}{btn("Sell outgrown gear", "lg block", P("sell"))}</div>'
     return auth("You’re verified", body, "Buying and selling are open.")
 
 
 @v.state("loading", "Checking the link.")
 def _():
-    body = '<div class="cluster"><span class="spinner" aria-hidden="true"></span><span class="text-muted" role="status">Checking your link…</span></div>'
+    body = f'<div class="cluster">{mark()}<span class="text-muted" role="status">Checking your link…</span></div>'
     return auth("Verifying", body)
 
 
@@ -412,7 +412,7 @@ def stat(value: str, label: str, href: str) -> str:
 
 
 def overview(stats: str, top: str = "", user: str = "member", extra: str = "") -> Page:
-    h = head(f'Hi, {ME}', f'Member since {ME_P["since"]}', btn("Sell an item", "primary", P("sell"), icon="plus") if user == "member" else "")
+    h = head(f'Hi, {ME}', f'Member since {ME_P["since"]}', btn("Sell outgrown gear", "primary", P("sell"), icon="plus") if user == "member" else "")
     grid = f'<div class="grid grid--auto" style="--layout-gutter: var(--space-4);">{stats}</div>' if stats else ""
     return account_page(h + extra + grid, "overview", user, top)
 
@@ -430,16 +430,18 @@ def _():
 
 @ac.state("empty", "New member, nothing yet: one nudge to list or shop.")
 def _():
-    e = empty("tag", "Nothing here yet", "List something she’s outgrown, or find her next size up.",
-              btn("Sell an item", "primary", P("sell")) + btn("Browse", href=P("catalog")))
+    e = empty("tag", "Nothing here yet", "Pass on something she’s outgrown, and it shows up here.",
+              btn("Sell outgrown gear", "primary", P("sell")))
     pg = overview("", extra=e)
-    pg.main = pg.main.replace(btn("Sell an item", "primary", P("sell"), icon="plus"), "")
+    pg.main = pg.main.replace(btn("Sell outgrown gear", "primary", P("sell"), icon="plus"), "")
     return pg
 
 
 @ac.state("error", "Overview failed to load; tabs still work.")
 def _():
-    return overview("", extra=load_error("Couldn’t load your account", "1f8e-77c0"))
+    pg = overview("", extra=load_error("Couldn’t load your account", "1f8e-77c0"))
+    pg.main = pg.main.replace(btn("Sell outgrown gear", "primary", P("sell"), icon="plus"), "")  # Try again is the one primary
+    return pg
 
 
 @ac.state("unverified", "Unverified member: verify to buy and sell.")
@@ -531,13 +533,13 @@ def _():
 @pr.state("error", "Profile failed to load: retry.")
 def _():
     return Page(main=center("", "Couldn’t load this profile", 'It’s us, not you. <span class="ref">Ref 4c11-8e02</span>',
-                            btn("Try again", "primary", icon="refresh") + btn("Back to shop", href=P("catalog"))))
+                            btn("Try again", "primary", icon="refresh") + btn("Shop the closet", href=P("catalog"))))
 
 
 @pr.state("unavailable", "Closed member: “This member isn’t available” (HTTP 404).")
 def _():
     return Page(main=center('4<em>0</em>4', "This member isn’t available", "The account may have been closed.",
-                            btn("Back to shop", "primary", P("catalog"))))
+                            btn("Shop the closet", "primary", P("catalog"))))
 
 
 @pr.state("long", "Busy seller: listings paged 24 at a time.")

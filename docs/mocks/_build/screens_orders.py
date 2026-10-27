@@ -186,7 +186,7 @@ def _():
 
 @oc.state("loading", "Waiting for the payment provider’s confirmation before showing the order.")
 def _():
-    main = ('<div class="center-state" aria-busy="true"><span class="spinner spinner--lg" aria-hidden="true"></span>'
+    main = (f'<div class="center-state" aria-busy="true">{mark()}'
             '<h1>Confirming your payment</h1><p class="text-muted" role="status">This usually takes a few seconds. Don’t close this page.</p></div>')
     return Page(main=main)
 
@@ -231,7 +231,7 @@ def _():
 
 @pu.state("empty", "No purchases yet: one action, browse the catalog.")
 def _():
-    return Page(main=page_head("Purchases") + empty("bag", "Nothing bought yet", "Everything in the catalog is girls’ clothing.", btn("Browse the catalog", "primary", P("catalog"))), account="purchases")
+    return Page(main=page_head("Purchases") + empty("bag", "Nothing bought yet", "Everything in the catalog is girls’ clothing.", btn("Shop the closet", "primary", P("catalog"))), account="purchases")
 
 
 @pu.state("error", "Purchases failed to load; the account navigation stays.")
@@ -256,7 +256,7 @@ def _():
 
 @sa.state("empty", "No sales yet: one action, list an item.")
 def _():
-    return Page(main=page_head("Sales") + empty("tag", "No sales yet", "Sold items show up here with what to do next.", btn("Sell an item", "primary", P("sell"))), account="sales")
+    return Page(main=page_head("Sales") + empty("tag", "No sales yet", "Sold items show up here with what to do next.", btn("Sell outgrown gear", "primary", P("sell"))), account="sales")
 
 
 @sa.state("error", "Sales failed to load; the account navigation stays.")
@@ -453,9 +453,9 @@ def _():
     return sale_page("TM-47511", "Completed", body, eyebrow="Order TM-47511 · Fri 2 Oct")
 
 
-@sd.state("cancelled", "Cancelled sale: buyer refunded, listing stays off the catalog until relisted.")
+@sd.state("cancelled", "Cancelled sale: buyer refunded, listing stays out of the closet until relisted.")
 def _():
-    body = (alert("info", "Cancelled · Buyer refunded in full", "The listing stays off the catalog until you relist it.") +
+    body = (alert("info", "Cancelled · Buyer refunded in full", "The listing stays out of the closet until you relist it.") +
             f'<div>{btn("Relist item", "primary", D("relist"))}</div>')
     return sale_page("TM-48302", "Cancelled", body)
 
@@ -527,7 +527,7 @@ def reason_body(err: bool = False, chosen: str = "", af: bool = True) -> str:
 
 
 co = screen("cancel-order", "dialog", "Cancel order", opens_from="sale-detail", reqs=["L2-035"])
-CO_DESC = "PuddleJumperPia is refunded $48.15 in full. The listing stays off the catalog until you relist."
+CO_DESC = "PuddleJumperPia is refunded $48.15 in full. The listing stays out of the closet until you relist."
 
 
 @co.state("default", "Seller cancels before shipping: reason required, full refund explained.")
@@ -584,13 +584,13 @@ rl = screen("relist", "dialog", "Relist item", opens_from="sale-detail", reqs=["
 @rl.state("default", "Relist with the original details.")
 def _():
     body = item_row("heart-hoodie", f"{money(38)} · {ship_text(7)}")
-    return Dialog(bg=("sale-detail", "cancelled"), html=dialog("Relist this item?", body, f'<button class="btn" type="button">Not now</button><a class="btn" href="{P("edit-listing")}">Edit first</a><button class="btn btn--primary" type="button" autofocus>Relist</button>', desc="It goes back in the catalog with its original photos, price and description."))
+    return Dialog(bg=("sale-detail", "cancelled"), html=dialog("Relist this item?", body, f'<button class="btn" type="button">Not now</button><a class="btn" href="{P("edit-listing")}">Edit first</a><button class="btn btn--primary" type="button" autofocus>Relist</button>', desc="It goes back in the closet with its original photos, price and description."))
 
 
 @rl.state("busy", "Relisting.")
 def _():
     body = item_row("heart-hoodie", f"{money(38)} · {ship_text(7)}")
-    return Dialog(bg=("sale-detail", "cancelled"), html=dialog("Relist this item?", body, '<button class="btn" type="button" disabled>Not now</button><button class="btn btn--primary" type="button" aria-busy="true">Relist</button>', desc="It goes back in the catalog with its original photos, price and description."))
+    return Dialog(bg=("sale-detail", "cancelled"), html=dialog("Relist this item?", body, '<button class="btn" type="button" disabled>Not now</button><button class="btn btn--primary" type="button" aria-busy="true">Relist</button>', desc="It goes back in the closet with its original photos, price and description."))
 
 
 # Request cancellation (buyer) -----------------------------------------------

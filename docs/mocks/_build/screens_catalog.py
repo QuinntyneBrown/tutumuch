@@ -9,7 +9,7 @@ def filters_form(p: str = "f", *, cat: str = "", brands=(), conds=(), lo: str = 
         return f'<label class="choice"><input type="checkbox" name="{name}"{" checked" if checked else ""}><span>{esc(label)}</span></label>'
     cats = "".join(
         f'<label class="choice"><input type="radio" name="{p}-cat"{" checked" if cat == c else ""}><span>{c}</span></label>'
-        for c in ["All"] + [c for c, _, _ in CATEGORIES])
+        for c in ["All"] + [label for _, label in NAV])
     subs = ""
     if cat and cat != "All":
         sub = next(s for c, s, _ in CATEGORIES if c == cat)
@@ -27,9 +27,15 @@ def filters_form(p: str = "f", *, cat: str = "", brands=(), conds=(), lo: str = 
                   f'<div class="input-group"><span class="addon">$</span><input class="input" id="{p}-max" inputmode="decimal" value="{hi}"{err}></div>'
                   f'</div>{perr}</fieldset>')
     cat_group = f'<fieldset class="filters__group"><legend>Category</legend>{cats}</fieldset>{subs}' if categories else ""  # none in Phase 1 (L2-093)
-    return (f'{cat_group}'
-            f'<fieldset class="filters__group"><legend>Brand</legend>{br}<a href="{D("filters")}" class="text-sm">All 10 brands</a></fieldset>'
-            f'<fieldset class="filters__group"><legend>Condition</legend>{co}</fieldset>{price_html}')
+    # Page guidelines 8: the three most useful filters first (Category stands for Sport; Size is the one
+    # accepted size), then Brand and Price behind "More filters" (ADR general/0009).
+    size = ('<div class="filters__group"><span class="field__label">Size</span>'
+            '<p class="filters__size">Every item is in Girls\u2019 sizes.</p></div>')
+    more = (f'<details class="filters__more-group"{" open" if (brands or lo or hi or invalid) else ""}><summary>More filters</summary><div class="filters__more-body">'
+            f'<fieldset class="filters__group"><legend>Brand</legend>{br}<a href="{D("filters")}" class="link text-sm">All 10 brands</a></fieldset>'
+            f'{price_html}</div></details>')
+    return (f'{cat_group}{size}'
+            f'<fieldset class="filters__group"><legend>Condition</legend>{co}</fieldset>{more}')
 
 
 def sidebar(**kw) -> str:
@@ -57,7 +63,18 @@ def catalog_page(grid: str, *, head: str | None = None, count: str = "1,284 item
     head = hero() if head is None else head
     side_html = sidebar(**(side or {}))
     main = (f'{head}<div class="catalog-layout">{side_html}<section aria-label="Listings">{toolbar(count, chips, sort)}{grid}{after_grid}</section></div>')
-    return Page(main=main, user=user, nav=nav, top=top, phase=phase)
+    return Page(main=main, user=user, nav=nav, top=top, phase=phase, main_class="container container--wide page")
+
+
+SPORT_POSE = {"Dance": "dance", "Sports": "soccer", "Soccer": "soccer", "Volleyball": "volleyball", "Gymnastics": "gymnastics", "Swimming": "swimming"}
+
+
+def category_head(cat: str, sub: str = "") -> str:
+    """Category header: H1, the size tag and, on the sport categories, Tilly in the matching pose."""
+    pose = SPORT_POSE.get(sub) or SPORT_POSE.get(cat)
+    art = tilly(pose) if pose else ""
+    return (f'<div class="category-head"><div class="stack stack--sm"><h1>{cat}</h1>'
+            f'<div>{size_tag("Girls\'", "size-tag--lg")}</div></div>{art}</div>')
 
 
 def load_more(shown: int = 16, total: str = "1,284") -> str:
@@ -86,10 +103,20 @@ def _():
 @s.state("category", "Clothing only: subcategory chips and the fixed size, reached from the Clothing nav link.")
 def _():
     keys = [k for k in CATALOG if ITEMS[k]["cat"] == "Clothing"]
-    head = (f'<div class="page-header"><div class="stack stack--sm"><h1>Clothing</h1><div>{size_tag(CATEGORIES[0][2], "size-tag--lg")}</div></div></div>')
+    head = category_head("Clothing")
     subs = '<div class="cluster" style="margin-bottom: var(--space-8);">' + "".join(
         f'<button class="chip" type="button" aria-pressed="{"true" if i == 0 else "false"}">{t}</button>' for i, t in enumerate(["All clothing"] + CATEGORIES[0][1])) + "</div>"
     return catalog_page(subs + listing_grid(keys), head=head, count="412 items", side={"cat": "Clothing"}, nav="clothing", after_grid=load_more(len(keys), "412"))
+
+
+@s.state("category-dance", "Dance, a sport category: the header shows Tilly dancing (one Tilly on the screen).")
+def _():
+    keys = [k for k in CATALOG if ITEMS[k]["cat"] == "Dance"]
+    subs = '<div class="cluster" style="margin-bottom: var(--space-8);">' + "".join(
+        f'<button class="chip" type="button" aria-pressed="{"true" if i == 0 else "false"}">{t}</button>' for i, t in enumerate(["All dance"] + CATEGORIES[2][1])) + "</div>"
+    pg = catalog_page(subs + listing_grid(keys), head=category_head("Dance"), count="186 items", side={"cat": "Dance"}, nav="dance", after_grid=load_more(len(keys), "186"))
+    pg.notes = note("Sports shows the pose of the one selected subcategory (soccer, volleyball, gymnastics, the swimming tile) and soccer otherwise. Empty states on these pages drop Tilly.", "top: 14rem; right: 1rem;")
+    return pg
 
 
 @s.state("search", "Keyword results for “carter’s”, title and brand matches first.")
@@ -116,7 +143,7 @@ def _():
 
 @s.state("empty", "No active listings at all (launch day): one action, sell the first item.")
 def _():
-    grid = empty("tag", "Nothing listed yet", "Be the first to list a dress, a pair of sneakers or anything your daughter has outgrown.", btn("Sell an item", "primary", P("sell")))
+    grid = empty("tag", "The closet is empty for now", "Be the first to pass on something she has outgrown.", btn("Sell outgrown gear", "primary", P("sell")))
     return catalog_page(grid, count="0 items")
 
 
@@ -175,14 +202,14 @@ DESC = {
 }
 
 
-def gallery(key: str, current: int = 1) -> str:
+def gallery(key: str, current: int = 1, sold: bool = False) -> str:
     it = ITEMS[key]
     n = min(it["photos"], 6)
     thumbs = "".join(
         f'<li><button type="button" aria-label="Show photo {i} of {n}"{" aria-current=\"true\"" if i == current else ""}>{photo(key, tag=False, alt="", tone=((it["tone"] + i - 2) % 6) + 1)}</button></li>'
         for i in range(1, n + 1))
     dots = "".join(f'<span{" aria-current=\"true\"" if i == current else ""}></span>' for i in range(1, n + 1))
-    return (f'<section class="gallery" aria-label="Photos"><div class="gallery__main">{photo(key, tag=False, n=current)}</div>'
+    return (f'<section class="gallery" aria-label="Photos"><div class="gallery__main">{photo(key, tag=False, n=current, cls="photo--sold" if sold else "")}</div>'
             f'<div class="gallery__dots" aria-hidden="true">{dots}</div><ul class="gallery__thumbs" role="list">{thumbs}</ul></section>')
 
 
@@ -202,7 +229,7 @@ def detail(key: str, *, actions: str, stamp: str | None = None, user: str = "mem
     rep = ""
     info = (f'<div class="detail__info">'
             f'<div class="stack stack--sm">{status_line}<span class="eyebrow">{esc(it["brand"])}</span><h1 class="detail__title">{esc(it["title"])}</h1>'
-            f'<div class="cluster" style="gap: var(--space-3);">{size_tag(it, "size-tag--lg")}<span class="text-muted">{esc(it["cond"])}</span></div></div>'
+            f'<div class="cluster" style="gap: var(--space-3);">{size_tag(it, "size-tag--lg")}{condition_badge(it["cond"])}</div></div>'
             f'<div class="detail__price"><span class="price price--lg">{money(it["price"])}</span>'
             f'<span class="text-muted text-sm">{ship_text(it["ship"])} · <span class="num">{money(total)}</span> total before tax</span></div>'
             f'{extra_info}'
@@ -213,7 +240,7 @@ def detail(key: str, *, actions: str, stamp: str | None = None, user: str = "mem
             f'{seller_block(it["seller"])}{rep}</div>')
     crumbs = (f'<nav aria-label="Breadcrumb" style="margin-top: var(--space-6);"><ol class="breadcrumb"><li><a href="{P("catalog")}">Shop</a></li>'
               f'<li><a href="{P("catalog", "category")}">{it["cat"]}</a></li><li aria-current="page">{it["sub"]}</li></ol></nav>')
-    return Page(main=f'{crumbs}<div class="detail">{gallery(key)}{info}</div>{below}', user=user, nav=cat_key(it["cat"]))
+    return Page(main=f'{crumbs}<div class="detail">{gallery(key, sold=stamp == "Sold")}{info}</div>{below}', user=user, nav=cat_key(it["cat"]))
 
 
 def buy_bar(total: float, actions: str) -> str:
@@ -224,7 +251,7 @@ def buy_bar(total: float, actions: str) -> str:
 
 
 def similar(keys) -> str:
-    return f'<section class="section" style="margin-top: var(--space-20);"><div class="section-head"><h2>More for girls</h2></div>{listing_grid(keys)}</section>'
+    return f'<section class="section" id="similar" style="margin-top: var(--space-20);"><div class="section-head"><h2>Similar in the closet</h2></div>{listing_grid(keys)}</section>'
 
 
 d = screen("listing-detail", "page", "Listing detail", route="/items/{id}", reqs=["L2-025", "L2-026", "L2-028", "L2-016", "L2-063", "L2-065"],
@@ -256,7 +283,8 @@ def _():
 
 @d.state("sold", "A sold listing keeps its URL with a Sold label and similar items, no Buy now.")
 def _():
-    return detail("party-dress", stamp="Sold", actions="", report=False, below=similar(["pleated-skirt", "pink-tutu", "velvet-dress", "rainbow-romper"]))
+    find = f'<div class="cluster">{btn("Find similar", "primary", "#similar")}</div>'
+    return detail("party-dress", stamp="Sold", actions="", extra_info=find, report=False, below=similar(["pleated-skirt", "pink-tutu", "velvet-dress", "rainbow-romper"]))
 
 
 @d.state("own", "The seller viewing their own Used - Fair listing: flaws shown, Edit and Withdraw instead of Buy now.")
@@ -278,7 +306,7 @@ def _():
 @d.state("error", "The listing failed to load: retry, or go back to the catalog.")
 def _():
     main = ('<div class="center-state"><h1>Couldn’t load this item</h1><p class="text-muted">It’s us, not you. Try again in a moment.</p>'
-            f'<span class="ref">Ref 2b9e-4410</span><div class="actions">{btn("Try again", "primary", icon="refresh")}{btn("Back to shop", href=P("catalog"))}</div></div>')
+            f'<span class="ref">Ref 2b9e-4410</span><div class="actions">{btn("Try again", "primary", icon="refresh")}{btn("Shop the closet", href=P("catalog"))}</div></div>')
     return Page(main=main)
 
 
@@ -286,7 +314,7 @@ def _():
 def _():
     main = ('<div class="center-state"><span class="code" aria-hidden="true">4<em>0</em>4</span><h1>This item isn’t available</h1>'
             '<p class="text-muted">It may have been sold or taken down.</p>'
-            f'<div class="actions">{btn("Shop similar items", "primary", P("catalog"))}</div></div>')
+            f'<div class="actions">{btn("Find similar", "primary", P("catalog"))}</div></div>')
     return Page(main=main)
 
 
@@ -300,17 +328,17 @@ m = screen("nav-menu", "dialog", "Menu", opens_from="catalog", reqs=["L2-062", "
 def menu_sheet(guest: bool, selling: bool = True) -> str:
     cats = "".join(f'<li><a href="{nav_href(k)}">{t}{ic("chevron-right")}</a></li>' for k, t in NAV)
     if guest:
-        sell = f'<li><a href="{P("sell")}">Sell an item</a></li>' if selling else ""
+        sell = f'<li><a href="{P("sell")}">Sell outgrown gear</a></li>' if selling else ""
         small = f'{sell}<li><a href="{P("rules")}">Marketplace rules</a></li>'
         foot = btn("Sign in", href=P("sign-in")) + btn("Join TuTuMuch", "primary", P("register"))
     else:
-        links = [("Sell an item", "sell"), ("Your listings", "my-listings"), ("Purchases", "purchases"), ("Sales", "sales"), ("Settings", "settings")]
+        links = [("Sell outgrown gear", "sell"), ("Your listings", "my-listings"), ("Purchases", "purchases"), ("Sales", "sales"), ("Settings", "settings")]
         if not selling:
             links = [(t, pid) for t, pid in links if pid not in ("sell", "my-listings", "sales")]
         small = "".join(f'<li><a href="{P(pid)}">{t}</a></li>' for t, pid in links)
         foot = btn("Sign out", icon="log-out")
     return (f'<div class="menu-sheet" id="menu" role="dialog" aria-modal="true" aria-labelledby="dlg-title" data-dismiss-on-escape>'
-            f'<div class="menu-sheet__head"><span class="logo">{LOGO_IMG}</span>'
+            f'<div class="menu-sheet__head">{mark()}'
             f'<h2 class="visually-hidden" id="dlg-title">Menu</h2><button class="btn btn--ghost btn--icon" type="button" aria-label="Close menu" autofocus>{ic("close")}</button></div>'
             f'<nav class="menu-sheet__body" aria-label="Menu"><ul class="menu-sheet__links" role="list">{cats}</ul>'
             f'<ul class="menu-sheet__links menu-sheet__links--small" role="list">{small}</ul></nav><div class="menu-sheet__foot">{foot}</div></div>')

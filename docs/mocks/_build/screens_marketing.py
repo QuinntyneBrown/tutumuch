@@ -24,13 +24,6 @@ STEPS = [("List it", "Add photos, a price and the condition."),
          ("Get paid", "The order completes and your payout is on its way.")]
 
 
-def shapes(quiet: bool = False) -> str:
-    q = " shapes--quiet" if quiet else ""
-    return (f'<div class="shapes{q}" aria-hidden="true"><span class="shapes__shape shapes__shape--brand"></span>'
-            '<span class="shapes__shape shapes__shape--tone"></span><span class="shapes__shape shapes__shape--light"></span>'
-            '<span class="shapes__stripes"></span></div>')
-
-
 def seller_href(member: bool) -> str:
     return P("sell") if member else P("register")
 
@@ -45,13 +38,14 @@ SOON = '<p class="marketing-hero__soon">Selling opens soon.</p>'
 
 
 def hero(member: bool, selling: bool = True) -> str:
-    actions = btn("Shop the catalog", "primary lg", P("catalog")) + (btn("Start selling", "lg", seller_href(member)) if selling else SOON)
-    return (f'<section class="marketing-hero" aria-labelledby="welcome-title">{shapes()}<div class="marketing-hero__inner">'
+    # The one primary button of the page (L2-096); every other call to action is secondary.
+    actions = btn("Shop the closet", "primary lg", P("catalog")) + (btn("Start selling", "lg", seller_href(member)) if selling else SOON)
+    return (f'<section class="marketing-hero" aria-labelledby="welcome-title"><div class="marketing-hero__inner">'
             '<div><p class="marketing-hero__eyebrow">Clothes · Dance · Sports · Gear, all for girls</p>'
             '<h1 class="marketing-hero__title" id="welcome-title">Twirl it <em>forward.</em></h1>'
             '<p class="marketing-hero__lede">New and gently loved clothes and gear for girls. Shop her next favourite thing, or pass on what she has outgrown.</p>'
             f'<div class="marketing-hero__actions">{actions}</div></div>'
-            f'<div class="marketing-hero__media">{poster()}</div></div></section>')
+            f'<div class="marketing-hero__media">{tilly("hero", "tilly--hero")}{poster()}</div></div></section>')
 
 
 def points(items) -> str:
@@ -72,8 +66,8 @@ def steps() -> str:
 
 
 def closing(member: bool, selling: bool = True) -> str:
-    actions = btn("Shop the catalog", "primary lg", P("catalog")) + (btn("Start selling", "lg", seller_href(member)) if selling else "")
-    return (f'<section class="marketing-hero marketing-hero--closing" aria-labelledby="closing-title">{shapes(quiet=True)}'
+    actions = btn("Shop the closet", "lg", P("catalog")) + (btn("Start selling", "lg", seller_href(member)) if selling else "")
+    return (f'<section class="marketing-hero marketing-hero--closing" aria-labelledby="closing-title">'
             '<div class="marketing-hero__inner"><div><h2 class="marketing-hero__title" id="closing-title">Her next favourite thing is <em>waiting.</em></h2>'
             f'<p class="marketing-hero__lede">New listings every day, every one for girls.</p>'
             f'<div class="marketing-hero__actions">{actions}</div></div></div></section>')
@@ -81,12 +75,12 @@ def closing(member: bool, selling: bool = True) -> str:
 
 def welcome(member: bool, selling: bool = True) -> Page:
     sellers = (band("sellers-title", "For sellers", "Pass it on to the next girl.", points(SELLER_POINTS),
-                    btn("Start selling", "primary", seller_href(member)), "feature-band--surface") if selling else
+                    btn("Start selling", href=seller_href(member)), "feature-band--surface") if selling else
                band("sellers-title", "For sellers", "Selling opens soon.", points(SELLER_POINTS_SOON),
                     '<p class="feature-band__note">For now, every item is hand-picked by TuTuMuch.</p>', "feature-band--surface"))
     main = (hero(member, selling)
             + band("shoppers-title", "For shoppers", "Everything here is for girls.", points(SHOPPER_POINTS),
-                   btn("Browse the catalog", "primary", P("catalog")))
+                   btn("Shop the closet", href=P("catalog")), "feature-band--blush")
             + sellers
             + band("how-title", "How it works", "Three steps. That’s it.", steps(), mod="feature-band--stacked")
             + closing(member, selling))
@@ -100,7 +94,7 @@ wl = screen("welcome", "page", "Marketing page", route="/welcome",
 @wl.state("default", "Signed out: hero with the video poster, shoppers, sellers, three steps and a closing CTA; Start selling goes to /join.")
 def _():
     pg = welcome(False)
-    pg.notes = note("Shapes drift slowly; prefers-reduced-motion stops them. The poster opens the video dialog; nothing autoplays.",
+    pg.notes = note("Tilly twirls in the hero (the one Tilly on the page). No shapes or gradients. The poster opens the video dialog; nothing autoplays.",
                     "top: 6rem; right: 1rem;")
     return pg
 
