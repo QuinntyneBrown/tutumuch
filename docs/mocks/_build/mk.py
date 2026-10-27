@@ -341,7 +341,7 @@ def btn(label: str, kind: str = "", href: str | None = None, icon: str | None = 
 def status(label: str) -> str:
     mod = {"Draft": "draft", "Active": "active", "Reserved": "reserved", "Sold": "sold", "Removed": "removed",
            "Paid": "info", "Shipped": "info", "Delivered": "info", "Completed": "active", "Cancelled": "removed", "Refunded": "removed",
-           "Open": "reserved"}.get(label, "draft")
+           "Open": "reserved", "Expired": "removed"}.get(label, "draft")
     return f'<span class="status status--{mod}">{esc(label)}</span>'
 
 

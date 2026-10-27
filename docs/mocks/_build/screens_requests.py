@@ -160,7 +160,7 @@ def request_form(v: dict, *, errors: dict | None = None, busy: bool = False, top
             + field("cond", "Lowest condition", select("cond", CONDITIONS, v.get("cond", ""), "Any condition"), optional=True,
                     help="This condition or better.")
             + '</div></section>'
-            f'<p class="text-sm text-muted">{ic("mail")} We’ll email you when a matching item is listed. A request stays open for 90 days{" from today" if edit else ""}.</p>'
+            f'<p class="text-sm text-muted cluster" style="gap: var(--space-2);">{ic("mail")}<span>We’ll email you when a matching item is listed. A request stays open for 90 days{" from today" if edit else ""}.</span></p>'
             f'<div class="form-actions form-actions--sticky form-actions--split">{cancel}{save}</div></form>')
 
 

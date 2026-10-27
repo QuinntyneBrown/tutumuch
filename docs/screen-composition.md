@@ -23,7 +23,7 @@ components sign-in-with-google added (provider button with its "or" divider) and
 page-guidelines conformance added ([ADR general/0009](adr/general/0009-page-guidelines-on-the-angular-and-giddy-stack.md):
 `tl-mark`, `tl-tilly`, `tl-condition-badge`, `tl-skeleton`, the `tone` and `responsive` inputs of
 `tl-logo`, the `tilly` input of `tl-empty-state` and `tl-center-state`, the `sold` state of
-`tl-listing-card` and `tl-gallery`, the `blush` tone of `tl-feature-band`; `tl-shapes` is retired).
+`tl-listing-card` and `tl-gallery`, the `blush` tone of `tl-feature-band`; `tl-shapes` is retired) and request-items added (the `bell` icon).
 Every screen follows [`docs/page-guidelines.md`](page-guidelines.md) (`L2-096`): one `h1`, one logo
 link, one primary button per view, loading states built from `tl-skeleton` (never a spinner),
 empty states with Tilly's hello pose, at most one Tilly per screen. Feature screens not built yet are inventoried below
@@ -73,8 +73,9 @@ App shell. `@tutumuch/accounts` `NotificationSettingsPage` (`src/lib/notificatio
 manage-notification-preferences. The account sub-navigation of the mocks is composed with the
 account overview journey.
 
-- Library: `tl-switch` (4 rows: "Account security emails, always on" and "Order emails, always
-  on" checked and disabled; "Review emails" and "Marketing emails", disabled while saving),
+- Library: `tl-switch` (5 rows: "Account security emails, always on" and "Order emails, always
+  on" checked and disabled; "Item request emails" (title "Item requests", "When something you asked
+  for is listed", added by request-items, `L2-103`), "Review emails" and "Marketing emails", disabled while saving),
   `tlButton` (primary "Save" with `busy`; primary "Try again"), `tl-alert` (success "Email
   settings saved", `live="polite"`), `tl-empty-state` (error tone "Couldn’t load email settings"
   with the reference), `tl-icon` (`refresh`), `ToastService` (danger "Something went wrong" with
@@ -88,7 +89,8 @@ Auth shell. `@tutumuch/accounts` `UnsubscribePage` (`src/lib/unsubscribe/`), bui
 manage-notification-preferences; the mocks have no screen for it, so it follows the verify-email
 layout.
 
-- Library: `tl-mark` beside the polite "Turning off news from TuTuMuch…" status (working, no page-load spinner), `tlButton` ("Shop the closet", "Manage your emails", "Try again"),
+- Library: `tl-mark` beside the polite "Turning off news from TuTuMuch…" status (working, no page-load spinner; for an item request
+  token the copy names item request emails: "You're unsubscribed from item request emails", request-items `L2-103`), `tlButton` ("Shop the closet", "Manage your emails", "Try again"),
   `tl-icon` (`refresh`)
 - Local: the `h1` and lead of each state and the `.stack` of actions
 
@@ -160,7 +162,7 @@ Auth shell. `@tutumuch/accounts` `VerifyEmailPage` reads `token` from the query 
 - Library: `tl-mark` beside the polite "Checking your link…" status (loading), `tl-button` (Start shopping, Sell outgrown gear only while `LaunchState.canSell()` (the lead then reads "Buying is open."), Send a new link, Sign in, Try again), `tl-alert` (Link sent, Too many requests), `tl-icon` (refresh)
 - Local: heading block with the lead line; the reference line of the error state
 
-### Catalog — `/` (`pages/catalog`: default, guest, category, search, filtered, loading, empty, no-results, error, offline, phase-one, phase-one-admin, phase-two)
+### Catalog — `/` (`pages/catalog`: default, guest, category, search, filtered, loading, empty, no-results, category-empty, error, offline, phase-one, phase-one-admin, phase-two)
 
 Built in `@tutumuch/catalog` (`src/lib/catalog/`, `src/lib/filters/`) by browse-catalog (default,
 guest, category at `/dresses`, `/tops`, `/outerwear`, `/bottoms`, loading, empty, error, offline)
@@ -173,7 +175,9 @@ toggle, the chips and the sort select). The URL holds the result set (`q`, `cate
   `tl-tilly` (category header of Dance: dance pose; Sports: soccer pose), `tl-skeleton` (item
   count), `tl-load-more`, `tl-empty-state` (empty: Tilly, "The closet is empty for now", "Sell
   outgrown gear" as `tlButton="primary"`; no-results: Tilly, "No items match", "Clear search and
-  filters"; both drop Tilly under a sport header; error: tone error, icon `refresh`, "Try again"), `tl-alert` (warning
+  filters" with the line "Try fewer filters or a different word." and the link "Can’t find it? Request it";
+  category-empty, a category page with nothing in it: "Nothing in {category} right now", "New items arrive every day." with
+  "Can’t find it? Request it" and primary "Shop the closet" to `/`; all drop Tilly under a sport header; error: tone error, icon `refresh`, "Try again"), `tl-alert` (warning
   banner with icon `wifi-off` for offline; danger "Couldn’t load more items" with a
   `tlButton="link"` Try again when a next page fails), `tl-chip` (one per active filter value),
   `tlButton` (Filters toggle, "Clear all" link button), `tl-choice` and `tl-input-group` (inside
@@ -195,6 +199,9 @@ toggle, the chips and the sort select). The URL holds the result set (`q`, `cate
   subcategory group either) and the six category routes redirect to `/` through the
   `categoryMenusOpen` guard of `catalog.routes.ts` (phase-one). The empty state's "Sell outgrown gear"
   shows only while `LaunchState.canSell()` (phase-one-admin, phase-two).
+- Item requests (request-items, `L2-104`): the "Request it" link is a plain `routerLink` to `/account/requests/new`
+  with `category` (the page's category slug, when one is chosen) and `q` (the keyword, cut to 100 characters);
+  it is shown to visitors too, and the request form sends a visitor through sign-in (`L2-105`).
 
 ### Listing detail — `/items/{id}` (`pages/listing-detail`: default, guest, new-seller, reserved, sold, own, loading, error, unavailable)
 
@@ -367,6 +374,48 @@ the account overview journey.
   `/sell/{reference}` (Draft), `/sales/{orderId}` (Sold) or `/items/{reference}` with the price
   ("$60" or "—") and the date ("Today", "Yesterday", "Sat 24 Oct"), and the four skeleton rows (`tl-skeleton`)
 
+### My requests — `/account/requests` (`pages/my-requests`: default, loading, empty, error, limit-reached, expired, no-matches, signed-out)
+
+App shell. `@tutumuch/catalog` `MyRequestsPage` (`src/lib/my-requests/`), built by request-items
+([detailed design](detailed-designs/catalog/request-items/README.md), `L2-098`, `L2-099`, `L2-102`). A
+401 sends the visitor to `/sign-in?returnUrl=/account/requests` (signed-out). The account
+sub-navigation of the mocks (its new "Requests" tab) is composed with the account overview journey.
+
+- Library: `tlButton` (primary "Request an item" with icon `plus` to `/account/requests/new`, hidden at the
+  limit; `size="sm"` "Edit" to `/account/requests/{id}/edit` and "Renew" on an expired request; ghost `size="sm"` "Delete"),
+  `tl-status` (tone `removed`, "Expired"), `tl-listing-grid` with `tl-listing-card` (the request's matches that
+  are still Active), `tl-empty-state` (icon `bell`, Tilly, "No requests yet", "Ask for something that isn’t in the
+  closet yet. We’ll email you when it’s listed.", primary "Request an item"; error tone, icon `refresh`,
+  "Couldn’t load your requests" with the reference and primary "Try again"), `tl-skeleton` (three request
+  blocks), `tl-icon` (`info` on the limit line), `DialogService` (Delete request), `ToastService` (Request toasts)
+- Local: the page header with "{n} open requests", the limit line "You have 20 open requests. Delete one to add
+  another.", and the `.request-list` of `.request` blocks: the keywords as an `h2`, the facts line
+  "{category} · Girls’ · Up to {price} · {condition} or better", "Open until {Mon d}" or the Expired status with
+  "Expired on {Mon d}", the actions, then "{n} match(es)" with the grid, or the line "No matches yet. We’ll email
+  you when one is listed.", "Your match is no longer available. We’ll keep looking." or "Renew it to keep looking
+  for 90 more days."
+
+### Request an item — `/account/requests/new`, `/account/requests/{id}/edit` (`pages/request-form`: default, prefilled, invalid, submitting, success, edit, loading, error, not-found, limit-reached, signed-out)
+
+App shell. `@tutumuch/catalog` `RequestFormPage` (`src/lib/request-form/`), built by request-items
+(`L2-097`, `L2-098`, `L2-104`, `L2-105`). `?category=` and `?q=` fill the new form (prefilled). A 401 sends
+the visitor to `/sign-in` with the whole URL as `returnUrl` (signed-out). Saving goes to `/account/requests`
+with the "Request saved" toast (success).
+
+- Library: `tl-form-field` (Category select "Choose a category"; Keywords with help "The words a seller would
+  use, like “ballet slippers”. Every word must be in the listing." and the counter "{n} / 100"; Highest price,
+  optional, help "Shipping not included."; Lowest condition select, optional, "Any condition" then the five
+  conditions, help "This condition or better."), `tl-input-group` (the `$` addon), `tl-fixed-size` (once a category is
+  chosen: "Size: Girls’"), `tl-error-summary` (invalid), `tlButton` (ghost "Cancel" to `/account/requests`; primary
+  "Save request" with `busy`), `tl-center-state` (error: icon `refresh`, "Couldn’t open this request" with the
+  reference, primary "Try again" and "Your requests"; not-found: icon `search`, "This request isn’t here", "It may
+  have been deleted.", primary "Your requests"; limit-reached: icon `info`, "You have 20 open requests", "Delete one
+  to add another. Expired requests don’t count.", primary "Your requests" and "Shop the closet"), `tl-skeleton`
+  (edit loading), `tl-icon` (`mail`), `ToastService` (danger "Something went wrong" with the reference when a save fails)
+- Local: the page header (h1 "Request an item" or "Edit request", subtitle "Can’t find it in the closet? Tell us
+  what she needs."), the `.form-section`s "What she needs" and "Limits", the mail note "We’ll email you when a
+  matching item is listed. A request stays open for 90 days." and the sticky `.form-actions` row
+
 ### Payouts — `/account/payouts` (`pages/payouts`: default, not-onboarded, loading, empty, error)
 
 App shell. `@tutumuch/orders` `PayoutsPage` (`src/lib/payouts/`), built by seller-payouts. The account
@@ -499,6 +548,7 @@ Built in `@tutumuch/marketing` (`src/lib/terms/`, exported as `infoRoutes`), in 
 | Ask to cancel (`dialogs/request-cancellation`: default, busy, failed) | `DialogService` | `tl-dialog` (description "If {seller} accepts, you’re refunded in full. Until then the order stays as is."), `tl-form-field` (textarea "Message to {seller}", optional, focused on open), `tl-alert` (danger "That didn’t go through" in the top slot; the message is kept), `tl-button` ("Keep order", disabled while busy; primary "Send request" with busy, "Try again" after a failure) | `RequestCancellationDialog` in `@tutumuch/orders` |
 | Respond to cancellation (`dialogs/respond-cancellation`: default, busy, failed) | `DialogService` | `tl-dialog` (heading "{buyer} asked to cancel", description "Accepting refunds {total} in full. Declining keeps the order — you still ship by {date}."), `tl-quote` (the buyer's message), `tl-alert` (danger "That didn’t go through" in the top slot), `tl-button` ("Decline"; primary "Accept and refund", focused; the chosen one shows busy and the other is disabled) | `RespondCancellationDialog` in `@tutumuch/orders` |
 | Withdraw listing (`dialogs/withdraw-listing`: default, busy, failed) | `DialogService` | `tl-dialog` (`size="sm"`, icon `trash`, tone danger, title "Withdraw “{title}”?", description "It leaves the shop right away. This can’t be undone."), `tl-alert` (danger "Couldn’t withdraw" / "Your listing is still live." in the top slot after a failure), `tl-button` ("Keep listing", focused, disabled while busy; danger "Withdraw" with busy, "Try again" after a failure) | `WithdrawListingDialog` in `@tutumuch/catalog` (ADR listings/0003); on success the page goes to `/account/listings` |
+| Delete request (`dialogs/delete-request`: default, busy, failed) | `DialogService` | `tl-dialog` (`size="sm"`, icon `trash`, tone danger, title "Delete this request?", description "“{keywords}” stops looking for new listings. This can’t be undone."), `tl-alert` (danger "Couldn’t delete" / "Your request is still open." in the top slot after a failure), `tl-button` ("Keep request", focused, disabled while busy; danger "Delete" with busy, "Try again" after a failure) | `DeleteRequestDialog` in `@tutumuch/catalog` (request-items, `L2-099`); on success My requests drops the request and shows "Request deleted" |
 | Pitch video (`dialogs/pitch-video`: default, loading, error, captions) | `DialogService` | `tl-dialog` (`size="lg"`, heading "TuTuMuch video" with `headingHidden`), `tl-video-player` (MP4 and WebM sources, English captions off by default, poster; Play/Pause, Captions toggle; loading spinner; error "The video didn’t load" with Try again) | `PitchVideoDialog` in `@tutumuch/marketing` |
 | Cookie settings (`dialogs/cookie-settings`: default, analytics-on) | `DialogService` through `CookieSettingsDialogService` | `tl-dialog` (size `sm`, heading "Cookie settings"), `tl-switch` with `hint` "Strictly necessary" ("Sign-in and checkout. Always on.", checked and disabled) and "Analytics" ("Helps us see which pages are slow.", `autofocus`), `tl-button` (Cancel; primary Save) | `CookieSettingsDialog` in `@tutumuch/privacy` |
 | Resolve problem (`dialogs/resolve-problem`: default, invalid, busy) | `DialogService` | `tl-dialog` (heading "Resolve problem {reference}"), `tl-radio-group` (legend "Decision") with `tl-choice` "Refund buyer in full" ("{total} to {buyer} · no payout") and "Release payout to seller" ("Order completes · {seller} is paid"), `tl-form-field` (textarea "Reason", help "Sent to both members.", error "Add a reason. Both members see it."), `tl-alert` (danger after a failure), `tl-button` (Cancel, disabled while busy; primary "Refund buyer" or "Release payout", busy "Refunding" or "Releasing") | `ResolveProblemDialog` in `@tutumuch/orders` |
@@ -513,6 +563,8 @@ Built in `@tutumuch/marketing` (`src/lib/terms/`, exported as `infoRoutes`), in 
 | Toasts (`notifications/toast`: info, success, warning, danger, with-action, stacked) | toast region | `tl-toast-region`, `tl-toast`, `ToastService` | None |
 | Cookie consent (`notifications/cookie-consent`: info, success) | fixed bottom panel, `@tutumuch/privacy` `CookieConsentComponent` in the root component | `tl-consent-banner` (info); `ToastService` success toast "Cookie choice saved" (success) | None |
 | System notices (`notifications/system-banner`: info, success, warning, danger) | banner above the top bar | not yet composed | not yet composed |
+| Request toasts (`notifications/request-toasts`: info, success, warning, danger) | toast region over My requests | `ToastService`: info "Request deleted"; success "Request saved" / "We’ll email you when it’s listed."; warning "You have 20 open requests" / "Delete one to renew this one." (Renew refused with 409); danger "Couldn’t delete your request" with "Try again" | None |
+| Match email (`pages/request-match-email`: default) | plain-text email sent through the outbox, not a web page | None: rendered by `EmailTemplates` (`ItemRequestMatched`) in `TuTuMuch.Application`, with the item request unsubscribe link and `List-Unsubscribe` headers added by the dispatcher (`L2-101`, `L2-103`) | None |
 
 ## Summary of local UI to build
 
