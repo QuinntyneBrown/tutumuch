@@ -23,4 +23,5 @@ Ordered by value to the user, highest first.
 | View member profile | See a member's public profile and listings | 3 |
 | Manage notification preferences | Member chooses which notifications they receive | 3 |
 | Manage cookie consent | Visitor accepts or rejects optional cookies | 3 |
-| **Total** | | **76** |
+| Sign in with Google | Visitor joins or signs in with their Google account | 6 |
+| **Total** | | **82** |
