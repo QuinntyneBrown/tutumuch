@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NotificationPreferencesApi, shortRef } from '@tutumuch/api';
-import { ButtonDirective, IconComponent, SpinnerComponent } from '@tutumuch/components';
+import { ButtonDirective, IconComponent, MarkComponent } from '@tutumuch/components';
 
 type State = 'working' | 'unsubscribed' | 'invalid' | 'error';
 
@@ -11,7 +11,7 @@ type State = 'working' | 'unsubscribed' | 'invalid' | 'error';
  */
 @Component({
   selector: 'tl-unsubscribe-page',
-  imports: [RouterLink, ButtonDirective, IconComponent, SpinnerComponent],
+  imports: [RouterLink, ButtonDirective, IconComponent, MarkComponent],
   templateUrl: './unsubscribe-page.html',
   styleUrl: './unsubscribe-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

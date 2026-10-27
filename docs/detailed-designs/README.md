@@ -74,7 +74,7 @@ read it as the matching library.
 | [reviews](reviews/) | `L1-009`, `L1-010` | view-member-profile |
 | [notifications](notifications/) | `L1-011` | send-email-notifications, manage-notification-preferences |
 | [privacy](privacy/) | `L1-014` | protect-personal-data, manage-cookie-consent |
-| [platform](platform/) | `L1-013`, `L1-015` to `L1-018` | harden-http-and-api, protect-credentials-and-supply-chain, meet-performance-and-scale, responsive-accessible-shell, report-errors-and-observe, keep-available-and-recoverable |
+| [platform](platform/) | `L1-013`, `L1-015` to `L1-018`, `L1-022` | harden-http-and-api, protect-credentials-and-supply-chain, meet-performance-and-scale, responsive-accessible-shell, report-errors-and-observe, keep-available-and-recoverable, page-guidelines-conformance |
 
 ## Deferred
 

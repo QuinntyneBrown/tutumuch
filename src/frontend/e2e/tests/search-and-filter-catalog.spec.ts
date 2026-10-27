@@ -51,6 +51,7 @@ test.describe('search and filter catalog', () => {
     await filters.sidebar.option('Category', 'Dance').check();
     await expect(page).toHaveURL('/?category=dance');
     await filters.sidebar.option('Dance', 'Tutus').check();
+    await filters.sidebar.openMore();
     await filters.sidebar.option('Brand', 'Gymboree').check();
     await filters.sidebar.option('Brand', 'Crewcuts').check();
     await filters.sidebar.option('Condition', 'New with tags').check();
@@ -96,6 +97,7 @@ test.describe('search and filter catalog', () => {
     await serveSearch(page, 2);
     const filters = new CatalogFilters(page);
     await new CatalogPage(page).goto();
+    await filters.sidebar.openMore();
 
     await expect(filters.sidebar.group('Brand').getByRole('checkbox')).toHaveCount(6);
     await filters.sidebar.allBrands.click();
@@ -109,6 +111,7 @@ test.describe('search and filter catalog', () => {
     await catalog.goto();
     await expect(catalog.count).toHaveText('2 items');
 
+    await filters.sidebar.openMore();
     await filters.sidebar.minPrice.fill('200');
     await filters.sidebar.maxPrice.fill('50');
 
@@ -162,6 +165,7 @@ test.describe('search and filter catalog', () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await new CatalogPage(page).goto();
     await filters.toggle.click();
+    await filters.sheet.openMore();
 
     await filters.sheet.minPrice.fill('200');
     await filters.sheet.maxPrice.fill('50');

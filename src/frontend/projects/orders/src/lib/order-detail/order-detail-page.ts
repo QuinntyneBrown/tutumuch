@@ -11,6 +11,7 @@ import {
   OrderSummaryItem,
   OrderTimelineComponent,
   QuoteComponent,
+  SkeletonComponent,
   ThreadComponent,
   TrackingLinkComponent,
 } from '@tutumuch/components';
@@ -57,6 +58,7 @@ const HEADINGS: Record<string, string> = {
     QuoteComponent,
     ThreadComponent,
     TrackingLinkComponent,
+    SkeletonComponent,
   ],
   templateUrl: './order-detail-page.html',
   styleUrl: './order-detail-page.css',

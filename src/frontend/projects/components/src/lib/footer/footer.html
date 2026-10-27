@@ -1,5 +1,5 @@
 <footer class="footer">
-  <tl-logo size="sm" />
+  <span class="footer__mark"><tl-mark [size]="36" /></span>
   <nav aria-label="Footer">
     <a routerLink="/rules">Marketplace rules</a>
     <a routerLink="/privacy">Privacy</a>
@@ -7,5 +7,5 @@
     <a routerLink="/welcome">About TuTuMuch</a>
     <button class="footer__link" type="button" (click)="cookieSettings.emit()">Cookie settings</button>
   </nav>
-  <span>© {{ year }} TuTuMuch</span>
+  <span>© TuTuMuch</span>
 </footer>

@@ -1,0 +1,10 @@
+<img
+  class="tilly tilly--{{ size() }}"
+  [class.tilly--tile]="pose() === 'swimming'"
+  [class.empty__tilly]="size() === 'empty'"
+  [src]="'/tilly/' + art().file"
+  [alt]="art().alt"
+  [width]="art().width"
+  [height]="art().height"
+  decoding="async"
+/>

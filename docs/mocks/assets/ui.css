@@ -730,8 +730,8 @@ a.tab { text-decoration: none; }
    Page guidelines look — TuTuMuch keeps the 12L components and draws them to
    docs/page-guidelines.md (ADR general/0009): Fraunces headings and prices,
    DM Sans text, sentence case, raspberry pill buttons that hover to ink, a
-   ringed white secondary button, lilac selected chips, condition badges,
-   white photo wells, no card shadows, thin ink/10 lines, blush skeletons,
+   ringed surface secondary button, lilac selected chips, condition badges,
+   surface photo wells, no card shadows, thin ink/10 lines, blush skeletons,
    Tilly in empty states and quick ease-out motion. Every value is a token.
    ========================================================================== */
 h1,
@@ -784,8 +784,8 @@ body {
   letter-spacing: normal;
 }
 
-/* Buttons: primary raspberry, hover ink; secondary white with a 2px inset raspberry ring, hover
-   raspberry with white text; text links raspberry, hover ink and underlined. No lip, no lift. */
+/* Buttons: primary raspberry, hover ink; secondary on the surface with a 2px inset raspberry ring, hover
+   raspberry with light text; text links raspberry, hover ink and underlined. No lip, no lift. */
 .btn {
   --btn-bg: var(--color-bg-surface);
   --btn-fg: var(--color-fg-accent);

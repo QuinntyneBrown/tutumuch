@@ -278,14 +278,14 @@ def condition_badge(cond: str) -> str:
 
 
 def listing_card(key: str, href: str | None = None, stamp: str | None = None) -> str:
-    """Listing card anatomy (L2-096): photo, title on one line, brand, "Girls' · condition", price pushed down."""
+    """Listing card anatomy (L2-096): photo, title on one line, brand, "Girls · condition", price pushed down."""
     it = ITEMS[key]
     stamp = stamp if stamp is not None else (it.get("status") if it.get("status") in ("Reserved", "Sold") else None)
     href = href or P("listing-detail")
     return (f'<li><a class="listing-card" href="{href}">{photo(key, stamp=stamp)}'
             f'<div class="listing-card__meta"><span class="listing-card__title">{esc(it["title"])}</span>'
             f'<span class="listing-card__brand">{esc(it["brand"])}</span>'
-            f'<span class="listing-card__facts">{esc(size_of(it))} · {esc(it["cond"])}</span>'
+            f'<span class="listing-card__facts">{esc(size_of(it).rstrip("\'"))} · {esc(it["cond"])}</span>'
             f'<span class="listing-card__price"><span class="price">{price(it["price"])}</span></span></div></a></li>')
 
 

@@ -13,6 +13,9 @@ import {
   LoadMoreComponent,
   SheetService,
   SizeTagComponent,
+  SkeletonComponent,
+  TillyComponent,
+  type TillyPose,
 } from '@tutumuch/components';
 
 import { CatalogStore } from './catalog-store';
@@ -34,11 +37,14 @@ import { toCardView } from '../card-view';
 import { FiltersSheet, FiltersSheetData } from '../filters/filters-sheet';
 import { FiltersSidebar } from '../filters/filters-sidebar';
 
+/** The sport categories and Tilly's matching pose; Sports shows her soccer pose. */
+const SPORT_POSES: Record<string, TillyPose> = { Dance: 'dance', Sports: 'soccer' };
+
 /**
  * The catalog at / and a category page at /dresses, /tops... (mocks pages/catalog). The URL is the
  * one source of a result set (L2-024): every change of its query parameters is parsed into a
  * CatalogQuery and loaded, and every filter, chip, sort or search change navigates. The header is
- * the hero, a category header, "Shop" or the search term. Filters are a sidebar from 992px and a
+ * the hero, a category header (with Tilly on the sport categories), "Shop" or the search term. Filters are a sidebar from 992px and a
  * sheet below it (L2-062).
  */
 @Component({
@@ -55,6 +61,8 @@ import { FiltersSidebar } from '../filters/filters-sidebar';
     ListingGridComponent,
     LoadMoreComponent,
     SizeTagComponent,
+    TillyComponent,
+    SkeletonComponent,
   ],
   providers: [CatalogStore],
   templateUrl: './catalog-page.html',
@@ -89,6 +97,8 @@ export class CatalogPage implements OnInit {
     const only = !query.q && !hasFilters({ ...query, category: null });
     return category && only ? category : null;
   });
+  /** Tilly in the matching sport pose on the sport category headers (page guidelines 6). */
+  readonly headerPose = computed<TillyPose | null>(() => SPORT_POSES[this.categoryHeader()?.label ?? ''] ?? null);
   readonly filtered = computed(() => !!this.query().q || hasFilters(this.query()));
   readonly chips = computed(() => chipsOf(this.query()));
   readonly cards = computed(() => this.store.items().map(toCardView));

@@ -79,7 +79,7 @@ test.describe('manage my listings', () => {
 
     await expect(listings.heading).toHaveText('Your listings');
     await expect(listings.subtitle).toHaveText('5 listings · 1 active');
-    await expect(listings.sellAnItem).toHaveAttribute('href', '/sell');
+    await expect(listings.sellOutgrownGear).toHaveAttribute('href', '/sell');
     await expect(listings.rows).toHaveCount(5);
     await expect(listings.rows.nth(0)).toContainText('Rainbow tulle tutu, pink');
     await expect(listings.rows.nth(0)).toContainText('Draft');
@@ -156,8 +156,8 @@ test.describe('manage my listings', () => {
     await listings.goto();
 
     await expect(listings.empty).toContainText('Nothing listed yet');
-    await expect(listings.empty).toContainText('List a pair of 12s or something in L.');
-    await expect(listings.empty.getByRole('link', { name: 'Sell an item' })).toHaveAttribute('href', '/sell');
+    await expect(listings.empty).toContainText('List a dress, a leotard or anything she’s outgrown.');
+    await expect(listings.empty.getByRole('link', { name: 'Sell outgrown gear' })).toHaveAttribute('href', '/sell');
     await expect(listings.filter).toHaveCount(0);
   });
 

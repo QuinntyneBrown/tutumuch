@@ -124,7 +124,7 @@ weights because the kit's `SOFT 100` and optical sizing need the variable axes.
 | Text link | `tlButton="link"` or `a.link`: semibold raspberry 700, hover ink and underline with 4px offset |
 | Focus style | every control: 2px raspberry ring with 2px offset (`--shadow-focus`) |
 | Condition badge | New `tl-condition-badge` (input `condition`). Not `tl-status`, whose colours mean order and listing states, nor `tl-size-tag`, which is the size. |
-| Skeleton blocks in blush | New `tl-skeleton` (shapes `text`, `photo`, `block`), drawn in `--color-skeleton`; `tl-listing-grid` uses it. `tl-spinner` stays only for in-place busy states (a button, load more). |
+| Skeleton blocks in blush | New `tl-skeleton` (shapes `text`, `title`, `photo`, `rect`, `circle`; the element itself is the block), drawn in `--color-skeleton`; every loading state uses it. `tl-spinner` stays only for in-place busy states (a button, load more). |
 | Tilly | New `tl-tilly` (input `pose`), which also writes the alt text: "Tilly twirling in a raspberry tutu", "Tilly dancing an arabesque", "Tilly kicking a soccer ball", "Tilly bumping a volleyball", "Tilly landing a gymnastics move", "Tilly holding up a yellow dress", "Tilly waving hello". `tl-empty-state` takes `[tilly]="true"` to show the "Hello, friend" pose. |
 | Selected chips | `--color-selected-bg` with a 1px `--color-selected-border` ring and ink text |
 | `sonner` toasts | `ToastService` and `tl-toast-region` |
@@ -163,11 +163,11 @@ page that already shows Tilly in its header uses a plain empty state.
   are; badge colours follow the guideline by nearest step: New with tags raspberry; New without
   tags and Used - Excellent sunny (Like new); Used - Good blush (Gently loved); Used - Fair white
   with an ink ring (Well loved). Renaming to the four-step scale needs a domain change (Deferred).
-- **Size.** Every listing is `Girls'` (`L2-013`). Cards show it as "Girls'" at the start of the
-  "Size · Condition" line ("Size Girls'" would read oddly); the size tag stays on category
+- **Size.** Every listing is `Girls'` (`L2-013`). Cards show its label "Girls" at the start of the
+  "Size · Condition" line ("Size Girls" would read oddly); the size tag stays on category
   headers and the detail page. Numeric sizes need a domain change (Deferred).
 - **Listing card.** Photo (4:5, white well, 1.5rem corners, cover), title on one line, brand (kept
-  because `L2-022` requires it), "Girls' · {condition}" muted, price row pushed to the bottom with
+  because `L2-022` requires it), "Girls · {condition}" muted, price row pushed to the bottom with
   `margin-top: auto`. No heart: saved hearts do not exist (Deferred). Reserved and Sold use a
   status badge; Sold greys the photo to 60% and offers "Find similar".
 - **Filters.** `L2-062` keeps the sidebar on large screens and the panel on small ones. Inside
@@ -220,11 +220,15 @@ files (184 KB) are chosen.
 - `L1-022` and `L2-096` are added; Playwright checks every routed page for one `h1`, one logo,
   labelled icon buttons, alt text, at most one Tilly and no inline hex or gradient.
 - AGENTS.md lists `public/fonts/` and `public/tilly/`.
+- Short waits that are not page content ("Checking your link…", "Confirming your payment") show
+  `tl-mark` beside their status text instead of a spinner. `tl-center-state` takes `tilly` for big
+  moments, `tl-feature-band` a `blush` tone, and catalog routes use a `wide` shell whose container is
+  80rem (product grids), while other pages keep 72rem.
 - The decorative `tl-shapes` component and its design-system page are retired: "no blobs, glows or
   decorative shapes". The marketing hero and closing band become solid blush panels.
 - Copy that requirements quote changes with the standard terms: "Shop the catalog" and "Browse the
   catalog" become "Shop the closet" (`L2-078`, `L2-094`), "Sell an item" actions become "Sell
-  outgrown gear" (`L2-003`, `L2-019`, `L2-094`), and `L2-083` no longer mentions shapes.
+  outgrown gear" (`L2-003`, `L2-021`, `L2-094`), and `L2-083` no longer mentions shapes.
 - One primary button per view: the marketing page keeps its primary in the hero; the bands and the
   closing call to action use secondary buttons.
 

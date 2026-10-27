@@ -40,7 +40,7 @@ in the guideline order (Dance, Sports, Clothing, Shoes, Cameras and tech, Toys a
 TuTuMuch has no bag, so there is no Bag link. Then one `h1` with an optional line, the content, at
 most one supporting section, and the footer with the mark, short links and "© TuTuMuch".
 
-Listing cards show a white 4:5 photo well, the title on one line, the brand, "Girls' · condition"
+Listing cards show a white 4:5 photo well, the title on one line, the brand, "Girls · condition"
 and the price, with the price rows aligned. Grids are 4, 3 and 2 columns. Loading is blush
 skeletons (a spinner only inside a busy control; the mark for a short wait), empty states show
 Tilly waving hello with one line and one action, errors say what happened with a raspberry icon,

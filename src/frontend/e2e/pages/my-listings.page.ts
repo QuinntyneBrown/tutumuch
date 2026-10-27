@@ -4,7 +4,7 @@ import { Locator, Page } from '@playwright/test';
 export class MyListingsPage {
   readonly heading: Locator;
   readonly subtitle: Locator;
-  readonly sellAnItem: Locator;
+  readonly sellOutgrownGear: Locator;
   readonly filter: Locator;
   readonly rows: Locator;
   readonly loading: Locator;
@@ -16,7 +16,7 @@ export class MyListingsPage {
     const main = page.locator('main');
     this.heading = main.getByRole('heading', { level: 1 });
     this.subtitle = main.locator('.page-header .subtitle');
-    this.sellAnItem = main.locator('.page-header').getByRole('link', { name: 'Sell an item' });
+    this.sellOutgrownGear = main.locator('.page-header').getByRole('link', { name: 'Sell outgrown gear' });
     this.filter = main.getByRole('group', { name: 'Filter by status' });
     this.rows = main.locator('.order-list:not([aria-busy]) li');
     this.loading = main.locator('[aria-busy="true"]');

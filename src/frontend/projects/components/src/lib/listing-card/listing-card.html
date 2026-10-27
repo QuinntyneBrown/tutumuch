@@ -1,5 +1,5 @@
 <a class="listing-card" [routerLink]="card().href">
-  <div class="photo">
+  <div class="photo" [class.photo--sold]="card().sold">
     @if (card().photo; as photo) {
       <picture>
         <source type="image/webp" [attr.srcset]="photo.webp" [attr.sizes]="sizes" />
@@ -16,16 +16,17 @@
         />
       </picture>
     }
-    @if (card().reserved) {
+    @if (card().sold) {
+      <span class="photo__stamp photo__stamp--sold">Sold</span>
+    } @else if (card().reserved) {
       <span class="photo__stamp">Reserved</span>
     }
-    <tl-size-tag [label]="card().sizeLabel" />
   </div>
   <div class="listing-card__meta">
-    <span class="listing-card__brand">{{ card().brand }}</span>
     <span class="listing-card__title">{{ card().title }}</span>
-    <span class="listing-card__foot"
-      ><span class="listing-card__condition">{{ card().condition }}</span
+    <span class="listing-card__brand">{{ card().brand }}</span>
+    <span class="listing-card__facts">{{ card().sizeLabel }} · {{ card().condition }}</span>
+    <span class="listing-card__price"
       ><span class="price">{{ card().price }}</span></span
     >
   </div>

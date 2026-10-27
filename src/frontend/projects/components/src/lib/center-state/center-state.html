@@ -4,6 +4,8 @@
       >{{ code[0] }}<em>{{ code.slice(1, -1) }}</em
       >{{ code.slice(-1) }}</span
     >
+  } @else if (tilly(); as pose) {
+    <tl-tilly [pose]="pose" size="confirm" />
   } @else if (icon(); as icon) {
     <div class="empty__icon"><tl-icon [name]="icon" size="lg" /></div>
   }

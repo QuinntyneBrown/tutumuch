@@ -2,11 +2,11 @@
   @case ('loading') {
     <h1 class="visually-hidden">Loading profile</h1>
     <section class="profile-head" aria-busy="true" aria-label="Loading profile">
-      <span class="skeleton avatar avatar--xl"></span>
+      <tl-skeleton class="avatar avatar--xl" />
       <div class="profile-head__body">
-        <span class="skeleton skeleton--title member-profile__skeleton-name"></span>
-        <span class="skeleton skeleton--text skeleton--w35"></span>
-        <span class="skeleton skeleton--text skeleton--w30"></span>
+        <tl-skeleton shape="title" class="member-profile__skeleton-name" />
+        <tl-skeleton class="skeleton--w35" />
+        <tl-skeleton class="skeleton--w30" />
       </div>
     </section>
     <tl-listing-grid [cards]="[]" [loading]="true" />
@@ -14,7 +14,7 @@
   @case ('unavailable') {
     <tl-center-state code="404" heading="This member isn’t available">
       <p class="text-muted">The account may have been closed.</p>
-      <a actions tlButton="primary" routerLink="/">Back to shop</a>
+      <a actions tlButton="primary" routerLink="/">Shop the closet</a>
     </tl-center-state>
   }
   @case ('error') {
@@ -25,7 +25,7 @@
       <button actions tlButton="primary" type="button" (click)="store.retry()">
         <tl-icon name="refresh" />Try again
       </button>
-      <a actions tlButton routerLink="/">Back to shop</a>
+      <a actions tlButton routerLink="/">Shop the closet</a>
     </tl-center-state>
   }
   @default {

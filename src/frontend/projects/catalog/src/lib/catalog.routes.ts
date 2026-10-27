@@ -10,46 +10,46 @@ const categoryMenusOpen: CanActivateFn = () =>
 
 /** Lazy routes of the catalog feature area, mounted at /: the catalog, one page per category (from launch Phase 2) and the listing detail. */
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', loadComponent: page, title: 'TuTuMuch' },
+  { path: '', pathMatch: 'full', loadComponent: page, data: { shell: 'wide' }, title: 'TuTuMuch' },
   {
     path: 'clothing',
     loadComponent: page,
-    data: { pageCategory: 'Clothing' },
+    data: { pageCategory: 'Clothing', shell: 'wide' },
     canActivate: [categoryMenusOpen],
     title: 'Clothing · TuTuMuch',
   },
   {
     path: 'shoes',
     loadComponent: page,
-    data: { pageCategory: 'Shoes' },
+    data: { pageCategory: 'Shoes', shell: 'wide' },
     canActivate: [categoryMenusOpen],
     title: 'Shoes · TuTuMuch',
   },
   {
     path: 'dance',
     loadComponent: page,
-    data: { pageCategory: 'Dance' },
+    data: { pageCategory: 'Dance', shell: 'wide' },
     canActivate: [categoryMenusOpen],
     title: 'Dance · TuTuMuch',
   },
   {
     path: 'sports',
     loadComponent: page,
-    data: { pageCategory: 'Sports' },
+    data: { pageCategory: 'Sports', shell: 'wide' },
     canActivate: [categoryMenusOpen],
     title: 'Sports · TuTuMuch',
   },
   {
     path: 'cameras-and-tech',
     loadComponent: page,
-    data: { pageCategory: 'Cameras and tech' },
+    data: { pageCategory: 'Cameras and tech', shell: 'wide' },
     canActivate: [categoryMenusOpen],
     title: 'Cameras and tech · TuTuMuch',
   },
   {
     path: 'toys-and-crafts',
     loadComponent: page,
-    data: { pageCategory: 'Toys and crafts' },
+    data: { pageCategory: 'Toys and crafts', shell: 'wide' },
     canActivate: [categoryMenusOpen],
     title: 'Toys and crafts · TuTuMuch',
   },

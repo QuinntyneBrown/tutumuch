@@ -2,19 +2,19 @@
   @case ('loading') {
     <h1 class="visually-hidden">Loading listing</h1>
     <div class="detail" aria-busy="true" aria-label="Loading listing">
-      <div class="gallery"><span class="skeleton skeleton--photo"></span></div>
+      <div class="gallery"><tl-skeleton shape="photo" /></div>
       <div class="detail__info">
         <div class="stack stack--sm">
-          <span class="skeleton skeleton--text skeleton--w20"></span>
-          <span class="skeleton skeleton--title skeleton--w80"></span>
-          <span class="skeleton skeleton--text skeleton--w35"></span>
+          <tl-skeleton width="20%" />
+          <tl-skeleton shape="title" width="80%" />
+          <tl-skeleton width="35%" />
         </div>
-        <span class="skeleton skeleton--title skeleton--w30"></span>
-        <span class="skeleton skeleton--rect listing-detail__bar-skeleton"></span>
+        <tl-skeleton shape="title" width="30%" />
+        <tl-skeleton shape="rect" height="3rem" />
         <div>
-          <span class="skeleton skeleton--text"></span>
-          <span class="skeleton skeleton--text"></span>
-          <span class="skeleton skeleton--text"></span>
+          <tl-skeleton />
+          <tl-skeleton />
+          <tl-skeleton />
         </div>
       </div>
     </div>
@@ -22,7 +22,7 @@
   @case ('unavailable') {
     <tl-center-state code="404" heading="This item isn’t available">
       <p class="text-muted">It may have been sold or taken down.</p>
-      <a actions tlButton="primary" routerLink="/">Shop similar items</a>
+      <a actions tlButton="primary" routerLink="/">Find similar</a>
     </tl-center-state>
   }
   @case ('error') {
@@ -32,7 +32,7 @@
       <button actions tlButton="primary" type="button" (click)="store.retry()">
         <tl-icon name="refresh" />Try again
       </button>
-      <a actions tlButton routerLink="/">Back to shop</a>
+      <a actions tlButton routerLink="/">Shop the closet</a>
     </tl-center-state>
   }
   @default {
@@ -49,7 +49,7 @@
         </ol>
       </nav>
       <div class="detail">
-        <tl-gallery [photos]="listing.photos" />
+        <tl-gallery [photos]="listing.photos" [sold]="listing.status === 'Sold'" />
         <div class="detail__info">
           <div class="stack stack--sm">
             @if (listing.status === 'Reserved') {
@@ -61,7 +61,7 @@
             <h1 class="detail__title">{{ listing.title }}</h1>
             <div class="cluster listing-detail__size">
               <tl-size-tag [label]="listing.sizeLabel" [large]="true" />
-              <span class="text-muted">{{ listing.condition }}</span>
+              <tl-condition-badge [condition]="listing.condition" />
             </div>
           </div>
           <div class="detail__price">
@@ -97,6 +97,11 @@
               </tl-buy-bar>
             }
           }
+          @if (listing.status === 'Sold') {
+            <div class="cluster">
+              <a tlButton="primary" [routerLink]="categoryPath()">Find similar</a>
+            </div>
+          }
           @if (listing.status === 'Reserved') {
             <tl-alert tone="warning" icon="clock" heading="In someone’s checkout"
               >If they don’t finish within 10 minutes, it’s back on sale.</tl-alert
@@ -124,7 +129,7 @@
       @if (similarCards().length > 0) {
         <section class="section listing-detail__similar" aria-labelledby="similar-title">
           <div class="section-head">
-            <h2 id="similar-title">More for girls</h2>
+            <h2 id="similar-title">Similar in the closet</h2>
           </div>
           <tl-listing-grid [cards]="similarCards()" />
         </section>

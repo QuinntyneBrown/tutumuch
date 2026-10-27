@@ -6,6 +6,7 @@ import {
   ButtonDirective,
   EmptyStateComponent,
   IconComponent,
+  SkeletonComponent,
   SwitchComponent,
   ToastService,
 } from '@tutumuch/components';
@@ -17,7 +18,7 @@ import {
  */
 @Component({
   selector: 'tl-notification-settings-page',
-  imports: [AlertComponent, ButtonDirective, EmptyStateComponent, IconComponent, SwitchComponent],
+  imports: [AlertComponent, ButtonDirective, EmptyStateComponent, IconComponent, SwitchComponent, SkeletonComponent],
   templateUrl: './notification-settings-page.html',
   styleUrl: './notification-settings-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

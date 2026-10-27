@@ -12,6 +12,7 @@ import {
   OrderSummaryItem,
   OrderTimelineComponent,
   QuoteComponent,
+  SkeletonComponent,
   ThreadComponent,
   TrackingLinkComponent,
 } from '@tutumuch/components';
@@ -59,6 +60,7 @@ const HEADINGS: Record<string, string> = {
     QuoteComponent,
     ThreadComponent,
     TrackingLinkComponent,
+    SkeletonComponent,
   ],
   templateUrl: './sale-detail-page.html',
   styleUrl: './sale-detail-page.css',
@@ -101,8 +103,8 @@ export class SaleDetailPage {
     if (sale?.status === 'Refunded')
       return sale.problem?.resolutionReason ?? 'Our team decided the problem for the buyer.';
     if (sale?.canRelist || sale?.status !== 'Cancelled')
-      return 'The listing stays off the catalog until you relist it.';
-    return 'The listing is back in the catalog.';
+      return 'The listing stays out of the closet until you relist it.';
+    return 'The listing is back in the closet.';
   });
   readonly ended = computed(() => ['Cancelled', 'Refunded'].includes(this.sale()?.status ?? ''));
   readonly steps = computed(() => timelineSteps(this.sale()?.timeline ?? []));

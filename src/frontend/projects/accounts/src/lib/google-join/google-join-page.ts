@@ -8,6 +8,7 @@ import {
   ChoiceComponent,
   ErrorSummaryComponent,
   FormFieldComponent,
+  SkeletonComponent,
   SummaryError,
 } from '@tutumuch/components';
 
@@ -38,6 +39,7 @@ type State = 'loading' | 'form' | 'submitting' | 'expired';
     ChoiceComponent,
     ErrorSummaryComponent,
     FormFieldComponent,
+    SkeletonComponent,
   ],
   templateUrl: './google-join-page.html',
   styleUrl: './google-join-page.css',

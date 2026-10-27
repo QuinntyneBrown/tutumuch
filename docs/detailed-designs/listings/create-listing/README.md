@@ -27,7 +27,7 @@ The slice runs from the sell page in the `@tutumuch/listings` library through `T
 
 - **`SellPage`** (`@tutumuch/listings`, `src/lib/sell/`) — routed standalone component at `/sell` (new listing) and `/sell/:reference` (continue a draft), exported through the library's lazy route table. It awaits `AuthState.load()` from `@tutumuch/api` and renders one of these states:
   - visitor — redirects to `/sign-in?returnUrl=/sell`.
-  - `unverified` — `tl-center-state` "Verify your email to sell", "We sent a link to {email}.", with "Resend link" (opens the verify-email prompt through `DialogService`) and "Back to shop". Also shown when a call answers 403 `EMAIL_NOT_VERIFIED`.
+  - `unverified` — `tl-center-state` "Verify your email to sell", "We sent a link to {email}.", with "Resend link" (opens the verify-email prompt through `DialogService`) and "Shop the closet". Also shown when a call answers 403 `EMAIL_NOT_VERIFIED`.
   - `error` — "Couldn't open the form" with the correlation ID ("Ref 5c1d-0e7a") and "Try again", when categories, options or the draft fail to load (`L2-068`).
   - `default` / `filled` — the listing form.
   - `invalid` — `tl-error-summary` at the top, each error inline through `tl-form-field`, focus moved to the summary, which is announced as an alert.

@@ -1,7 +1,25 @@
 /* Application-level styles. Tokens and component styles come from @tutumuch/components (angular.json). */
 
-/* Titan One, the wordmark face (brand kit), self-hosted under the SIL Open Font License
+/* The page-guideline faces (ADR general/0009), self-hosted latin variable subsets under the SIL
+   Open Font License: Fraunces for headings and prices (public/fonts/Fraunces-OFL.txt), DM Sans for
+   everything else (public/fonts/DMSans-OFL.txt) and Titan One for the wordmark and mark only
    (public/fonts/TitanOne-OFL.txt). */
+@font-face {
+  font-family: 'Fraunces';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/fraunces-latin-full.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 100 1000;
+  font-display: swap;
+  src: url('/fonts/dm-sans-latin-opsz.woff2') format('woff2');
+}
+
 @font-face {
   font-family: 'Titan One';
   font-style: normal;

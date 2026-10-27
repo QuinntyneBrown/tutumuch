@@ -1,17 +1,27 @@
 import { Locator, Page } from '@playwright/test';
 
-/** One filter form, in the sidebar or the filter sheet: category, subcategory, brand, condition, price. */
+/** One filter form, in the sidebar or the filter sheet: category, subcategory, size, condition, then brand and price under "More filters". */
 export class FilterForm {
   readonly minPrice: Locator;
   readonly maxPrice: Locator;
   readonly priceError: Locator;
   readonly allBrands: Locator;
+  /** The "More filters" disclosure that holds Brand and Price (page guidelines 8). */
+  readonly moreFilters: Locator;
 
   constructor(readonly root: Locator) {
     this.minPrice = root.getByLabel('Minimum price in dollars');
     this.maxPrice = root.getByLabel('Maximum price in dollars');
     this.priceError = root.locator('.field__error');
     this.allBrands = root.getByRole('button', { name: /^All \d+ brands$/ });
+    this.moreFilters = root.locator('summary', { hasText: 'More filters' });
+  }
+
+  /** Opens "More filters" so Brand and Price can be used; a no-op when it is already open. */
+  async openMore(): Promise<void> {
+    if (!(await this.moreFilters.locator('xpath=..').evaluate((d) => (d as HTMLDetailsElement).open))) {
+      await this.moreFilters.click();
+    }
   }
 
   group(legend: string): Locator {

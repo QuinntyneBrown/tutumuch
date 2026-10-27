@@ -5,7 +5,10 @@
       <p class="subtitle">{{ subtitle }}</p>
     }
   </div>
-  <a tlButton="primary" routerLink="/sell"><tl-icon name="plus" />Sell an item</a>
+  @if (listings()?.counts.all !== 0) {
+    <!-- The empty state carries the one primary action instead (L2-096). -->
+    <a tlButton="primary" routerLink="/sell"><tl-icon name="plus" />Sell outgrown gear</a>
+  }
 </div>
 @if (showFilter()) {
   <tl-filter-chips
@@ -21,11 +24,11 @@
       @for (row of [1, 2, 3, 4]; track row) {
         <li>
           <div class="item-row my-listings__skeleton-row">
-            <span class="skeleton skeleton--rect thumb thumb--lg"></span>
+            <tl-skeleton shape="rect" class="thumb thumb--lg" />
             <div class="item-row__body">
-              <span class="skeleton skeleton--text my-listings__skeleton-title"></span>
+              <tl-skeleton class="my-listings__skeleton-title" />
             </div>
-            <span class="skeleton skeleton--text my-listings__skeleton-price"></span>
+            <tl-skeleton class="my-listings__skeleton-price" />
           </div>
         </li>
       }
@@ -41,8 +44,8 @@
     @if (listings(); as listings) {
       @if (listings.counts.all === 0) {
         <tl-empty-state icon="tag" heading="Nothing listed yet">
-          List a pair of 12s or something in L.
-          <a actions tlButton="primary" routerLink="/sell">Sell an item</a>
+          List a dress, a leotard or anything she’s outgrown.
+          <a actions tlButton="primary" routerLink="/sell">Sell outgrown gear</a>
         </tl-empty-state>
       } @else {
         <ul class="order-list" role="list">

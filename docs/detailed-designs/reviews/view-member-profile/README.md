@@ -60,9 +60,9 @@ built now, and what waits for review authoring and edit-profile, is recorded in
   - *long*: 24 cards per page (`L2-041`); `tl-load-more` reads "Showing {loaded} of {total}".
     A failed next page shows the danger `tl-alert` "Couldn’t load more items" with "Try again".
   - *unavailable*: `tl-center-state` with code "404", "This member isn’t available", "The
-    account may have been closed." and "Back to shop" (to `/`).
+    account may have been closed." and "Shop the closet" (to `/`).
   - *error*: `tl-center-state` "Couldn’t load this profile", "It’s us, not you." with the
-    reference, "Try again" and "Back to shop" (`L2-068`).
+    reference, "Try again" and "Shop the closet" (`L2-068`).
   - *own*: the same as *default*; "Edit profile" waits for edit-profile.
 - **`tl-rating-summary`** (`@tutumuch/components`): `role="img"` named "Rated {average} out of 5
   from {count} reviews" with the stars, the average to one decimal place and "({count}

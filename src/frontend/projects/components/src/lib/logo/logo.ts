@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { MarkComponent } from '../mark/mark';
+
 /** One wordmark letter: it bounces on its own baseline (dy in em, rot in degrees), as in the brand kit. */
 interface WordmarkLetter {
   readonly ch: string;
@@ -22,18 +24,24 @@ const LETTERS: readonly WordmarkLetter[] = [
 ];
 
 /**
- * The TuTuMuch wordmark as a link home: polka-dot "TuTu", gingham "Much", plum outline and a
- * raspberry drop shadow (brand kit: Gingham wordmark). Sizes sm, md, lg (design system: Top bar, Footer).
+ * The TuTuMuch wordmark as a link home: polka-dot "TuTu", gingham "Much", ink outline and a
+ * raspberry drop shadow (brand kit: Gingham wordmark), the one logo of a page (design system:
+ * Logo, Top bar). Sizes sm, md, lg, never under 28px tall. `tone="reversed"` (ink shadow, paler
+ * dots, a sunny "Much") is only for raspberry backgrounds. `responsive` shows `tl-mark` instead
+ * under 640px, inside the same link.
  */
 @Component({
   selector: 'tl-logo',
-  imports: [RouterLink],
+  imports: [RouterLink, MarkComponent],
   templateUrl: './logo.html',
   styleUrl: './logo.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LogoComponent {
   readonly size = input<'sm' | 'md' | 'lg'>('md');
+  readonly tone = input<'color' | 'reversed'>('color');
+  /** Under 640px show the mark in place of the wordmark (the app header). */
+  readonly responsive = input(false);
   readonly letters = LETTERS;
 
   transform(letter: WordmarkLetter): string {

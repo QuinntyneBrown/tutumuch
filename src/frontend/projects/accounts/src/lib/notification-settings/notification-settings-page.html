@@ -13,10 +13,10 @@
         @for (row of [1, 2, 3, 4]; track row) {
           <li>
             <div class="settings-list__body">
-              <span class="skeleton skeleton--text emails__skeleton-title"></span>
-              <span class="skeleton skeleton--text emails__skeleton-meta"></span>
+              <tl-skeleton class="emails__skeleton-title" />
+              <tl-skeleton class="emails__skeleton-meta" />
             </div>
-            <span class="skeleton skeleton--rect emails__skeleton-switch"></span>
+            <tl-skeleton shape="rect" class="emails__skeleton-switch" />
           </li>
         }
       </ul>

@@ -21,7 +21,7 @@ export class OrderDetailPage {
   readonly askToCancel: Locator;
   readonly requestNote: Locator;
   readonly quote: Locator;
-  readonly shopSimilar: Locator;
+  readonly findSimilar: Locator;
 
   constructor(private readonly page: Page) {
     const main = page.locator('main');
@@ -44,7 +44,7 @@ export class OrderDetailPage {
     this.askToCancel = main.getByRole('button', { name: 'Ask to cancel' });
     this.requestNote = main.locator('.order__request');
     this.quote = main.locator('blockquote');
-    this.shopSimilar = main.getByRole('link', { name: 'Shop similar items' });
+    this.findSimilar = main.getByRole('link', { name: 'Find similar' });
   }
 
   async goto(id = 'o-1'): Promise<void> {

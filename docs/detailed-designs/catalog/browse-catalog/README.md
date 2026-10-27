@@ -28,7 +28,7 @@ Feature library `@tutumuch/catalog` (`src/frontend/projects/catalog/src/lib/`), 
 - **`CatalogPage`** (`catalog/catalog-page`) — renders the hero ("Find something *she’ll love.*" and the lead "Clothes, dance and sports gear, cameras, toys and more, from families whose girls have outgrown them.") at `/`, or a page header with the category name and a large `tl-size-tag` on a category page; then the toolbar with the polite item count and the grid. It reads all state from `CatalogStore` and renders exactly one view:
   - `loading` — `tl-listing-grid` with 8 skeleton cards (`aria-busy="true"`, label "Loading listings"); the count shows a text skeleton.
   - `loaded` — the grid, the count "1,284 items" and `tl-load-more`.
-  - `empty` — `tl-empty-state` "Nothing listed yet", "Be the first to list a pair of 12s or something in L.", primary link "Sell an item" to `/sell`; the count reads "0 items".
+  - `empty` — `tl-empty-state` "Nothing listed yet", "Be the first to list a pair of 12s or something in L.", primary link "Sell outgrown gear" to `/sell`; the count reads "0 items".
   - `error` — `tl-empty-state` in the error tone: "Couldn’t load items", "Something went wrong on our side. Ref {ref}", "Try again" repeats the request.
   - `offline` — warning `tl-alert` banner "You’re offline. Showing items from your last visit." at the top of `main`, the saved cards and the count "{n} saved items"; no Load more.
 - **`CatalogStore`** — signal store provided by the page. `load(category)` fetches page 1 and replaces the cards; `retry()` repeats it; `loadMore()` fetches the next page and appends cards whose `id` is not shown yet (offset paging can repeat a card when newer listings are published between requests). When a next page fails, the cards stay and a danger `tl-alert` "Couldn’t load more items" with the reference and a Try again link is shown. After a successful first page of `/` it writes the cards to `localStorage` key `tutumuch.catalog.snapshot.v1` (public listing data only); when page 1 fails with status 0 while `navigator.onLine` is false, that snapshot is shown. Storage failures are ignored and only disable the offline view.
@@ -80,7 +80,7 @@ Feature library `@tutumuch/catalog` (`src/frontend/projects/catalog/src/lib/`), 
 In launch Phase 1 ([launch-phases](../../platform/launch-phases/README.md), `L2-093`) the six
 category routes carry the `categoryMenusOpen` guard, which redirects to `/`; `FilterForm` has no
 Category fieldset; the top bar shows no category links or menu button; and the empty state's
-"Sell an item" shows only while `LaunchState.canSell()`. The API is unchanged: the catalog lists
+"Sell outgrown gear" shows only while `LaunchState.canSell()`. The API is unchanged: the catalog lists
 every Active and Reserved listing in every phase.
 
 ### Error codes

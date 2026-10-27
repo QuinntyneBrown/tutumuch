@@ -231,7 +231,7 @@ def _():
 
 @pu.state("empty", "No purchases yet: one action, browse the catalog.")
 def _():
-    return Page(main=page_head("Purchases") + empty("bag", "Nothing bought yet", "Everything in the catalog is girls’ clothing.", btn("Shop the closet", "primary", P("catalog"))), account="purchases")
+    return Page(main=page_head("Purchases") + empty("bag", "Nothing bought yet", "Find her next favourite thing in the closet.", btn("Shop the closet", "primary", P("catalog"))), account="purchases")
 
 
 @pu.state("error", "Purchases failed to load; the account navigation stays.")

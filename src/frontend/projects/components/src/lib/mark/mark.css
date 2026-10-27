@@ -1,0 +1,24 @@
+:host {
+  display: inline-flex;
+  flex: none;
+}
+.mark__bg {
+  fill: var(--color-mark-bg);
+}
+.mark__light {
+  fill: var(--color-logo-gingham-light);
+}
+.mark__dark {
+  fill: var(--color-logo-gingham-dark);
+}
+.mark__letter {
+  font-family: var(--font-family-logo);
+  font-size: 76px;
+  paint-order: stroke;
+  stroke: var(--color-logo-outline);
+  stroke-width: 7.6px;
+  stroke-linejoin: round;
+}
+.mark__shadow {
+  fill: var(--color-logo-shadow);
+}
