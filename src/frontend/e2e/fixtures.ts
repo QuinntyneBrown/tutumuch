@@ -169,8 +169,9 @@ export async function signInAs(page: Page, member: MemberFixture): Promise<void>
 /**
  * Every test gets a page whose calls to TuTuMuch API are answered by fixtures (an auto fixture, so it
  * is in place before any beforeEach hook adds its own routes). The session endpoints
- * answer 401 (a visitor) unless a test signs a member in. Other unfixtured API calls are answered
- * 501 and recorded so a test can assert none happened.
+ * answer 401 (a visitor) unless a test signs a member in, and no third-party sign-in is offered
+ * unless a test says so. Other unfixtured API calls are answered 501 and recorded so a test can
+ * assert none happened.
  */
 /** The visitor's cookie choice before the test starts; `unknown` shows the consent banner (L2-056). */
 export type ConsentFixture = 'unknown' | 'necessary' | 'analytics';
@@ -206,6 +207,7 @@ export const test = base.extend<{ consent: ConsentFixture; unfixturedApiCalls: s
       const visitor = (route: Route) => route.fulfill(problem(401, 'UNAUTHENTICATED', 'Sign in to continue'));
       await page.route('**/api/auth/me', visitor);
       await page.route('**/api/auth/refresh', visitor);
+      await page.route('**/api/auth/providers', (route) => route.fulfill({ json: { google: false } }));
       await use(calls);
     },
     { auto: true },

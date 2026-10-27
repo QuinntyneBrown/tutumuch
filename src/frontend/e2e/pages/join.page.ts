@@ -11,6 +11,8 @@ export class JoinPage {
   readonly submit: Locator;
   readonly errorSummary: Locator;
   readonly resend: Locator;
+  /** "Continue with Google", rendered only when TuTuMuch API has a Google client (L2-088). */
+  readonly google: Locator;
 
   constructor(private readonly page: Page) {
     this.heading = page.getByRole('heading', { level: 1 });
@@ -22,6 +24,7 @@ export class JoinPage {
     this.submit = page.getByRole('button', { name: 'Join TuTuMuch' });
     this.errorSummary = page.getByRole('alert').filter({ hasText: 'Fix these to continue' });
     this.resend = page.getByRole('button', { name: 'Resend email' });
+    this.google = page.getByRole('link', { name: 'Continue with Google' });
   }
 
   async goto(): Promise<void> {

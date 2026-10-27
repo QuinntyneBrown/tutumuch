@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AccountsApi, ApiProblem, shortRef } from '@tutumuch/api';
@@ -9,6 +9,8 @@ import {
   ErrorSummaryComponent,
   FormFieldComponent,
   IconComponent,
+  OrDividerComponent,
+  ProviderButtonComponent,
   SummaryError,
 } from '@tutumuch/components';
 
@@ -23,7 +25,10 @@ const FIELDS = {
 
 type FieldId = (typeof FIELDS)[keyof typeof FIELDS];
 
-/** Join TuTuMuch at /join (L2-001, mocks pages/register). Client checks mirror TuTuMuch API and are never trusted. */
+/**
+ * Join TuTuMuch at /join (L2-001, L2-088, mocks pages/register). Client checks mirror TuTuMuch API and
+ * are never trusted. "Continue with Google" sits above the form when a Google client is configured.
+ */
 @Component({
   selector: 'tl-join-page',
   imports: [
@@ -35,12 +40,14 @@ type FieldId = (typeof FIELDS)[keyof typeof FIELDS];
     ErrorSummaryComponent,
     FormFieldComponent,
     IconComponent,
+    OrDividerComponent,
+    ProviderButtonComponent,
   ],
   templateUrl: './join-page.html',
   styleUrl: './join-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class JoinPage {
+export class JoinPage implements OnInit {
   private readonly api = inject(AccountsApi);
 
   readonly form = inject(NonNullableFormBuilder).group({
@@ -56,12 +63,20 @@ export class JoinPage {
   readonly failure = signal<string | null>(null);
   readonly resend = signal<'idle' | 'busy' | 'sent' | 'limited'>('idle');
   readonly email = signal('');
+  /** True once TuTuMuch API said a Google client is configured; the button renders only then. */
+  readonly googleOffered = signal(false);
+  readonly leavingForGoogle = signal(false);
+  readonly googleStartUrl = this.api.googleStartUrl('/');
 
   readonly summary = computed<SummaryError[]>(() =>
     Object.values(FIELDS)
       .filter((id) => this.errors()[id])
       .map((id) => ({ fieldId: id, message: this.errors()[id]! })),
   );
+
+  ngOnInit(): void {
+    void this.loadProviders();
+  }
 
   async submit(): Promise<void> {
     if (this.state() === 'submitting') return;
@@ -90,6 +105,11 @@ export class JoinPage {
     this.resend.set('busy');
     const result = await this.api.requestVerificationEmail(this.email());
     this.resend.set(result.ok ? 'sent' : 'limited');
+  }
+
+  private async loadProviders(): Promise<void> {
+    const result = await this.api.providers();
+    this.googleOffered.set(result.ok && result.value.google);
   }
 
   private showProblem(problem: ApiProblem): void {

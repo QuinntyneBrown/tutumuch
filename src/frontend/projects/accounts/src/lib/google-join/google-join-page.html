@@ -1,0 +1,96 @@
+@if (state() === 'expired') {
+  <div>
+    <h1>That took a little too long</h1>
+    <p class="text-muted google-join__lead">
+      Google sign-ins have to be finished within 10 minutes. Nothing was created.
+    </p>
+  </div>
+  <div class="stack">
+    <a tlButton="primary" size="lg" [block]="true" routerLink="/sign-in">Continue with Google again</a>
+    <a tlButton size="lg" [block]="true" routerLink="/sign-in">Back to sign in</a>
+  </div>
+} @else {
+  <div>
+    <h1>Almost there</h1>
+    <p class="text-muted google-join__lead">Pick a display name to finish joining with Google.</p>
+  </div>
+  @if (state() === 'loading') {
+    <div class="stack stack--lg" aria-busy="true" aria-label="Loading">
+      <div>
+        <span class="skeleton skeleton--text google-join__skeleton-label"></span>
+        <span class="skeleton skeleton--rect google-join__skeleton-input"></span>
+      </div>
+      <div>
+        <span class="skeleton skeleton--text google-join__skeleton-label"></span>
+        <span class="skeleton skeleton--rect google-join__skeleton-input"></span>
+      </div>
+      <span class="skeleton skeleton--text google-join__skeleton-line"></span>
+      <span class="skeleton skeleton--rect google-join__skeleton-button"></span>
+    </div>
+  } @else {
+    <tl-error-summary [errors]="summary()" />
+    @if (failure() !== null) {
+      <tl-alert tone="danger" heading="Couldn’t create your account"
+        >Try again in a moment. <span class="ref">{{ failure() }}</span></tl-alert
+      >
+    }
+    <form class="stack stack--lg" novalidate [formGroup]="form" (ngSubmit)="submit()">
+      <tl-form-field #mail fieldId="email" label="Google email" help="From your Google account. It counts as verified.">
+        <input
+          class="input"
+          id="email"
+          type="email"
+          readonly
+          [value]="email()"
+          [attr.aria-describedby]="mail.describedBy()"
+        />
+      </tl-form-field>
+      <tl-form-field
+        #name
+        fieldId="display-name"
+        label="Display name"
+        help="3–30 letters, numbers, _ or -. Shown publicly."
+        [error]="errors()['display-name']"
+      >
+        <input
+          class="input"
+          id="display-name"
+          type="text"
+          autocomplete="username"
+          formControlName="displayName"
+          [readonly]="state() === 'submitting'"
+          [attr.aria-describedby]="name.describedBy()"
+          [attr.aria-invalid]="name.invalid()"
+        />
+      </tl-form-field>
+      <div class="stack stack--sm">
+        <tl-choice #age inputId="age" [error]="errors().age">
+          <input
+            type="checkbox"
+            id="age"
+            formControlName="ageConfirmed"
+            [attr.aria-describedby]="age.describedBy()"
+            [attr.aria-invalid]="age.invalid()"
+          />
+          I’m 18 or older
+        </tl-choice>
+        <tl-choice #terms inputId="terms" [error]="errors().terms">
+          <input
+            type="checkbox"
+            id="terms"
+            formControlName="termsAccepted"
+            [attr.aria-describedby]="terms.describedBy()"
+            [attr.aria-invalid]="terms.invalid()"
+          />
+          I accept the <a routerLink="/terms">terms</a> and <a routerLink="/rules">marketplace rules</a>
+        </tl-choice>
+      </div>
+      <div class="stack">
+        <button tlButton="primary" size="lg" [block]="true" type="submit" [busy]="state() === 'submitting'">
+          Join TuTuMuch
+        </button>
+      </div>
+    </form>
+    <p class="text-sm text-muted">Not you? <a routerLink="/sign-in">Back to sign in</a></p>
+  }
+}
