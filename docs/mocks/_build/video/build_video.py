@@ -7,7 +7,7 @@ gradients or decorative shapes.
 
 Inputs  LINES below                         one narrated line per slide (caption text, spoken text)
         music/upbeat-ukulele-kids-excerpt.mp3  "Upbeat Ukulele Kids" (Cold_Fire, Pixabay), ducked under the voice
-        kokoro/                             Kokoro-82M ONNX + af_bella voice from Hugging Face (auto-downloaded;
+        kokoro/                             Kokoro-82M ONNX + af_heart voice from Hugging Face (auto-downloaded;
                                             the kokoro-onnx GitHub release when Hugging Face is unreachable)
         docs/design-system/assets/logo.png  the TuTuMuch wordmark
         docs/design-system/assets/fonts/    Fraunces and DM Sans (OFL)
@@ -29,19 +29,21 @@ HERE = pathlib.Path(__file__).resolve().parent
 REPO = HERE.parents[3]
 OUT_DIRS = [REPO / "src/frontend/projects/tutumuch/public/media", REPO / "docs/mocks/assets/media"]
 NAME = "tutumuch-pitch"
-HF_REPO, VOICE, SPEED = "onnx-community/Kokoro-82M-v1.0-ONNX", "af_bella", 1.12
+HF_REPO, VOICE, SPEED = "onnx-community/Kokoro-82M-v1.0-ONNX", "af_heart", 1.12
 MUSIC, MUSIC_DB = HERE / "music/upbeat-ukulele-kids-excerpt.mp3", -9
-LEAD, GAP, TAIL = 0.5, 0.45, 1.4  # seconds before the first line, between lines and after the last; the length follows the narration
+LEAD, GAP, TAIL = 1.0, 0.45, 2.5  # seconds of music alone before the first line, between lines and after the last; the length follows the narration
 SILENT_WPS = 2.6  # words per second used to time captions when there is no narration
 
 # (caption text, text the narrator speaks). Shopping only: nothing promises that a member can sell.
-# One line per slide, nothing that only fills time.
+# One line per slide, nothing that only fills time. "|" splits the spoken text into separate utterances, so a
+# question is synthesized on its own and ends rising. "Two Two Much" is how the name is said.
 LINES = [
-    ("Outgrown already? Welcome to TuTuMuch.", "Outgrown already? Welcome to Tutu Much!"),
+    ("Outgrown already? Welcome to TuTuMuch.", "Outgrown already?|Welcome to Two Two Much!"),
     ("New and gently loved clothes, shoes, dance and sports gear for girls.",
      "New and gently loved clothes, shoes, dance and sports gear for girls."),
     ("Every piece hand-picked, its condition named up front.", "Every piece hand-picked, its condition named up front."),
-    ("Find it, buy it, it ships to you. Shop the closet.", "Find it, buy it, it ships to you. Shop the closet!"),
+    ("Find it. Buy it. And it ships to you. Shop the closet.",
+     "Find it.|Buy it.|And it ships to you.|Shop the closet!"),
 ]
 
 ASSETS = REPO / "docs/design-system/assets"
@@ -143,11 +145,16 @@ class Narrator:
 
     def say(self, text, out):
         np = self.np
-        ids = self.tok.tokenize(self.tok.phonemize(text, lang="en-us"))
-        audio = self.sess.run(None, {self.input: np.array([[0, *ids, 0]], dtype=np.int64),
-                                     "style": self.style[len(ids)],
-                                     "speed": np.array([SPEED], dtype=np.float32)})[0].reshape(-1)
-        audio = np.trim_zeros(np.where(np.abs(audio) < 0.004, 0, audio))  # trim leading/trailing silence
+        parts = []
+        for part in text.split("|"):
+            ids = self.tok.tokenize(self.tok.phonemize(part.strip(), lang="en-us"))
+            audio = self.sess.run(None, {self.input: np.array([[0, *ids, 0]], dtype=np.int64),
+                                         "style": self.style[len(ids)],
+                                         "speed": np.array([SPEED], dtype=np.float32)})[0].reshape(-1)
+            audio = np.trim_zeros(np.where(np.abs(audio) < 0.004, 0, audio))  # trim leading/trailing silence
+            parts.append(audio)
+        pause = np.zeros(int(24000 * 0.25), dtype=parts[0].dtype)
+        audio = np.concatenate([x for p in parts for x in (p, pause)][:-1])
         with wave.open(str(out), "wb") as w:
             w.setnchannels(1); w.setsampwidth(2); w.setframerate(24000)
             w.writeframes((np.clip(audio, -1, 1) * 32767).astype(np.int16).tobytes())
@@ -204,7 +211,7 @@ def main():
     if music:
         inputs += ["-i", str(MUSIC)]
         bg = (f"[{n}:a]aresample=48000,atrim=0:{total:.3f},asetpts=PTS-STARTPTS,volume={MUSIC_DB}dB,"
-              f"afade=t=in:d=0.6,afade=t=out:st={total - 2.0:.3f}:d=2.0")
+              f"afade=t=in:d={LEAD:.3f},afade=t=out:st={total - 1.5:.3f}:d=1.5")
         if silent:
             filt.append(f"{bg},alimiter=limit=0.95[aout]")
         else:

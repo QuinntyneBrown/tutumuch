@@ -27,10 +27,10 @@ python -m pip install -r docs/mocks/_build/video/requirements.txt
 python -m playwright install chromium
 ```
 
-- **Voice**: Kokoro-82M from Hugging Face, voice `af_bella` at speed 1.12. The model and voice
+- **Voice**: Kokoro-82M from Hugging Face, voice `af_heart` at speed 1.12; the name is spoken "Two Two Much". A `|` splits a spoken line into separate utterances. The model and voice
   download into `kokoro/` (git-ignored, about 330 MB) on the first run. When Hugging Face is
   unreachable the script takes the same Kokoro-82M v1.0 weights from the `kokoro-onnx` GitHub
-  release (`model-files-v1.0`) and extracts `af_bella` from its voice pack.
+  release (`model-files-v1.0`) and extracts `af_heart` from its voice pack.
 - **Browser**: Python Playwright's Chromium; set `PLAYWRIGHT_BROWSERS_PATH` to reuse a
   pre-installed browser of the matching Playwright version.
 - **Music**: `music/upbeat-ukulele-kids-excerpt.mp3` is a 34-second excerpt of _Upbeat Ukulele
