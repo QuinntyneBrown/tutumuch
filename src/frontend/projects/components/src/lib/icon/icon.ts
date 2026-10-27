@@ -31,7 +31,8 @@ export type IconName =
   | 'play'
   | 'pause'
   | 'captions'
-  | 'bell';
+  | 'bell'
+  | 'heart';
 
 /** One decorative inline SVG icon from the TuTuMuch set, hidden from assistive technology (design system: Icon). */
 @Component({

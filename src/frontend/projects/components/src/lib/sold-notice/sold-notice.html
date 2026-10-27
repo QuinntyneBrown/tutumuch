@@ -1,0 +1,6 @@
+<section class="sold-notice" role="status" [attr.aria-labelledby]="id">
+  <span class="photo__stamp photo__stamp--sold">Sold</span>
+  <h2 #title class="sold-notice__title" tabindex="-1" [id]="id">{{ heading() }}</h2>
+  <p class="sold-notice__text"><ng-content /></p>
+  <div class="sold-notice__actions"><ng-content select="[actions]" /></div>
+</section>
