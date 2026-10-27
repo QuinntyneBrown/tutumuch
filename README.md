@@ -55,7 +55,7 @@ General marketplaces bury girls' things among everything else. On TuTuMuch every
 
 | Area          | Status    | What works today                                                                                                                               |
 | ------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| Accounts      | Available | Join, email verification, sign in and sign out with session cookies and rotating refresh tokens                                                |
+| Accounts      | Available | Join, email verification, sign in (with a password or with Google) and sign out with session cookies and rotating refresh tokens                |
 | Listings      | Available | Sell page with drafts, publishing, photo upload and processing, and a daily publish limit                                                      |
 | Catalog       | Available | Home and six category pages (`/clothing`, `/shoes`, `/dance`, `/sports`, `/cameras-and-tech`, `/toys-and-crafts`), paged newest first, and the listing detail page at `/items/{reference}` |
 | Orders        | Available | Checkout, shipping, receipt confirmation, payouts and order problems                                                                           |
@@ -195,6 +195,11 @@ Endpoints are served under `/api`, except processed photos under `/photos`. Endp
 | `POST` | `/api/auth/refresh`                 | Rotate the refresh token                               |
 | `POST` | `/api/auth/sign-out`                | End the session                                        |
 | `GET`  | `/api/auth/me`                      | Current member _(member)_                              |
+| `GET`  | `/api/auth/providers`               | Which third-party sign-ins are configured              |
+| `GET`  | `/api/auth/google/start`            | Leave for Google's consent page (`returnUrl`)          |
+| `GET`  | `/api/auth/google/callback`         | Back from Google: sign in, link or start a join        |
+| `GET`  | `/api/auth/google/pending`          | The email of a pending Google join                     |
+| `POST` | `/api/auth/google/finish`           | Finish a Google join: display name, age, terms         |
 | `GET`  | `/api/categories`                   | Categories and their accepted sizes                    |
 | `GET`  | `/api/selling/options`              | Brands, conditions and fee for the sell page           |
 | `POST` | `/api/listings`                     | Create a draft listing _(member)_                      |
