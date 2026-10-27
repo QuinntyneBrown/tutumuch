@@ -4,11 +4,12 @@
 
    Three tiers:
      1. Primitives  (--palette-*, --font-*, --size-*)  raw values, never used
-                    directly by components.
+                    directly by components. The only place a hex value may
+                    appear.
      2. Semantic    (--color-*, --text-*, --space-*, --radius-*, --shadow-*,
                     --duration-*, --ease-*, --z-*, --layout-*) meaning-based
                     aliases that components consume. Themes override these.
-     3. Component   (--button-*, --field-*, ...) declared in components.css,
+     3. Component   (--btn-*, --alert-*, ...) declared in components.css,
                     always alias a semantic token.
 
    Themes: light is the default (:root). Dark applies with
@@ -16,8 +17,12 @@
    page has not forced [data-theme="light"]. High-contrast tweaks apply
    under prefers-contrast: more and forced-colors.
 
-   Giddy: values harvested from docs/mocks (Oct 2026). Grape accent on a
-   cream canvas, night-sky dark theme, "party pop" decorative colours.
+   Giddy, drawn to the TuTuMuch page guidelines (docs/page-guidelines.md,
+   ADR general/0009). Palette, fonts and type scale come from the TuTuMuch
+   brand kit (Magic Patterns, tailwind.config.js, index.css, data/brand.ts):
+   raspberry, lilac, blush, sunny, cream, ink and muted; Fraunces for
+   headings and prices, DM Sans for everything else, Titan One only in the
+   logo. No gradients, no card shadows, quick ease-out motion.
    Re-run scripts/check_contrast.py after any change.
    ========================================================================== */
 
@@ -27,209 +32,206 @@
   --palette-white: #ffffff;
   --palette-black: #000000;
 
-  --palette-gray-25: #fbfbfc;
-  --palette-gray-50: #f6f7f9;
-  --palette-gray-100: #eef0f3;
-  --palette-gray-200: #dfe3e8;
-  --palette-gray-300: #c9cfd8;
-  --palette-gray-400: #a3abb8;
-  --palette-gray-500: #636c7b;
-  --palette-gray-600: #5e6675;
-  --palette-gray-700: #444b58;
-  --palette-gray-800: #2c323c;
-  --palette-gray-900: #1a1e26;
-  --palette-gray-950: #0f1216;
+  /* Raspberry (#D6336C): primary actions, links, active states, sale prices.
+     Raspberry 100 is Blush (#FDE2EA). */
+  --palette-raspberry-50: #fff0f5;
+  --palette-raspberry-100: #fde2ea; /* Blush: soft sections, tags, skeletons */
+  --palette-raspberry-200: #f9c2d4;
+  --palette-raspberry-300: #f29bbc;
+  --palette-raspberry-400: #e8689a;
+  --palette-raspberry-500: #de4b81;
+  --palette-raspberry-600: #d6336c; /* Raspberry */
+  --palette-raspberry-700: #c2255c; /* raspberry text and links: 5.4:1 on cream */
+  --palette-raspberry-800: #a61e4d;
+  --palette-raspberry-900: #7d173b;
+  --palette-raspberry-950: #4a0e23;
 
-  --palette-blue-50: #ebf2ff;
-  --palette-blue-100: #d6e3ff;
-  --palette-blue-200: #adc6ff;
-  --palette-blue-300: #8ab4ff;
-  --palette-blue-400: #5f93f7;
-  --palette-blue-500: #3b7af0;
-  --palette-blue-600: #2563eb;
-  --palette-blue-700: #1d4ed8;
-  --palette-blue-800: #1e3fae;
-  --palette-blue-900: #1b2f7a;
-  --palette-blue-950: #0f1f3d;
+  /* Lilac (#9B7FD4): small accents and selected chips; never text on light. */
+  --palette-lilac-50: #f6f2fd;
+  --palette-lilac-100: #ece5fa;
+  --palette-lilac-200: #d9ccf2;
+  --palette-lilac-300: #c3b0ea;
+  --palette-lilac-500: #9b7fd4; /* Lilac */
+  --palette-lilac-700: #6a4fb0;
+  --palette-lilac-800: #553e8f;
+  --palette-lilac-950: #261c42;
+  --palette-lilac-tint-15: #f0e6f0; /* lilac at 15% over cream (bg-lilac/15), opaque so contrast is measurable */
+  --palette-lilac-tint-30-night: #423251; /* lilac at 30% over the plum night */
 
-  /* Giddy brand: grape (accent), plus a cream canvas and a night-sky dark theme. */
-  --palette-grape-50: #f4efff;
-  --palette-grape-100: #e9dfff;
-  --palette-grape-200: #d4c1ff;
-  --palette-grape-300: #bb9dff;
-  --palette-grape-400: #9d70ff;
-  --palette-grape-500: #8247f5;
-  --palette-grape-600: #6c2fe0;
-  --palette-grape-700: #5a22c4;
-  --palette-grape-800: #46199c;
-  --palette-grape-900: #321272;
-  --palette-grape-950: #1d0b45;
+  /* Sunny (#F6C64B): condition badges and deal highlights, always with ink text. */
+  --palette-sunny-100: #fdf0c9;
+  --palette-sunny-300: #f9d77c;
+  --palette-sunny-400: #f6c64b; /* Sunny */
+  --palette-sunny-800: #6e4f00;
+  --palette-sunny-950: #332503;
 
-  --palette-cream-50: #fff9f1;
-  --palette-cream-100: #fbf1e3;
-  --palette-cream-200: #f3e4cf;
+  /* Cream (#FFF8F5): the page. */
+  --palette-cream-50: #fff8f5; /* Cream */
+  --palette-cream-100: #f8efea;
+  --palette-cream-200: #efe2db;
 
-  --palette-night-700: #3d3159;
-  --palette-night-800: #2b2142;
-  --palette-night-850: #241b38;
-  --palette-night-900: #1c1530;
-  --palette-night-950: #130e22;
-  --palette-night-990: #0e0a19;
+  /* Ink (#3A2233) and Muted (#7A6370) on a plum scale; the dark theme is a plum night. */
+  --palette-plum-50: #faf5f8;
+  --palette-plum-100: #f0e6ec;
+  --palette-plum-200: #dccbd5;
+  --palette-plum-300: #c0a9b7;
+  --palette-plum-400: #8f7a87;
+  --palette-plum-500: #7a6370; /* Muted */
+  --palette-plum-600: #634e5b;
+  --palette-plum-700: #523d4b;
+  --palette-plum-800: #3a2233; /* Ink */
+  --palette-plum-850: #2d1c29;
+  --palette-plum-900: #241620;
+  --palette-plum-950: #1c1119;
+  --palette-plum-990: #150c12;
+  --palette-ink-alpha-10: rgb(58 34 51 / 0.1);  /* thin separators (ink/10) */
+  --palette-ink-alpha-15: rgb(58 34 51 / 0.15); /* Well loved badge ring (ink/15) */
+  --palette-ink-alpha-55: rgb(58 34 51 / 0.55); /* modal scrim */
+  --palette-cream-alpha-12: rgb(255 248 245 / 0.12); /* dark theme separators */
+  --palette-cream-alpha-20: rgb(255 248 245 / 0.2);
 
-  /* Party pops: decorative fills for tiles, kid avatars and confetti. */
-  --palette-sun-100: #fff1c2;
-  --palette-sun-300: #ffd970;
-  --palette-sun-400: #ffc93c;
-  --palette-sun-800: #6e4a00;
-  --palette-sun-950: #332503;
-  --palette-pink-100: #ffe0ee;
-  --palette-pink-300: #ff9cc6;
-  --palette-pink-400: #ff6fa8;
-  --palette-pink-700: #c01a6b;
-  --palette-pink-800: #9c1655;
-  --palette-pink-950: #3b0d23;
-  --palette-mint-100: #d3f6e8;
-  --palette-mint-300: #7fe6c2;
-  --palette-mint-400: #3ccfa0;
-  --palette-mint-800: #0d6447;
-  --palette-mint-950: #08302a;
-  --palette-sky-100: #dbeeff;
-  --palette-sky-300: #8fd0ff;
-  --palette-sky-400: #4cb8ff;
-  --palette-sky-800: #0b5690;
-  --palette-sky-950: #0a2640;
-  --palette-orange-100: #ffe4d1;
-  --palette-orange-300: #ffb27f;
-  --palette-orange-400: #ff8a3d;
-  --palette-orange-800: #943a00;
-  --palette-orange-950: #3b1c06;
-
+  /* Status: success keeps a green (order states need it); the rest come from the palette. */
   --palette-green-50: #e9f8ee;
-  --palette-green-100: #cdf0d9;
   --palette-green-300: #7ed69a;
-  --palette-green-500: #2a8f52;
   --palette-green-700: #1b6b3c;
-  --palette-green-900: #0f3b22;
   --palette-green-950: #0b2918;
 
-  --palette-amber-50: #fff6e5;
-  --palette-amber-100: #ffe9c2;
-  --palette-amber-300: #f7c15c;
-  --palette-amber-500: #b26f00;
-  --palette-amber-700: #8a5300;
-  --palette-amber-900: #4d2f00;
-  --palette-amber-950: #2e1d05;
-
-  --palette-red-50: #fdecec;
-  --palette-red-100: #fbd5d4;
-  --palette-red-300: #f59b96;
-  --palette-red-500: #d93a30;
-  --palette-red-600: #c42c22;
-  --palette-red-700: #a0221b;
-  --palette-red-900: #5a1410;
-  --palette-red-950: #3a110d;
+  /* Logo art (brand kit): only inside tl-logo and tl-mark, never page colours. */
+  --palette-logo-lilac: #b9a3e8;    /* gingham, dark cells */
+  --palette-logo-lavender: #e3d8fa; /* gingham, light cells */
+  --palette-logo-grape: #8a5cd6;
+  --palette-logo-pink: #f29bbc;     /* polka dots */
+  --palette-logo-pink-reversed: #f7b8cf; /* polka dots on raspberry */
 
   /* ---------- Primitives: typography ----------------------------------- */
-  --font-family-sans: ui-rounded, "SF Pro Rounded", "Nunito", "Varela Round", "Quicksand", "Segoe UI", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-family-display: ui-rounded, "SF Pro Rounded", "Nunito", "Baloo 2", "Fredoka", "Segoe UI", system-ui, sans-serif;
-  --font-family-mono: ui-monospace, "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+  --font-family-sans: "DM Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-family-display: "Fraunces", ui-serif, Georgia, "Times New Roman", serif;
+  --font-family-logo: "Titan One", "Arial Rounded MT Bold", ui-rounded, sans-serif;
+  --font-family-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+  --font-variation-display: "SOFT" 100, "WONK" 0; /* the kit's soft Fraunces */
 
-  --font-size-xs: 0.75rem;    /* 12px  captions, badges */
-  --font-size-sm: 0.875rem;   /* 14px  secondary text, table cells */
-  --font-size-md: 1rem;       /* 16px  body */
-  --font-size-lg: 1.125rem;   /* 18px  lead paragraph, large body */
-  --font-size-xl: 1.25rem;    /* 20px  h4 */
-  --font-size-2xl: 1.5rem;    /* 24px  h3 */
+  --font-size-xs: 0.75rem;    /* 12px  captions */
+  --font-size-sm: 0.875rem;   /* 14px  secondary text, labels, badges */
+  --font-size-md: 1rem;       /* 16px  body on phones */
+  --font-size-lg: 1.125rem;   /* 18px  body from 768px, h4 */
+  --font-size-xl: 1.25rem;    /* 20px  price */
+  --font-size-2xl: 1.375rem;  /* 22px  h3 (subheading) */
   --font-size-3xl: 1.875rem;  /* 30px  h2 */
   --font-size-4xl: 2.25rem;   /* 36px  h1 */
-  --font-size-5xl: 3rem;      /* 48px  display */
+  --font-size-5xl: 3rem;      /* 48px  h1 from 768px */
+  --font-size-6xl: 4rem;      /* 64px  display */
+  --font-size-h1: var(--font-size-4xl);
+  --font-size-body: var(--font-size-md);
 
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
-  --font-weight-heavy: 800;
+  --font-weight-heavy: 700;
 
-  --line-height-tight: 1.2;   /* display, h1-h2 */
-  --line-height-snug: 1.3;    /* h3-h4 */
-  --line-height-normal: 1.5;  /* body */
-  --line-height-relaxed: 1.65;/* long-form reading */
+  --line-height-tight: 1.1;   /* display, h1-h2 */
+  --line-height-snug: 1.27;   /* h3 (22/28) */
+  --line-height-normal: 1.5;  /* UI text */
+  --line-height-relaxed: 1.75;/* body (16/28) */
 
-  --letter-spacing-tight: -0.01em;
+  --letter-spacing-tight: -0.025em; /* headings (tracking-tight) */
   --letter-spacing-normal: 0;
-  --letter-spacing-wide: 0.04em; /* all-caps labels */
+  --letter-spacing-wide: 0;   /* no letterspaced all-caps labels */
 
   /* ---------- Semantic: colour (light) --------------------------------- */
-  --color-bg-canvas: var(--palette-cream-50);       /* page background */
-  --color-bg-surface: var(--palette-white);         /* cards, panels, inputs */
-  --color-bg-surface-raised: var(--palette-white);  /* dialogs, menus, popovers */
-  --color-bg-surface-sunken: var(--palette-cream-100);/* wells, code blocks, table headers */
-  --color-bg-subtle: var(--palette-gray-100);       /* hover rows, chips */
-  --color-bg-subtle-hover: var(--palette-gray-200);
-  --color-bg-inverse: var(--palette-gray-900);      /* tooltips, dark toasts */
-  --color-bg-backdrop: rgba(15, 18, 22, 0.55);      /* modal scrim */
-
-  --color-fg-default: var(--palette-gray-900);      /* body text */
-  --color-fg-muted: var(--palette-gray-600);        /* secondary text */
-  --color-fg-subtle: var(--palette-gray-500);       /* placeholders, metadata (4.5:1 on surface) */
-  --color-fg-disabled: var(--palette-gray-400);     /* disabled text; exempt from contrast */
-  --color-fg-inverse: var(--palette-white);         /* text on inverse/accent backgrounds */
-  --color-fg-link: var(--palette-grape-700);
-  --color-fg-link-hover: var(--palette-grape-800);
-
-  --color-border-default: var(--palette-cream-200); /* dividers, card edges (decorative) */
-  --color-border-strong: var(--palette-gray-500);   /* form control edges (>= 3:1) */
-  --color-border-inverse: var(--palette-gray-700);
-
-  --color-accent: var(--palette-grape-600);          /* primary actions, selected states */
-  --color-accent-hover: var(--palette-grape-700);
-  --color-accent-active: var(--palette-grape-800);
-  --color-accent-subtle: var(--palette-grape-50);    /* selected row, accent chip background */
-  --color-accent-subtle-hover: var(--palette-grape-100);
+  --color-bg-canvas: var(--palette-cream-50); /* page background (Cream) */
+  --color-bg-surface: var(--palette-white); /* cards, photo wells, inputs (white) */
+  --color-bg-surface-raised: var(--palette-white); /* dialogs, menus, popovers */
+  --color-bg-surface-sunken: var(--palette-cream-100); /* wells, table headers */
+  --color-bg-subtle: var(--palette-cream-100); /* hover rows, quiet chips */
+  --color-bg-subtle-hover: var(--palette-cream-200);
+  --color-bg-blush: var(--palette-raspberry-100); /* soft section backgrounds and tags (Blush) */
+  --color-bg-inverse: var(--palette-plum-800); /* toasts (Ink) */
+  --color-bg-backdrop: var(--palette-ink-alpha-55);
+  --color-fg-default: var(--palette-plum-800); /* headings and body (Ink) */
+  --color-fg-muted: var(--palette-plum-500); /* secondary text and metadata (Muted); not on Blush */
+  --color-fg-subtle: var(--palette-plum-600); /* secondary text on Blush and sunken surfaces */
+  --color-fg-disabled: var(--palette-plum-300);
+  --color-fg-inverse: var(--palette-white);
+  --color-fg-link: var(--palette-raspberry-700); /* raspberry text: links and text buttons */
+  --color-fg-link-hover: var(--palette-plum-800); /* hover to Ink */
+  --color-border-default: var(--palette-ink-alpha-10); /* thin separators: ink at 10% */
+  --color-border-ring: var(--palette-ink-alpha-15);
+  --color-border-strong: var(--palette-plum-400); /* form control edges (>= 3:1) */
+  --color-border-inverse: var(--palette-plum-600);
+  --color-accent: var(--palette-raspberry-600); /* primary buttons, active states (Raspberry) */
+  --color-accent-hover: var(--palette-plum-800); /* primary button hover: Ink */
+  --color-accent-active: var(--palette-plum-900);
+  --color-accent-subtle: var(--palette-raspberry-100);
+  --color-accent-subtle-hover: var(--palette-raspberry-200);
   --color-fg-on-accent: var(--palette-white);
-  --color-fg-accent: var(--palette-grape-700);       /* accent-coloured text on surfaces */
-
-  --color-focus-ring: var(--palette-grape-600);
+  --color-fg-accent: var(--palette-raspberry-700);
+  --color-sale: var(--palette-raspberry-700);
+  --color-selected-bg: var(--palette-lilac-tint-15); /* selected chips: lilac at 15% */
+  --color-selected-border: var(--palette-lilac-500); /* selected chip ring (Lilac) */
+  --color-highlight: var(--palette-sunny-400); /* deals and Like new (Sunny), always with ink text */
+  --color-fg-on-highlight: var(--palette-plum-800);
+  --color-skeleton: var(--palette-raspberry-100); /* loading skeleton blocks (Blush) */
+  --color-focus-ring: var(--palette-raspberry-600);
   --color-focus-ring-offset: var(--color-bg-surface);
-
-  --color-info-bg: var(--palette-blue-50);
-  --color-info-fg: var(--palette-blue-800);
-  --color-info-border: var(--palette-blue-300);
-  --color-info-icon: var(--palette-blue-600);
-  --color-info-solid: var(--palette-blue-600);
-
+  --color-info-bg: var(--palette-lilac-50);
+  --color-info-fg: var(--palette-lilac-800);
+  --color-info-border: var(--palette-lilac-300);
+  --color-info-icon: var(--palette-lilac-700);
+  --color-info-solid: var(--palette-lilac-700);
   --color-success-bg: var(--palette-green-50);
   --color-success-fg: var(--palette-green-700);
   --color-success-border: var(--palette-green-300);
-  --color-success-icon: var(--palette-green-500);
+  --color-success-icon: var(--palette-green-700);
   --color-success-solid: var(--palette-green-700);
-
-  --color-warning-bg: var(--palette-amber-50);
-  --color-warning-fg: var(--palette-amber-700);
-  --color-warning-border: var(--palette-amber-300);
-  --color-warning-icon: var(--palette-amber-500);
-  --color-warning-solid: var(--palette-amber-700);
-
-  --color-danger-bg: var(--palette-red-50);
-  --color-danger-fg: var(--palette-red-700);
-  --color-danger-border: var(--palette-red-300);
-  --color-danger-icon: var(--palette-red-500);
-  --color-danger-solid: var(--palette-red-600);     /* destructive buttons */
-  --color-danger-solid-hover: var(--palette-red-700);
+  --color-warning-bg: var(--palette-sunny-100);
+  --color-warning-fg: var(--palette-sunny-800);
+  --color-warning-border: var(--palette-sunny-400);
+  --color-warning-icon: var(--palette-sunny-800);
+  --color-warning-solid: var(--palette-sunny-800);
+  --color-danger-bg: var(--palette-raspberry-50);
+  --color-danger-fg: var(--palette-raspberry-800);
+  --color-danger-border: var(--palette-raspberry-300);
+  --color-danger-icon: var(--palette-raspberry-700); /* error icons are raspberry, never all-red screens */
+  --color-danger-solid: var(--palette-raspberry-800);
+  --color-danger-solid-hover: var(--palette-plum-800);
   --color-fg-on-danger: var(--palette-white);
+  --color-inverse-info: var(--palette-lilac-300);
+  --color-inverse-success: var(--palette-green-300);
+  --color-inverse-warning: var(--palette-sunny-400);
+  --color-inverse-danger: var(--palette-raspberry-300);
+  --color-condition-new-bg: var(--palette-raspberry-600); /* New with tags */
+  --color-condition-new-fg: var(--palette-white);
+  --color-condition-like-new-bg: var(--palette-sunny-400); /* New without tags, Used - Excellent (Like new) */
+  --color-condition-like-new-fg: var(--palette-plum-800);
+  --color-condition-loved-bg: var(--palette-raspberry-100); /* Used - Good (Gently loved) */
+  --color-condition-loved-fg: var(--palette-plum-800);
+  --color-condition-well-loved-bg: var(--palette-white); /* Used - Fair (Well loved) */
+  --color-condition-well-loved-fg: var(--palette-plum-800);
+  --color-condition-well-loved-ring: var(--palette-ink-alpha-15);
+  --color-showcase-start: var(--palette-raspberry-100); /* marketing hero and closing band: a solid blush panel */
+  --color-showcase-end: var(--palette-raspberry-100);
+  --color-showcase-subtle: var(--palette-raspberry-200);
+  --color-fg-showcase: var(--palette-plum-800);
+  --color-fg-showcase-muted: var(--palette-plum-600);
+  --color-fg-showcase-accent: var(--palette-raspberry-800);
+  --color-photo-bg: var(--palette-white); /* listing photo wells are white in both themes, like real photos */
+  --color-mark-bg: var(--palette-raspberry-100); /* the mark's blush circle */
 
-  /* ---------- Semantic: typography roles ------------------------------- */
-  --text-display: var(--font-weight-heavy) var(--font-size-5xl) / var(--line-height-tight) var(--font-family-display);
-  --text-h1: var(--font-weight-heavy) var(--font-size-4xl) / var(--line-height-tight) var(--font-family-display);
-  --text-h2: var(--font-weight-bold) var(--font-size-3xl) / var(--line-height-tight) var(--font-family-display);
-  --text-h3: var(--font-weight-bold) var(--font-size-2xl) / var(--line-height-snug) var(--font-family-display);
-  --text-h4: var(--font-weight-bold) var(--font-size-xl) / var(--line-height-snug) var(--font-family-display);
-  --text-body-lg: var(--font-weight-regular) var(--font-size-lg) / var(--line-height-normal) var(--font-family-sans);
-  --text-body: var(--font-weight-regular) var(--font-size-md) / var(--line-height-normal) var(--font-family-sans);
-  --text-body-sm: var(--font-weight-regular) var(--font-size-sm) / var(--line-height-normal) var(--font-family-sans);
-  --text-caption: var(--font-weight-regular) var(--font-size-xs) / var(--line-height-normal) var(--font-family-sans);
-  --text-label: var(--font-weight-semibold) var(--font-size-sm) / var(--line-height-normal) var(--font-family-sans);
-  --text-overline: var(--font-weight-semibold) var(--font-size-xs) / var(--line-height-normal) var(--font-family-sans);
+  /* ---------- Semantic: typography roles (brand kit typeScale) --------- */
+  --text-display: var(--font-weight-semibold) clamp(2.5rem, 6vw, var(--font-size-6xl)) / 1 var(--font-family-display);      /* 64/64 */
+  --text-h1: var(--font-weight-semibold) var(--font-size-h1) / var(--line-height-tight) var(--font-family-display);            /* 36/40, 48 from 768px */
+  --text-h2: var(--font-weight-semibold) var(--font-size-3xl) / 1.2 var(--font-family-display);                               /* 30 */
+  --text-h3: var(--font-weight-medium) var(--font-size-2xl) / 1.75rem var(--font-family-display);                             /* 22/28 */
+  --text-h4: var(--font-weight-semibold) var(--font-size-lg) / 1.5rem var(--font-family-display);                             /* 18/24 card and dialog titles */
+  --text-body-lg: var(--font-weight-regular) var(--font-size-lg) / 1.75rem var(--font-family-sans);                           /* 18/28 */
+  --text-body: var(--font-weight-regular) var(--font-size-body) / 1.75rem var(--font-family-sans);                            /* 16/28, 18/28 from 768px */
+  --text-body-sm: var(--font-weight-regular) var(--font-size-sm) / 1.25rem var(--font-family-sans);                           /* 14/20 secondary */
+  --text-caption: var(--font-weight-regular) var(--font-size-xs) / 1rem var(--font-family-sans);
+  --text-label: var(--font-weight-semibold) var(--font-size-sm) / 1.25rem var(--font-family-sans);                            /* 14/20 */
+  --text-overline: var(--font-weight-semibold) var(--font-size-sm) / 1.25rem var(--font-family-sans);                         /* sentence case, never all caps */
+  --text-price: var(--font-weight-semibold) var(--font-size-xl) / 1.4 var(--font-family-display);                             /* 20, tabular figures */
+  --text-price-original: var(--font-weight-regular) var(--font-size-sm) / 1.25rem var(--font-family-sans);                    /* 14, muted, struck */
   --text-code: var(--font-weight-regular) var(--font-size-sm) / var(--line-height-normal) var(--font-family-mono);
 
   /* ---------- Semantic: spacing (4px base) ----------------------------- */
@@ -237,19 +239,19 @@
   --space-0-5: 0.125rem; /* 2px  hairline gaps */
   --space-1: 0.25rem;    /* 4px  icon-to-label */
   --space-2: 0.5rem;     /* 8px  inside chips, between inline items */
-  --space-3: 0.75rem;    /* 12px compact padding */
+  --space-3: 0.75rem;    /* 12px compact padding, badge x-padding */
   --space-4: 1rem;       /* 16px default padding, stack gap */
   --space-5: 1.25rem;    /* 20px */
-  --space-6: 1.5rem;     /* 24px card padding, section gap (mobile) */
+  --space-6: 1.5rem;     /* 24px button x-padding, page gutter on phones */
   --space-8: 2rem;       /* 32px section gap */
-  --space-10: 2.5rem;    /* 40px */
-  --space-12: 3rem;      /* 48px page section spacing */
-  --space-16: 4rem;      /* 64px hero spacing */
-  --space-20: 5rem;      /* 80px */
+  --space-10: 2.5rem;    /* 40px page gutter from 768px */
+  --space-12: 3rem;      /* 48px */
+  --space-16: 4rem;      /* 64px section spacing (py-16) */
+  --space-20: 5rem;      /* 80px section spacing from 768px (py-20) */
   --space-24: 6rem;      /* 96px */
 
   /* ---------- Semantic: layout ----------------------------------------- */
-  --layout-breakpoint-sm: 40rem;   /* 640px  large phones */
+  --layout-breakpoint-sm: 40rem;   /* 640px  large phones; the header swaps the mark for the wordmark */
   --layout-breakpoint-md: 48rem;   /* 768px  tablets */
   --layout-breakpoint-lg: 64rem;   /* 1024px small laptops */
   --layout-breakpoint-xl: 80rem;   /* 1280px desktops */
@@ -257,51 +259,58 @@
 
   --layout-columns: 4;              /* grid columns at the current breakpoint */
   --layout-gutter: var(--space-4);  /* gap between columns */
-  --layout-margin: var(--space-4);  /* page edge to content */
-  --layout-container-max: 80rem;    /* 1280px */
-  --layout-measure: 65ch;           /* max line length for prose */
+  --layout-margin: var(--space-6);  /* page edge to content (px-6) */
+  --layout-container-max: 72rem;    /* 1152px content width (max-w-6xl) */
+  --layout-container-wide: 80rem;   /* 1280px product grids (max-w-7xl) */
+  --layout-measure: 42rem;          /* about 70 characters (max-w-2xl) */
   --layout-sidebar-width: 16rem;    /* 256px */
   --layout-topbar-height: 4rem;     /* 64px */
   --layout-bottom-nav-height: 4.5rem; /* 72px mobile tab bar */
   --layout-aside-width: 22rem;      /* 352px right-hand column in .split */
 
-  /* Illustration sizes: emoji art, mascot and empty-state artwork */
-  --size-illustration-sm: 2.25rem;  /* 36px  mascot in chat */
-  --size-illustration-md: 4rem;     /* 64px  media tiles, invitation */
-  --size-illustration-lg: 6rem;     /* 96px  hero gallery tile */
-  --size-illustration-xl: 10rem;    /* 160px landing and status pages */
+  /* Illustration sizes: Tilly and empty-state artwork */
+  --size-illustration-sm: 2.25rem;  /* 36px  mark in the compact header */
+  --size-illustration-md: 6rem;     /* 96px  Tilly in a dialog */
+  --size-illustration-lg: 10rem;    /* 160px Tilly in an empty state */
+  --size-illustration-xl: 18rem;    /* 288px Tilly in a hero or category header */
 
   /* ---------- Semantic: shape ------------------------------------------ */
-  --radius-xs: 0.125rem;  /* 2px  checkbox */
-  --radius-sm: 0.5rem;    /* 8px  compact controls */
-  --radius-md: 0.875rem;  /* 14px inputs, menus, wells */
-  --radius-lg: 1.25rem;   /* 20px cards, dialogs */
-  --radius-xl: 1.75rem;   /* 28px sheets, hero panels */
-  --radius-full: 9999px;  /* pills, avatars */
+  --radius-xs: 0.25rem;   /* 4px  checkbox */
+  --radius-sm: 0.75rem;   /* 12px compact controls, thumbnails */
+  --radius-md: 1rem;      /* 16px inputs, swatches, wells (rounded-2xl) */
+  --radius-lg: 1.5rem;    /* 24px cards and images */
+  --radius-xl: 2rem;      /* 32px large panels, dialogs, sheets */
+  --radius-full: 9999px;  /* buttons, chips, badges, avatars */
+  --radius-input: var(--radius-md);
+  --radius-card: var(--radius-lg);
+  --radius-panel: var(--radius-xl);
 
   --border-width-hairline: 1px;
   --border-width-thick: 2px;
 
   /* ---------- Semantic: elevation -------------------------------------- */
-  --shadow-color: 20 25 35;
-  --shadow-1: 0 1px 2px rgb(var(--shadow-color) / 0.08);                                       /* cards */
-  --shadow-2: 0 2px 6px rgb(var(--shadow-color) / 0.10), 0 1px 2px rgb(var(--shadow-color) / 0.06); /* raised cards, dropdowns */
-  --shadow-3: 0 8px 24px rgb(var(--shadow-color) / 0.14), 0 2px 6px rgb(var(--shadow-color) / 0.08); /* popovers, menus */
-  --shadow-4: 0 20px 48px rgb(var(--shadow-color) / 0.22), 0 4px 12px rgb(var(--shadow-color) / 0.10); /* dialogs, sheets */
+  /* No shadows on cards. Floating elements (menus, toasts, dialogs, sheets) get a soft one. */
+  --shadow-color: 58 34 51;
+  --shadow-1: none;  /* cards: none */
+  --shadow-2: none;  /* raised cards: none */
+  --shadow-3: 0 8px 24px rgb(var(--shadow-color) / 0.12), 0 2px 6px rgb(var(--shadow-color) / 0.06); /* menus, popovers, toasts */
+  --shadow-4: 0 20px 48px rgb(var(--shadow-color) / 0.18), 0 4px 12px rgb(var(--shadow-color) / 0.08); /* dialogs, sheets */
   --shadow-focus: 0 0 0 2px var(--color-focus-ring-offset), 0 0 0 4px var(--color-focus-ring);
 
   /* ---------- Semantic: motion ----------------------------------------- */
+  /* Quick and ease-out: 150-250ms, cubic-bezier(0.23, 1, 0.32, 1). Name the properties; never `all`. */
   --duration-instant: 0ms;
-  --duration-fast: 120ms;     /* hover, colour changes */
-  --duration-base: 200ms;     /* reveal, menus, tooltips */
-  --duration-slow: 320ms;     /* dialogs, sheets, page transitions */
-  --duration-deliberate: 500ms;/* progress, skeleton shimmer cycles */
-  --duration-spin: 800ms;     /* one turn of a spinner (status loop) */
-  --duration-loop: 1.4s;      /* shimmer, typing dots, pulse, indeterminate bar (status loops) */
-  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
-  --ease-enter: cubic-bezier(0, 0, 0, 1);
-  --ease-exit: cubic-bezier(0.3, 0, 1, 1);
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 150ms;     /* hover, colour changes */
+  --duration-base: 200ms;     /* reveal, menus, a heart filling */
+  --duration-slow: 250ms;     /* dialogs, sheets, drawers */
+  --duration-deliberate: 250ms;
+  --duration-spin: 800ms;     /* one turn of an in-place spinner (status loop) */
+  --duration-loop: 1.4s;      /* indeterminate bar (status loop) */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-standard: var(--ease-out);
+  --ease-enter: var(--ease-out);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --ease-spring: var(--ease-out); /* no bouncing UI; the logo already bounces */
 
   /* ---------- Semantic: z-order ---------------------------------------- */
   --z-base: 0;
@@ -320,32 +329,34 @@
   --focus-ring-width: 2px;
   --focus-ring-offset: 2px;
   --control-height-sm: 2rem;    /* 32px */
-  --control-height-md: 2.5rem;  /* 40px */
+  --control-height-md: 2.75rem; /* 44px */
   --control-height-lg: 3rem;    /* 48px */
 
-
-  /* ---------- Semantic: party pops (decorative, Giddy-specific) --------- */
-  --color-pop-sun-bg: var(--palette-sun-100);    --color-pop-sun-fg: var(--palette-sun-800);    --color-pop-sun-solid: var(--palette-sun-400);
-  --color-pop-pink-bg: var(--palette-pink-100);  --color-pop-pink-fg: var(--palette-pink-800);  --color-pop-pink-solid: var(--palette-pink-400);
-  --color-pop-mint-bg: var(--palette-mint-100);  --color-pop-mint-fg: var(--palette-mint-800);  --color-pop-mint-solid: var(--palette-mint-400);
-  --color-pop-sky-bg: var(--palette-sky-100);    --color-pop-sky-fg: var(--palette-sky-800);    --color-pop-sky-solid: var(--palette-sky-400);
-  --color-pop-orange-bg: var(--palette-orange-100); --color-pop-orange-fg: var(--palette-orange-800); --color-pop-orange-solid: var(--palette-orange-400);
-  --color-pop-grape-bg: var(--palette-grape-100); --color-pop-grape-fg: var(--palette-grape-800); --color-pop-grape-solid: var(--palette-grape-400);
-  --color-hero-from: var(--palette-grape-600);
-  --color-hero-to: var(--palette-pink-700);
-  --color-fg-on-hero: var(--palette-white);
-  --color-accent-press: var(--palette-grape-800);
-  --shadow-press: 0 0.25rem 0 var(--color-accent-press);   /* chunky "pressable" lip under primary buttons */
+  /* ---------- Logo and mark (brand kit) -------------------------------- */
+  /* Titan One, ink outline, raspberry shadow, polka-dot "TuTu", gingham "Much".
+     The logo keeps these colours in both themes. */
+  --color-logo-outline: var(--palette-plum-800);
+  --color-logo-shadow: var(--palette-raspberry-600);
+  --color-logo-dots-base: var(--palette-white);
+  --color-logo-dot: var(--palette-logo-pink);
+  --color-logo-gingham-light: var(--palette-logo-lavender);
+  --color-logo-gingham-dark: var(--palette-logo-lilac);
+  /* Reversed tone, only on Raspberry: ink shadow, paler dots, a sunny "Much". */
+  --color-logo-reversed-shadow: var(--palette-plum-800);
+  --color-logo-reversed-dot: var(--palette-logo-pink-reversed);
+  --color-logo-reversed-much: var(--palette-sunny-400);
 
   color-scheme: light;
 }
 
-/* Responsive layout tokens: columns, gutters and margins grow with the viewport. */
+/* Responsive tokens: columns, gutters, margins and type grow with the viewport. */
 @media (min-width: 48rem) {
   :root, [data-theme] {
     --layout-columns: 8;
     --layout-gutter: var(--space-6);
-    --layout-margin: var(--space-8);
+    --layout-margin: var(--space-10);
+    --font-size-h1: var(--font-size-5xl);
+    --font-size-body: var(--font-size-lg);
   }
 }
 
@@ -353,160 +364,182 @@
   :root, [data-theme] {
     --layout-columns: 12;
     --layout-gutter: var(--space-8);
-    --layout-margin: var(--space-12);
   }
 }
 
 /* ---------- Dark theme ----------------------------------------------------- */
+/* The guidelines define light only; dark is a plum night with a lighter raspberry accent. */
 [data-theme="dark"] {
-  --color-bg-canvas: var(--palette-night-950);
-  --color-bg-surface: var(--palette-night-900);
-  --color-bg-surface-raised: var(--palette-night-850);
-  --color-bg-surface-sunken: var(--palette-night-990);
-  --color-bg-subtle: var(--palette-night-800);
-  --color-bg-subtle-hover: var(--palette-night-700);
-  --color-bg-inverse: var(--palette-gray-100);
-  --color-bg-backdrop: rgba(0, 0, 0, 0.65);
-
-  --color-fg-default: #f1ecfa;
-  --color-fg-muted: #c2b9d6;
-  --color-fg-subtle: #a69cbd;
-  --color-fg-disabled: var(--palette-gray-600);
-  --color-fg-inverse: var(--palette-gray-900);
-  --color-fg-link: var(--palette-grape-300);
-  --color-fg-link-hover: var(--palette-grape-200);
-
-  --color-border-default: var(--palette-night-700);
-  --color-border-strong: #958ab0;
-  --color-border-inverse: var(--palette-gray-300);
-
-  --color-accent: var(--palette-grape-300);
-  --color-accent-hover: var(--palette-grape-200);
-  --color-accent-active: var(--palette-grape-100);
-  --color-accent-subtle: var(--palette-grape-950);
-  --color-accent-subtle-hover: var(--palette-grape-900);
-  --color-fg-on-accent: var(--palette-grape-950);
-  --color-fg-accent: var(--palette-grape-300);
-
-  --color-focus-ring: var(--palette-grape-300);
-
-  --color-info-bg: var(--palette-blue-950);
-  --color-info-fg: var(--palette-blue-200);
-  --color-info-border: var(--palette-blue-800);
-  --color-info-icon: var(--palette-blue-300);
-  --color-info-solid: var(--palette-blue-300);
-
+  --color-bg-canvas: var(--palette-plum-950);
+  --color-bg-surface: var(--palette-plum-900);
+  --color-bg-surface-raised: var(--palette-plum-850);
+  --color-bg-surface-sunken: var(--palette-plum-990);
+  --color-bg-subtle: var(--palette-plum-850);
+  --color-bg-subtle-hover: var(--palette-plum-700);
+  --color-bg-blush: var(--palette-raspberry-950);
+  --color-bg-inverse: var(--palette-cream-100);
+  --color-bg-backdrop: rgb(0 0 0 / 0.65);
+  --color-fg-default: var(--palette-plum-50);
+  --color-fg-muted: var(--palette-plum-200);
+  --color-fg-subtle: var(--palette-plum-300);
+  --color-fg-disabled: var(--palette-plum-600);
+  --color-fg-inverse: var(--palette-plum-800);
+  --color-fg-link: var(--palette-raspberry-300);
+  --color-fg-link-hover: var(--palette-raspberry-200);
+  --color-border-default: var(--palette-cream-alpha-12);
+  --color-border-ring: var(--palette-cream-alpha-20);
+  --color-border-strong: var(--palette-plum-400);
+  --color-border-inverse: var(--palette-plum-300);
+  --color-accent: var(--palette-raspberry-400);
+  --color-accent-hover: var(--palette-raspberry-300);
+  --color-accent-active: var(--palette-raspberry-200);
+  --color-accent-subtle: var(--palette-raspberry-950);
+  --color-accent-subtle-hover: var(--palette-raspberry-900);
+  --color-fg-on-accent: var(--palette-plum-950);
+  --color-fg-accent: var(--palette-raspberry-300);
+  --color-sale: var(--palette-raspberry-300);
+  --color-selected-bg: var(--palette-lilac-tint-30-night);
+  --color-selected-border: var(--palette-lilac-300);
+  --color-highlight: var(--palette-sunny-400);
+  --color-fg-on-highlight: var(--palette-plum-800);
+  --color-skeleton: var(--palette-plum-800);
+  --color-focus-ring: var(--palette-raspberry-300);
+  --color-focus-ring-offset: var(--color-bg-surface);
+  --color-info-bg: var(--palette-lilac-950);
+  --color-info-fg: var(--palette-lilac-200);
+  --color-info-border: var(--palette-lilac-700);
+  --color-info-icon: var(--palette-lilac-300);
+  --color-info-solid: var(--palette-lilac-300);
   --color-success-bg: var(--palette-green-950);
   --color-success-fg: var(--palette-green-300);
   --color-success-border: var(--palette-green-700);
   --color-success-icon: var(--palette-green-300);
   --color-success-solid: var(--palette-green-300);
-
-  --color-warning-bg: var(--palette-amber-950);
-  --color-warning-fg: var(--palette-amber-300);
-  --color-warning-border: var(--palette-amber-700);
-  --color-warning-icon: var(--palette-amber-300);
-  --color-warning-solid: var(--palette-amber-300);
-
-  --color-danger-bg: var(--palette-red-950);
-  --color-danger-fg: var(--palette-red-300);
-  --color-danger-border: var(--palette-red-700);
-  --color-danger-icon: var(--palette-red-300);
-  --color-danger-solid: var(--palette-red-300);
-  --color-danger-solid-hover: var(--palette-red-100);
-  --color-fg-on-danger: var(--palette-red-950);
-
-
-  --color-pop-sun-bg: var(--palette-sun-950);    --color-pop-sun-fg: var(--palette-sun-300);
-  --color-pop-pink-bg: var(--palette-pink-950);  --color-pop-pink-fg: var(--palette-pink-300);
-  --color-pop-mint-bg: var(--palette-mint-950);  --color-pop-mint-fg: var(--palette-mint-300);
-  --color-pop-sky-bg: var(--palette-sky-950);    --color-pop-sky-fg: var(--palette-sky-300);
-  --color-pop-orange-bg: var(--palette-orange-950); --color-pop-orange-fg: var(--palette-orange-300);
-  --color-pop-grape-bg: var(--palette-grape-950); --color-pop-grape-fg: var(--palette-grape-200);
-  --color-hero-from: var(--palette-grape-800);
-  --color-hero-to: var(--palette-pink-800);
-  --color-accent-press: var(--palette-grape-500);
-  --shadow-press: 0 0.25rem 0 var(--color-accent-press);
-  --color-focus-ring-offset: var(--color-bg-surface);
-  --shadow-focus: 0 0 0 2px var(--color-focus-ring-offset), 0 0 0 4px var(--color-focus-ring);
+  --color-warning-bg: var(--palette-sunny-950);
+  --color-warning-fg: var(--palette-sunny-300);
+  --color-warning-border: var(--palette-sunny-800);
+  --color-warning-icon: var(--palette-sunny-300);
+  --color-warning-solid: var(--palette-sunny-400);
+  --color-danger-bg: var(--palette-raspberry-950);
+  --color-danger-fg: var(--palette-raspberry-200);
+  --color-danger-border: var(--palette-raspberry-800);
+  --color-danger-icon: var(--palette-raspberry-300);
+  --color-danger-solid: var(--palette-raspberry-300);
+  --color-danger-solid-hover: var(--palette-raspberry-200);
+  --color-fg-on-danger: var(--palette-plum-950);
+  --color-inverse-info: var(--palette-lilac-700);
+  --color-inverse-success: var(--palette-green-700);
+  --color-inverse-warning: var(--palette-sunny-800);
+  --color-inverse-danger: var(--palette-raspberry-700);
+  --color-condition-new-bg: var(--palette-raspberry-400);
+  --color-condition-new-fg: var(--palette-plum-950);
+  --color-condition-like-new-bg: var(--palette-sunny-400);
+  --color-condition-like-new-fg: var(--palette-plum-800);
+  --color-condition-loved-bg: var(--palette-raspberry-950);
+  --color-condition-loved-fg: var(--palette-plum-50);
+  --color-condition-well-loved-bg: var(--palette-plum-900);
+  --color-condition-well-loved-fg: var(--palette-plum-50);
+  --color-condition-well-loved-ring: var(--palette-cream-alpha-20);
+  --color-showcase-start: var(--palette-plum-850);
+  --color-showcase-end: var(--palette-plum-850);
+  --color-showcase-subtle: var(--palette-plum-700);
+  --color-fg-showcase: var(--palette-plum-50);
+  --color-fg-showcase-muted: var(--palette-plum-200);
+  --color-fg-showcase-accent: var(--palette-raspberry-300);
+  --color-photo-bg: var(--palette-white);
+  --color-mark-bg: var(--palette-raspberry-100);
   --shadow-color: 0 0 0;
-  --shadow-1: 0 1px 2px rgb(var(--shadow-color) / 0.4);
-  --shadow-2: 0 2px 6px rgb(var(--shadow-color) / 0.45), 0 1px 2px rgb(var(--shadow-color) / 0.3);
   --shadow-3: 0 8px 24px rgb(var(--shadow-color) / 0.5), 0 2px 6px rgb(var(--shadow-color) / 0.35);
   --shadow-4: 0 20px 48px rgb(var(--shadow-color) / 0.6), 0 4px 12px rgb(var(--shadow-color) / 0.4);
-
+  --shadow-focus: 0 0 0 2px var(--color-focus-ring-offset), 0 0 0 4px var(--color-focus-ring);
   color-scheme: dark;
 }
 
 /* Follow the OS preference unless the page has explicitly chosen light. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --color-bg-canvas: var(--palette-night-950);
-    --color-bg-surface: var(--palette-night-900);
-    --color-bg-surface-raised: var(--palette-night-850);
-    --color-bg-surface-sunken: var(--palette-night-990);
-    --color-bg-subtle: var(--palette-night-800);
-    --color-bg-subtle-hover: var(--palette-night-700);
-    --color-bg-inverse: var(--palette-gray-100);
-    --color-bg-backdrop: rgba(0, 0, 0, 0.65);
-    --color-fg-default: #f1ecfa;
-    --color-fg-muted: #c2b9d6;
-    --color-fg-subtle: #a69cbd;
-    --color-fg-disabled: var(--palette-gray-600);
-    --color-fg-inverse: var(--palette-gray-900);
-    --color-fg-link: var(--palette-grape-300);
-    --color-fg-link-hover: var(--palette-grape-200);
-    --color-border-default: var(--palette-night-700);
-    --color-border-strong: #958ab0;
-    --color-border-inverse: var(--palette-gray-300);
-    --color-accent: var(--palette-grape-300);
-    --color-accent-hover: var(--palette-grape-200);
-    --color-accent-active: var(--palette-grape-100);
-    --color-accent-subtle: var(--palette-grape-950);
-    --color-accent-subtle-hover: var(--palette-grape-900);
-    --color-fg-on-accent: var(--palette-grape-950);
-    --color-fg-accent: var(--palette-grape-300);
-    --color-focus-ring: var(--palette-grape-300);
-    --color-info-bg: var(--palette-blue-950);
-    --color-info-fg: var(--palette-blue-200);
-    --color-info-border: var(--palette-blue-800);
-    --color-info-icon: var(--palette-blue-300);
-    --color-info-solid: var(--palette-blue-300);
+    --color-bg-canvas: var(--palette-plum-950);
+    --color-bg-surface: var(--palette-plum-900);
+    --color-bg-surface-raised: var(--palette-plum-850);
+    --color-bg-surface-sunken: var(--palette-plum-990);
+    --color-bg-subtle: var(--palette-plum-850);
+    --color-bg-subtle-hover: var(--palette-plum-700);
+    --color-bg-blush: var(--palette-raspberry-950);
+    --color-bg-inverse: var(--palette-cream-100);
+    --color-bg-backdrop: rgb(0 0 0 / 0.65);
+    --color-fg-default: var(--palette-plum-50);
+    --color-fg-muted: var(--palette-plum-200);
+    --color-fg-subtle: var(--palette-plum-300);
+    --color-fg-disabled: var(--palette-plum-600);
+    --color-fg-inverse: var(--palette-plum-800);
+    --color-fg-link: var(--palette-raspberry-300);
+    --color-fg-link-hover: var(--palette-raspberry-200);
+    --color-border-default: var(--palette-cream-alpha-12);
+    --color-border-ring: var(--palette-cream-alpha-20);
+    --color-border-strong: var(--palette-plum-400);
+    --color-border-inverse: var(--palette-plum-300);
+    --color-accent: var(--palette-raspberry-400);
+    --color-accent-hover: var(--palette-raspberry-300);
+    --color-accent-active: var(--palette-raspberry-200);
+    --color-accent-subtle: var(--palette-raspberry-950);
+    --color-accent-subtle-hover: var(--palette-raspberry-900);
+    --color-fg-on-accent: var(--palette-plum-950);
+    --color-fg-accent: var(--palette-raspberry-300);
+    --color-sale: var(--palette-raspberry-300);
+    --color-selected-bg: var(--palette-lilac-tint-30-night);
+    --color-selected-border: var(--palette-lilac-300);
+    --color-highlight: var(--palette-sunny-400);
+    --color-fg-on-highlight: var(--palette-plum-800);
+    --color-skeleton: var(--palette-plum-800);
+    --color-focus-ring: var(--palette-raspberry-300);
+    --color-focus-ring-offset: var(--color-bg-surface);
+    --color-info-bg: var(--palette-lilac-950);
+    --color-info-fg: var(--palette-lilac-200);
+    --color-info-border: var(--palette-lilac-700);
+    --color-info-icon: var(--palette-lilac-300);
+    --color-info-solid: var(--palette-lilac-300);
     --color-success-bg: var(--palette-green-950);
     --color-success-fg: var(--palette-green-300);
     --color-success-border: var(--palette-green-700);
     --color-success-icon: var(--palette-green-300);
     --color-success-solid: var(--palette-green-300);
-    --color-warning-bg: var(--palette-amber-950);
-    --color-warning-fg: var(--palette-amber-300);
-    --color-warning-border: var(--palette-amber-700);
-    --color-warning-icon: var(--palette-amber-300);
-    --color-warning-solid: var(--palette-amber-300);
-    --color-danger-bg: var(--palette-red-950);
-    --color-danger-fg: var(--palette-red-300);
-    --color-danger-border: var(--palette-red-700);
-    --color-danger-icon: var(--palette-red-300);
-    --color-danger-solid: var(--palette-red-300);
-    --color-danger-solid-hover: var(--palette-red-100);
-    --color-fg-on-danger: var(--palette-red-950);
-  
-  --color-pop-sun-bg: var(--palette-sun-950);    --color-pop-sun-fg: var(--palette-sun-300);
-  --color-pop-pink-bg: var(--palette-pink-950);  --color-pop-pink-fg: var(--palette-pink-300);
-  --color-pop-mint-bg: var(--palette-mint-950);  --color-pop-mint-fg: var(--palette-mint-300);
-  --color-pop-sky-bg: var(--palette-sky-950);    --color-pop-sky-fg: var(--palette-sky-300);
-  --color-pop-orange-bg: var(--palette-orange-950); --color-pop-orange-fg: var(--palette-orange-300);
-  --color-pop-grape-bg: var(--palette-grape-950); --color-pop-grape-fg: var(--palette-grape-200);
-  --color-hero-from: var(--palette-grape-800);
-  --color-hero-to: var(--palette-pink-800);
-  --color-accent-press: var(--palette-grape-500);
-  --shadow-press: 0 0.25rem 0 var(--color-accent-press);
-  --color-focus-ring-offset: var(--color-bg-surface);
-  --shadow-focus: 0 0 0 2px var(--color-focus-ring-offset), 0 0 0 4px var(--color-focus-ring);
-  --shadow-color: 0 0 0;
-    --shadow-1: 0 1px 2px rgb(var(--shadow-color) / 0.4);
-    --shadow-2: 0 2px 6px rgb(var(--shadow-color) / 0.45), 0 1px 2px rgb(var(--shadow-color) / 0.3);
+    --color-warning-bg: var(--palette-sunny-950);
+    --color-warning-fg: var(--palette-sunny-300);
+    --color-warning-border: var(--palette-sunny-800);
+    --color-warning-icon: var(--palette-sunny-300);
+    --color-warning-solid: var(--palette-sunny-400);
+    --color-danger-bg: var(--palette-raspberry-950);
+    --color-danger-fg: var(--palette-raspberry-200);
+    --color-danger-border: var(--palette-raspberry-800);
+    --color-danger-icon: var(--palette-raspberry-300);
+    --color-danger-solid: var(--palette-raspberry-300);
+    --color-danger-solid-hover: var(--palette-raspberry-200);
+    --color-fg-on-danger: var(--palette-plum-950);
+    --color-inverse-info: var(--palette-lilac-700);
+    --color-inverse-success: var(--palette-green-700);
+    --color-inverse-warning: var(--palette-sunny-800);
+    --color-inverse-danger: var(--palette-raspberry-700);
+    --color-condition-new-bg: var(--palette-raspberry-400);
+    --color-condition-new-fg: var(--palette-plum-950);
+    --color-condition-like-new-bg: var(--palette-sunny-400);
+    --color-condition-like-new-fg: var(--palette-plum-800);
+    --color-condition-loved-bg: var(--palette-raspberry-950);
+    --color-condition-loved-fg: var(--palette-plum-50);
+    --color-condition-well-loved-bg: var(--palette-plum-900);
+    --color-condition-well-loved-fg: var(--palette-plum-50);
+    --color-condition-well-loved-ring: var(--palette-cream-alpha-20);
+    --color-showcase-start: var(--palette-plum-850);
+    --color-showcase-end: var(--palette-plum-850);
+    --color-showcase-subtle: var(--palette-plum-700);
+    --color-fg-showcase: var(--palette-plum-50);
+    --color-fg-showcase-muted: var(--palette-plum-200);
+    --color-fg-showcase-accent: var(--palette-raspberry-300);
+    --color-photo-bg: var(--palette-white);
+    --color-mark-bg: var(--palette-raspberry-100);
+    --shadow-color: 0 0 0;
     --shadow-3: 0 8px 24px rgb(var(--shadow-color) / 0.5), 0 2px 6px rgb(var(--shadow-color) / 0.35);
     --shadow-4: 0 20px 48px rgb(var(--shadow-color) / 0.6), 0 4px 12px rgb(var(--shadow-color) / 0.4);
+    --shadow-focus: 0 0 0 2px var(--color-focus-ring-offset), 0 0 0 4px var(--color-focus-ring);
     color-scheme: dark;
   }
 }
@@ -539,219 +572,15 @@
 }
 
 /* ==========================================================================
-   TuTuMuch brand palette.
-
-   TuTuMuch uses the Giddy design system (everything above) with the
-   colours of the TuTuMuch brand kit: Raspberry #D6336C (primary: logo,
-   buttons), Lilac #9B7FD4 (secondary: accents), Blush #FDE2EA (soft
-   surfaces, tags), Sunny #F6C64B (highlights, deals), Cream #FFF8F5 (page),
-   Ink #3A2233 (text, dark surfaces) and Muted #7A6370 (secondary text).
-   This block adds those scales and points Giddy's semantic colour tokens at
-   them; type, space, shape, elevation and motion stay Giddy's. Raspberry 600
-   carries white button text (4.6:1); raspberry text and links use raspberry
-   700 so they meet WCAG 2.2 AA on cream. Lilac 500 is too light for text and
-   is used for fills; lilac text uses 700-800.
-   ========================================================================== */
-
-:root, [data-theme="light"] {
-  --palette-raspberry-50: #fff0f5;
-  --palette-raspberry-100: #fde2ea; /* Blush: soft surfaces, tags */
-  --palette-raspberry-200: #f9c2d4;
-  --palette-raspberry-300: #f29bbc; /* logo dots */
-  --palette-raspberry-400: #e8689a;
-  --palette-raspberry-500: #de4b81;
-  --palette-raspberry-600: #d6336c; /* Raspberry: primary, logo, buttons */
-  --palette-raspberry-700: #c2255c; /* raspberry text and links (AA on cream) */
-  --palette-raspberry-800: #a61e4d;
-  --palette-raspberry-900: #7d173b;
-  --palette-raspberry-950: #4a0e23;
-
-  --palette-lilac-50: #f6f2fd;
-  --palette-lilac-100: #ece5fa;
-  --palette-lilac-200: #e3d8fa; /* logo gingham, light */
-  --palette-lilac-300: #b9a3e8; /* logo gingham, dark */
-  --palette-lilac-400: #ad95e0;
-  --palette-lilac-500: #9b7fd4; /* Lilac: secondary, accents */
-  --palette-lilac-600: #8467c8;
-  --palette-lilac-700: #6a4fb0;
-  --palette-lilac-800: #553e8f;
-  --palette-lilac-900: #3f2e6a;
-  --palette-lilac-950: #261c42;
-
-  --palette-sunny-100: #fdf0c9;
-  --palette-sunny-300: #f9d77c;
-  --palette-sunny-400: #f6c64b; /* Sunny: highlights, deals */
-  --palette-sunny-500: #e0ab25;
-  --palette-sunny-800: #6e4f00;
-  --palette-sunny-950: #332503;
-
-  --palette-cream-50: #fff8f5; /* Cream: page background */
-  --palette-cream-100: #f8efea;
-  --palette-cream-200: #efe2db;
-
-  --palette-plum-50: #faf5f8;
-  --palette-plum-100: #f0e6ec;
-  --palette-plum-200: #dccbd5;
-  --palette-plum-300: #c0a9b7;
-  --palette-plum-400: #9a8692;
-  --palette-plum-500: #78616e; /* Muted: secondary text (brand #7A6370, a hair darker to read on Blush) */
-  --palette-plum-600: #634e5b;
-  --palette-plum-700: #523d4b;
-  --palette-plum-800: #3a2233; /* Ink: text, dark surfaces */
-  --palette-plum-850: #2d1c29;
-  --palette-plum-900: #241620;
-  --palette-plum-950: #1c1119;
-  --palette-plum-990: #150c12;
-
-  /* Giddy's party-pop sun is TuTuMuch's Sunny. */
-  --palette-sun-100: var(--palette-sunny-100);
-  --palette-sun-300: var(--palette-sunny-300);
-  --palette-sun-400: var(--palette-sunny-400);
-  --palette-sun-800: var(--palette-sunny-800);
-  --palette-sun-950: var(--palette-sunny-950);
-
-  /* Wordmark (brand kit): Titan One, plum outline, raspberry shadow, polka-dot "TuTu" and
-     gingham "Much". The logo keeps these colours in both themes. */
-  --font-family-logo: "Titan One", "Arial Rounded MT Bold", ui-rounded, sans-serif;
-  --color-logo-outline: var(--palette-plum-800);
-  --color-logo-shadow: var(--palette-raspberry-600);
-  --color-logo-dots-base: var(--palette-white);
-  --color-logo-dot: var(--palette-raspberry-300);
-  --color-logo-gingham-light: var(--palette-lilac-200);
-  --color-logo-gingham-dark: var(--palette-lilac-300);
-
-  /* Semantic colour (light) */
-  --color-bg-canvas: var(--palette-cream-50);
-  --color-bg-surface-sunken: var(--palette-cream-100);
-  --color-bg-subtle: var(--palette-cream-100);
-  --color-bg-subtle-hover: var(--palette-cream-200);
-  --color-bg-inverse: var(--palette-plum-800);
-
-  --color-fg-default: var(--palette-plum-800);
-  --color-fg-muted: var(--palette-plum-500);
-  --color-fg-subtle: var(--palette-plum-600);
-  --color-fg-disabled: var(--palette-plum-300);
-  --color-fg-link: var(--palette-raspberry-700);
-  --color-fg-link-hover: var(--palette-raspberry-800);
-
-  --color-border-default: var(--palette-cream-200);
-  --color-border-strong: var(--palette-plum-400);
-  --color-border-inverse: var(--palette-plum-600);
-
-  --color-accent: var(--palette-raspberry-600);
-  --color-accent-hover: var(--palette-raspberry-700);
-  --color-accent-active: var(--palette-raspberry-800);
-  --color-accent-subtle: var(--palette-raspberry-100);
-  --color-accent-subtle-hover: var(--palette-raspberry-200);
-  --color-fg-accent: var(--palette-raspberry-700);
-  --color-focus-ring: var(--palette-raspberry-600);
-  --color-accent-press: var(--palette-raspberry-800);
-
-  --color-pop-pink-bg: var(--palette-raspberry-100);
-  --color-pop-pink-fg: var(--palette-raspberry-800);
-  --color-pop-grape-bg: var(--palette-lilac-100);
-  --color-pop-grape-fg: var(--palette-lilac-800);
-  --color-pop-sun-bg: var(--palette-sunny-400);
-  --color-pop-sun-fg: var(--palette-plum-800);
-  --color-hero-from: var(--palette-raspberry-600);
-  --color-hero-to: var(--palette-lilac-700);
-}
-
-[data-theme="dark"] {
-  --color-bg-canvas: var(--palette-plum-950);
-  --color-bg-surface: var(--palette-plum-900);
-  --color-bg-surface-raised: var(--palette-plum-850);
-  --color-bg-surface-sunken: var(--palette-plum-990);
-  --color-bg-subtle: var(--palette-plum-800);
-  --color-bg-subtle-hover: var(--palette-plum-700);
-  --color-bg-inverse: var(--palette-cream-100);
-
-  --color-fg-default: #fbf3f6;
-  --color-fg-muted: var(--palette-plum-200);
-  --color-fg-subtle: var(--palette-plum-300);
-  --color-fg-disabled: var(--palette-plum-600);
-  --color-fg-inverse: var(--palette-plum-800);
-  --color-fg-link: var(--palette-raspberry-300);
-  --color-fg-link-hover: var(--palette-raspberry-200);
-
-  --color-border-default: var(--palette-plum-700);
-  --color-border-strong: var(--palette-plum-400);
-  --color-border-inverse: var(--palette-plum-300);
-
-  --color-accent: var(--palette-raspberry-400);
-  --color-accent-hover: var(--palette-raspberry-300);
-  --color-accent-active: var(--palette-raspberry-200);
-  --color-accent-subtle: var(--palette-raspberry-950);
-  --color-accent-subtle-hover: var(--palette-raspberry-900);
-  --color-fg-on-accent: var(--palette-plum-950);
-  --color-fg-accent: var(--palette-raspberry-300);
-  --color-focus-ring: var(--palette-raspberry-300);
-  --color-accent-press: var(--palette-raspberry-700);
-
-  --color-pop-pink-bg: var(--palette-raspberry-950);
-  --color-pop-pink-fg: var(--palette-raspberry-200);
-  --color-pop-grape-bg: var(--palette-lilac-950);
-  --color-pop-grape-fg: var(--palette-lilac-200);
-  --color-pop-sun-bg: var(--palette-sunny-950);
-  --color-pop-sun-fg: var(--palette-sunny-400);
-  --color-hero-from: var(--palette-raspberry-800);
-  --color-hero-to: var(--palette-lilac-800);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --color-bg-canvas: var(--palette-plum-950);
-    --color-bg-surface: var(--palette-plum-900);
-    --color-bg-surface-raised: var(--palette-plum-850);
-    --color-bg-surface-sunken: var(--palette-plum-990);
-    --color-bg-subtle: var(--palette-plum-800);
-    --color-bg-subtle-hover: var(--palette-plum-700);
-    --color-bg-inverse: var(--palette-cream-100);
-
-    --color-fg-default: #fbf3f6;
-    --color-fg-muted: var(--palette-plum-200);
-    --color-fg-subtle: var(--palette-plum-300);
-    --color-fg-disabled: var(--palette-plum-600);
-    --color-fg-inverse: var(--palette-plum-800);
-    --color-fg-link: var(--palette-raspberry-300);
-    --color-fg-link-hover: var(--palette-raspberry-200);
-
-    --color-border-default: var(--palette-plum-700);
-    --color-border-strong: var(--palette-plum-400);
-    --color-border-inverse: var(--palette-plum-300);
-
-    --color-accent: var(--palette-raspberry-400);
-    --color-accent-hover: var(--palette-raspberry-300);
-    --color-accent-active: var(--palette-raspberry-200);
-    --color-accent-subtle: var(--palette-raspberry-950);
-    --color-accent-subtle-hover: var(--palette-raspberry-900);
-    --color-fg-on-accent: var(--palette-plum-950);
-    --color-fg-accent: var(--palette-raspberry-300);
-    --color-focus-ring: var(--palette-raspberry-300);
-    --color-accent-press: var(--palette-raspberry-700);
-
-    --color-pop-pink-bg: var(--palette-raspberry-950);
-    --color-pop-pink-fg: var(--palette-raspberry-200);
-    --color-pop-grape-bg: var(--palette-lilac-950);
-    --color-pop-grape-fg: var(--palette-lilac-200);
-    --color-pop-sun-bg: var(--palette-sunny-950);
-    --color-pop-sun-fg: var(--palette-sunny-400);
-    --color-hero-from: var(--palette-raspberry-800);
-    --color-hero-to: var(--palette-lilac-800);
-  }
-}
-
-/* ==========================================================================
    TuTuMuch layout tokens.
 
    TuTuMuch keeps the 12L layout and components and takes its whole look
-   (colour, type, shape, elevation, motion) from the Giddy design system
-   and the TuTuMuch brand palette above. The tokens below name things only the 12L layout uses; each one
-   aliases a Giddy token, so Giddy stays the single source of the look.
+   from the tokens above. The tokens below name things only the 12L layout
+   uses; each one aliases a token above, so there is one source of the look.
    ========================================================================== */
 
 :root, [data-theme="light"] {
-  /* 12L primitive names mapped onto Giddy's palette. */
+  /* 12L primitive names mapped onto the palette. */
   --palette-ink-950: var(--palette-plum-990);
   --palette-ink-900: var(--palette-plum-950);
   --palette-ink-850: var(--palette-plum-900);
@@ -763,75 +592,16 @@
   --palette-paper-50: var(--palette-cream-50);
   --palette-paper-100: var(--palette-cream-100);
   --palette-paper-200: var(--palette-cream-200);
-  --palette-paper-300: var(--palette-gray-200);
-  --palette-paper-400: var(--palette-gray-300);
-
-  --palette-stone-300: var(--palette-gray-300);
-  --palette-stone-400: var(--palette-gray-400);
-  --palette-stone-500: var(--palette-gray-500);
-  --palette-stone-550: var(--palette-gray-500);
-  --palette-stone-600: var(--palette-gray-600);
-  --palette-stone-700: var(--palette-gray-700);
 
   --palette-signal-300: var(--palette-raspberry-300);
   --palette-signal-500: var(--palette-raspberry-600);
-  --palette-red-800: var(--palette-red-700);
 
-  /* Listing photo wells: Giddy's party-pop tints. */
-  --photo-bg-1: var(--palette-raspberry-100);
-  --photo-bg-2: var(--palette-mint-100);
-  --photo-bg-3: var(--palette-sunny-100);
-  --photo-bg-4: var(--palette-sky-100);
-  --photo-bg-5: var(--palette-lilac-100);
-  --photo-bg-6: var(--palette-orange-100);
-
-  --font-weight-black: var(--font-weight-heavy);
+  --font-weight-black: var(--font-weight-semibold);
   --letter-spacing-display: var(--letter-spacing-tight);
 
-  /* Giddy shapes are rounded, so the 12L 45° chamfer is switched off. */
+  /* Rounded shapes, so the 12L 45° chamfer is switched off. */
   --chamfer: 0px;
 
-  /* Brand mark, current-page bar and size tag flag. */
+  /* Current-page bar, timeline step and toast edge. */
   --color-brand: var(--color-accent);
-
-  /* Showcase: the marketing hero, closing band and video frame. Ink (plum) in both themes,
-     with cream text, pink headline emphasis and raspberry, lilac and sunny shapes. */
-  --color-showcase-start: var(--palette-plum-850);
-  --color-showcase-end: var(--palette-plum-700);
-  --color-showcase-subtle: var(--palette-plum-700);
-  --color-fg-showcase: var(--palette-cream-50); /* 15.3:1 on start, 9.4:1 on end */
-  --color-fg-showcase-muted: var(--palette-plum-200); /* 10.3:1 on start, 6.4:1 on end */
-  --color-fg-showcase-accent: var(--palette-raspberry-300); /* 7.8:1 on start, 4.8:1 on end; headline emphasis */
-  --color-shape-brand: var(--palette-raspberry-600); /* decorative shapes only, never behind text */
-  --color-shape-tone: var(--palette-lilac-500);
-  --color-shape-light: var(--palette-sunny-400);
-  --gradient-showcase: linear-gradient(
-    135deg,
-    var(--color-showcase-start) 0%,
-    var(--palette-plum-800) 55%,
-    var(--color-showcase-end) 100%
-  );
-  --duration-drift: 24s; /* decorative shape drift; stopped under prefers-reduced-motion */
-
-  /* Status icons on inverse surfaces (toasts). */
-  --color-inverse-info: var(--palette-blue-300);
-  --color-inverse-success: var(--palette-green-300);
-  --color-inverse-warning: var(--palette-amber-300);
-  --color-inverse-danger: var(--palette-red-300);
-}
-
-[data-theme="dark"] {
-  --color-inverse-info: var(--palette-blue-700);
-  --color-inverse-success: var(--palette-green-700);
-  --color-inverse-warning: var(--palette-amber-700);
-  --color-inverse-danger: var(--palette-red-700);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --color-inverse-info: var(--palette-blue-700);
-    --color-inverse-success: var(--palette-green-700);
-    --color-inverse-warning: var(--palette-amber-700);
-    --color-inverse-danger: var(--palette-red-700);
-  }
 }

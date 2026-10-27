@@ -44,7 +44,7 @@ file. Components use the semantic tokens.
 | --- | --- | --- | --- |
 | `raspberry` | `#D6336C` | `--palette-raspberry-600` | `--color-accent` (primary buttons, active states, focus ring), `--color-sale` |
 | raspberry as text | — | `--palette-raspberry-700` (`#C2255C`) | `--color-fg-link`, `--color-fg-accent`, `--color-error-icon` (raspberry 600 is 4.4:1 on cream, below AA for body text; white on raspberry 600 is 4.6:1) |
-| `lilac` | `#9B7FD4` | `--palette-lilac-500` | `--color-selected-border`; `--color-selected-bg` is lilac at 15% (`--palette-lilac-alpha-15`). Never text on light. |
+| `lilac` | `#9B7FD4` | `--palette-lilac-500` | `--color-selected-border`; `--color-selected-bg` is lilac at 15% (`--palette-lilac-tint-15`, lilac at 15% over cream made opaque). Never text on light. |
 | `blush` | `#FDE2EA` | `--palette-raspberry-100` | `--color-bg-blush`, `--color-accent-subtle`, `--color-skeleton` |
 | `sunny` | `#F6C64B` | `--palette-sunny-400` | `--color-highlight` (always with `--color-fg-default`) |
 | `cream` | `#FFF8F5` | `--palette-cream-50` | `--color-bg-canvas` |
@@ -220,6 +220,13 @@ files (184 KB) are chosen.
 - `L1-022` and `L2-096` are added; Playwright checks every routed page for one `h1`, one logo,
   labelled icon buttons, alt text, at most one Tilly and no inline hex or gradient.
 - AGENTS.md lists `public/fonts/` and `public/tilly/`.
+- The decorative `tl-shapes` component and its design-system page are retired: "no blobs, glows or
+  decorative shapes". The marketing hero and closing band become solid blush panels.
+- Copy that requirements quote changes with the standard terms: "Shop the catalog" and "Browse the
+  catalog" become "Shop the closet" (`L2-078`, `L2-094`), "Sell an item" actions become "Sell
+  outgrown gear" (`L2-003`, `L2-019`, `L2-094`), and `L2-083` no longer mentions shapes.
+- One primary button per view: the marketing page keeps its primary in the hero; the bands and the
+  closing call to action use secondary buttons.
 
 ### Deferred (needs a domain or product change)
 - Top-level Volleyball, Soccer, Gymnastics, Swimming, Party & occasion and Accessories

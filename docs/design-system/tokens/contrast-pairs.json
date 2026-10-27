@@ -362,58 +362,10 @@
       ]
     },
     {
-      "fg": "--color-pop-sun-fg",
-      "bg": "--color-pop-sun-bg",
-      "min": 4.5,
-      "note": "text on sun pop tile, chip, avatar and tally"
-    },
-    {
-      "fg": "--color-pop-pink-fg",
-      "bg": "--color-pop-pink-bg",
-      "min": 4.5,
-      "note": "text on pink pop tile, chip, avatar and tally"
-    },
-    {
-      "fg": "--color-pop-mint-fg",
-      "bg": "--color-pop-mint-bg",
-      "min": 4.5,
-      "note": "text on mint pop tile, chip, avatar and tally"
-    },
-    {
-      "fg": "--color-pop-sky-fg",
-      "bg": "--color-pop-sky-bg",
-      "min": 4.5,
-      "note": "text on sky pop tile, chip, avatar and tally"
-    },
-    {
-      "fg": "--color-pop-orange-fg",
-      "bg": "--color-pop-orange-bg",
-      "min": 4.5,
-      "note": "text on orange pop tile, chip, avatar and tally"
-    },
-    {
-      "fg": "--color-pop-grape-fg",
-      "bg": "--color-pop-grape-bg",
-      "min": 4.5,
-      "note": "text on grape pop tile, chip, avatar and tally"
-    },
-    {
-      "fg": "--color-fg-on-hero",
-      "bg": "--color-hero-from",
-      "min": 4.5,
-      "note": "hero text at gradient start"
-    },
-    {
-      "fg": "--color-fg-on-hero",
-      "bg": "--color-hero-to",
-      "min": 4.5,
-      "note": "hero text at gradient end"
-    },
-    {
-      "fg": "--color-fg-muted",
+      "fg": "--color-fg-subtle",
       "bg": "--color-accent-subtle",
       "min": 4.5,
-      "note": "meta text in unread notification"
+      "note": "meta text in unread notification (muted is not used on Blush)"
     },
     {
       "fg": "--color-fg-accent",
@@ -492,6 +444,96 @@
       "bg": "--color-fg-showcase",
       "min": 4.5,
       "note": "marketing: primary button label on the showcase"
+    },
+    {
+      "fg": "--color-fg-default",
+      "bg": "--color-bg-blush",
+      "min": 4.5,
+      "note": "ink text on blush sections and tags"
+    },
+    {
+      "fg": "--color-fg-subtle",
+      "bg": "--color-bg-blush",
+      "min": 4.5,
+      "note": "secondary text on blush"
+    },
+    {
+      "fg": "--color-fg-link",
+      "bg": "--color-bg-blush",
+      "min": 4.5,
+      "note": "raspberry link on blush"
+    },
+    {
+      "fg": "--color-fg-default",
+      "bg": "--color-selected-bg",
+      "min": 4.5,
+      "note": "selected chip label on lilac at 15%"
+    },
+    {
+      "fg": "--color-selected-border",
+      "bg": "--color-bg-canvas",
+      "min": 3,
+      "note": "selected chip ring"
+    },
+    {
+      "fg": "--color-fg-on-highlight",
+      "bg": "--color-highlight",
+      "min": 4.5,
+      "note": "ink on sunny deal highlight"
+    },
+    {
+      "fg": "--color-condition-new-fg",
+      "bg": "--color-condition-new-bg",
+      "min": 4.5,
+      "note": "New with tags badge, 14px semibold"
+    },
+    {
+      "fg": "--color-condition-like-new-fg",
+      "bg": "--color-condition-like-new-bg",
+      "min": 4.5,
+      "note": "Like new badge"
+    },
+    {
+      "fg": "--color-condition-loved-fg",
+      "bg": "--color-condition-loved-bg",
+      "min": 4.5,
+      "note": "Gently loved badge"
+    },
+    {
+      "fg": "--color-condition-well-loved-fg",
+      "bg": "--color-condition-well-loved-bg",
+      "min": 4.5,
+      "note": "Well loved badge"
+    },
+    {
+      "fg": "--color-fg-default",
+      "bg": "--color-showcase-start",
+      "min": 4.5,
+      "note": "marketing hero text on the blush panel"
+    },
+    {
+      "fg": "--color-sale",
+      "bg": "--color-bg-canvas",
+      "min": 4.5,
+      "note": "sale price on the page"
+    },
+    {
+      "fg": "--color-sale",
+      "bg": "--color-bg-surface",
+      "min": 4.5,
+      "note": "sale price on white"
+    },
+    {
+      "fg": "--color-danger-icon",
+      "bg": "--color-bg-canvas",
+      "min": 3,
+      "note": "raspberry error icon"
+    },
+    {
+      "fg": "--color-accent-hover",
+      "bg": "--color-bg-canvas",
+      "min": 3,
+      "note": "primary button hover fill (ink) vs page"
     }
   ]
 }

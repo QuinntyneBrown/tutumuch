@@ -1,0 +1,27 @@
+/* Fraunces (headings, prices) and DM Sans (everything else), the TuTuMuch page-guideline
+   faces, and Titan One (logo only). Self-hosted latin variable subsets under the SIL Open Font
+   License (Fraunces-OFL.txt, DMSans-OFL.txt, TitanOne-OFL.txt), from Fontsource 5.3.0
+   (ADR general/0009). */
+@font-face {
+  font-family: "Fraunces";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("fonts/fraunces-latin-full.woff2") format("woff2-variations"), url("fonts/fraunces-latin-full.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "DM Sans";
+  font-style: normal;
+  font-weight: 100 1000;
+  font-display: swap;
+  src: url("fonts/dm-sans-latin-opsz.woff2") format("woff2-variations"), url("fonts/dm-sans-latin-opsz.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Titan One";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("fonts/titan-one-latin.woff2") format("woff2");
+}

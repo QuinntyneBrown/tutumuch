@@ -161,7 +161,8 @@ def _():
 
 @s.state("success", "Published: the item is live, with a nudge to set up payouts.")
 def _():
-    main = (f'<div class="center-state"><div class="empty__icon">{ic("check", "icon icon--lg")}</div><h1>It’s live</h1>'
+    # A new listing is a big moment: Tilly's Show & Tell pose (page guidelines 6, L2-096).
+    main = (f'<div class="center-state">{tilly("show-and-tell", "tilly--confirm")}<h1>It’s live</h1>'
             f'<div class="panel" style="width: 100%;">{item_row("pink-tutu", "Janie and Jack · Girls’ · $24.00").replace(ITEMS["pink-tutu"]["title"], NEW["title"])}</div>'
             f'<p class="text-muted"><a href="{P("payouts", "not-onboarded")}">Set up payouts</a> so you’re paid when it sells.</p>'
             f'<div class="actions">{btn("View listing", "primary", P("listing-detail", "own"))}{btn("Sell another", href=P("sell"))}</div></div>')
@@ -170,8 +171,8 @@ def _():
 
 @s.state("selling-not-open", "Launch Phase 1 or 2, a member who is not an administrator: selling opens soon; no form (HTTP 403 SELLING_NOT_OPEN).")
 def _():
-    pg = blocked("tag", "Selling opens soon", "For now, every item is hand-picked by TuTuMuch. You can still shop everything in the catalog.",
-                 btn("Shop the catalog", "primary", P("catalog")), nav="", phase=1)
+    pg = blocked("tag", "Selling opens soon", "For now, every item is hand-picked by TuTuMuch. You can still shop everything in the closet.",
+                 btn("Shop the closet", "primary", P("catalog")), nav="", phase=1)
     pg.notes = note("Shown for /sell, /sell/{reference}, /items/{reference}/edit and /account/listings in Phases 1 and 2 (L2-094). No Sell link in the top bar.",
                     "top: 6rem; right: 1rem;")
     return pg
@@ -179,8 +180,8 @@ def _():
 
 @s.state("product-limit", "Launch Phase 1, the administrator at the product limit: the catalog is full for now (HTTP 409 PRODUCT_LIMIT_REACHED).")
 def _():
-    pg = blocked("info", "The catalog is full for now", "This launch phase keeps the catalog small. Withdraw a listing, or move to the next phase, to list more.",
-                 btn("Your listings", "primary", P("my-listings")) + btn("Back to shop", href=P("catalog")), user="admin", phase=1)
+    pg = blocked("info", "The closet is full for now", "This launch phase keeps the closet small. Withdraw a listing, or move to the next phase, to list more.",
+                 btn("Your listings", "primary", P("my-listings")) + btn("Shop the closet", href=P("catalog")), user="admin", phase=1)
     pg.notes = note("Fewer than Launch:PhaseOneProductLimit (40) listings in any status (L2-092). Editing existing listings still works.", "top: 6rem; right: 1rem;")
     return pg
 
@@ -188,7 +189,7 @@ def _():
 @s.state("unverified", "Unverified member: listing is blocked until the email is verified (HTTP 403).")
 def _():
     return blocked("mail", "Verify your email to sell", "We sent a link to tessa.bell@example.com.",
-                   btn("Resend link", "primary", D("verify-email-prompt")) + btn("Back to shop", href=P("catalog")))
+                   btn("Resend link", "primary", D("verify-email-prompt")) + btn("Shop the closet", href=P("catalog")))
 
 
 @s.state("limited", "Daily limit reached: 20 new listings per day (HTTP 429).")
@@ -200,7 +201,7 @@ def _():
 @s.state("error", "Categories failed to load: the form can’t start, retry with a reference.")
 def _():
     return blocked("refresh", "Couldn’t open the form", 'Something went wrong on our side. <span class="ref">Ref 5c1d-0e7a</span>',
-                   btn("Try again", "primary", icon="refresh") + btn("Back to shop", href=P("catalog")))
+                   btn("Try again", "primary", icon="refresh") + btn("Shop the closet", href=P("catalog")))
 
 
 # ---------------------------------------------------------------------------
@@ -303,7 +304,7 @@ ROWS = [  # newest first: (title, photo key or None, price, status, date)
 
 
 def listing_row(title, key, pr, st, date) -> str:
-    th = photo(key, tag=False, alt="") if key else f'<div class="photo photo--none">{ic("image")}</div>'
+    th = photo(key, tag=False, alt="", cls="photo--sold" if st == "Sold" else "") if key else f'<div class="photo photo--none">{ic("image")}</div>'
     href = {"Active": P("listing-detail", "own"), "Draft": P("sell", "draft-saved"), "Sold": P("sale-detail")}[st]
     return (f'<li><a href="{href}"><div class="item-row"><div class="thumb thumb--lg">{th}</div>'
             f'<div class="item-row__body"><span class="item-row__title">{esc(title)}</span>{status(st)}</div></div>'
@@ -317,9 +318,10 @@ def filter_chips(active: str = "All") -> str:
         for n, c in counts) + "</div>")
 
 
-def listings_page(body: str, sub: str = "5 listings · 1 active") -> Page:
+def listings_page(body: str, sub: str = "5 listings · 1 active", action: bool = True) -> Page:
+    act = btn("Sell outgrown gear", "primary", P("sell"), icon="plus") if action else ""   # the empty state carries it instead
     head = (f'<div class="page-header"><div><h1>Your listings</h1>' + (f'<p class="subtitle">{sub}</p>' if sub else "")
-            + f'</div>{btn("Sell an item", "primary", P("sell"), icon="plus")}</div>')
+            + f'</div>{act}</div>')
     return Page(main=head + body, account="listings")
 
 
@@ -347,7 +349,7 @@ def _():
 
 @ml.state("empty", "No listings yet: one action, sell an item.")
 def _():
-    return listings_page(empty("tag", "Nothing listed yet", "List a dress, a leotard or anything she’s outgrown.", btn("Sell an item", "primary", P("sell"))), sub="")
+    return listings_page(empty("tag", "Nothing listed yet", "List a dress, a leotard or anything she’s outgrown.", btn("Sell outgrown gear", "primary", P("sell"))), sub="", action=False)
 
 
 @ml.state("error", "Listings failed to load: retry with a reference.")
@@ -404,7 +406,7 @@ def _():
 
 @pay.state("empty", "No sales yet: payouts appear after the first one.")
 def _():
-    return payouts_page(empty("dollar", "No payouts yet", "Your earnings show up here after your first sale.", btn("Sell an item", "primary", P("sell"))))
+    return payouts_page(empty("dollar", "No payouts yet", "Your earnings show up here after your first sale.", btn("Sell outgrown gear", "primary", P("sell"))))
 
 
 @pay.state("error", "Payout details failed to load.")
