@@ -1,7 +1,15 @@
 # TuTuMuch pitch video build
 
 `build_video.py` builds the 30-second pitch video that plays on the marketing page (`/welcome`).
-The narration lines, the slide markup and the TuTuMuch-token slide styles are in the script.
+The narration lines, the slide markup and the slide styles are in the script.
+
+The video speaks to shoppers only. In launch Phase 1 (the default) only TuTuMuch sells, so it says
+nothing about members selling (`L2-094`, ADR platform/0014): what TuTuMuch is, what is in the closet,
+that every piece is hand-picked with its condition named up front, find it, buy it, it ships, and
+"Shop the closet". The slides follow the page guidelines (`docs/page-guidelines.md`, ADR general/0009):
+cream and blush backgrounds, Fraunces headings and DM Sans text from `docs/design-system/assets/fonts/`,
+Tilly in approved poses from `docs/design-system/assets/tilly/` (at most one per slide), the condition
+badge colours, and no gradients or decorative shapes.
 
 ```
 python -I docs/mocks/_build/video/build_video.py            # narration and music
@@ -16,7 +24,11 @@ Needs ffmpeg and ffprobe and the Python package `playwright` (with `python -m pl
 chromium`); narration also needs `kokoro-onnx`, `onnxruntime`, `huggingface_hub` and `numpy`.
 
 - **Voice**: Kokoro-82M from Hugging Face, voice `af_bella` at speed 1.12. The model and voice
-  download into `kokoro/` (git-ignored, about 330 MB) on the first run.
+  download into `kokoro/` (git-ignored, about 330 MB) on the first run. When Hugging Face is
+  unreachable the script takes the same Kokoro-82M v1.0 weights from the `kokoro-onnx` GitHub
+  release (`model-files-v1.0`) and extracts `af_bella` from its voice pack.
+- **Browser**: Python Playwright's Chromium; set `PLAYWRIGHT_BROWSERS_PATH` to reuse a
+  pre-installed browser of the matching Playwright version.
 - **Music**: `music/upbeat-ukulele-kids-excerpt.mp3` is a 34-second excerpt of _Upbeat Ukulele
   Kids_ by Cold_Fire on Pixabay (Pixabay Content Licence), committed so the build is repeatable.
   It was cut from the track on its Pixabay page, starting on the beat at 4.25 s, with
