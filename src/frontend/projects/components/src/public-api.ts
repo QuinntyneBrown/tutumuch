@@ -24,9 +24,11 @@ export { ListingCardComponent, type ListingCardPhoto, type ListingCardView } fro
 export { ListingGridComponent } from './lib/listing-grid/listing-grid';
 export { LoadMoreComponent } from './lib/load-more/load-more';
 export { LogoComponent } from './lib/logo/logo';
+export { OrDividerComponent } from './lib/or-divider/or-divider';
 export { OrderTimelineComponent, type TimelineStep } from './lib/order-timeline/order-timeline';
 export { OrderSummaryComponent, type OrderSummaryItem } from './lib/order-summary/order-summary';
 export { PhotoUploaderComponent, type UploaderMove, type UploaderTile } from './lib/photo-uploader/photo-uploader';
+export { ProviderButtonComponent, type SignInProvider } from './lib/provider-button/provider-button';
 export { QuoteComponent } from './lib/quote/quote';
 export { RadioGroupComponent } from './lib/radio-group/radio-group';
 export { RatingSummaryComponent, type RatingSummaryView } from './lib/rating-summary/rating-summary';

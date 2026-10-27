@@ -53,6 +53,7 @@ feature band, steps, video poster and video player, and the showcase tokens they
 | [Toast](components/toast.html) | info, success, warning, danger; optional action; `ToastService` | entering, leaving, paused | notifications/toast |
 | [Sheet](components/sheet.html) | navigation, filter | open | dialogs/nav-menu, dialogs/filters |
 | [Button](components/button.html) | primary, secondary, ghost, link, danger | default, hover, focus, active, disabled, loading | catalog/guest, nav-menu, toast |
+| [Provider button](components/provider-button.html) | google; with the "or" divider | default, hover, focus, active, busy, disabled | sign-in/default, sign-in/google-busy, register/default |
 | [Link](components/link.html) | inline, nav, footer | default, hover, focus, current | catalog, rules |
 | [Form field](components/form-field.html) | input, textarea, select | default, hover, focus, invalid, disabled, read only | sign-in, sell |
 | [Alert](components/alert.html) | info, success, warning, danger; banner without title; projected actions; dismissible | static, polite, assertive | sign-in/invalid, sell/draft-saved, verify-email-prompt, payout-banner |
