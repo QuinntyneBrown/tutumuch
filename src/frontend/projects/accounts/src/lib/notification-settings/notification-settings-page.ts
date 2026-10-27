@@ -13,7 +13,7 @@ import {
 
 /**
  * The member's email settings at /account/emails (mocks pages/notification-settings, L2-043):
- * account security and order emails locked on, review and marketing emails the member's choice,
+ * account security and order emails locked on; item request, review and marketing emails the member's choice (L2-103),
  * saved with the ETag they were read with. A visitor is sent to sign in.
  */
 @Component({
@@ -33,6 +33,7 @@ export class NotificationSettingsPage {
   readonly errorRef = signal('');
   readonly reviews = signal(true);
   readonly marketing = signal(false);
+  readonly itemRequests = signal(true);
   readonly saving = signal(false);
   readonly saved = signal(false);
 
@@ -50,7 +51,7 @@ export class NotificationSettingsPage {
     this.saving.set(true);
     this.saved.set(false);
     const result = await this.api.update(
-      { reviewEmails: this.reviews(), marketingEmails: this.marketing() },
+      { reviewEmails: this.reviews(), marketingEmails: this.marketing(), itemRequestEmails: this.itemRequests() },
       this.etag,
     );
     this.saving.set(false);
@@ -92,6 +93,7 @@ export class NotificationSettingsPage {
     const enabled = (key: string) => preferences.categories.find((category) => category.key === key)?.enabled ?? false;
     this.reviews.set(enabled('reviews'));
     this.marketing.set(enabled('marketing'));
+    this.itemRequests.set(enabled('itemRequests'));
   }
 
   private toSignIn(problem: ApiProblem): boolean {

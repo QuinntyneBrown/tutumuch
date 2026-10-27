@@ -10,7 +10,7 @@
   @case ('loading') {
     <div class="page--form">
       <ul class="settings-list" aria-busy="true" aria-label="Loading">
-        @for (row of [1, 2, 3, 4]; track row) {
+        @for (row of [1, 2, 3, 4, 5]; track row) {
           <li>
             <div class="settings-list__body">
               <tl-skeleton class="emails__skeleton-title" />
@@ -49,6 +49,13 @@
             <span class="settings-list__meta">Sales, shipping, delivery, refunds</span>
           </div>
           <tl-switch label="Order emails, always on" [checked]="true" disabled />
+        </li>
+        <li>
+          <div class="settings-list__body">
+            <span class="settings-list__title">Item requests</span>
+            <span class="settings-list__meta">When something you asked for is listed</span>
+          </div>
+          <tl-switch label="Item request emails" [(checked)]="itemRequests" [disabled]="saving()" />
         </li>
         <li>
           <div class="settings-list__body">

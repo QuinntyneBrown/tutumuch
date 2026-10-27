@@ -24,6 +24,7 @@ import {
   CatalogQuery,
   CatalogSort,
   EMPTY_QUERY,
+  MAX_SEARCH_LENGTH,
   SORTS,
   canonicalParams,
   chipsOf,
@@ -101,6 +102,11 @@ export class CatalogPage implements OnInit {
   readonly headerPose = computed<TillyPose | null>(() => SPORT_POSES[this.categoryHeader()?.label ?? ''] ?? null);
   readonly filtered = computed(() => !!this.query().q || hasFilters(this.query()));
   readonly chips = computed(() => chipsOf(this.query()));
+  /** The request form filled in with this page's category and keyword (L2-104); Angular drops the undefined ones. */
+  readonly requestParams = computed(() => {
+    const query = this.query();
+    return { category: query.category ?? undefined, q: query.q ? query.q.slice(0, MAX_SEARCH_LENGTH) : undefined };
+  });
   readonly cards = computed(() => this.store.items().map(toCardView));
 
   /** Runs after the route-data input is bound, so a category page is known. */

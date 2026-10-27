@@ -89,7 +89,7 @@ Auth shell. `@tutumuch/accounts` `UnsubscribePage` (`src/lib/unsubscribe/`), bui
 manage-notification-preferences; the mocks have no screen for it, so it follows the verify-email
 layout.
 
-- Library: `tl-mark` beside the polite "Turning off news from TuTuMuch…" status (working, no page-load spinner; for an item request
+- Library: `tl-mark` beside the polite "Turning off these emails…" status (working, no page-load spinner; for an item request
   token the copy names item request emails: "You're unsubscribed from item request emails", request-items `L2-103`), `tlButton` ("Shop the closet", "Manage your emails", "Try again"),
   `tl-icon` (`refresh`)
 - Local: the `h1` and lead of each state and the `.stack` of actions

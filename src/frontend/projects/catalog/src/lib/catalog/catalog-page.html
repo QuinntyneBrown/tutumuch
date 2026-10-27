@@ -68,9 +68,16 @@
     </div>
     @switch (store.view()) {
       @case ('empty') {
-        @if (filtered()) {
+        @if (categoryHeader(); as category) {
+          <tl-empty-state icon="tag" [heading]="'Nothing in ' + category.label + ' right now'" [tilly]="!headerPose()">
+            New items arrive every day.
+            <a routerLink="/account/requests/new" [queryParams]="requestParams()">Can’t find it? Request it</a>
+            <a actions tlButton="primary" routerLink="/">Shop the closet</a>
+          </tl-empty-state>
+        } @else if (filtered()) {
           <tl-empty-state icon="search" heading="No items match" [tilly]="!headerPose()">
             Try fewer filters or a different word.
+            <a routerLink="/account/requests/new" [queryParams]="requestParams()">Can’t find it? Request it</a>
             <button actions tlButton="primary" type="button" (click)="clearAll()">Clear search and filters</button>
           </tl-empty-state>
         } @else {

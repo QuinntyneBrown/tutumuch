@@ -1,0 +1,145 @@
+@switch (view()) {
+  @case ('loading') {
+    <div class="request-form">
+      <div class="page-header"><h1>Edit request</h1></div>
+      <div class="stack stack--lg" aria-busy="true" aria-label="Loading request">
+        @for (row of [1, 2, 3, 4]; track row) {
+          <div class="stack stack--sm">
+            <tl-skeleton width="20%" />
+            <tl-skeleton shape="rect" height="3rem" />
+          </div>
+        }
+      </div>
+    </div>
+  }
+  @case ('error') {
+    <tl-center-state icon="refresh" heading="Couldn’t open this request">
+      <p class="text-muted">
+        Something went wrong on our side. <span class="ref">{{ loadRef() }}</span>
+      </p>
+      <button actions tlButton="primary" type="button" (click)="load()"><tl-icon name="refresh" />Try again</button>
+      <a actions tlButton routerLink="/account/requests">Your requests</a>
+    </tl-center-state>
+  }
+  @case ('not-found') {
+    <tl-center-state icon="search" heading="This request isn’t here">
+      <p class="text-muted">It may have been deleted.</p>
+      <a actions tlButton="primary" routerLink="/account/requests">Your requests</a>
+    </tl-center-state>
+  }
+  @case ('limit') {
+    <tl-center-state icon="info" heading="You have 20 open requests">
+      <p class="text-muted">Delete one to add another. Expired requests don’t count.</p>
+      <a actions tlButton="primary" routerLink="/account/requests">Your requests</a>
+      <a actions tlButton routerLink="/">Shop the closet</a>
+    </tl-center-state>
+  }
+  @default {
+    <div class="request-form">
+      <div class="page-header">
+        <div>
+          <h1>{{ editing() ? 'Edit request' : 'Request an item' }}</h1>
+          <p class="subtitle">Can’t find it in the closet? Tell us what she needs.</p>
+        </div>
+      </div>
+      <form class="sell-form" novalidate [formGroup]="form" (ngSubmit)="save()">
+        <tl-error-summary [errors]="summary()" />
+        <section class="form-section" aria-labelledby="s-what">
+          <h2 id="s-what">What she needs</h2>
+          <tl-form-field #cat fieldId="cat" label="Category" [error]="errors()['cat']">
+            <select
+              class="select"
+              id="cat"
+              formControlName="category"
+              [attr.aria-describedby]="cat.describedBy()"
+              [attr.aria-invalid]="cat.invalid()"
+            >
+              <option value="">Choose a category</option>
+              @for (option of categories; track option.slug) {
+                <option [value]="option.label">{{ option.label }}</option>
+              }
+            </select>
+          </tl-form-field>
+          @if (chosen(); as category) {
+            <tl-fixed-size size="Girls'" [sizeLabel]="category.sizeLabel" />
+          }
+          <tl-form-field
+            #kw
+            fieldId="keywords"
+            label="Keywords"
+            help="The words a seller would use, like “ballet slippers”. Every word must be in the listing."
+            [error]="errors()['keywords']"
+            [counter]="keywordCount()"
+          >
+            <input
+              class="input"
+              id="keywords"
+              type="text"
+              [attr.maxlength]="maxKeywords"
+              formControlName="keywords"
+              [attr.aria-describedby]="kw.describedBy()"
+              [attr.aria-invalid]="kw.invalid()"
+            />
+          </tl-form-field>
+        </section>
+        <section class="form-section" aria-labelledby="s-limits">
+          <h2 id="s-limits">Limits</h2>
+          <div class="form-row">
+            <tl-form-field
+              #max
+              fieldId="max"
+              label="Highest price"
+              help="Shipping not included."
+              [optional]="true"
+              [error]="errors()['max']"
+            >
+              <tl-input-group addon="$">
+                <input
+                  class="input"
+                  id="max"
+                  inputmode="decimal"
+                  formControlName="maxPrice"
+                  [attr.aria-describedby]="max.describedBy()"
+                  [attr.aria-invalid]="max.invalid()"
+                />
+              </tl-input-group>
+            </tl-form-field>
+            <tl-form-field
+              #cond
+              fieldId="cond"
+              label="Lowest condition"
+              help="This condition or better."
+              [optional]="true"
+              [error]="errors()['cond']"
+            >
+              <select
+                class="select"
+                id="cond"
+                formControlName="minimumCondition"
+                [attr.aria-describedby]="cond.describedBy()"
+                [attr.aria-invalid]="cond.invalid()"
+              >
+                <option value="">Any condition</option>
+                @for (option of conditions; track option.slug) {
+                  <option [value]="option.label">{{ option.label }}</option>
+                }
+              </select>
+            </tl-form-field>
+          </div>
+        </section>
+        <p class="text-sm text-muted request-form__note">
+          <tl-icon name="mail" />
+          <span
+            >We’ll email you when a matching item is listed. A request stays open for 90 days{{
+              editing() ? ' from today' : ''
+            }}.</span
+          >
+        </p>
+        <div class="form-actions form-actions--sticky form-actions--split">
+          <a tlButton="ghost" routerLink="/account/requests">Cancel</a>
+          <button tlButton="primary" type="submit" [busy]="busy()">Save request</button>
+        </div>
+      </form>
+    </div>
+  }
+}

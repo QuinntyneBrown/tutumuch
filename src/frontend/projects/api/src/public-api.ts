@@ -89,3 +89,9 @@ export {
 } from './lib/orders/problems-api';
 export { provideApi } from './lib/provide-api';
 export { MembersApi, type PublicProfile } from './lib/reviews/members-api';
+export {
+  ItemRequestsApi,
+  type ItemRequest,
+  type ItemRequestBody,
+  type MyItemRequests,
+} from './lib/requests/item-requests-api';

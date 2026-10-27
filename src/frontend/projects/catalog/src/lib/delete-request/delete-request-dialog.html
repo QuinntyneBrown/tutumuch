@@ -1,0 +1,14 @@
+<tl-dialog heading="Delete this request?" icon="trash" tone="danger" size="sm">
+  <span description>“{{ data.keywords }}” stops looking for new listings. This can’t be undone.</span>
+  @if (state() === 'failed') {
+    <tl-alert top tone="danger" heading="Couldn’t delete">Your request is still open.</tl-alert>
+  }
+  <ng-container ngProjectAs="[footer]">
+    <button tlButton type="button" data-autofocus [disabled]="state() === 'busy'" (click)="ref.close()">
+      Keep request
+    </button>
+    <button tlButton="danger" type="button" [busy]="state() === 'busy'" (click)="submit()">
+      {{ state() === 'failed' ? 'Try again' : 'Delete' }}
+    </button>
+  </ng-container>
+</tl-dialog>

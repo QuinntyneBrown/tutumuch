@@ -144,7 +144,7 @@ def request_form(v: dict, *, errors: dict | None = None, busy: bool = False, top
     size_html = ""
     if cat:
         size_html = (f'<div class="fixed-size" id="size">{size_tag("Girls\'", "size-tag--lg")}<span>Size: Girls’</span>'
-                     f'<span class="fixed-size__label">Every item is for girls</span></div>')
+                     f'<span class="fixed-size__label">Set by category</span></div>')
     q = v.get("q", "")
     save = btn("Save request", "primary", attrs=('aria-busy="true"' if busy else 'type="submit"'))
     cancel = f'<a class="btn btn--ghost" href="{P("my-requests")}">Cancel</a>'
@@ -152,7 +152,7 @@ def request_form(v: dict, *, errors: dict | None = None, busy: bool = False, top
             f'<section class="form-section" aria-labelledby="s-what"><h2 id="s-what">What she needs</h2>'
             + field("cat", "Category", select("cat", [c for c, _, _ in CATEGORIES], cat, "Choose a category"), error=e.get("cat"))
             + size_html
-            + field("q", "Keywords", value=q, error=e.get("q"), counter=f"{len(q)} / 100",
+            + field("keywords", "Keywords", value=q, error=e.get("q"), counter=f"{len(q)} / 100",
                     help="The words a seller would use, like “ballet slippers”. Every word must be in the listing.")
             + '</section>'
             f'<section class="form-section" aria-labelledby="s-limits"><h2 id="s-limits">Limits</h2><div class="form-row">'
@@ -191,7 +191,7 @@ def _():
 @rf.state("invalid", "Save refused: a summary at the top and each problem inline; focus moves to the summary.")
 def _():
     errs = {"cat": "Choose a category", "q": "Describe the item in 3 to 100 characters", "max": "Enter a price from $1.00 to $5,000.00"}
-    top = error_summary([("cat", errs["cat"]), ("q", errs["q"]), ("max", errs["max"])])
+    top = error_summary([("cat", errs["cat"]), ("keywords", errs["q"]), ("max", errs["max"])])
     return form_page(request_form({"q": "sl", "max": "0.99"}, errors=errs, top=top))
 
 

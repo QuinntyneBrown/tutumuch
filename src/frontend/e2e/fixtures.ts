@@ -748,3 +748,27 @@ export async function serveProfile(page: Page, profile: Record<string, unknown>,
   await page.route('**/photos/**', (route) => route.fulfill({ status: 404 }));
   return pages;
 }
+
+/** One item request as GET /api/me/item-requests returns it (L2-099): open, no match yet. */
+export function itemRequest(fields: Record<string, unknown> = {}): Record<string, unknown> {
+  return {
+    id: '7d3c0f2e-0000-4000-8000-000000000001',
+    category: 'Dance',
+    size: "Girls'",
+    keywords: 'ballet slippers',
+    maxPrice: 20,
+    minimumCondition: 'Used - Good',
+    createdAt: '2026-10-20T12:00:00Z',
+    updatedAt: '2026-10-20T12:00:00Z',
+    expiresAt: '2027-01-18T12:00:00Z',
+    status: 'Open',
+    matchCount: 0,
+    matches: [],
+    ...fields,
+  };
+}
+
+/** GET /api/me/item-requests: the requests, how many are open and the limit of 20 (L2-098). */
+export function myItemRequests(items: Record<string, unknown>[], openCount = items.length): Record<string, unknown> {
+  return { items, openCount, limit: 20 };
+}

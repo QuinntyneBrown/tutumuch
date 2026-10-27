@@ -1,0 +1,107 @@
+<div class="page-header">
+  <div>
+    <h1>Requests</h1>
+    @if (view() === 'loaded' && rows().length) {
+      <p class="subtitle">{{ subtitle() }}</p>
+    }
+  </div>
+  @if (view() === 'loaded' && rows().length && !atLimit()) {
+    <a tlButton="primary" routerLink="/account/requests/new"><tl-icon name="plus" />Request an item</a>
+  }
+</div>
+@switch (view()) {
+  @case ('loading') {
+    <ul class="request-list" role="list" aria-busy="true" aria-label="Loading requests">
+      @for (row of [1, 2, 3]; track row) {
+        <li class="request">
+          <div class="request__head">
+            <div class="stack stack--sm my-requests__skeleton">
+              <tl-skeleton shape="title" width="40%" />
+              <tl-skeleton width="60%" />
+              <tl-skeleton width="25%" />
+            </div>
+          </div>
+        </li>
+      }
+    </ul>
+  }
+  @case ('error') {
+    <tl-empty-state icon="refresh" heading="Couldn’t load your requests" tone="error">
+      Something went wrong on our side. <span class="ref">{{ errorRef() }}</span>
+      <button actions tlButton="primary" type="button" (click)="retry()"><tl-icon name="refresh" />Try again</button>
+    </tl-empty-state>
+  }
+  @default {
+    @if (!rows().length) {
+      <tl-empty-state icon="bell" heading="No requests yet">
+        Ask for something that isn’t in the closet yet. We’ll email you when it’s listed.
+        <a actions tlButton="primary" routerLink="/account/requests/new">Request an item</a>
+      </tl-empty-state>
+    } @else {
+      @if (atLimit()) {
+        <p class="text-sm text-muted request-list__limit">
+          <tl-icon name="info" />You have {{ data()!.limit }} open requests. Delete one to add another.
+        </p>
+      }
+      <ul class="request-list" role="list">
+        @for (row of rows(); track row.request.id) {
+          <li class="request">
+            <div class="request__head">
+              <div class="stack stack--sm">
+                <h2 class="request__title">{{ row.request.keywords }}</h2>
+                <span class="text-sm text-muted">{{ row.facts }}</span>
+                @if (row.open) {
+                  <span class="text-sm text-muted">Open until {{ row.day }}</span>
+                } @else {
+                  <span class="cluster request__expired">
+                    <tl-status tone="removed">Expired</tl-status>
+                    <span class="text-sm text-muted">Expired on {{ row.day }}</span>
+                  </span>
+                }
+              </div>
+              <div class="cluster request__actions">
+                @if (row.open) {
+                  <a
+                    tlButton
+                    size="sm"
+                    [routerLink]="['/account/requests', row.request.id, 'edit']"
+                    [attr.aria-label]="'Edit ' + row.request.keywords"
+                    >Edit</a
+                  >
+                } @else {
+                  <button
+                    tlButton
+                    size="sm"
+                    type="button"
+                    [busy]="renewing() === row.request.id"
+                    [attr.aria-label]="'Renew ' + row.request.keywords"
+                    (click)="renew(row.request)"
+                  >
+                    Renew
+                  </button>
+                }
+                <button
+                  tlButton="ghost"
+                  size="sm"
+                  type="button"
+                  [attr.aria-label]="'Delete ' + row.request.keywords"
+                  (click)="remove(row.request)"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+            @if (row.cards.length) {
+              <div class="request__matches">
+                <h3 class="text-sm">{{ row.cards.length }} {{ row.cards.length === 1 ? 'match' : 'matches' }}</h3>
+                <tl-listing-grid [cards]="row.cards" />
+              </div>
+            } @else {
+              <p class="request__note text-sm text-muted">{{ row.note }}</p>
+            }
+          </li>
+        }
+      </ul>
+    }
+  }
+}

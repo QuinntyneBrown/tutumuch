@@ -1,0 +1,51 @@
+:host {
+  display: block;
+}
+.request-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--color-border-default);
+}
+.request {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding-block: var(--space-8);
+  border-bottom: 1px solid var(--color-border-default);
+}
+.request__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+.request__title {
+  font: var(--text-h4);
+  letter-spacing: var(--letter-spacing-tight);
+  overflow-wrap: anywhere;
+}
+.request__expired {
+  gap: var(--space-2);
+}
+.request__actions {
+  flex: none;
+}
+.request__matches {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.request__note {
+  margin: 0;
+}
+.request-list__limit {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-6);
+}
+.my-requests__skeleton {
+  flex: 1;
+}

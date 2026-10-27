@@ -3,14 +3,19 @@
     <div><h1>Unsubscribing</h1></div>
     <div class="cluster" aria-busy="true">
       <tl-mark />
-      <span class="text-muted" role="status">Turning off news from TuTuMuch…</span>
+      <span class="text-muted" role="status">Turning off these emails…</span>
     </div>
   }
   @case ('unsubscribed') {
     <div>
       <h1>You’re unsubscribed</h1>
       <p class="text-muted unsubscribe__lead">
-        You won’t get news from TuTuMuch any more. Account security and order emails still arrive.
+        @if (category() === 'ItemRequests') {
+          You’re unsubscribed from item request emails. Your requests and their matches stay on your requests page, and
+          account security and order emails still arrive.
+        } @else {
+          You won’t get news from TuTuMuch any more. Account security and order emails still arrive.
+        }
       </p>
     </div>
     <div class="stack">
