@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>TuTuMuch flyer 6: Shop (Half Letter, two-sided)</title>
+    <link rel="stylesheet" href="../print.css" />
+    <link rel="stylesheet" href="_flyer.css" />
+    <style>
+      /* Front: a poster. Tilly twirls out of the raspberry hero onto the cream. */
+      .hero { left: 0; right: 0; top: 0; height: 520px; background-color: var(--raspberry); background-image: radial-gradient(#e0548a 16%, transparent 18%); background-size: 24px 24px; }
+      .front .wordmark { left: 50%; top: 48px; width: 250px; transform: translateX(-50%); }
+      .front .eyebrow { left: 50%; top: 122px; transform: translateX(-50%) rotate(-1.5deg); }
+      .headline { left: 36px; right: 36px; top: 158px; margin: 0; text-align: center; font-size: 44px; line-height: 1; color: var(--white); }
+      .headline em { font-style: normal; color: var(--sunny); }
+      .tilly { left: 50%; top: 250px; height: 300px; transform: translateX(-50%); }
+      .front .lede { left: 44px; right: 44px; top: 570px; text-align: center; }
+      .front .ticks { left: 60px; right: 36px; top: 622px; gap: 6px; }
+      .front .url { left: 50%; top: 752px; transform: translateX(-50%); padding: 7px 18px 8px; font: 900 17px/1 var(--font-body); background: var(--ink); color: var(--white); }
+
+      /* Back: what you'll find, how it works, the QR code. */
+      .back h2 { margin: 0; font: 400 24px/1 var(--font-display); color: var(--raspberry); }
+      .back .h-find { left: 36px; top: 44px; }
+      .grid { left: 36px; top: 84px; width: 480px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 11px; }
+      .tile {
+        position: relative; height: 112px; border: 3px solid var(--ink); border-radius: 16px; box-shadow: 3px 4px 0 var(--ink);
+        background: var(--white); display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 8px;
+      }
+      .tile:nth-child(3n+2) { background: var(--blush); }
+      .tile:nth-child(6n+1), .tile:nth-child(6n+6) { background: var(--lilac-200); }
+      .tile img { width: 66px; height: 66px; }
+      .tile span { font: 900 11px/1.1 var(--font-body); text-align: center; }
+      .back .panel { left: 36px; top: 350px; width: 480px; height: 200px; padding: 18px 18px 0 20px; }
+      .back .panel h2 { margin-bottom: 12px; }
+      .back .steps { gap: 10px; }
+      .peek { right: 40px; top: 540px; height: 118px; }
+      .back .promise { left: 36px; top: 580px; margin: 0; padding: 0; list-style: none; display: flex; gap: 8px; }
+      .back .promise li { padding: 6px 11px 7px; font: 800 11px/1 var(--font-body); background: var(--sunny); }
+    </style>
+  </head>
+  <body>
+    <!-- Half Letter, two-sided, for shoppers only: nothing here is about selling.
+         Categories are the six of ADR general/0006; item art is docs/mocks/assets/items.
+         The shopping steps follow the checkout, ship and complete-order journeys. -->
+    <div class="sheet half front">
+      <div class="hero"></div>
+      <span class="wordmark" data-wordmark data-shadow="#3A2233"></span>
+      <div class="chip eyebrow">New &amp; gently loved · all for girls</div>
+      <h1 class="headline display outlined">Her next favourite<br />thing is <em>waiting.</em></h1>
+      <img class="char tilly" src="../../characters/tilly-twirl.png" alt="" />
+      <p class="lede">Clothes, shoes, dance and sports gear, bikes, cameras, toys and more, every one for girls.</p>
+      <ul class="ticks">
+        <li><svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="13" fill="#F6C64B" stroke="#3A2233" stroke-width="3"/><path d="M9 15.5l4 4 8-9" fill="none" stroke="#3A2233" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Every listing is for girls</b>Nothing to filter out.</span></li>
+        <li><svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="13" fill="#F6C64B" stroke="#3A2233" stroke-width="3"/><path d="M9 15.5l4 4 8-9" fill="none" stroke="#3A2233" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Outgrown, not worn out</b>Plenty of twirl left in them.</span></li>
+        <li><svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="13" fill="#F6C64B" stroke="#3A2233" stroke-width="3"/><path d="M9 15.5l4 4 8-9" fill="none" stroke="#3A2233" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Honest condition</b>Five grades, flaws named up front.</span></li>
+      </ul>
+      <div class="chip url">www.tutumuch.kids</div>
+    </div>
+
+    <div class="sheet half back">
+      <h2 class="h-find">What you’ll find</h2>
+      <div class="grid">
+        <div class="tile"><img src="../../../mocks/assets/items/party-dress.svg" alt="" /><span>Clothing</span></div>
+        <div class="tile"><img src="../../../mocks/assets/items/sneakers.svg" alt="" /><span>Shoes</span></div>
+        <div class="tile"><img src="../../../mocks/assets/items/tutu.svg" alt="" /><span>Dance</span></div>
+        <div class="tile"><img src="bike.svg" alt="" /><span>Sports, bikes and scooters</span></div>
+        <div class="tile"><img src="../../../mocks/assets/items/camera.svg" alt="" /><span>Cameras and tech</span></div>
+        <div class="tile"><img src="../../../mocks/assets/items/doll.svg" alt="" /><span>Toys and crafts</span></div>
+      </div>
+      <section class="panel">
+        <h2>How shopping works</h2>
+        <ol class="steps">
+          <li><span class="n">1</span><span><b>Find it</b>Browse by category, brand, condition and price, or search for exactly what she needs.</span></li>
+          <li><span class="n">2</span><span><b>Buy it</b>Check out and pay securely. Your order ships within 5 business days.</span></li>
+          <li><span class="n">3</span><span><b>Love it</b>It arrives at your door. Confirm it got there, and she’s off twirling.</span></li>
+        </ol>
+      </section>
+      <img class="char peek" src="../../characters/tilly-hello.png" alt="" />
+      <ul class="promise">
+        <li class="chip">New listings every day</li>
+        <li class="chip">Help with any order problem</li>
+      </ul>
+
+      <section class="cta">
+        <div class="cta__qr"><img src="../qr-tutumuch-kids.svg" alt="QR code for www.tutumuch.kids" /></div>
+        <div class="cta__copy">
+          <p class="cta__head">Shop the catalog. <em>Come on in!</em></p>
+          <p class="cta__url">www.tutumuch.kids</p>
+          <p class="cta__small">Scan to start browsing. Questions? hello@tutumuch.kids</p>
+        </div>
+      </section>
+    </div>
+    <script src="_flyer.js"></script>
+    <script src="../wordmark.js"></script>
+  </body>
+</html>

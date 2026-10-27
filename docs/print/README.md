@@ -11,6 +11,7 @@ hold in their hands matches the site. See [ADR general/0007](../adr/general/0007
 | Stickers (6) | `stickers/sticker-N-*.png` | `stickers/contact-sheet.png`, `*-preview.png` |
 | Flyers (3, Letter) | `flyers/flyer-N-*-print-bleed.pdf` (print shop), `flyer-N-*-letter.pdf` (home printer) | `flyers/*-preview.png` |
 | Buyer handouts (2, 5 × 7) | `flyers/flyer-N-*-5x7-print-bleed.pdf` (print shop), `flyer-N-*-5x7.pdf` (trimmed) | `flyers/*-5x7-preview.png` |
+| Shopper flyer (Half Letter, two-sided) | `flyers/flyer-6-shop-half-letter-print-bleed.pdf` (print shop), `flyer-6-shop-half-letter.pdf` (trimmed) | `flyers/*-half-letter-{front,back}-preview.png` |
 
 ## Business card
 
@@ -111,6 +112,26 @@ Card-sized versions of the two buyer flyers, to hand out:
 
 Order "5 × 7 flyer" or "5 × 7 postcard", single-sided, and upload the bleed PDF.
 
+### Half Letter shopper flyer, two-sided
+
+For shoppers only; it says nothing about selling.
+
+| | |
+|---|---|
+| ![Front](flyers/flyer-6-shop-half-letter-front-preview.png) | ![Back](flyers/flyer-6-shop-half-letter-back-preview.png) |
+| **Front**: "Her next favourite thing is waiting." Tilly twirls out of the hero; the three shopper promises and the address | **Back**: the six categories, "How shopping works" (find it, buy it, love it) and the QR code |
+
+| | |
+|---|---|
+| Trim | Half Letter, 5.5 × 8.5 in, two-sided |
+| `-print-bleed.pdf` | Two pages (front, back) at 5.75 × 8.75 in: 0.125 in bleed for a print shop that trims |
+| `.pdf` | Two pages at 5.5 × 8.5 in, bleed cropped off |
+| Safe area | 0.25 in inside the trim, checked by the renderer on each side |
+
+Order "5.5 × 8.5 flyer" (also sold as Half Letter or half-page), double-sided, and upload the
+bleed PDF: page 1 is the front, page 2 the back. The steps on the back follow the checkout,
+ship (within 5 business days) and complete-order journeys.
+
 | | |
 |---|---|
 | Trim | US Letter, 8.5 × 11 in |
@@ -144,7 +165,8 @@ Edit the HTML sources, never the PNGs or PDFs.
 docs/print/
   business-cards/   tutumuch-business-card.pdf, tutumuch-card-{front,back}[-guides].png
   stickers/         sticker-N-*.png (print), *-preview.png, contact-sheet.png
-  flyers/           flyer-N-*-print-bleed.pdf, *-letter.pdf or *-5x7.pdf, *-preview.png
+  flyers/           flyer-N-*-print-bleed.pdf, *-letter.pdf or trimmed *.pdf, *-preview.png
+                    (a two-sided flyer has two .sheet elements and two-page PDFs)
   characters/       Tilly cutouts (transparent PNG) + ATTRIBUTION.md
   _build/
     render.mjs      renders and checks everything

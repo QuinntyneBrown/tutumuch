@@ -51,6 +51,7 @@ const STICKERS = [
 // how far in from the bleed edge (CSS px) words and the QR code must stay.
 const LETTER = { w: 8.5, h: 11, safe: 48, name: 'letter' } // 0.375in inside the trim
 const CARD_5X7 = { w: 5, h: 7, safe: 36, name: '5x7' } // 0.25in inside the trim
+const HALF_LETTER = { w: 5.5, h: 8.5, safe: 36, name: 'half-letter' } // 0.25in inside the trim
 
 const FLYERS = [
   { slug: 'flyer-1-join', title: 'Join TuTuMuch: buy and sell', size: LETTER },
@@ -58,6 +59,7 @@ const FLYERS = [
   { slug: 'flyer-3-shop-gear', title: 'Shop bikes, sports and dance gear', size: LETTER },
   { slug: 'flyer-4-shop-5x7', title: 'Shop new and gently loved, 5x7', size: CARD_5X7 },
   { slug: 'flyer-5-shop-gear-5x7', title: 'Shop sports and dance gear, 5x7', size: CARD_5X7 },
+  { slug: 'flyer-6-shop-half-letter', title: 'Shop, Half Letter, two-sided', size: HALF_LETTER, sides: 2 },
 ]
 
 const KEYLINE = 60 // px of white beyond the artwork: 0.2in at 300 DPI
@@ -373,27 +375,32 @@ async function renderFlyers(browser) {
   const dir = path.join(printRoot, 'flyers')
   await mkdir(dir, { recursive: true })
 
-  for (const { slug, title, size } of FLYERS.filter((f) => !pick || f.slug === pick)) {
+  for (const { slug, title, size, sides = 1 } of FLYERS.filter((f) => !pick || f.slug === pick)) {
     const file = path.join(here, 'flyers', `${slug}.html`)
     const bleedIn = { w: size.w + 0.25, h: size.h + 0.25 }
     const W = bleedIn.w * CSS_DPI
     const H = bleedIn.h * CSS_DPI
+    const pages = `1-${sides}`
 
-    const { context, page } = await openPage(browser, file, { width: W, height: H, scale: 2 })
+    const { context, page } = await openPage(browser, file, { width: W, height: H * sides, scale: 2 })
+    const found = await page.locator('.sheet').count()
+    if (found !== sides) throw new Error(`${slug}: expected ${sides} .sheet element(s), found ${found}`)
 
-    // Words and the QR code must sit inside the safe area.
+    // Words and the QR code must sit inside the safe area of their own sheet.
     const unsafe = await page.evaluate(
       ({ safe, W, H }) => {
         const right = W - safe
         const bottom = H - safe
         return [...document.querySelectorAll('.sheet :is(p, h1, h2, li, .chip, .cta__qr, [data-wordmark])')]
           .map((el) => {
+            const origin = el.closest('.sheet').getBoundingClientRect()
+            const rel = (rect) => ({ left: rect.left - origin.left, top: rect.top - origin.top, right: rect.right - origin.left, bottom: rect.bottom - origin.top, width: rect.width, height: rect.height })
             // Measure the content, not the box: nowrap text can overflow its paragraph.
             const range = document.createRange()
             range.selectNodeContents(el)
-            const box = el.getBoundingClientRect()
+            const box = rel(el.getBoundingClientRect())
             // The wordmark's SVG box already includes its padding; its glyph boxes are not ink.
-            const ink = el.matches('[data-wordmark], .cta__qr') ? box : range.getBoundingClientRect()
+            const ink = el.matches('[data-wordmark], .cta__qr') ? box : rel(range.getBoundingClientRect())
             const r = {
               left: Math.min(box.left, ink.width ? ink.left : box.left),
               top: Math.min(box.top, ink.height ? ink.top : box.top),
@@ -409,17 +416,21 @@ async function renderFlyers(browser) {
     )
     if (unsafe.length) throw new Error(`${slug}: outside the safe area: ${unsafe.join('; ')}`)
 
-    const preview = await page.locator('.sheet').screenshot()
-    await writeFile(path.join(dir, `${slug}-preview.png`), preview)
-    await page.pdf({ path: path.join(dir, `${slug}-print-bleed.pdf`), width: `${bleedIn.w}in`, height: `${bleedIn.h}in`, printBackground: true, pageRanges: '1' })
+    const previews = []
+    for (let i = 0; i < sides; i += 1) {
+      const name = sides === 1 ? `${slug}-preview.png` : `${slug}-${i === 0 ? 'front' : 'back'}-preview.png`
+      await writeFile(path.join(dir, name), await page.locator('.sheet').nth(i).screenshot())
+      previews.push(name)
+    }
+    await page.pdf({ path: path.join(dir, `${slug}-print-bleed.pdf`), width: `${bleedIn.w}in`, height: `${bleedIn.h}in`, printBackground: true, pageRanges: pages })
     await context.close()
 
-    // The trimmed PDF: Letter for a home printer, or the 5x7 card without its bleed.
+    // The trimmed PDF: Letter for a home printer, or the card without its bleed.
     const trimmed = size === LETTER ? `${slug}-letter.pdf` : `${slug}.pdf`
-    const home = await openPage(browser, file, { width: W, height: H, query: '?trim=1' })
-    await home.page.pdf({ path: path.join(dir, trimmed), width: `${size.w}in`, height: `${size.h}in`, printBackground: true, pageRanges: '1' })
+    const home = await openPage(browser, file, { width: W, height: H * sides, query: '?trim=1' })
+    await home.page.pdf({ path: path.join(dir, trimmed), width: `${size.w}in`, height: `${size.h}in`, printBackground: true, pageRanges: pages })
     await home.context.close()
-    console.log(`✓ ${title.padEnd(34)} ${slug}-print-bleed.pdf, ${trimmed}, ${slug}-preview.png`)
+    console.log(`✓ ${title.padEnd(34)} ${slug}-print-bleed.pdf, ${trimmed}, ${previews.join(', ')}`)
   }
 }
 
