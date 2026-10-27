@@ -22,7 +22,9 @@
       @if (empty()) {
         <tl-empty-state icon="tag" heading="No payouts yet">
           Your earnings show up here after your first sale.
-          <a actions tlButton="primary" routerLink="/sell">Sell an item</a>
+          @if (launch.canSell()) {
+            <a actions tlButton="primary" routerLink="/sell">Sell an item</a>
+          }
         </tl-empty-state>
       } @else {
         @if (setupError(); as error) {

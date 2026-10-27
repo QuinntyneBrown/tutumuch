@@ -1,0 +1,39 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+title Open the sell page in Phase 1
+
+actor "Member (not an administrator)" as M
+participant "Router\n(listings.routes.ts)" as R
+participant "sellingOpen guard" as G
+participant "AuthState" as A
+participant "LaunchState" as L
+participant "SellingNotOpenPage" as N
+participant "TuTuMuch.Api" as API
+
+M -> R : navigate /sell
+R -> G : canMatch
+G -> A : load()
+A -> API : GET /api/auth/me
+API --> A : 200 { displayName, isAdministrator: false, ... }
+G -> L : canSell()
+note right of L : phase 1 loaded at start:\nmemberSellingOpen false,\nisAdministrator false
+L --> G : false
+G --> R : false (route does not match)
+R -> N : next /sell route: loadComponent
+N --> M : tl-center-state "Selling opens soon"\n+ "Shop the catalog"
+
+== A direct API call is refused too ==
+M -> API : POST /api/listings
+API -> API : CanSell policy: VerifiedEmail + SellingOpen\n(Launch:Phase 1, Members.IsAdministrator false)
+API --> M : 403 problem SELLING_NOT_OPEN "Selling opens soon"
+
+== The owner at the product limit ==
+actor "Owner (Administrator)" as O
+O -> API : POST /api/listings
+API -> API : CanSell passes (IsAdministrator)
+API -> API : ListingCommandHandlers: COUNT(Listings) = 39\nLaunchRules.CanAddListing(One, 39, 40) = false
+API --> O : 409 PRODUCT_LIMIT_REACHED "The catalog is full for now"
+@enduml

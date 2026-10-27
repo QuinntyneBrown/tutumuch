@@ -90,6 +90,8 @@ The slice runs from the sell page in the `@tutumuch/listings` library through `T
 | `UNAUTHENTICATED` | 401 | No valid session |
 | `EMAIL_NOT_VERIFIED` | 403 | Unverified member calls a selling endpoint |
 | `RATE_LIMITED` | 429 | A 21st publish in one UTC day |
+| `SELLING_NOT_OPEN` | 403 | Launch Phase 1 or 2 and the caller is not an administrator; checked before `EMAIL_NOT_VERIFIED` ([launch-phases](../../platform/launch-phases/README.md)) |
+| `PRODUCT_LIMIT_REACHED` | 409 | Launch Phase 1: a new draft when the listing count is `Launch:PhaseOneProductLimit` − 1 or more, or a publish when it is the limit or more |
 
 ### Infrastructure and data (`TuTuMuch.Infrastructure`)
 
@@ -115,10 +117,13 @@ The slice runs from the sell page in the `@tutumuch/listings` library through `T
 |-----|-------|-------|
 | `Selling:PlatformFeePercent` | 10 | Shown by `GET /api/selling/options`; seller-payouts reads the same key |
 | `Selling:PublishesPerDay` | 20 | Per member per UTC day (`L2-051`) |
+| `Launch:Phase` | 1 | 1 or 2: only administrators sell; 3: every verified member ([ADR platform/0014](../../../adr/platform/0014-launch-phase-configuration.md)) |
+| `Launch:PhaseOneProductLimit` | 40 | Phase 1 keeps fewer listings than this |
 | `Selling:SuggestedBrands` | Carter's, OshKosh B'gosh, Gap Kids, Old Navy, Hanna Andersson, Mini Boden, Janie and Jack, Tea Collection, Zara Kids, H&M Kids | From the mocks |
 
 ### Decisions and open questions
 
+- Launch phases ([launch-phases](../../platform/launch-phases/README.md), `L2-091`, `L2-092`, `L2-094`): the `CanSell` policy adds `SellingOpenRequirement`; `CreateListingDraftCommand` and `PublishListingCommand` check the Phase 1 product limit; `/sell` and `/sell/:reference` load `SellingNotOpenPage` for anyone the phase does not let sell, and `SellPage` shows the product-limit state on 409 `PRODUCT_LIMIT_REACHED`.
 - There is no seller size confirmation and no `SizeConfirmedAt` column ([ADR general/0008](../../../adr/general/0008-remove-the-for-girls-confirmation.md)).
 - `Cache-Control: max-age=3600` on categories, the 500-character flaws limit and the `L-10001` start are chosen here; change them in this design if the product owner decides otherwise.
 - Earnings round half up to the cent (`Math.round` on cents).

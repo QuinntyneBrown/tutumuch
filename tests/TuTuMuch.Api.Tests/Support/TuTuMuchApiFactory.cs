@@ -23,14 +23,18 @@ public sealed class TuTuMuchApiFactory : WebApplicationFactory<Program>
 {
     private readonly SqliteConnection _connection;
     private readonly string? _sharedDatabase;
+    private readonly string? _launchPhase;
 
     /// <summary>
     /// One in-memory database on one connection. With <paramref name="concurrent"/>, every
     /// DbContext opens its own connection to a shared-cache in-memory database instead, so
-    /// parallel requests run in parallel as they would against SQL Server.
+    /// parallel requests run in parallel as they would against SQL Server. The API runs in launch
+    /// Phase 3 (today's rules) unless <paramref name="launchPhase"/> says otherwise; null leaves
+    /// Launch:Phase to appsettings.json (L2-089).
     /// </summary>
-    public TuTuMuchApiFactory(bool concurrent = false)
+    public TuTuMuchApiFactory(bool concurrent = false, string? launchPhase = "3")
     {
+        _launchPhase = launchPhase;
         _sharedDatabase = concurrent ? $"Data Source=file:tutumuch-{Guid.NewGuid():N}?mode=memory&cache=shared" : null;
         _connection = new SqliteConnection(_sharedDatabase ?? "DataSource=:memory:");
         _connection.Open();
@@ -59,6 +63,11 @@ public sealed class TuTuMuchApiFactory : WebApplicationFactory<Program>
         builder.UseSetting("Auth:SigningKey", "test-signing-key-that-is-at-least-32-bytes-long");
         builder.UseSetting("App:BaseUrl", "https://tutumuch.test");
         builder.UseSetting("Notifications:UnsubscribeSigningKey", "test-unsubscribe-key");
+        if (_launchPhase is not null)
+        {
+            builder.UseSetting("Launch:Phase", _launchPhase);
+        }
+
         builder.ConfigureTestServices(services =>
         {
             services.RemoveAll<DbContextOptions<TuTuMuchDbContext>>();

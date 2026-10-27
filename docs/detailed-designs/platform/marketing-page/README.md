@@ -94,6 +94,16 @@ media come from the build, and the error state routes `**/media/tutumuch-pitch.*
 `serve.mjs` learns the media content types. Covers `L2-078` to `L2-083`, including reduced
 motion and the footer link.
 
+### Launch phases
+
+In launch Phases 1 and 2 ([launch-phases](../launch-phases/README.md), `L2-094`), unless the
+member is an administrator, `WelcomePage` reads `LaunchState.canSell()` and replaces the hero's
+"Start selling" with `<p class="marketing-hero__soon">Selling opens soon.</p>`, the seller band's
+heading with "Selling opens soon.", its points with "Pass it on soon" and "Join today", and its
+button with `<p class="feature-band__note">For now, every item is hand-picked by TuTuMuch.</p>`;
+the closing hero keeps only "Shop the catalog" (mock `pages/welcome/selling-opens-soon`). The page
+still calls no endpoint itself: `LaunchState` is loaded by the app initializer.
+
 ## Requirements
 
 | L2 ID | Refines (L1) | Requirement |
@@ -103,6 +113,7 @@ motion and the footer link.
 | `L2-080` | `L1-020` | Poster first, no autoplay, keyboard play and pause |
 | `L2-081` | `L1-020` | Captions off by default, Captions toggle |
 | `L2-082` | `L1-020` | Video error state; page stays usable |
+| `L2-094` | `L1-021`, `L1-020` | Seller CTAs say selling opens soon in launch Phases 1 and 2 |
 | `L2-083` | `L1-020` | Contrast over gradients, heading order, reduced motion, title, meta description and link-preview tags |
 
 Related requirements applied without restating them: `L2-061` to `L2-065` (responsive,

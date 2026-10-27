@@ -395,6 +395,7 @@ class Page:
     footer: bool = True
     main_class: str = "container page"
     notes: str = ""          # .mock-note annotations
+    phase: int = 3           # launch phase (L2-089): 1 hides the category links and menu button; 1 and 2 hide Sell from non-admins
 
 
 @dataclass
@@ -428,22 +429,28 @@ def nav_href(key: str) -> str:
 
 
 def topbar(pg: Page) -> str:
+    menus = pg.phase != 1                                   # L2-093: no category links or menu button in Phase 1
+    can_sell = pg.phase == 3 or pg.user == "admin"          # L2-094: Sell only for administrators in Phases 1 and 2
     nav = "".join(
-        f'<a class="nav-link" href="{nav_href(k)}"{" aria-current=\"page\"" if pg.nav == k else ""}>{label}</a>' for k, label in NAV)
+        f'<a class="nav-link" href="{nav_href(k)}"{" aria-current=\"page\"" if pg.nav == k else ""}>{label}</a>' for k, label in NAV) if menus else ""
     search = (f'<form class="search" role="search" action="{P("catalog", "search")}"><label class="visually-hidden" for="q">Search TuTuMuch</label>'
               f'{ic("search")}<input class="input" id="q" name="q" type="search" placeholder="Search brands and items"></form>')
     if pg.user == "guest":
+        sell = f'<a class="btn btn--ghost topbar__sell" href="{P("sell")}">Sell</a>' if can_sell else ""
         right = (f'<a class="btn btn--ghost btn--icon topbar__search-btn" href="{P("catalog", "search")}" aria-label="Search">{ic("search")}</a>'
-                 f'<a class="btn btn--ghost topbar__sell" href="{P("sell")}">Sell</a>'
-                 f'<a class="btn" href="{P("sign-in")}">Sign in</a>')
+                 f'{sell}<a class="btn" href="{P("sign-in")}">Sign in</a>')
     else:
-        who = PEOPLE[ME]
+        who = ADMIN if pg.user == "admin" else PEOPLE[ME]
         sell_cur = ' aria-current="page"' if pg.nav == "sell" else ""
+        sell = f'<a class="nav-link topbar__sell" href="{P("sell")}"{sell_cur}>{ic("plus")}Sell</a>' if can_sell else ""
         right = (f'<a class="btn btn--ghost btn--icon topbar__search-btn" href="{P("catalog", "search")}" aria-label="Search">{ic("search")}</a>'
-                 f'<a class="nav-link topbar__sell" href="{P("sell")}"{sell_cur}>{ic("plus")}Sell</a>'
+                 f'{sell}'
                  f'<a class="avatar avatar--sm" href="{P("account")}" aria-label="Your account, {esc(who["name"])}" style="text-decoration: none;">{who["initials"]}</a>')
-    return (f'<header class="topbar"><button class="btn btn--ghost btn--icon topbar__menu" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu">{ic("menu")}</button>'
-            f'{logo()}<nav class="topbar__nav" aria-label="Primary">{nav}</nav><span class="topbar__spacer"></span>{search}'
+    menu = (f'<button class="btn btn--ghost btn--icon topbar__menu" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu">{ic("menu")}</button>'
+            if menus else "")
+    nav_el = f'<nav class="topbar__nav" aria-label="Primary">{nav}</nav>' if menus else ""
+    return (f'<header class="topbar">{menu}'
+            f'{logo()}{nav_el}<span class="topbar__spacer"></span>{search}'
             f'<div class="topbar__actions">{right}</div></header>')
 
 

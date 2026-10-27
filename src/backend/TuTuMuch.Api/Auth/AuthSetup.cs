@@ -7,6 +7,8 @@ using Microsoft.IdentityModel.Tokens;
 using TuTuMuch.Api.Http;
 using TuTuMuch.Application.Abstractions;
 using TuTuMuch.Application.Common;
+using TuTuMuch.Application.Launch;
+using TuTuMuch.Domain.Launch;
 
 namespace TuTuMuch.Api.Auth;
 
@@ -16,7 +18,7 @@ public static class Policies
     /// <summary>A signed-in member whose email is verified (L2-002 AC4, L2-003).</summary>
     public const string VerifiedMember = "VerifiedMember";
 
-    /// <summary>A verified member may sell; there is no seller application (L2-003).</summary>
+    /// <summary>A verified member may sell; there is no seller application (L2-003). In launch Phases 1 and 2 only an administrator (L2-091).</summary>
     public const string CanSell = "CanSell";
 
     /// <summary>A member holding the Administrator role (L2-010 AC3); only order problems use it (L2-036).</summary>
@@ -71,7 +73,34 @@ public sealed class AdministratorHandler(ITuTuMuchDbContext db) : AuthorizationH
     }
 }
 
-/// <summary>Answers 401 and 403 as problem details; 403 for an unverified member carries EMAIL_NOT_VERIFIED.</summary>
+/// <summary>Requires a launch phase that lets the caller sell: Phase 3, or an administrator in Phases 1 and 2 (L2-091, ADR platform/0014).</summary>
+public sealed class SellingOpenRequirement : IAuthorizationRequirement;
+
+public sealed class SellingOpenHandler(ITuTuMuchDbContext db, IOptions<LaunchOptions> launch) : AuthorizationHandler<SellingOpenRequirement>
+{
+    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, SellingOpenRequirement requirement)
+    {
+        if (context.User.Identity?.IsAuthenticated != true)
+        {
+            return;
+        }
+
+        var phase = launch.Value.CurrentPhase;
+        var memberId = context.User.MemberId();
+        // Phase 3 needs no database read.
+        if (LaunchRules.MemberSellingOpen(phase)
+            || LaunchRules.CanSell(phase, await db.Members.AnyAsync(m => m.Id == memberId && m.IsAdministrator)))
+        {
+            context.Succeed(requirement);
+        }
+        else
+        {
+            context.Fail(new AuthorizationFailureReason(this, "SELLING_NOT_OPEN"));
+        }
+    }
+}
+
+/// <summary>Answers 401 and 403 as problem details; SELLING_NOT_OPEN comes before EMAIL_NOT_VERIFIED for an unverified member.</summary>
 public sealed class ProblemAuthorizationResultHandler : IAuthorizationMiddlewareResultHandler
 {
     private readonly AuthorizationMiddlewareResultHandler _default = new();
@@ -86,7 +115,9 @@ public sealed class ProblemAuthorizationResultHandler : IAuthorizationMiddleware
         if (result.Forbidden)
         {
             var reasons = result.AuthorizationFailure?.FailureReasons.Select(r => r.Message).ToList() ?? [];
-            return ProblemResults.WriteAsync(context, reasons.Contains("EMAIL_NOT_VERIFIED")
+            return ProblemResults.WriteAsync(context, reasons.Contains("SELLING_NOT_OPEN")
+                ? new Error(403, "SELLING_NOT_OPEN", "Selling opens soon")
+                : reasons.Contains("EMAIL_NOT_VERIFIED")
                 ? new Error(403, "EMAIL_NOT_VERIFIED", "Verify your email to sell")
                 : reasons.Contains("ADMINISTRATOR_REQUIRED")
                     ? new Error(403, "ADMINISTRATOR_REQUIRED", "Only TuTuMuch administrators can do that")
@@ -112,6 +143,7 @@ public static class AuthSetup
         services.AddSingleton<GoogleFlowCookie>();
         services.AddScoped<IAuthorizationHandler, VerifiedEmailHandler>();
         services.AddScoped<IAuthorizationHandler, AdministratorHandler>();
+        services.AddScoped<IAuthorizationHandler, SellingOpenHandler>();
         services.AddSingleton<IAuthorizationMiddlewareResultHandler, ProblemAuthorizationResultHandler>();
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
@@ -143,7 +175,7 @@ public static class AuthSetup
 
         services.AddAuthorizationBuilder()
             .AddPolicy(Policies.VerifiedMember, p => p.RequireAuthenticatedUser().AddRequirements(new VerifiedEmailRequirement()))
-            .AddPolicy(Policies.CanSell, p => p.RequireAuthenticatedUser().AddRequirements(new VerifiedEmailRequirement()))
+            .AddPolicy(Policies.CanSell, p => p.RequireAuthenticatedUser().AddRequirements(new VerifiedEmailRequirement(), new SellingOpenRequirement()))
             .AddPolicy(Policies.Administrator, p => p.RequireAuthenticatedUser().AddRequirements(new AdministratorRequirement()));
         return services;
     }

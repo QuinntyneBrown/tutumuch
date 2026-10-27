@@ -22,6 +22,9 @@ is not set it counts as `Production`, so the guard is on by default.
 verify their email, photos go through the upload pipeline (metadata stripped, WebP and JPEG
 versions), listings are created as drafts and then published. Running `seed` again when
 the demo is already there changes nothing; `seed --reset` always gives the same fresh demo.
+The demo targets launch phase 3 (every member sells): `seed` ignores `Launch__Phase` and says
+so in its output; the API may run in any phase over the demo
+([ADR platform/0014](../../../docs/adr/platform/0014-launch-phase-configuration.md)).
 
 ## Settings
 

@@ -88,6 +88,7 @@ Every action is on `ListingsController` under the `CanSell` policy (`L2-003`, `L
 | `LISTING_CHANGED` | 412 | `If-Match` does not match the current version |
 | `PRECONDITION_REQUIRED` | 428 | `PUT` of a published listing without `If-Match` |
 | `CATEGORY_INVALID`, `SIZE_NOT_ACCEPTED`, `LISTING_INVALID` | 422 | As in [create-listing](../create-listing/README.md) |
+| `SELLING_NOT_OPEN` | 403 | Edit, withdraw or relist in launch Phase 1 or 2 by anyone but an administrator ([launch-phases](../../platform/launch-phases/README.md), `L2-091`); `/items/{reference}/edit` then loads `SellingNotOpenPage`. Editing is never limited by the Phase 1 product limit |
 
 ## Requirements
 

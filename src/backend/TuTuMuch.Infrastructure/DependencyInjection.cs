@@ -1,8 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using TuTuMuch.Application.Abstractions;
 using TuTuMuch.Application.Catalog;
+using TuTuMuch.Application.Launch;
 using TuTuMuch.Application.Listings;
 using TuTuMuch.Application.Notifications;
 using TuTuMuch.Infrastructure.Accounts;
@@ -31,6 +33,8 @@ public static class DependencyInjection
         services.Configure<AppOptions>(configuration.GetSection("App"));
         services.Configure<NotificationOptions>(configuration.GetSection("Notifications"));
         services.Configure<SellingOptions>(configuration.GetSection("Selling"));
+        services.AddOptions<LaunchOptions>().Bind(configuration.GetSection(LaunchOptions.Section)).ValidateOnStart();
+        services.AddSingleton<IValidateOptions<LaunchOptions>, LaunchOptionsValidator>();
         services.Configure<PhotoOptions>(configuration.GetSection("Photos"));
         services.Configure<CatalogOptions>(configuration.GetSection("Catalog"));
         services.Configure<PhotoStorageOptions>(configuration.GetSection("PhotoStorage"));

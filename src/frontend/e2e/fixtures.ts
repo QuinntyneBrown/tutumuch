@@ -5,13 +5,33 @@ export interface MemberFixture {
   displayName: string;
   email: string;
   emailVerified: boolean;
+  isAdministrator: boolean;
 }
 
 export const marcus: MemberFixture = {
   displayName: 'marcus_12',
   email: 'marcus.bell@example.com',
   emailVerified: true,
+  isAdministrator: false,
 };
+
+/** The owner, who holds the Administrator role and is the only seller in launch Phases 1 and 2. */
+export const administrator: MemberFixture = {
+  displayName: 'ana_ruiz',
+  email: 'ana.ruiz@tutumuch.test',
+  emailVerified: true,
+  isAdministrator: true,
+};
+
+/** GET /api/launch for a launch phase (L2-090); every test runs in Phase 3 unless it serves another. */
+export function launchPhase(phase: 1 | 2 | 3): Record<string, unknown> {
+  return { phase, categoryMenusVisible: phase !== 1, memberSellingOpen: phase === 3 };
+}
+
+/** Answers GET /api/launch with the phase; call before the first navigation. */
+export async function serveLaunchPhase(page: Page, phase: 1 | 2 | 3): Promise<void> {
+  await page.route('**/api/launch', (route) => route.fulfill({ json: launchPhase(phase) }));
+}
 
 export const unverifiedMarcus: MemberFixture = { ...marcus, emailVerified: false };
 
@@ -208,6 +228,7 @@ export const test = base.extend<{ consent: ConsentFixture; unfixturedApiCalls: s
       await page.route('**/api/auth/me', visitor);
       await page.route('**/api/auth/refresh', visitor);
       await page.route('**/api/auth/providers', (route) => route.fulfill({ json: { google: false } }));
+      await serveLaunchPhase(page, 3);
       await use(calls);
     },
     { auto: true },

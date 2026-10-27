@@ -2,7 +2,7 @@ import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, input, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { CatalogApi, CatalogBrand } from '@tutumuch/api';
+import { CatalogApi, CatalogBrand, LaunchState } from '@tutumuch/api';
 import {
   AlertComponent,
   ButtonDirective,
@@ -67,6 +67,7 @@ export class CatalogPage implements OnInit {
   private readonly sheets = inject(SheetService);
   private readonly api = inject(CatalogApi);
   readonly store = inject(CatalogStore);
+  readonly launch = inject(LaunchState);
   /**
    * From the route data of a category page; absent at /. Not named category, because input
    * binding would fill it from the ?category= query parameter as well.

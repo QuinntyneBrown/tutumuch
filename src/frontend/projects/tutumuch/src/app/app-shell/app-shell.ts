@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRouteSnapshot, NavigationEnd, ResolveEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
-import { AuthState } from '@tutumuch/api';
+import { AuthState, LaunchState } from '@tutumuch/api';
 import { FooterComponent, LogoComponent, TopBarComponent } from '@tutumuch/components';
 import { PayoutBannerComponent } from '@tutumuch/orders';
 import { CookieSettingsDialogService } from '@tutumuch/privacy';
@@ -19,7 +19,7 @@ function shellOf(route: ActivatedRouteSnapshot): Shell {
 
 /**
  * App shell: the payout banner, top bar with the member from AuthState, main#main with the router
- * outlet and the footer, whose "Cookie settings" opens the dialog; a top-bar search navigates to the catalog. Routes with data.shell 'auth' render in the auth shell: large logo above a centred card.
+ * outlet and the footer; the top bar follows the launch phase (LaunchState), whose "Cookie settings" opens the dialog; a top-bar search navigates to the catalog. Routes with data.shell 'auth' render in the auth shell: large logo above a centred card.
  * Routes with data.shell 'admin' render in the admin shell: the admin top bar and no footer.
  * Routes with data.shell 'marketing' get the app shell with a full-width main.marketing (ADR platform/0011).
  */
@@ -33,6 +33,7 @@ function shellOf(route: ActivatedRouteSnapshot): Shell {
 export class AppShellComponent {
   private readonly router = inject(Router);
   readonly auth = inject(AuthState);
+  readonly launch = inject(LaunchState);
   readonly cookieSettings = inject(CookieSettingsDialogService);
 
   readonly shell = toSignal(

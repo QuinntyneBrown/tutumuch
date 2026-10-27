@@ -1,0 +1,36 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+title Phase read at startup and served to the SPA
+
+actor Operator as Op
+participant "deploy/docker-compose.yml\n(api environment)" as C
+participant "TuTuMuch.Api host" as H
+participant "LaunchOptionsValidator" as V
+participant "LaunchController" as LC
+participant "Browser: app initializer" as I
+participant "LaunchState" as L
+participant "AppShell / tl-top-bar" as S
+
+Op -> C : Launch__Phase=${Launch__Phase:-1}\ndocker compose up -d api
+C -> H : start with configuration
+H -> V : ValidateOnStart(LaunchOptions)
+alt Phase missing, 1, 2 or 3
+  V --> H : Success (missing → Phase 1)
+else any other value
+  V --> H : Fail "Launch:Phase must be 1, 2 or 3"
+  H --> Op : process exits; health smoke test fails;\nprevious containers keep serving
+end
+
+I -> L : load() (provideAppInitializer)
+L -> LC : GET /api/launch
+LC --> L : 200 { phase: 1, categoryMenusVisible: false,\nmemberSellingOpen: false }\nCache-Control: public, max-age=60
+alt request fails
+  L -> L : assume Phase 1 (most closed)
+end
+L --> I : resolved; first render
+S -> L : categoryMenusVisible(), canSell()
+S --> S : no category links, no menu button,\nSell only for an administrator
+@enduml

@@ -9,6 +9,7 @@ Ordered by value to the user, highest first.
 | View listing detail | See photos, description, price and seller | 4 |
 | Checkout and pay | Buyer purchases a listing and pays securely | 7 |
 | Create listing | Seller lists an item for girls (audience-locked) for sale | 4 |
+| Owner sells alone in launch Phases 1 and 2 | The owner, signed in as an administrator, lists every item with the existing sell and edit screens while members only shop; Phase 1 has one flat catalog of fewer than 40 items, Phase 2 adds the category menus, Phase 3 opens selling to every member (`L1-021`) | 4 |
 | Upload listing photos | Seller adds and orders listing photos | 6 |
 | Ship order | Seller marks order shipped with tracking | 4 |
 | Seller payouts | Seller receives earnings from completed orders | 5 |
@@ -24,4 +25,4 @@ Ordered by value to the user, highest first.
 | Manage notification preferences | Member chooses which notifications they receive | 3 |
 | Manage cookie consent | Visitor accepts or rejects optional cookies | 3 |
 | Sign in with Google | Visitor joins or signs in with their Google account | 6 |
-| **Total** | | **82** |
+| **Total** | | **86** |

@@ -9,6 +9,8 @@ export interface CurrentMember {
   displayName: string;
   email: string;
   emailVerified: boolean;
+  /** Holds the Administrator role: the only seller in launch Phases 1 and 2 (L2-094). */
+  isAdministrator: boolean;
 }
 
 /**

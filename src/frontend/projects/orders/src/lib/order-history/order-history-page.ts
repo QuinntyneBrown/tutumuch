@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { OrderList, OrdersApi, shortRef } from '@tutumuch/api';
+import { LaunchState, OrderList, OrdersApi, shortRef } from '@tutumuch/api';
 import {
   ButtonDirective,
   EmptyStateComponent,
@@ -26,6 +26,7 @@ import { OrderHistoryList, orderMeta, orderSubtitle, statusTone } from './order-
 })
 export class OrderHistoryPage {
   private readonly api = inject(OrdersApi);
+  readonly launch = inject(LaunchState);
 
   readonly list: OrderHistoryList = inject(ActivatedRoute).snapshot.data['list'];
   readonly orders = signal<OrderList | null>(null);

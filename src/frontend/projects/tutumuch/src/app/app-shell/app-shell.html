@@ -12,7 +12,13 @@
   </main>
 } @else {
   <tl-payout-banner />
-  <tl-top-bar [member]="auth.member()" [query]="query()" (searched)="search($event)" />
+  <tl-top-bar
+    [member]="auth.member()"
+    [query]="query()"
+    [categoryLinksVisible]="launch.categoryMenusVisible()"
+    [sellVisible]="launch.canSell()"
+    (searched)="search($event)"
+  />
   <main id="main" [class]="shell() === 'marketing' ? 'marketing' : 'container page'" tabindex="-1">
     <router-outlet />
   </main>

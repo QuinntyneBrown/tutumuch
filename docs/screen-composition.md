@@ -27,12 +27,12 @@ implemented, and the catalogue grows in the same change.
 
 | Part | Library components | Local UI |
 |---|---|---|
-| App shell (`shell: 'app'`) | `tl-skip-link`, `tl-top-bar` (guest, member; six category links inline from 1280px, menu button and nav-menu sheet below), `tl-footer` (its `cookieSettings` opens `CookieSettingsDialogService`), `tl-toast-region`, `@tutumuch/privacy` `tl-cookie-consent` in the root component | `<main id="main" tabindex="-1">` with the router outlet, in `projects/tutumuch` |
+| App shell (`shell: 'app'`) | `tl-skip-link`, `tl-top-bar` (guest, member; six category links inline from 1280px, menu button and nav-menu sheet below; `[categoryLinksVisible]` from `LaunchState.categoryMenusVisible()` hides the links and the menu button in launch Phase 1, `[sellVisible]` from `LaunchState.canSell()` hides Sell from non-administrators in Phases 1 and 2, `pages/catalog`: phase-one, phase-one-admin, phase-two), `tl-footer` (its `cookieSettings` opens `CookieSettingsDialogService`), `tl-toast-region`, `@tutumuch/privacy` `tl-cookie-consent` in the root component | `<main id="main" tabindex="-1">` with the router outlet, in `projects/tutumuch` |
 | Auth shell (`shell: 'auth'`) | `tl-skip-link`, `tl-logo` (lg), `tl-toast-region` | `.auth-layout` with `<main id="main" class="auth-card" tabindex="-1">` and the router outlet, in `projects/tutumuch`; chosen by route `data.shell = 'auth'` |
 | Admin shell (`shell: 'admin'`) | `tl-skip-link`, `tl-top-bar` (`variant="admin"`: logo, "Admin" label, the member's initials), `tl-toast-region` | `<main id="main" class="container page" tabindex="-1">` with the router outlet and no footer, in `projects/tutumuch`; chosen by route `data.shell = 'admin'` |
 | Marketing shell (`shell: 'marketing'`) | `tl-skip-link`, `tl-top-bar` (guest, member), `tl-footer` (with "About TuTuMuch" to `/welcome`), `tl-toast-region` | `<main id="main" class="marketing" tabindex="-1">` with the router outlet and no container, in `projects/tutumuch`; chosen by route `data.shell = 'marketing'` ([ADR platform/0011](adr/platform/0011-marketing-feature-library.md)) |
 | Bare shell (`shell: 'bare'`) | `tl-skip-link`, `tl-top-bar` (bare variant), `tl-toast-region` | Not yet composed |
-| Nav-menu sheet (`dialogs/nav-menu`: default, guest) | `tl-sheet`, `tl-button`, `tl-link` | The six category links (Clothing, Shoes, Dance, Sports, Cameras and tech, Toys and crafts) at `/clothing`, `/shoes`, `/dance`, `/sports`, `/cameras-and-tech`, `/toys-and-crafts`; the top bar shows them inline only from 1280px (`--layout-breakpoint-xl`) and the menu button opens this sheet below that. Composed as `tl-nav-menu` in `@tutumuch/components` (opened by `tl-top-bar` through `SheetService`) with the six category links; the member links, Sign out and the row chevrons of the mock are not composed yet |
+| Nav-menu sheet (`dialogs/nav-menu`: default, guest, phase-two) | `tl-sheet`, `tl-button`, `tl-link` | The six category links (Clothing, Shoes, Dance, Sports, Cameras and tech, Toys and crafts) at `/clothing`, `/shoes`, `/dance`, `/sports`, `/cameras-and-tech`, `/toys-and-crafts`; the top bar shows them inline only from 1280px (`--layout-breakpoint-xl`) and the menu button opens this sheet below that. Composed as `tl-nav-menu` in `@tutumuch/components` (opened by `tl-top-bar` through `SheetService`) with the six category links; the member links, Sign out and the row chevrons of the mock are not composed yet. Never opened in launch Phase 1: the top bar has no menu button then (L2-093) |
 | Toast region (`notifications/toast`: info, success, warning, danger, with-action, stacked) | `tl-toast-region`, `tl-toast`, `ToastService` | None |
 | System banner (`notifications/system-banner`: info, success, warning, danger) | `tl-system-banner` (not in the catalogue yet) | Not yet composed |
 
@@ -149,10 +149,10 @@ password reset.
 
 Auth shell. `@tutumuch/accounts` `VerifyEmailPage` reads `token` from the query string.
 
-- Library: `tl-spinner` (loading), `tl-button` (Start shopping, Sell an item, Send a new link, Sign in, Try again), `tl-alert` (Link sent, Too many requests), `tl-icon` (refresh)
+- Library: `tl-spinner` (loading), `tl-button` (Start shopping, Sell an item only while `LaunchState.canSell()` (the lead then reads "Buying is open."), Send a new link, Sign in, Try again), `tl-alert` (Link sent, Too many requests), `tl-icon` (refresh)
 - Local: heading block with the lead line; the reference line of the error state
 
-### Catalog — `/` (`pages/catalog`: default, guest, category, search, filtered, loading, empty, no-results, error, offline)
+### Catalog — `/` (`pages/catalog`: default, guest, category, search, filtered, loading, empty, no-results, error, offline, phase-one, phase-one-admin, phase-two)
 
 Built in `@tutumuch/catalog` (`src/lib/catalog/`, `src/lib/filters/`) by browse-catalog (default,
 guest, category at `/dresses`, `/tops`, `/outerwear`, `/bottoms`, loading, empty, error, offline)
@@ -178,6 +178,11 @@ toggle, the chips and the sort select). The URL holds the result set (`q`, `cate
   page shows an inline danger alert instead of the toast in the design, until `ToastService`
   exists (responsive-accessible-shell). The subcategory chips under a category header are not
   built; the sidebar's subcategory group covers the same filter.
+- Launch phases ([ADR platform/0014](adr/platform/0014-launch-phase-configuration.md)): in Phase 1
+  (`LaunchState.categoryMenusVisible()` false) `FilterForm` has no Category fieldset (so no
+  subcategory group either) and the six category routes redirect to `/` through the
+  `categoryMenusOpen` guard of `catalog.routes.ts` (phase-one). The empty state's "Sell an item"
+  shows only while `LaunchState.canSell()` (phase-one-admin, phase-two).
 
 ### Listing detail — `/items/{id}` (`pages/listing-detail`: default, guest, new-seller, reserved, sold, own, loading, error, unavailable)
 
@@ -301,7 +306,7 @@ address-hidden (`tl-icon` `eye-off`, "Removed 30 days after the order ended.").
 App shell. The same `OrderHistoryPage` with route data `list: 'sales'`, built by order-history.
 
 - Library: `tl-item-row` ("to {buyer} · ship by {date} · {date}" while Paid, else "to {buyer} ·
-  {date}"), `tl-status`, `tl-empty-state` (icon `tag`, "No sales yet" with primary "Sell an item";
+  {date}"), `tl-status`, `tl-empty-state` (icon `tag`, "No sales yet" with primary "Sell an item" only while `LaunchState.canSell()`;
   error tone "Couldn’t load sales" with the reference and "Try again")
 - Local: the page header with "{n} to ship", the `.order-list` rows linking to `/sales/{id}`, and
   the skeleton rows
@@ -329,6 +334,8 @@ at `/sell/{reference}` instead.
 
 ### Your listings — `/account/listings` (`pages/my-listings`: default, filtered, loading, empty, error)
 
+In launch Phases 1 and 2 a non-administrator gets the `SellingNotOpenPage` of the sell page entry instead (`sellingOpen` route guard).
+
 App shell. `@tutumuch/listings` `MyListingsPage` (`src/lib/my-listings/`), built by manage-my-listings.
 The status is kept in the URL query (`?status=sold`). The payout banner stays in the app shell
 (ADR orders/0005, ADR listings/0002). The account sub-navigation of the mocks is composed with
@@ -352,7 +359,7 @@ App shell. `@tutumuch/orders` `PayoutsPage` (`src/lib/payouts/`), built by selle
 sub-navigation of the mocks is composed with the account overview journey.
 
 - Library: `tl-stat` ("Paid out", "Pending"), `tl-button` ("Change" and primary "Set up payouts",
-  both with icon `external`; "Try again" with icon `refresh`; primary "Sell an item"), `tl-alert`
+  both with icon `external`; "Try again" with icon `refresh`; primary "Sell an item", only while `LaunchState.canSell()`), `tl-alert`
   (warning "Set up payouts to get paid" with the button projected as `actions`; danger for a
   provider failure), `tl-item-row` (each history row), `tl-empty-state` (empty with icon `tag`;
   error tone with the reference), `tl-icon`
@@ -360,7 +367,7 @@ sub-navigation of the mocks is composed with the account overview journey.
   `.section-head` ("History" or "Held"), the `.order-list` rows with their thumbnail, amount and
   status caption, and the loading skeleton
 
-### Sell an item — `/sell` (`pages/sell`: default, filled, invalid, submitting, draft-saved, success, unverified, limited, error)
+### Sell an item — `/sell` (`pages/sell`: default, filled, invalid, submitting, draft-saved, success, unverified, limited, error, selling-not-open, product-limit)
 
 App shell. `@tutumuch/listings` `SellPage` at `/sell` and `/sell/{reference}` (continue a draft).
 Visitors are sent to `/sign-in?returnUrl=/sell`. The Photos section comes first; each chosen file
@@ -368,6 +375,7 @@ uploads at once and a save sends the photo IDs in order. The footer stays visibl
 
 - Library: `tl-photo-uploader` (photos with cover, uploading and rejected tiles, add tile, help and error), `tl-error-summary` (invalid), `tl-alert` (draft-saved success, save or publish failure), `tl-form-field` (category, type, title with counter, brand, flaws, description with counter, price, shipping), `tl-input-group` (`$` addon), `tl-fixed-size` with `tl-size-tag` (after a category is chosen), `tl-segmented` (condition), `tl-earnings`, `tl-button` (Save draft, Publish with busy), `tl-center-state` (success, unverified, limited, error) with `tl-item-row` (success panel) and `tl-icon`, `DialogService` (opens the verify-email prompt)
 - Local: `.page-header` with the h1, `.sell-form` sections (Photos, Item, Price, confirmation: `.form-section`, `.form-row`), the upload state of each tile and its client size check, the brand `<datalist>`, the sticky `.form-actions` bar, the success panel wrapper and the payouts line
+- Launch phases ([ADR platform/0014](adr/platform/0014-launch-phase-configuration.md)): `listings.routes.ts` guards `/sell`, `/sell/{reference}`, `/items/{reference}/edit` and `/account/listings` with `sellingOpen` (`LaunchState.canSell()` after `AuthState.load()`); when it does not match, the same paths load `SellingNotOpenPage` (selling-not-open): `tl-center-state` (icon `tag`, "Selling opens soon", "For now, every item is hand-picked by TuTuMuch. You can still shop everything in the catalog.") with primary `tlButton` "Shop the catalog" to `/`. A save answered 409 `PRODUCT_LIMIT_REACHED` shows the product-limit state: `tl-center-state` (icon `info`, "The catalog is full for now", the API's limit in the text) with primary "Your listings" and "Back to shop".
 
 ### Forbidden — `/403` (`pages/forbidden`: default)
 
@@ -389,7 +397,7 @@ uploads at once and a save sends the photo IDs in order. The footer stays visibl
 - Library: not yet composed
 - Local: not yet composed
 
-### Marketing page — `/welcome` (`pages/welcome`: default, signed-in)
+### Marketing page — `/welcome` (`pages/welcome`: default, signed-in, selling-opens-soon)
 
 Built in `@tutumuch/marketing` (`src/lib/welcome/`) by the marketing page. Calls no TuTuMuch API
 endpoint; the shell's `AuthState` decides the seller target. Title "Twirl it forward · TuTuMuch"
@@ -406,7 +414,13 @@ girls and never promises boys' or adult sizes ([ADR general/0005](adr/general/00
   How it works "Three steps. That’s it.", `stacked`), `tl-steps` (List it, Sell it, Get
   paid), `tlButton` (primary "Shop the catalog" to `/`; "Start selling" to `/join`, or `/sell`
   for a member), `DialogService` (opens the pitch video dialog)
-- Local: `WelcomePage` (copy, CTA targets from `AuthState.member()`) and
+- Launch Phases 1 and 2 for anyone but an administrator (`LaunchState.canSell()` false,
+  selling-opens-soon): the hero's actions hold "Shop the catalog" and
+  `<p class="marketing-hero__soon">Selling opens soon.</p>`; the seller band's heading is
+  "Selling opens soon." with the two points "Pass it on soon" and "Join today", and its
+  actions slot holds `<p class="feature-band__note">For now, every item is hand-picked by TuTuMuch.</p>`;
+  the closing hero keeps only "Shop the catalog".
+- Local: `WelcomePage` (copy, CTA targets from `AuthState.member()` and `LaunchState.canSell()`) and
   `PitchVideoDialog`.
 
 ### Privacy — `/privacy` (`pages/privacy`: default)
@@ -472,7 +486,7 @@ Built by resolve-order-problems in `@tutumuch/orders` (`src/lib/problem-detail/`
 |---|---|---|---|
 | Account banner (`notifications/account-banner`: info, success, warning) | banner above the top bar | not yet composed | not yet composed |
 | Reservation timer (`notifications/reservation-timer`: info, warning, danger, success) | timer under the checkout title; warning and danger banners at the top of checkout | `tl-reservation-timer`, `tl-alert` (banner, icon `clock`) | None; success is the confirmation page until `ToastService` exists |
-| Payout banner (`notifications/payout-banner`: info, success, warning, danger) | banner above the top bar, `@tutumuch/orders` `PayoutBannerComponent` in the app shell | `tl-alert` (`banner`, links projected as `actions`; info and success `dismissible`) | None |
+| Payout banner (`notifications/payout-banner`: info, success, warning, danger) | banner above the top bar, `@tutumuch/orders` `PayoutBannerComponent` in the app shell; not shown (and the summary not requested) while `LaunchState.canSell()` is false | `tl-alert` (`banner`, links projected as `actions`; info and success `dismissible`) | None |
 | Toasts (`notifications/toast`: info, success, warning, danger, with-action, stacked) | toast region | `tl-toast-region`, `tl-toast`, `ToastService` | None |
 | Cookie consent (`notifications/cookie-consent`: info, success) | fixed bottom panel, `@tutumuch/privacy` `CookieConsentComponent` in the root component | `tl-consent-banner` (info); `ToastService` success toast "Cookie choice saved" (success) | None |
 | System notices (`notifications/system-banner`: info, success, warning, danger) | banner above the top bar | not yet composed | not yet composed |

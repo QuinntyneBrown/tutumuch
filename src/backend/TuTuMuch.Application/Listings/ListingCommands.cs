@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using TuTuMuch.Application.Abstractions;
 using TuTuMuch.Application.Common;
+using TuTuMuch.Application.Launch;
+using TuTuMuch.Domain.Launch;
 using TuTuMuch.Domain.Listings;
 
 namespace TuTuMuch.Application.Listings;
@@ -42,7 +44,7 @@ public sealed record MyListingDto(
 
 public sealed record PublishListingResult(string Reference, string Status, bool PayoutOnboardingRequired);
 
-/// <summary>Creates a draft; only an accepted category is required (L2-019). The size comes from the category (L2-013).</summary>
+/// <summary>Creates a draft; only an accepted category is required (L2-019). The size comes from the category (L2-013). In launch Phase 1 the catalog must stay below its product limit (L2-092).</summary>
 /// <remarks>PhotoIds sets the photos in display order (L2-017); null leaves them unchanged.</remarks>
 public sealed record CreateListingDraftCommand(Guid SellerId, ListingDetails Details, IReadOnlyList<Guid>? PhotoIds = null) : IRequest<Result<MyListingDto>>;
 
@@ -59,7 +61,7 @@ public sealed record UpdateListingCommand(
     IReadOnlyList<Guid>? PhotoIds = null,
     int? ExpectedVersion = null) : IRequest<Result<MyListingDto>>;
 
-/// <summary>Publishes the caller's draft under the L2-015 to L2-018 rules and the daily limit of L2-051.</summary>
+/// <summary>Publishes the caller's draft under the L2-015 to L2-018 rules, the daily limit of L2-051 and the launch Phase 1 product limit (L2-092).</summary>
 public sealed record PublishListingCommand(Guid SellerId, string Reference) : IRequest<Result<PublishListingResult>>;
 
 public sealed record GetMyListingQuery(Guid SellerId, string Reference) : IRequest<Result<MyListingDto>>;
@@ -70,6 +72,7 @@ public sealed class ListingCommandHandlers(
     ListingPhotoAttacher photos,
     IOptions<SellingOptions> options,
     IOptions<PhotoOptions> photoOptions,
+    IOptions<LaunchOptions> launch,
     TimeProvider clock) :
     IRequestHandler<CreateListingDraftCommand, Result<MyListingDto>>,
     IRequestHandler<UpdateListingCommand, Result<MyListingDto>>,
@@ -81,6 +84,11 @@ public sealed class ListingCommandHandlers(
 
     public async Task<Result<MyListingDto>> Handle(CreateListingDraftCommand command, CancellationToken cancellationToken)
     {
+        if (!LaunchRules.CanAddListing(launch.Value.CurrentPhase, await CountListingsAsync(cancellationToken), launch.Value.PhaseOneProductLimit))
+        {
+            return ListingRefusals.ProductLimitReached;
+        }
+
         if (ToError(Listing.CheckDraft(command.Details)) is { } error)
         {
             return error;
@@ -138,6 +146,11 @@ public sealed class ListingCommandHandlers(
         if (listing.Status != ListingStatus.Draft)
         {
             return NotDraft;
+        }
+
+        if (!LaunchRules.CanPublish(launch.Value.CurrentPhase, await CountListingsAsync(cancellationToken), launch.Value.PhaseOneProductLimit))
+        {
+            return ListingRefusals.ProductLimitReached;
         }
 
         var now = clock.GetUtcNow().UtcDateTime;
@@ -212,6 +225,10 @@ public sealed class ListingCommandHandlers(
 
     private async Task<MyListingDto> ToDtoAsync(Listing listing, CancellationToken cancellationToken) =>
         MyListingDto.From(listing, await photos.PhotosOfAsync(listing.Id, cancellationToken), photoOptions.Value);
+
+    /// <summary>Every listing in any status; only launch Phase 1 needs the count (L2-092).</summary>
+    private async Task<int> CountListingsAsync(CancellationToken cancellationToken) =>
+        launch.Value.CurrentPhase == LaunchPhase.One ? await db.Listings.CountAsync(cancellationToken) : 0;
 
     private static readonly Error NotDraft = new(409, "LISTING_NOT_DRAFT", "This listing is not a draft");
 

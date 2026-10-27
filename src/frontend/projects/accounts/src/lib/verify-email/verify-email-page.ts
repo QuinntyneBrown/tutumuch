@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, input, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { AccountsApi, AuthState, shortRef } from '@tutumuch/api';
+import { AccountsApi, AuthState, LaunchState, shortRef } from '@tutumuch/api';
 import { AlertComponent, ButtonDirective, IconComponent, SpinnerComponent } from '@tutumuch/components';
 
 type State = 'loading' | 'verified' | 'expired' | 'used' | 'error';
@@ -16,6 +16,7 @@ type State = 'loading' | 'verified' | 'expired' | 'used' | 'error';
 export class VerifyEmailPage implements OnInit {
   private readonly api = inject(AccountsApi);
   private readonly auth = inject(AuthState);
+  readonly launch = inject(LaunchState);
   private readonly router = inject(Router);
 
   /** The token query parameter, bound by the router. */

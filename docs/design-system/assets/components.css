@@ -789,6 +789,7 @@ h1, h2, h3, h4, .display, .card__title, .dialog__title, .drawer__title, .empty__
 .marketing-hero__lede { font: var(--text-body-lg); font-size: clamp(var(--font-size-lg), 1.6vw, var(--font-size-xl)); color: var(--color-fg-showcase-muted); max-width: 32rem; margin: var(--space-6) 0 0; }
 .marketing-hero__actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-8); }
 .marketing-hero__media { position: relative; min-width: 0; }
+.marketing-hero__soon { align-self: center; font: var(--text-body-lg); color: var(--color-fg-showcase-muted); margin: 0; }
 
 /* ---------- Shapes: decorative party-pop blobs and a polka-dot band ------------ */
 .shapes { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
@@ -825,6 +826,7 @@ h1, h2, h3, h4, .display, .card__title, .dialog__title, .drawer__title, .empty__
 .feature-band__eyebrow::before { content: ''; width: var(--space-3); height: var(--space-3); background: var(--color-brand); border-radius: 50%; }
 .feature-band__title { font: var(--text-h1); font-size: clamp(var(--font-size-3xl), 4vw, var(--font-size-5xl)); letter-spacing: var(--letter-spacing-display); text-wrap: balance; max-width: 16ch; margin: var(--space-3) 0 0; }
 .feature-band__actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-8); }
+.feature-band__note { font: var(--text-body); color: var(--color-fg-muted); margin: 0; }
 .feature-band__points { list-style: none; display: grid; gap: var(--space-6); margin: 0; padding: 0; }
 .feature-band__point { border-top: 2px solid var(--color-border-default); padding-top: var(--space-4); }
 .feature-band__point strong { display: block; font: var(--text-h4); }
