@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- Every page, mock and design-system page follows `docs/page-guidelines.md` (`L1-022`, `L2-096`, ADR general/0009): the brand-kit palette, Fraunces and DM Sans (self-hosted) with Titan One only in the logo, pill buttons that hover to ink, no card shadows or gradients, the two-row header with the categories in guideline order and the mark under 640px, listing cards with aligned price rows, condition badges, blush skeletons, Tilly in the marketing hero, sport headers, empty states and the "It's live" confirmation, "More filters" for Brand and Price, and the standard terms ("Shop the closet", "Sell outgrown gear"). New `tl-mark`, `tl-tilly`, `tl-condition-badge` and `tl-skeleton`; `tl-shapes` is retired. A Playwright guideline check covers every routed page.
 - Simpler pitch video: the poster button reads "Play", the dialog has no visible heading, captions stay off until turned on, and the transcript link and file are gone (`L2-080` to `L2-082`). The seller band drops "10% fee, only when it sells".
 
 ### Added
