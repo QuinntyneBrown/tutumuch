@@ -1,24 +1,36 @@
-{$SITE_ADDRESS:localhost}
-
-encode zstd gzip
-
-# The bare domain redirects to the canonical www host (both must be in SITE_ADDRESS so Caddy holds a certificate for each).
-@apex host {$APEX_HOST:tutumuch.kids}
-redir @apex https://{$CANONICAL_HOST:www.tutumuch.kids}{uri} permanent
-
-handle /api/* {
-	reverse_proxy api:8080
-}
-
-handle /photos/* {
-	reverse_proxy api:8080
-}
-
-handle {
+# Serves one single-page build from the folder given as the argument.
+(spa) {
 	# index.html and SPA routes must revalidate so a deploy shows up at once; hashed assets can be cached.
 	@entry not path *.js *.css *.png *.jpg *.svg *.ico *.webp *.mp4 *.webm *.vtt *.woff2
 	header @entry Cache-Control "no-cache"
-	root * /srv
+	root * {args[0]}
 	try_files {path} /index.html
 	file_server
+}
+
+{$SITE_ADDRESS:localhost} {
+	encode zstd gzip
+
+	# The bare domain redirects to the canonical www host (both must be in SITE_ADDRESS so Caddy holds a certificate for each).
+	@apex host {$APEX_HOST:tutumuch.kids}
+	redir @apex https://{$CANONICAL_HOST:www.tutumuch.kids}{uri} permanent
+
+	handle /api/* {
+		reverse_proxy api:8080
+	}
+
+	handle /photos/* {
+		reverse_proxy api:8080
+	}
+
+	# The full application, for user acceptance testing, on the same API and database as the marketing page.
+	@uat host {$UAT_HOST:uat.tutumuch.kids}
+	handle @uat {
+		import spa /srv/app
+	}
+
+	# Every other host gets the marketing-only build.
+	handle {
+		import spa /srv/marketing
+	}
 }

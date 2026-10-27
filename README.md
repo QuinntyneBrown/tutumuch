@@ -179,7 +179,7 @@ Backend tests use in-memory substitutes and never connect to a real database. Pl
 
 ## Deployment
 
-Every push to `main` deploys to `https://tutumuch.kids` once CI's `npm run verify` passes: the Deploy workflow builds the four images, pushes them to GitHub Container Registry, migrates the database, restarts the Docker Compose stack on one small Azure Linux VM and checks `/api/health`. Run the Deploy workflow by hand with an older commit SHA to roll back. See [docs/deployment.md](docs/deployment.md) and ADR platform/0012.
+Every push to `main` deploys to `https://tutumuch.kids` (the marketing page) and `https://uat.tutumuch.kids` (the full application, on the same API and database) once CI's `npm run verify` passes: the Deploy workflow builds the four images, pushes them to GitHub Container Registry, migrates the database, restarts the Docker Compose stack on one small Azure Linux VM and checks `/api/health` and the UAT host. Run the Deploy workflow by hand with an older commit SHA to roll back. See [docs/deployment.md](docs/deployment.md) and ADR platform/0012.
 
 ## API reference
 

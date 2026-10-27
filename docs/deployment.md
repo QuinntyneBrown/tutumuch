@@ -1,8 +1,10 @@
 # Deployment
 
 TuTuMuch runs in production on one small Azure Linux VM with Docker Compose, backed by an
-Azure SQL Database, at `tutumuch.kids`. Every push to `main` is deployed automatically once
-CI's `npm run verify` has passed on it; there is no manual step. The setup is sized for a
+Azure SQL Database, at `tutumuch.kids` (the marketing page) and `uat.tutumuch.kids` (the full
+application, for user acceptance testing, on the same API and database). Every push to
+`main` is deployed automatically to both hosts once CI's `npm run verify` has passed on it;
+there is no manual step. The setup is sized for a
 few users and mirrors 12L's ([ADR platform/0012](adr/platform/0012-low-cost-single-vm-continuous-deployment.md),
 `L2-084` to `L2-086`, [design](detailed-designs/platform/deploy-to-production/README.md)).
 
@@ -10,14 +12,16 @@ few users and mirrors 12L's ([ADR platform/0012](adr/platform/0012-low-cost-sing
 
 | Piece                  | Where                                   | Notes                                                                 |
 | ---------------------- | --------------------------------------- | --------------------------------------------------------------------- |
-| `web` (Caddy)          | VM, ports 80/443, 128 MB                | Serves the Angular build, terminates TLS (Let's Encrypt), proxies `/api` and `/photos` to `api`; `index.html` and SPA routes are sent with `Cache-Control: no-cache` |
+| `web` (Caddy)          | VM, ports 80/443, 128 MB                | Serves the marketing-only build (`/srv/marketing`) on `www`, and the full application (`/srv/app`) on `uat` ([ADR platform/0013](adr/platform/0013-uat-host-in-the-production-web-image.md)); terminates TLS (Let's Encrypt), proxies `/api` and `/photos` of both hosts to `api`; `index.html` and SPA routes are sent with `Cache-Control: no-cache` |
 | `api`                  | VM, internal port 8080, 512 MB          | `TuTuMuch.Api`; photos on the `photos` Docker volume at `/data/photos` |
 | `worker`               | VM, 384 MB                              | `TuTuMuch.Worker`; shares the `photos` volume                         |
 | `migrator`             | VM, run once per deploy, 384 MB         | `TuTuMuch.Migrator`; applies EF Core migrations before the restart    |
 | Database               | Azure SQL Database, Basic tier          | Firewall allows only the VM's public IP                               |
-| DNS                    | Namecheap                               | `A` records for `@` and `www` of `tutumuch.kids` point at the VM's static public IP; Caddy redirects the bare domain to `www.tutumuch.kids` |
+| DNS                    | Namecheap                               | `A` records for `@`, `www` and `uat` of `tutumuch.kids` point at the VM's static public IP; Caddy redirects the bare domain to `www.tutumuch.kids` |
 
-One instance of each service, no load balancer, no staging environment. Every service logs
+One instance of each service, no load balancer, no staging environment: `uat` is a second
+host on the same stack, not a second environment, so whatever is done there (sign-ups,
+listings, orders) happens in the production database. Every service logs
 through Docker's `json-file` driver, rotated at 10 MB with 3 files kept. The VM is a B1s
 (1 vCPU, 1 GB) or B1ms (1 vCPU, 2 GB) with a 2 GB swap file. A deploy restarts the stack,
 so the site is unavailable for a few seconds.
@@ -25,7 +29,7 @@ so the site is unavailable for a few seconds.
 All of it is defined in [`deploy/`](../deploy):
 
 - `backend.Dockerfile` builds `api`, `worker` and `migrator` from one restore (context `src/backend`).
-- `web/Dockerfile` builds the Angular workspace and packages it with Caddy and `web/Caddyfile` (context: repository root).
+- `web/Dockerfile` builds the Angular workspace twice from one library build (`npm run build:web`: the `marketing` configuration to `dist/marketing`, the `production` configuration to `dist/app`) and packages both with Caddy and `web/Caddyfile` (context: repository root).
 - `docker-compose.yml` is the production stack; the deploy workflow copies it to `/opt/tutumuch` on the VM.
 - `.env.example` lists the settings the stack needs; the real `/opt/tutumuch/.env` lives only on the VM.
 - `cloud-init.yaml` is the VM's first-boot script (Docker, swap, `/opt/tutumuch`).
@@ -42,11 +46,15 @@ deploys nothing. Deploys queue in the `deploy-production` group and never overla
 2. **deploy** (`production` environment): over SSH, copies `docker-compose.yml`, logs in to
    GHCR with the job's token on stdin, sets `IMAGE_TAG` in `.env`, pulls, runs
    `docker compose run --rm -T migrator < /dev/null`, then `docker compose up -d` and
-   prunes images older than 72 hours. The script runs under `set -euo pipefail`, so a
+   prunes images older than 72 hours. It also rewrites `SITE_ADDRESS` in `.env` as
+   `<SITE_HOST>, www.<SITE_HOST>, uat.<SITE_HOST>`, so Caddy requests a certificate for
+   each host and a new host needs only a DNS record. The script runs under `set -euo pipefail`, so a
    failed migration stops it before the restart and the old containers keep serving.
 3. **smoke test**: polls `https://$SITE_HOST/api/health` for up to two minutes; no 200 fails
    the run. The health endpoint does not need the database
    ([ADR platform/0004](adr/platform/0004-health-check-without-database.md)).
+4. **smoke test UAT**: polls `https://uat.$SITE_HOST/` for up to two minutes; no 200 fails
+   the run (Caddy may still be obtaining the certificate for a brand-new host).
 
 Secrets, in the repository's `production` environment only (never committed or printed):
 
@@ -54,7 +62,7 @@ Secrets, in the repository's `production` environment only (never committed or p
 | ---------------- | --------------------------------------------------------- |
 | `DEPLOY_HOST`    | Public IP of the VM                                       |
 | `DEPLOY_SSH_KEY` | Private key whose public half is in `azureuser`'s `authorized_keys` |
-| `SITE_HOST`      | `tutumuch.kids`                                           |
+| `SITE_HOST`      | `tutumuch.kids` (the `www` and `uat` hosts are derived from it) |
 
 Application secrets (connection string, signing keys) live only in `/opt/tutumuch/.env` on
 the VM.
@@ -126,7 +134,7 @@ repository's usage. Check the Azure pricing calculator for your region.
 3. On the VM, create `/opt/tutumuch/.env` from `deploy/.env.example` with real values.
 4. Create an SSH key pair for deploys; add the public half to `azureuser`'s
    `~/.ssh/authorized_keys`.
-5. Point `tutumuch.kids` and `www.tutumuch.kids` at the VM's IP.
+5. Point `tutumuch.kids`, `www.tutumuch.kids` and `uat.tutumuch.kids` at the VM's IP.
 6. In GitHub, create the `production` environment and set `DEPLOY_HOST`, `DEPLOY_SSH_KEY`
    and `SITE_HOST` in it.
 7. Run the Deploy workflow by hand once (or push to `main`). From then on every green push

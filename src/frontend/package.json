@@ -16,7 +16,8 @@
     "backend:verify": "npm run backend:restore && npm run backend:format && npm run backend:build && npm run backend:test",
     "test:e2e": "playwright test",
     "verify": "npm run backend:verify && npm run lint && npm run build:all && npm run test:e2e",
-    "build:marketing": "npm run build:libs && ng build tutumuch --configuration marketing"
+    "build:marketing": "npm run build:libs && ng build tutumuch --configuration marketing",
+    "build:web": "npm run build:libs && ng build tutumuch --configuration marketing --output-path dist/marketing && ng build tutumuch --configuration production --output-path dist/app"
   },
   "private": true,
   "packageManager": "npm@11.19.1",

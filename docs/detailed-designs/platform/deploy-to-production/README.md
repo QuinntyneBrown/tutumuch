@@ -56,15 +56,17 @@ The deploy job uses `environment: production` (`contents: read`, `packages: read
    migrator swallows the rest of the script and the restart never runs), then
    `docker compose up -d --remove-orphans`, prune images older than 72 hours and log out.
    A failed migration exits the script before `up -d`, so the old containers keep running.
+   The script also rewrites `SITE_ADDRESS` in `.env` from `SITE_HOST` (apex, `www`, `uat`)
+   so Caddy holds a certificate for each host ([ADR platform/0013](../../../adr/platform/0013-uat-host-in-the-production-web-image.md), `L2-087`).
 5. **Smoke test** — poll `https://$SITE_HOST/api/health` 20 times, 6 seconds apart; no 200
-   fails the run. The health endpoint needs no database
+   fails the run; then the same for `https://uat.$SITE_HOST/` (`L2-087`). The health endpoint needs no database
    ([ADR platform/0004](../../../adr/platform/0004-health-check-without-database.md)).
 
 ### Stack on a small VM (`L2-084`)
 
 | Service | Memory limit | Notes |
 |---------|-------------:|-------|
-| `web` (Caddy) | 128 MB | Ports 80/443, Let's Encrypt; `Cache-Control: no-cache` for `index.html` and SPA routes |
+| `web` (Caddy) | 128 MB | Ports 80/443, Let's Encrypt; the marketing build on `www` and the full application on `uat` (`L2-087`); `Cache-Control: no-cache` for `index.html` and SPA routes |
 | `api` | 512 MB | TCP health check on 8080; photos on the `photos` volume |
 | `worker` | 384 MB | Shares `photos` |
 | `migrator` | 384 MB | `profiles: [migrate]`, run once per deploy |
@@ -94,7 +96,8 @@ The testing rules forbid Docker and a live database in tests, so the checks are 
 an xUnit test reads `deploy.yml`, `docker-compose.yml` and `Caddyfile` from the
 repository and asserts the trigger and gate, the `-T migrator < /dev/null` line before
 `up -d`, `set -euo pipefail`, the smoke test, the permissions, `umask 077`, no `echo` of a
-secret, the memory limits, the log rotation and the `no-cache` rule.
+secret, the memory limits, the log rotation, the `no-cache` rule, and the `uat` host
+block, output folders and smoke test (`L2-087`).
 `HealthEndpointTests` keeps covering `/api/health` without a database.
 
 ## Requirements

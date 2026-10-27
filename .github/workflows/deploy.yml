@@ -113,6 +113,7 @@ jobs:
             cd /opt/tutumuch
             trap 'docker logout ghcr.io >/dev/null' EXIT
             sed -i '/^IMAGE_TAG=/d' .env && echo "IMAGE_TAG=${{ env.DEPLOY_SHA }}" >> .env
+            sed -i '/^SITE_ADDRESS=/d' .env && printf 'SITE_ADDRESS=%s, www.%s, uat.%s\n' "${{ env.SITE_HOST }}" "${{ env.SITE_HOST }}" "${{ env.SITE_HOST }}" >> .env
             docker compose pull --quiet
             docker compose run --rm -T migrator < /dev/null
             docker compose up -d --remove-orphans
@@ -125,3 +126,10 @@ jobs:
             sleep 6
           done
           echo "health check failed" && exit 1
+      - name: Smoke test UAT
+        run: |
+          for i in $(seq 1 20); do
+            curl -fsS -o /dev/null "https://uat.${SITE_HOST}/" && exit 0
+            sleep 6
+          done
+          echo "uat check failed" && exit 1

@@ -1,7 +1,8 @@
 // Architecture Test
-// Traces to: L2-084, L2-085, L2-086
+// Traces to: L2-084, L2-085, L2-086, L2-087
 // Description: The deploy workflow, compose stack and Caddyfile deploy only green pushes to main, migrate before
-// the restart, fail on a bad health check, keep secrets scoped, fit a small VM and never cache index.html.
+// the restart, fail on a bad health check, keep secrets scoped, fit a small VM, never cache index.html and serve the
+// full application on the uat host from the same image.
 
 using System.Text.RegularExpressions;
 
@@ -13,6 +14,7 @@ public sealed partial class DeploymentPipelineTests
     private static readonly string Workflow = Read(".github/workflows/deploy.yml");
     private static readonly string Compose = Read("deploy/docker-compose.yml");
     private static readonly string Caddyfile = Read("deploy/web/Caddyfile");
+    private static readonly string WebDockerfile = Read("deploy/web/Dockerfile");
 
     [Fact]
     public void Deploy_runs_after_a_successful_ci_push_to_main()
@@ -103,6 +105,24 @@ public sealed partial class DeploymentPipelineTests
     {
         Assert.Contains("@entry not path *.js *.css", Caddyfile);
         Assert.Contains("header @entry Cache-Control \"no-cache\"", Caddyfile);
+    }
+
+    [Fact]
+    public void The_full_application_is_served_on_the_uat_host_from_the_same_image()
+    {
+        Assert.Contains("@uat host {$UAT_HOST:uat.tutumuch.kids}", Caddyfile);
+        Assert.Matches(@"handle @uat \{\s*\n\s+import spa /srv/app", Caddyfile);
+        Assert.Matches(@"handle \{\s*\n\s+import spa /srv/marketing", Caddyfile);
+        Assert.Contains("COPY --from=build /src/dist/marketing/browser /srv/marketing", WebDockerfile);
+        Assert.Contains("COPY --from=build /src/dist/app/browser /srv/app", WebDockerfile);
+    }
+
+    [Fact]
+    public void The_deploy_sets_every_site_host_and_smoke_tests_uat()
+    {
+        Assert.Contains("printf 'SITE_ADDRESS=%s, www.%s, uat.%s\\n'", Workflow);
+        Assert.Contains("curl -fsS -o /dev/null \"https://uat.${SITE_HOST}/\" && exit 0", Workflow);
+        Assert.Contains("echo \"uat check failed\" && exit 1", Workflow);
     }
 
     private static string Job(string name)
