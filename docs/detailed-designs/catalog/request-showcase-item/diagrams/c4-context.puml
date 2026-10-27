@@ -1,0 +1,14 @@
+@startuml
+!include <C4/C4_Context>
+LAYOUT_WITH_LEGEND()
+title System Context — Request a showcase item
+
+Person(shopper, "Shopper", "Member or visitor who wants one like a showcase item")
+Person(owner, "Owner", "TuTuMuch's owner, signed in as an administrator")
+System(tutumuch, "TuTuMuch", "Marketplace for all things young girls")
+System_Ext(google, "Google", "Optional sign-in")
+
+Rel(shopper, tutumuch, "Views showcase listings and requests them using", "HTTPS")
+Rel(owner, tutumuch, "Marks showcase listings and reads requests using", "HTTPS")
+Rel(shopper, google, "Signs in with, when they choose it", "OpenID Connect")
+@enduml

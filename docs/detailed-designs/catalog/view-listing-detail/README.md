@@ -17,6 +17,7 @@ The page shows the same listing differently depending on its status and on who v
 - The seller viewing their own Active listing sees "Edit listing" and "Withdraw" instead of "Buy now", and the API refuses any attempt by a member to buy their own listing (`L2-026`).
 - A Reserved listing, held for another buyer's checkout for 10 minutes, shows a "Reserved" label and no "Buy now" (`L2-028`).
 - A Sold listing keeps its URL, shows a "Sold" label, no "Buy now", and similar items.
+- A showcase listing looks like any Active listing; its "Buy now" shows the "Sold" label and "Request this item" instead of checkout ([request-showcase-item](../request-showcase-item/README.md), `L2-107`, `L2-108`).
 - A Draft or Removed listing opened by anyone other than its seller shows "This item isn't available" with HTTP 404.
 
 A seller with no completed sales shows "New seller" in place of a rating. A Used - Fair listing shows its flaws (`L2-016`). On viewports narrower than 992 px the page uses one column with a swipeable gallery and a "Buy now" bar fixed to the bottom of the screen; from 992 px it uses two columns with the gallery on the left (`L2-063`).
@@ -36,10 +37,11 @@ Screens and copy come from `docs/mocks/pages/listing-detail/` (states `default`,
   - `unavailable` — API returned 404: `tl-center-state` with code "404", heading "This item isn’t available", text "It may have been sold or taken down.", primary action "Find similar" to `/`.
   - `error` — any other failure: heading "Couldn’t load this item", text "It’s us, not you. Try again in a moment.", "Ref {correlationId}", actions "Try again" and "Shop the closet".
 - **Info column** (local markup on the kit classes) — "Reserved" or "Sold" stamp; brand eyebrow; title as `<h1>`; `tl-size-tag` and condition; price "$85.00" and the line "{shipping} · {total} total before tax", where shipping reads "$9.00 shipping" or "Free shipping" when 0 (`L2-018`); the buy bar; for Reserved the warning `tl-alert` "In someone’s checkout" with "If they don’t finish within 10 minutes, it’s back on sale."; the flaws block "Flaws: {flaws}" for Used - Fair; the description; the facts "Size" ("Girls'"), "Category" ("Dance · Tutus"), "Condition", "Listed" (relative time inside `<time datetime>`); and `tl-seller-summary`. All listing text is bound as text and never as HTML (`L2-015`).
-- **`ListingDetailStore`** — signal store: `listing`, `view`, `errorRef`, `similar`, and the computed `primaryAction: 'buy' | 'sign-in-to-buy' | 'manage' | 'none'`:
+- **`ListingDetailStore`** — signal store: `listing`, `view`, `errorRef`, `similar`, and the computed `primaryAction: 'buy' | 'sign-in-to-buy' | 'showcase' | 'manage' | 'none'`:
 
   | `status` | `viewer.relation` | `primaryAction` |
   |----------|-------------------|-----------------|
+  | `Active`, `showcase` | `OtherMember`, `Anonymous` | `showcase` (request-showcase-item: Buy now shows `tl-sold-notice`) |
   | `Active` | `OtherMember` | `buy` |
   | `Active` | `Anonymous` | `sign-in-to-buy` |
   | `Active` | `Seller` | `manage` |

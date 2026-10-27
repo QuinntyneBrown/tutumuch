@@ -378,7 +378,7 @@ def _():
               f'{btn("See requests", "ghost", P("showcase-requests"))}</div>')
     pg = detail("gold-tutu", actions=acts, user="admin", report=False)
     pg.main = pg.main.replace("<p>", switch + "<p>", 1)
-    pg.notes = note("The switch calls PUT /api/admin/listings/L-20940/showcase; only the administrator's own Active listing can be a showcase (L2-107). If the call fails the switch goes back and the danger toast “Couldn’t change the showcase” is shown.", "top: 8rem; right: 1rem;")
+    pg.notes = note("The switch calls PUT /api/admin/listings/L-20940/showcase; only the administrator's own Draft or Active listing can be a showcase (L2-107). If the call fails the switch goes back and the danger toast “Couldn’t change the showcase” is shown.", "top: 8rem; right: 1rem;")
     return pg
 
 

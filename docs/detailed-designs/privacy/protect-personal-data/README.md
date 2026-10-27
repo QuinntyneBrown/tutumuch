@@ -154,6 +154,8 @@ The slice runs from the Privacy page through `TuTuMuch API` down to the stored b
 
 No plaintext address column exists once this feature is built. Searching by address is not supported. [checkout-and-pay](../../orders/checkout-and-pay/README.md) stores addresses in plain `Shipping*` columns on `Checkouts` and `Orders` and in `SavedAddresses` until then ([ADR orders/0002](../../../adr/orders/0002-reserve-with-a-conditional-update-and-a-filtered-unique-index.md)); this feature's migration encrypts them into the cipher columns above, `Checkouts` included, and drops the plain ones.
 
+Showcase requests ([request-showcase-item](../../catalog/request-showcase-item/README.md), `L2-111`) hold a member's note and link to their account; the member's email reaches only the administrator's list. `ShowcaseRequests` cascades from `Members`, so erasing a member erases their requests, and a closed member's requests leave the administrator's list at once.
+
 ### Configuration
 
 | Key | Value |

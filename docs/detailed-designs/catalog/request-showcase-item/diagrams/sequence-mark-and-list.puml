@@ -1,0 +1,54 @@
+@startuml
+title UML sequence behaviour — Mark a showcase listing and read the requests
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+actor "Owner (administrator)" as owner
+actor "Buyer with a stale page" as buyer
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "ListingDetailPage" as page
+  participant "ShowcaseRequestsPage" as list
+  participant "ShowcaseApi / CheckoutApi (@tutumuch/api)" as client
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "AdminShowcaseController" as admin
+  participant "CheckoutsController" as checkouts
+end box
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
+  participant "ShowcaseRequestCommandHandlers" as handler
+  participant "StartCheckoutCommand handler" as checkout
+end box
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
+end box
+owner -> page : Turn on the Showcase switch on their Draft or Active listing
+page -> client : setShowcase(reference, true)
+client -> admin : PUT /api/admin/listings/{reference}/showcase
+note right of admin : Administrator policy: 401 visitor, 403 ADMINISTRATOR_REQUIRED (L2-010)
+admin -> handler : SetShowcaseCommand(administratorId, reference, true)
+handler -> db : The caller's own listing
+alt another member's listing
+  handler --> admin : 404 LISTING_NOT_FOUND
+else Reserved, Sold or Removed
+  handler --> admin : 409 SHOWCASE_NOT_ALLOWED
+else Draft or Active
+  handler -> db : IsShowcase = 1, Version + 1
+  admin --> client : 200 { reference, showcase: true }
+  page --> owner : Switch on, "See requests"
+end
+buyer -> client : POST /api/checkouts { listingReference }
+client -> checkouts : StartCheckoutCommand
+checkouts -> checkout : StartCheckoutCommand(buyerId, reference)
+checkout -> db : Read the listing
+checkout --> checkouts : 409 LISTING_SHOWCASE (nothing reserved)
+checkouts --> buyer : CheckoutPage showcase view, "Request this item"
+owner -> list : Open /admin/requests
+list -> client : adminRequests()
+client -> admin : GET /api/admin/showcase-requests
+admin -> handler : GetShowcaseRequestsQuery
+handler -> db : Requests joined to listings and open members, newest first
+admin --> client : 200 [ { listingReference, listingTitle, memberDisplayName, memberEmail, note, requestedAt } ]
+list --> owner : One block per request, or "No requests yet"
+@enduml

@@ -235,8 +235,8 @@ notice with the dialog open. The administrator's own showcase listing (showcase-
 `tl-switch` with `hint` ("Showcase" / "Buy now shows Sold and Request this item") calling
 `PUT /api/admin/listings/{id}/showcase` (on failure the switch goes back and `ToastService` shows the
 danger toast "Couldn’t change the showcase"), and a `tlButton="ghost"` "See requests"
-link to `/admin/requests`. The administrator's own ordinary Active listing shows the same switch
-off and no "See requests".
+link to `/admin/requests`. The administrator's own ordinary Active listing, and their Draft, show the same switch (off unless
+marked) and no "See requests".
 
 - Local: the switch row (`.cluster` with space-between) under the buy bar
 
