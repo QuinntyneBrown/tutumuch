@@ -729,6 +729,17 @@ a.tab { text-decoration: none; }
 .switch .choice__text { flex: 1; }
 /* @@system */
 
+/* Library-only screen rules kept with the shell and marketing components (consent banner, footer button, switch, uploader). */
+.switch--labelled { justify-content: space-between; width: 100%; }
+.footer__link { appearance: none; border: 0; padding: 0; background: none; font: inherit; color: inherit; cursor: pointer; text-decoration: none; }
+.footer__link:hover { text-decoration: underline; }
+.consent__title { font: var(--text-h4); }
+.consent__link { align-self: flex-start; appearance: none; border: 0; padding: 0; background: none; font: var(--text-body-sm); color: inherit; text-decoration: underline; cursor: pointer; }
+.uploader .photo img { width: 100%; height: 100%; object-fit: cover; }
+.uploader__add[aria-disabled="true"] { opacity: 0.5; cursor: not-allowed; }
+.marketing-hero__soon { align-self: center; font: var(--text-body-lg); color: var(--color-fg-showcase-muted); margin: 0; }
+.feature-band__note { font: var(--text-body); color: var(--color-fg-muted); margin: 0; }
+
 /* ==========================================================================
    Page guidelines look — TuTuMuch keeps the 12L components and draws them to
    docs/page-guidelines.md (ADR general/0009): Fraunces headings and prices,
