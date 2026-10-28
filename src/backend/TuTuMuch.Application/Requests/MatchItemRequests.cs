@@ -35,7 +35,8 @@ public sealed partial class MatchItemRequestsHandler(
     private async Task MatchAsync(Guid listingId, CancellationToken cancellationToken)
     {
         var listing = await db.Listings.AsNoTracking().SingleOrDefaultAsync(l => l.Id == listingId, cancellationToken);
-        if (listing is not { Status: ListingStatus.Active })
+        // A showcase listing cannot be bought, so it never matches (L2-107, ADR catalog/0008).
+        if (listing is not { Status: ListingStatus.Active, IsShowcase: false })
         {
             return;
         }

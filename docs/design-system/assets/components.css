@@ -1479,3 +1479,10 @@ a.link:hover {
 .btn--provider[aria-busy="true"] .icon--mark, .btn--provider[data-state="loading"] .icon--mark { visibility: hidden; }
 .or-divider { display: flex; align-items: center; gap: var(--space-3); margin: 0; color: var(--color-fg-muted); font: var(--text-caption); }
 .or-divider::before, .or-divider::after { content: ""; flex: 1; border-top: 1px solid var(--color-border-default); }
+
+/* ---------- Sold notice: Buy now on a showcase listing (L2-108) ---------- */
+.sold-notice { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); padding: var(--space-5); border: 1px solid var(--color-border-default); border-radius: var(--radius-lg); background: var(--color-bg-surface-sunken); }
+.sold-notice .photo__stamp { position: static; }
+.sold-notice__title { margin: 0; font: var(--text-h4); letter-spacing: var(--letter-spacing-tight); }
+.sold-notice__text { margin: 0; color: var(--color-fg-muted); }
+.sold-notice__actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }

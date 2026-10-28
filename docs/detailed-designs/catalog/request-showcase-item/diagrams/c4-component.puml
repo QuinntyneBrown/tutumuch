@@ -1,0 +1,28 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Request a showcase item
+
+Container(web, "TuTuMuch Web", "Angular", "@tutumuch/catalog ListingDetailPage, RequestShowcaseItemDialog, ShowcaseRequestsPage; @tutumuch/orders CheckoutPage; @tutumuch/accounts SignInPage, JoinPage; @tutumuch/api ShowcaseApi, safeReturnUrl")
+Container_Boundary(api, "TuTuMuch API") {
+  Component(requests, "ShowcaseRequestsController", "ASP.NET Core controller", "GET, PUT /api/me/showcase-requests/{reference}")
+  Component(admin, "AdminShowcaseController", "ASP.NET Core controller, Administrator policy", "PUT /api/admin/listings/{reference}/showcase; GET /api/admin/showcase-requests")
+  Component(catalog, "CatalogController", "ASP.NET Core controller", "GET /api/catalog/listings/{reference} with showcase")
+  Component(checkouts, "CheckoutsController", "ASP.NET Core controller", "POST /api/checkouts")
+  Component(handlers, "Showcase command and query handlers", "MediatR handlers", "Mark, send, read one, list all")
+  Component(checkout, "StartCheckoutCommand handler", "MediatR handler", "409 LISTING_SHOWCASE; never reserves a showcase listing")
+  Component(matcher, "MatchItemRequestsHandler", "MediatR notification handler", "Skips showcase listings")
+  ComponentDb(db, "TuTuMuchDbContext", "EF Core", "Listings, ShowcaseRequests, Members")
+}
+
+Rel(web, requests, "Sends and reads the member's request", "JSON/HTTPS")
+Rel(web, admin, "Marks listings; reads the list", "JSON/HTTPS")
+Rel(web, catalog, "Reads the listing", "JSON/HTTPS")
+Rel(web, checkouts, "Starts checkout (stale page or direct link)", "JSON/HTTPS")
+Rel(requests, handlers, "Sends commands and queries")
+Rel(admin, handlers, "Sends commands and queries")
+Rel(checkouts, checkout, "Sends StartCheckoutCommand")
+Rel(handlers, db, "Reads and writes")
+Rel(checkout, db, "Conditional reservation with IsShowcase = 0")
+Rel(matcher, db, "Reads the listing")
+@enduml

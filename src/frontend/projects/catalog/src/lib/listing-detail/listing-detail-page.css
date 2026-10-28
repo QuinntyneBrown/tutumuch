@@ -17,3 +17,7 @@
 .listing-detail__similar {
   margin-top: var(--space-20);
 }
+.listing-detail__showcase {
+  justify-content: space-between;
+  gap: var(--space-4);
+}

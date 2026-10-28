@@ -17,6 +17,8 @@ PEOPLE = {
     "HandMeDownHana": {"name": "Hana Ferreira", "initials": "HF", "city": "Portland, OR", "since": "Jun 2025", "rating": 4.7, "reviews": 41, "sales": 46, "bio": "Three sisters’ worth of coats and knits. Everything measured flat."},
     "PuddleJumperPia": {"name": "Pia Reyes", "initials": "PR", "city": "Denver, CO", "since": "Aug 2026", "rating": 5.0, "reviews": 2, "sales": 0, "bio": ""},
     "RainbowRosa": {"name": "Rosa Kim", "initials": "RK", "city": "Chicago, IL", "since": "Oct 2026", "rating": None, "reviews": 0, "sales": 0, "bio": "Clearing out the wardrobe."},
+    # TuTuMuch's owner sells as an ordinary member under this display name; the account holds the Administrator role (L1-024).
+    "AnasCloset": {"name": "Ana Ruiz", "initials": "AR", "city": "Austin, TX", "since": "Jan 2025", "rating": None, "reviews": 0, "sales": 0, "bio": "TuTuMuch's own closet."},
 }
 ME = "TutuTessa"          # the signed-in member in member mocks
 ADMIN = {"name": "Ana Ruiz", "initials": "AR", "handle": "ana.admin"}
@@ -48,6 +50,8 @@ ITEMS = {
     "cat-headphones": {"id": "L-20882", "title": "Cat-ear kids' headphones", "brand": "JLab", "cat": "Cameras and tech", "sub": "Headphones", "cond": "New without tags", "price": 19, "ship": 5, "seller": "RainbowRosa", "img": "headphones", "tone": 6, "listed": "Yesterday", "photos": 2},
     "rag-doll": {"id": "L-20876", "title": "Soft rag doll with yellow dress", "brand": "Melissa & Doug", "cat": "Toys and crafts", "sub": "Dolls", "cond": "Used - Excellent", "price": 16, "ship": 6, "seller": "TutuTessa", "img": "doll", "tone": 5, "listed": "Yesterday", "photos": 3},
     "paint-set": {"id": "L-20912", "title": "Watercolour paint set", "brand": "Crayola", "cat": "Toys and crafts", "sub": "Arts and crafts", "cond": "New with tags", "price": 11, "ship": 5, "seller": "RainbowRosa", "img": "paint-set", "tone": 3, "listed": "4 hours ago", "photos": 2},
+    # A showcase listing (L2-107): looks Active, but Buy now shows Sold and "Request this item". Not in CATALOG.
+    "gold-tutu": {"id": "L-20940", "title": "Gold sequin recital tutu", "brand": "Capezio", "cat": "Dance", "sub": "Tutus", "cond": "Used - Excellent", "price": 48, "ship": 6, "seller": "AnasCloset", "img": "tutu", "tone": 3, "listed": "1 day ago", "photos": 4},
 }
 
 # Catalog order, newest first (L2-022).

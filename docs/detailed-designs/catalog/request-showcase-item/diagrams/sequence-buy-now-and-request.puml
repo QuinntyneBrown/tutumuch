@@ -1,0 +1,68 @@
+@startuml
+title UML sequence behaviour — Buy now and Request this item
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+actor "Shopper" as actor
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "ListingDetailPage (@tutumuch/catalog)" as page
+  participant "RequestShowcaseItemDialog" as dialog
+  participant "SignInPage (@tutumuch/accounts)" as signin
+  participant "ShowcaseApi (@tutumuch/api)" as client
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "ShowcaseRequestsController" as controller
+end box
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
+  participant "ShowcaseRequestCommandHandlers" as handler
+end box
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
+end box
+actor -> page : Open /items/{reference}
+page --> actor : Gallery, price, Buy now (showcase = true)
+actor -> page : Buy now
+note right of page : No call to /api/checkouts (L2-108)
+page --> actor : tl-sold-notice "This one has already found a home", focus on its heading
+alt visitor
+  actor -> page : Request this item
+  page -> signin : /sign-in?returnUrl=/items/{reference}?request=1
+  signin --> actor : "Sign in to request this item" (Join and Google keep returnUrl)
+  actor -> signin : Sign in
+  signin -> page : navigateByUrl(safeReturnUrl) (same-site only, L2-109)
+  page --> actor : Sold notice shown, dialog open (request=1)
+else member
+  page -> client : myRequest(reference)
+  client -> controller : GET /api/me/showcase-requests/{reference}
+  controller --> client : 200 request or 404 SHOWCASE_REQUEST_NOT_FOUND
+  actor -> page : Request this item (or Update your request)
+  page -> dialog : DialogService.open
+end
+actor -> dialog : Note, Send request
+dialog -> client : sendRequest(reference, note)
+client -> controller : PUT /api/me/showcase-requests/{reference}
+controller -> handler : SendShowcaseRequestCommand(memberId, reference, note)
+handler -> db : Active showcase listing by reference
+alt not found, not Active or not showcase
+  handler --> controller : 404 LISTING_NOT_FOUND
+else the seller
+  handler --> controller : 422 CANNOT_REQUEST_OWN_LISTING
+else note over 500 characters
+  handler --> controller : 422 SHOWCASE_NOTE_LENGTH
+else existing request
+  handler -> db : Update note and UpdatedAt
+  controller --> client : 200
+  dialog --> actor : Toast "Request updated"
+else new request
+  handler -> db : Count the member's requests since 00:00 UTC
+  alt 20 or more
+    controller --> client : 429 Retry-After "That's 20 requests today"
+  else
+    handler -> db : Insert ShowcaseRequest (unique member and listing)
+    controller --> client : 201
+    dialog --> actor : Toast "Request sent"
+  end
+end
+@enduml

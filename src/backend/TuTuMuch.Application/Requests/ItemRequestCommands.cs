@@ -148,7 +148,7 @@ public sealed class ItemRequestCommandHandlers(ITuTuMuchDbContext db, IOptions<P
             .ToListAsync(cancellationToken);
         var listingIds = matches.Select(m => m.ListingId).Distinct().ToList();
         var active = await db.Listings.AsNoTracking()
-            .Where(l => listingIds.Contains(l.Id) && l.Status == ListingStatus.Active)
+            .Where(l => listingIds.Contains(l.Id) && l.Status == ListingStatus.Active && !l.IsShowcase)
             .ToListAsync(cancellationToken);
         var cards = (await CatalogCards.ToCardsAsync(db, active, photoOptions.Value, cancellationToken)).ToDictionary(c => c.Id);
         return requests.Select(r =>

@@ -23,7 +23,7 @@ components sign-in-with-google added (provider button with its "or" divider) and
 page-guidelines conformance added ([ADR general/0009](adr/general/0009-page-guidelines-on-the-angular-and-giddy-stack.md):
 `tl-mark`, `tl-tilly`, `tl-condition-badge`, `tl-skeleton`, the `tone` and `responsive` inputs of
 `tl-logo`, the `tilly` input of `tl-empty-state` and `tl-center-state`, the `sold` state of
-`tl-listing-card` and `tl-gallery`, the `blush` tone of `tl-feature-band`; `tl-shapes` is retired) and request-items added (the `bell` icon).
+`tl-listing-card` and `tl-gallery`, the `blush` tone of `tl-feature-band`; `tl-shapes` is retired) and request-items added (the `bell` icon) and request-showcase-item added (`tl-sold-notice` and the `heart` icon).
 Every screen follows [`docs/page-guidelines.md`](page-guidelines.md) (`L2-096`): one `h1`, one logo
 link, one primary button per view, loading states built from `tl-skeleton` (never a spinner),
 empty states with Tilly's hello pose, at most one Tilly per screen. Feature screens not built yet are inventoried below
@@ -110,13 +110,13 @@ them (ADR reviews/0001).
 - Local: `.profile-head` with the `avatar--xl` initials or photo, `h1` and bio; the `.stats`
   row; the For sale and Reviews `.section-head` blocks; the header loading skeleton (`tl-skeleton`)
 
-### Join — `/join` (`pages/register`: default, invalid, submitting, success, error)
+### Join — `/join` (`pages/register`: default, request, invalid, submitting, success, request-success, error)
 
-Auth shell. `@tutumuch/accounts` `JoinPage`. "Continue with Google" sits above the form when
+Auth shell. `@tutumuch/accounts` `JoinPage`. A `returnUrl` (same-site only, `safeReturnUrl` in `@tutumuch/api`) is kept by "Continue with Google" and "Sign in"; when it asks for a showcase request (`/items/{id}?request=1`, `L2-109`) the lead reads "Join, verify your email, then sign in and we’ll take you back to your request." (state request) and the success state's primary action is "Sign in to send your request" to `/sign-in?returnUrl=…` (state request-success). "Continue with Google" sits above the form when
 `GET /api/auth/providers` says Google is configured ([ADR accounts/0001](adr/accounts/0001-sign-in-with-google.md), `L2-088`).
 
 - Library: `tl-provider-button` (google, to `/api/auth/google/start`, busy while leaving) and `tl-or-divider`, `tl-form-field` (display name, email, password), `tl-choice` (age, terms), `tl-error-summary` (invalid), `tl-alert` (error with reference; success "Link sent" and warning "Too many requests" after Resend email), `tl-button` (Join TuTuMuch primary lg block with busy; Browse while you wait; Resend email link), `tl-icon` (mail)
-- Local: heading block with the lead line; the mail icon circle and "We sent a link to …" paragraph of the success state
+- Local: heading block with the lead line; the mail icon circle and "We sent a link to …" paragraph of the success state; the request lead and the "Sign in to send your request" link (`tlButton` primary lg block)
 
 ### Finish joining with Google — `/join/google` (`pages/join-google`: loading, default, invalid, submitting, expired, error)
 
@@ -142,11 +142,11 @@ join held server-side for 10 minutes; the page reads the Google email from
 - Library: not yet composed
 - Local: not yet composed
 
-### Sign in — `/sign-in` (`pages/sign-in`: default, return, invalid, submitting, locked, error, google-busy, google-cancelled, google-existing, google-failed)
+### Sign in — `/sign-in` (`pages/sign-in`: default, return, request, invalid, submitting, locked, error, google-busy, google-cancelled, google-existing, google-failed)
 
 Auth shell. `@tutumuch/accounts` `SignInPage`; `returnUrl` keeps the page the member came from.
 When `returnUrl` is a listing (`/items/{id}`) the heading reads "Sign in to buy" with the line
-"You’ll go straight back to the item." (state return). "Continue with Google" sits first, above an
+"You’ll go straight back to the item." (state return). When it is a showcase request (`/items/{id}?request=1`) the heading reads "Sign in to request this item" with "You’ll go straight back to the item and your request." and the "Join" link keeps the `returnUrl` (state request, `L2-109`). Only a same-site path is followed (`safeReturnUrl` in `@tutumuch/api`). "Continue with Google" sits first, above an
 "or" divider, when `GET /api/auth/providers` says Google is configured; the `google` query
 parameter the callback sends back (`cancelled`, `existing`, `failed` with `ref`) picks the alert
 (`L2-088`). The `locked` state and the "Forgot password?" link arrive with account lockout and
@@ -203,7 +203,7 @@ toggle, the chips and the sort select). The URL holds the result set (`q`, `cate
   with `category` (the page's category slug, when one is chosen) and `q` (the keyword, cut to 100 characters);
   it is shown to visitors too, and the request form sends a visitor through sign-in (`L2-105`).
 
-### Listing detail — `/items/{id}` (`pages/listing-detail`: default, guest, new-seller, reserved, sold, own, loading, error, unavailable)
+### Listing detail — `/items/{id}` (`pages/listing-detail`: default, guest, new-seller, reserved, sold, own, loading, error, unavailable, showcase, showcase-sold, showcase-guest, showcase-requested, showcase-own)
 
 Built by view-listing-detail in `@tutumuch/catalog` (`src/lib/listing-detail/`) for every state. In
 the own state edit-and-withdraw-listing adds "Withdraw", which opens the Withdraw listing dialog
@@ -223,7 +223,24 @@ their profile.
   `h1.detail__title`, `.detail__price` line, `.flaws`, description, `dl.facts` with the
   relative `time`), the two-column `.detail` layout
 
-### Checkout — `/checkout/{id}` (`pages/checkout`: default, new-address, invalid, non-us, submitting, declined, expired, conflict, loading, error)
+Showcase listing (request-showcase-item, `L2-107` to `L2-109`): the showcase state is the default
+state; "Buy now" is a `tlButton="primary"` lg `button`, not a link to checkout. Pressing it
+replaces the buy bar with `tl-sold-notice` (heading "This one has already found a home", text "We
+can look for another one like it. Tell us what you’re after.", projected action `tlButton="primary"`
+lg "Request this item"), focused through its `focus()` (showcase-sold; the same for a visitor,
+showcase-guest, whose action goes to `/sign-in?returnUrl=/items/{id}?request=1`). With an existing
+request the text is "You asked for this on {date}. Add a note or change it any time." and the
+action "Update your request" (showcase-requested). `?request=1` with a signed-in member shows the
+notice with the dialog open. The administrator's own showcase listing (showcase-own) adds
+`tl-switch` with `hint` ("Showcase" / "Buy now shows Sold and Request this item") calling
+`PUT /api/admin/listings/{id}/showcase` (on failure the switch goes back and `ToastService` shows the
+danger toast "Couldn’t change the showcase"), and a `tlButton="ghost"` "See requests"
+link to `/admin/requests`. The administrator's own ordinary Active listing, and their Draft, show the same switch (off unless
+marked) and no "See requests".
+
+- Local: the switch row (`.cluster` with space-between) under the buy bar
+
+### Checkout — `/checkout/{id}` (`pages/checkout`: default, new-address, invalid, non-us, submitting, declined, expired, conflict, showcase, loading, error)
 
 Built by checkout-and-pay in `@tutumuch/orders` (`src/lib/checkout/`) for every state; `{id}` is
 the listing reference. A refused start for the seller's own, a sold or a missing listing goes
@@ -236,8 +253,11 @@ back to `/items/{id}`, and a visitor goes to sign in with checkout as the return
   Street address, Apartment, suite (optional), City, State, ZIP code with `inputmode="numeric"`,
   Country), `tl-order-summary`, `tlButton` (primary lg block "Pay $102.34", or "Continue" before
   a total exists, busy while submitting and disabled at zero; ghost "Cancel and release item"),
-  `tl-center-state` (conflict: icon `lock`; expired: icon `clock`; error: reference and "Try
-  again" with icon `refresh`), `tl-icon`
+  `tl-center-state` (conflict: icon `lock`; expired: icon `clock`; showcase, on 409
+  `LISTING_SHOWCASE` (`L2-108`): icon `heart`, heading "This one has already found a home", "We can look for
+  another one like it.", primary "Request this item" to `/items/{id}?request=1` and "Keep
+  shopping", no address or card field; error: reference and "Try again" with icon `refresh`),
+  `tl-icon`
 - Local: `.page-header`, the `.split` layout, the `.checkout-step` sections, the saved-address
   radios (`.option`, `address.address`), `HostedCardFieldsComponent` (the "Card" field, the
   provider's hosted fields from `PAYMENT_FIELDS` in `@tutumuch/api` and the `.secure-note`), the
@@ -509,6 +529,20 @@ Built by resolve-order-problems in `@tutumuch/orders` (`src/lib/problem-detail/`
   {day}", the sunken `aside` panel with its eyebrow, the resolution reason line, and the
   two-column loading skeleton (`tl-skeleton`)
 
+### Showcase requests — `/admin/requests` (`pages/showcase-requests`: default, loading, empty, error, forbidden)
+
+Built by request-showcase-item in `@tutumuch/catalog` (`src/lib/showcase-requests/`), in the admin
+shell (`L2-110`, `L2-111`). A visitor is sent to `/sign-in?returnUrl=/admin/requests`; a 403 from
+the API is the forbidden state.
+
+- Library: `tl-skeleton` (loading), `tl-empty-state` (empty: Tilly, "No requests yet", "When a
+  shopper asks for a showcase item, it shows up here."; error: "Couldn’t load requests" with the
+  reference and "Try again" with icon `refresh`), `tl-center-state` (forbidden: code "403", "You
+  can’t open this", "Only TuTuMuch’s administrators can see requests.", primary "Shop the closet")
+- Local: the `.page-header` ("Showcase requests", "{n} requests"), the request list (one block per
+  request: the listing title linking to `/items/{id}`, the reference and `time`, the member's
+  display name and `mailto:` email, the note as text or "No note")
+
 ### Marketplace rules — `/rules` (`pages/rules`: default)
 
 Built in `@tutumuch/marketing` (`src/lib/rules/`, exported as `infoRoutes`), in the app shell. Static copy.
@@ -549,6 +583,7 @@ Built in `@tutumuch/marketing` (`src/lib/terms/`, exported as `infoRoutes`), in 
 | Respond to cancellation (`dialogs/respond-cancellation`: default, busy, failed) | `DialogService` | `tl-dialog` (heading "{buyer} asked to cancel", description "Accepting refunds {total} in full. Declining keeps the order — you still ship by {date}."), `tl-quote` (the buyer's message), `tl-alert` (danger "That didn’t go through" in the top slot), `tl-button` ("Decline"; primary "Accept and refund", focused; the chosen one shows busy and the other is disabled) | `RespondCancellationDialog` in `@tutumuch/orders` |
 | Withdraw listing (`dialogs/withdraw-listing`: default, busy, failed) | `DialogService` | `tl-dialog` (`size="sm"`, icon `trash`, tone danger, title "Withdraw “{title}”?", description "It leaves the shop right away. This can’t be undone."), `tl-alert` (danger "Couldn’t withdraw" / "Your listing is still live." in the top slot after a failure), `tl-button` ("Keep listing", focused, disabled while busy; danger "Withdraw" with busy, "Try again" after a failure) | `WithdrawListingDialog` in `@tutumuch/catalog` (ADR listings/0003); on success the page goes to `/account/listings` |
 | Delete request (`dialogs/delete-request`: default, busy, failed) | `DialogService` | `tl-dialog` (`size="sm"`, icon `trash`, tone danger, title "Delete this request?", description "“{keywords}” stops looking for new listings. This can’t be undone."), `tl-alert` (danger "Couldn’t delete" / "Your request is still open." in the top slot after a failure), `tl-button` ("Keep request", focused, disabled while busy; danger "Delete" with busy, "Try again" after a failure) | `DeleteRequestDialog` in `@tutumuch/catalog` (request-items, `L2-099`); on success My requests drops the request and shows "Request deleted" |
+| Request this item (`dialogs/request-showcase-item`: default, requested, invalid, busy, failed, limited) | `DialogService` | `tl-dialog` (icon `heart`, heading "Request this item", description "Tell TuTuMuch you’d like one like it. Only TuTuMuch sees your request."), `tl-item-row` (thumbnail, title, "{price} · {brand}"), `tl-form-field` (textarea "Note", optional, help "Anything that helps us find one like it: size, colour, when you need it.", counter "{n} / 500", error "Keep the note to 500 characters", focused on open), `tl-error-summary` (invalid, in the top slot), `tl-alert` (danger "Couldn’t send your request" with the reference; warning "That’s 20 requests today" with icon `clock`, in the top slot), `tl-button` (Cancel, disabled while busy; primary "Send request", or "Update request" when one exists, with busy; "Try again" after a failure) | `RequestShowcaseItemDialog` in `@tutumuch/catalog`; the "You asked for this on {date}. Sending again updates your request." line; on success the dialog closes and the page shows the toast |
 | Pitch video (`dialogs/pitch-video`: default, loading, error, captions) | `DialogService` | `tl-dialog` (`size="lg"`, heading "TuTuMuch video" with `headingHidden`), `tl-video-player` (MP4 and WebM sources, English captions off by default, poster; Play/Pause, Captions toggle; loading spinner; error "The video didn’t load" with Try again) | `PitchVideoDialog` in `@tutumuch/marketing` |
 | Cookie settings (`dialogs/cookie-settings`: default, analytics-on) | `DialogService` through `CookieSettingsDialogService` | `tl-dialog` (size `sm`, heading "Cookie settings"), `tl-switch` with `hint` "Strictly necessary" ("Sign-in and checkout. Always on.", checked and disabled) and "Analytics" ("Helps us see which pages are slow.", `autofocus`), `tl-button` (Cancel; primary Save) | `CookieSettingsDialog` in `@tutumuch/privacy` |
 | Resolve problem (`dialogs/resolve-problem`: default, invalid, busy) | `DialogService` | `tl-dialog` (heading "Resolve problem {reference}"), `tl-radio-group` (legend "Decision") with `tl-choice` "Refund buyer in full" ("{total} to {buyer} · no payout") and "Release payout to seller" ("Order completes · {seller} is paid"), `tl-form-field` (textarea "Reason", help "Sent to both members.", error "Add a reason. Both members see it."), `tl-alert` (danger after a failure), `tl-button` (Cancel, disabled while busy; primary "Refund buyer" or "Release payout", busy "Refunding" or "Releasing") | `ResolveProblemDialog` in `@tutumuch/orders` |
@@ -564,6 +599,7 @@ Built in `@tutumuch/marketing` (`src/lib/terms/`, exported as `infoRoutes`), in 
 | Cookie consent (`notifications/cookie-consent`: info, success) | fixed bottom panel, `@tutumuch/privacy` `CookieConsentComponent` in the root component | `tl-consent-banner` (info); `ToastService` success toast "Cookie choice saved" (success) | None |
 | System notices (`notifications/system-banner`: info, success, warning, danger) | banner above the top bar | not yet composed | not yet composed |
 | Request toasts (`notifications/request-toasts`: info, success, warning, danger) | toast region over My requests | `ToastService`: info "Request deleted"; success "Request saved" / "We’ll email you when it’s listed."; warning "You have 20 open requests" / "Delete one to renew this one." (Renew refused with 409); danger "Couldn’t delete your request" with "Try again" | None |
+| Showcase request toasts (`notifications/showcase-request-toasts`: info, success, warning, danger) | toast region over the listing | `ToastService`: success "Request sent" / "Thank you. TuTuMuch sees every request."; info "Request updated"; warning "That’s 20 requests today" / "Try again tomorrow."; danger "Couldn’t send your request" with "Try again" | None |
 | Match email (`pages/request-match-email`: default) | plain-text email sent through the outbox, not a web page | None: rendered by `EmailTemplates` (`ItemRequestMatched`) in `TuTuMuch.Application`, with the item request unsubscribe link and `List-Unsubscribe` headers added by the dispatcher (`L2-101`, `L2-103`) | None |
 
 ## Summary of local UI to build

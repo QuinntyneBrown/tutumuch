@@ -13,7 +13,7 @@ namespace TuTuMuch.Application.Checkouts;
 /// <summary>The fields of a shipping address as the buyer sends them; any may be missing.</summary>
 public sealed record AddressInput(string? FullName, string? Line1, string? Line2, string? City, string? State, string? Zip, string? Country);
 
-/// <summary>Reserves the listing for the buyer for 10 minutes (L2-028), refusing their own listing (L2-026 AC2).</summary>
+/// <summary>Reserves the listing for the buyer for 10 minutes (L2-028), refusing their own listing (L2-026 AC2) and a showcase listing (L2-108).</summary>
 public sealed record StartCheckoutCommand(Guid BuyerId, string ListingReference) : IRequest<Result<CheckoutDto>>;
 
 public sealed record GetCheckoutQuery(Guid BuyerId, Guid CheckoutId) : IRequest<Result<CheckoutDto>>;
@@ -41,6 +41,9 @@ public sealed class CheckoutCommandHandlers(
     public static readonly Error OwnListing = new(422, "CANNOT_BUY_OWN_LISTING", "You can't buy your own listing");
     public static readonly Error Reserved = new(409, "LISTING_RESERVED", "Someone else is checking out");
     public static readonly Error Unavailable = new(409, "LISTING_UNAVAILABLE", "This item isn't available");
+
+    /// <summary>A showcase listing is never reserved, sold or paid for (L2-108, ADR catalog/0008).</summary>
+    public static readonly Error Showcase = new(409, "LISTING_SHOWCASE", "This one has already found a home");
     public static readonly Error Expired = new(409, "RESERVATION_EXPIRED", "Your reservation ended");
     public static readonly Error Processing = new(409, "PAYMENT_IN_PROGRESS", "Your payment is being confirmed");
     public static readonly Error AddressRequired = new(409, "ADDRESS_REQUIRED", "Add a shipping address first");
@@ -59,6 +62,11 @@ public sealed class CheckoutCommandHandlers(
         if (!listing.CanBePurchasedBy(command.BuyerId))
         {
             return OwnListing;
+        }
+
+        if (listing.IsShowcase)
+        {
+            return Showcase;
         }
 
         var now = clock.GetUtcNow().UtcDateTime;
@@ -89,7 +97,7 @@ public sealed class CheckoutCommandHandlers(
             // The database decides the winner (L2-029): only one conditional update can match an
             // Active listing, or a Reserved one whose 10 minutes have passed.
             var reserved = await db.Listings
-                .Where(l => l.Id == listing.Id && (l.Status == ListingStatus.Active || (l.Status == ListingStatus.Reserved && l.ReservedUntil <= now)))
+                .Where(l => l.Id == listing.Id && !l.IsShowcase && (l.Status == ListingStatus.Active || (l.Status == ListingStatus.Reserved && l.ReservedUntil <= now)))
                 .ExecuteUpdateAsync(
                     s => s.SetProperty(l => l.Status, ListingStatus.Reserved)
                         .SetProperty(l => l.ReservedByCheckoutId, checkout.Id)

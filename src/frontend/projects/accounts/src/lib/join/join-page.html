@@ -4,6 +4,9 @@
   <p>
     We sent a link to <strong>{{ email() }}</strong
     >. It works for 24 hours.
+    @if (toRequest()) {
+      You can send your request now and verify later.
+    }
   </p>
   @if (resend() === 'sent') {
     <tl-alert tone="success" heading="Link sent" live="polite">Earlier links no longer work.</tl-alert>
@@ -13,13 +16,25 @@
     >
   }
   <div class="stack">
-    <a tlButton="primary" size="lg" [block]="true" routerLink="/">Shop the closet while you wait</a>
+    @if (toRequest()) {
+      <a tlButton="primary" size="lg" [block]="true" routerLink="/sign-in" [queryParams]="signInParams()"
+        >Sign in to send your request</a
+      >
+    } @else {
+      <a tlButton="primary" size="lg" [block]="true" routerLink="/">Shop the closet while you wait</a>
+    }
     <button tlButton="link" type="button" [busy]="resend() === 'busy'" (click)="resendEmail()">Resend email</button>
   </div>
 } @else {
   <div>
     <h1>Join TuTuMuch</h1>
-    <p class="text-muted join__lead">Buy and sell with one account.</p>
+    <p class="text-muted join__lead">
+      {{
+        toRequest()
+          ? 'Join, verify your email, then sign in and we’ll take you back to your request.'
+          : 'Buy and sell with one account.'
+      }}
+    </p>
   </div>
   <tl-error-summary [errors]="summary()" />
   @if (failure() !== null) {
@@ -31,7 +46,7 @@
     <div class="stack">
       <tl-provider-button
         provider="google"
-        [href]="googleStartUrl"
+        [href]="googleStartUrl()"
         [busy]="leavingForGoogle()"
         (pressed)="leavingForGoogle.set(true)"
         >Continue with Google</tl-provider-button
@@ -110,5 +125,7 @@
       </button>
     </div>
   </form>
-  <p class="text-sm text-muted">Already a member? <a routerLink="/sign-in">Sign in</a></p>
+  <p class="text-sm text-muted">
+    Already a member? <a routerLink="/sign-in" [queryParams]="signInParams()">Sign in</a>
+  </p>
 }

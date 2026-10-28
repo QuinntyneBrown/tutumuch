@@ -91,7 +91,7 @@ def checkout(*, address: str | None = None, top: str = "", pay: str | None = Non
     return Page(main=f'{head}<div class="split">{left}{order_summary(BUY, BUY_TAX, BUY_TOTAL)}</div>', footer=False)
 
 
-c = screen("checkout", "page", "Checkout", route="/checkout/{id}", reqs=["L2-027", "L2-028", "L2-029", "L2-030", "L2-063", "L2-065"],
+c = screen("checkout", "page", "Checkout", route="/checkout/{id}", reqs=["L2-027", "L2-028", "L2-029", "L2-030", "L2-063", "L2-065", "L2-108"],
            na={"empty": "Checkout always holds exactly one reserved item."})
 
 
@@ -149,6 +149,14 @@ def _():
     main = (f'<div class="center-state">{ic("lock", "icon icon--lg")}<h1>Someone else is checking out</h1>'
             f'<p class="text-muted">If they don’t finish within 10 minutes, it’s back on sale.</p>'
             f'<div class="actions">{btn("Back to the item", "primary", P("listing-detail", "reserved"))}{btn("Keep shopping", href=P("catalog"))}</div></div>')
+    return Page(main=main)
+
+
+@c.state("showcase", "Checkout opened for a showcase listing: the API refused it (409 LISTING_SHOWCASE); no address or card is asked for (L2-108).")
+def _():
+    main = (f'<div class="center-state">{ic("heart", "icon icon--lg")}<h1>This one has already found a home</h1>'
+            f'<p class="text-muted">We can look for another one like it.</p>'
+            f'<div class="actions">{btn("Request this item", "primary", P("listing-detail", "showcase-sold"))}{btn("Keep shopping", href=P("catalog"))}</div></div>')
     return Page(main=main)
 
 

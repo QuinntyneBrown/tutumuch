@@ -1,0 +1,18 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Request a showcase item
+
+Person(shopper, "Shopper", "Member or visitor")
+Person(owner, "Owner", "Administrator")
+System_Boundary(tutumuch, "TuTuMuch") {
+  Container(web, "TuTuMuch Web", "Angular", "Listing detail with the Sold notice, RequestShowcaseItemDialog, sign in and join with returnUrl, ShowcaseRequestsPage")
+  Container(api, "TuTuMuch API", "ASP.NET Core", "/api/me/showcase-requests, /api/admin/listings/{reference}/showcase, /api/admin/showcase-requests; checkout refusal")
+  ContainerDb(db, "TuTuMuch database", "SQL Server", "Listings.IsShowcase, ShowcaseRequests, Members")
+}
+
+Rel(shopper, web, "Uses", "HTTPS")
+Rel(owner, web, "Uses the switch and the admin list", "HTTPS")
+Rel(web, api, "Calls", "JSON/HTTPS")
+Rel(api, db, "Reads and writes the flag and requests", "EF Core")
+@enduml

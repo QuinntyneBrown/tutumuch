@@ -42,6 +42,7 @@ export { SheetService } from './lib/sheet/sheet-service';
 export { SizeTagComponent } from './lib/size-tag/size-tag';
 export { SkeletonComponent } from './lib/skeleton/skeleton';
 export { SkipLinkComponent } from './lib/skip-link/skip-link';
+export { SoldNoticeComponent } from './lib/sold-notice/sold-notice';
 export { SpinnerComponent } from './lib/spinner/spinner';
 export { StatusComponent, type StatusTone } from './lib/status/status';
 export { StatComponent } from './lib/stat/stat';

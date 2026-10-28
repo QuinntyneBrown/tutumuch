@@ -77,6 +77,8 @@ export interface ListingDetail {
     publishedReviewCount: number;
   };
   viewer: { relation: ViewerRelation };
+  /** A showcase listing: Buy now shows the Sold notice instead of checkout (L2-108). */
+  showcase: boolean;
 }
 
 /** Typed client for the public catalog: listings, their count, brands and one listing. */

@@ -102,6 +102,7 @@ Address columns are plain until [protect-personal-data](../../privacy/protect-pe
 | `CANNOT_BUY_OWN_LISTING` | 422 | the seller starts checkout for their own listing (`L2-026`) |
 | `LISTING_RESERVED` | 409 | another live checkout holds the listing (`L2-028`, `L2-029`) |
 | `LISTING_UNAVAILABLE` | 409 | the listing is Sold |
+| `LISTING_SHOWCASE` | 409 | the listing is a showcase listing; nothing is reserved ([request-showcase-item](../../catalog/request-showcase-item/README.md), `L2-108`) |
 | `CHECKOUT_NOT_FOUND` | 404 | the checkout is unknown or another member's |
 | `NON_US_ADDRESS` | 422 | the country is not the United States |
 | `ADDRESS_INVALID` | 422 | a field is missing or malformed; field errors name each |
@@ -114,6 +115,10 @@ Address columns are plain until [protect-personal-data](../../privacy/protect-pe
 | `PAYMENT_PROVIDER_UNAVAILABLE` | 502 | the provider could not be reached |
 | `WEBHOOK_SIGNATURE_INVALID` | 400 | the webhook signature does not verify |
 | `ORDER_NOT_FOUND` | 404 | the order is unknown or another member's |
+
+### Showcase listings
+
+[request-showcase-item](../../catalog/request-showcase-item/README.md) adds `Listing.IsShowcase`. `StartCheckoutCommand` refuses a showcase listing with `409 LISTING_SHOWCASE` after the visibility and own-listing checks, and the conditional reservation update also requires `IsShowcase = 0`, so a showcase listing is never reserved, sold or paid for ([ADR catalog/0008](../../../adr/catalog/0008-showcase-listings-and-showcase-requests.md)). `CheckoutPage` shows the `showcase` view for that code: "This one has already found a home" with "Request this item" back to the listing and no address or card field.
 
 ### Open questions and deferred work
 

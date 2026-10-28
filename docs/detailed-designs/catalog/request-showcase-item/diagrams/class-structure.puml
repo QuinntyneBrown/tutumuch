@@ -1,0 +1,101 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Request a showcase item
+
+package "TuTuMuch.Domain" {
+  class Listing {
+    +Guid Id
+    +string Reference
+    +Guid SellerId
+    +ListingStatus Status
+    +bool IsShowcase
+    +int Version
+    +SetShowcase(showcase, now): void
+  }
+  class ShowcaseRequest {
+    +Guid Id
+    +Guid MemberId
+    +Guid ListingId
+    +string? Note
+    +DateTime CreatedAt
+    +DateTime UpdatedAt
+    +{static} int MaxNote = 500
+    +{static} int NewPerDay = 20
+    +{static} Check(note): IReadOnlyList<RuleViolation>
+    +{static} Create(memberId, listingId, note, now): ShowcaseRequest
+    +Update(note, now): void
+  }
+  class Member {
+    +Guid Id
+    +string DisplayName
+    +string Email
+    +DateTime? ClosedAt
+    +bool IsAdministrator
+  }
+}
+
+package "TuTuMuch.Application.Requests" {
+  class SetShowcaseCommand <<record>> {
+    +Guid AdministratorId
+    +string Reference
+    +bool Showcase
+  }
+  class SendShowcaseRequestCommand <<record>> {
+    +Guid MemberId
+    +string Reference
+    +string? Note
+  }
+  class GetMyShowcaseRequestQuery <<record>> {
+    +Guid MemberId
+    +string Reference
+  }
+  class GetShowcaseRequestsQuery <<record>>
+  class ShowcaseRequestCommandHandlers {
+    +Handle(SetShowcaseCommand): Result<ShowcaseListingDto>
+    +Handle(SendShowcaseRequestCommand): Result<SentShowcaseRequest>
+    +Handle(GetMyShowcaseRequestQuery): Result<ShowcaseRequestDto>
+    +Handle(GetShowcaseRequestsQuery): IReadOnlyList<AdminShowcaseRequestDto>
+  }
+  class ShowcaseRequestDto <<record>> {
+    +string ListingReference
+    +string? Note
+    +DateTime RequestedAt
+    +DateTime UpdatedAt
+  }
+  class AdminShowcaseRequestDto <<record>> {
+    +string ListingReference
+    +string ListingTitle
+    +string MemberDisplayName
+    +string MemberEmail
+    +string? Note
+    +DateTime RequestedAt
+  }
+}
+
+package "TuTuMuch.Application.Checkouts" {
+  class CheckoutCommandHandlers {
+    +{static} Error Showcase = 409 LISTING_SHOWCASE
+  }
+}
+
+Member "1" -- "0..*" ShowcaseRequest : makes >
+Listing "1" -- "0..*" ShowcaseRequest : is requested in >
+Member "1" -- "0..*" Listing : sells >
+ShowcaseRequestCommandHandlers ..> SetShowcaseCommand
+ShowcaseRequestCommandHandlers ..> SendShowcaseRequestCommand
+ShowcaseRequestCommandHandlers ..> GetMyShowcaseRequestQuery
+ShowcaseRequestCommandHandlers ..> GetShowcaseRequestsQuery
+ShowcaseRequestCommandHandlers ..> ShowcaseRequest
+ShowcaseRequestCommandHandlers ..> ShowcaseRequestDto
+ShowcaseRequestCommandHandlers ..> AdminShowcaseRequestDto
+CheckoutCommandHandlers ..> Listing : refuses IsShowcase
+@enduml

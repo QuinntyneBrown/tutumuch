@@ -264,7 +264,7 @@ def similar(keys) -> str:
     return f'<section class="section" id="similar" style="margin-top: var(--space-20);"><div class="section-head"><h2>Similar in the closet</h2></div>{listing_grid(keys)}</section>'
 
 
-d = screen("listing-detail", "page", "Listing detail", route="/items/{id}", reqs=["L2-025", "L2-026", "L2-028", "L2-016", "L2-063", "L2-065"],
+d = screen("listing-detail", "page", "Listing detail", route="/items/{id}", reqs=["L2-025", "L2-026", "L2-028", "L2-016", "L2-063", "L2-065", "L2-107", "L2-108", "L2-109", "L2-111"],
            na={"empty": "A listing always has its required fields; a missing listing is the 'unavailable' state."})
 
 
@@ -326,6 +326,149 @@ def _():
             '<p class="text-muted">It may have been sold or taken down.</p>'
             f'<div class="actions">{btn("Find similar", "primary", P("catalog"))}</div></div>')
     return Page(main=main)
+
+
+# ---------------------------------------------------------------------------
+# Showcase listing (L2-107 to L2-109): looks Active; Buy now shows Sold and "Request this item"
+# ---------------------------------------------------------------------------
+def sold_notice(text: str, action: str) -> str:
+    """The Sold notice that replaces the buy bar after Buy now on a showcase listing (design system: Sold notice)."""
+    return (f'<section class="sold-notice" role="status" aria-labelledby="sold-title">'
+            f'<span class="photo__stamp photo__stamp--sold">Sold</span>'
+            f'<h2 class="sold-notice__title" id="sold-title" tabindex="-1">This one has already found a home</h2>'
+            f'<p class="sold-notice__text">{text}</p><div class="sold-notice__actions">{action}</div></section>')
+
+
+SHOWCASE_TEXT = "We can look for another one like it. Tell us what you’re after."
+
+
+@d.state("showcase", "A showcase listing looks like any Active listing: price, shipping and Buy now (L2-107).")
+def _():
+    pg = detail("gold-tutu", actions=btn("Buy now", "primary lg", P("listing-detail", "showcase-sold"), attrs='role="button"'))
+    pg.notes = note("Nothing on the page or in the API response says it is a showcase listing to a shopper, or that anyone requested it (L2-111).", "top: 8rem; right: 1rem;")
+    return pg
+
+
+@d.state("showcase-sold", "Buy now on a showcase listing: no checkout, no address or card. The Sold notice with Request this item takes the buy bar's place (L2-108).")
+def _():
+    notice = sold_notice(SHOWCASE_TEXT, btn("Request this item", "primary lg", D("request-showcase-item")))
+    pg = detail("gold-tutu", actions="", extra_info=notice)
+    pg.notes = note("Focus moves to “This one has already found a home”; the notice is announced politely. No call to /api/checkouts is made.", "top: 8rem; right: 1rem;")
+    return pg
+
+
+@d.state("showcase-guest", "A visitor's Buy now shows the same notice; Request this item goes to sign in and comes back with the form open (L2-109).")
+def _():
+    notice = sold_notice(SHOWCASE_TEXT, btn("Request this item", "primary lg", P("sign-in", "request")))
+    return detail("gold-tutu", actions="", extra_info=notice, user="guest", report=False)
+
+
+@d.state("showcase-requested", "The member already asked for this item: the notice says when and the action updates the request (L2-109).")
+def _():
+    notice = sold_notice("You asked for this on Oct 24. Add a note or change it any time.", btn("Update your request", "primary lg", D("request-showcase-item", "requested")))
+    return detail("gold-tutu", actions="", extra_info=notice)
+
+
+@d.state("showcase-own", "The owner, an administrator, on their own showcase listing: Edit, Withdraw, the Showcase switch on and See requests (L2-107).")
+def _():
+    acts = btn("Edit listing", "primary lg", P("edit-listing"), icon="edit") + btn("Withdraw", "lg", D("withdraw-listing"))
+    switch = ('<div class="cluster" style="justify-content: space-between; gap: var(--space-4);">'
+              '<label class="switch switch--labelled"><span class="choice__text"><span class="switch__label">Showcase</span>'
+              '<small>Buy now shows Sold and Request this item</small></span><input type="checkbox" role="switch" checked></label>'
+              f'{btn("See requests", "ghost", P("showcase-requests"))}</div>')
+    pg = detail("gold-tutu", actions=acts, user="admin", report=False)
+    pg.main = pg.main.replace("<p>", switch + "<p>", 1)
+    pg.notes = note("The switch calls PUT /api/admin/listings/L-20940/showcase; only the administrator's own Draft or Active listing can be a showcase (L2-107). If the call fails the switch goes back and the danger toast “Couldn’t change the showcase” is shown.", "top: 8rem; right: 1rem;")
+    return pg
+
+
+# ---------------------------------------------------------------------------
+# Request this item (L2-109)
+# ---------------------------------------------------------------------------
+rq = screen("request-showcase-item", "dialog", "Request this item", opens_from="listing-detail", reqs=["L2-109", "L2-049", "L2-051", "L2-065"])
+
+NOTE_HELP = "Anything that helps us find one like it: size, colour, when you need it."
+
+
+def request_dialog(*, note_text: str = "", error: str | None = None, busy: bool = False, top: str = "", requested: bool = False,
+                   primary: str | None = None) -> Dialog:
+    ro = " readonly" if busy else ""
+    count = len(note_text)
+    ctl = f'<textarea class="textarea" id="rq-note" name="note" rows="4" maxlength="600"{{db}}{ro}>{esc(note_text)}</textarea>'
+    body = (item_row("gold-tutu", f'{money(48)} · Capezio') +
+            (f'<p class="text-sm text-muted">You asked for this on Oct 24. Sending again updates your request.</p>' if requested else "") +
+            field("rq-note", "Note", ctl, help=NOTE_HELP, error=error, optional=True, counter=f"{count} / 500"))
+    label = primary or ("Update request" if requested else "Send request")
+    send = btn(label, "primary", attrs='type="submit" aria-busy="true"' if busy else 'type="submit"')
+    cancel = btn("Cancel", attrs='type="button" disabled' if busy else 'type="button"')
+    html = dialog("Request this item", body, cancel + send, desc="Tell TuTuMuch you’d like one like it. Only TuTuMuch sees your request.", icon="heart", top=top)
+    return Dialog(bg=("listing-detail", "showcase-sold"), html=html)
+
+
+@rq.state("default", "An empty request: the item, one optional note and Send request.")
+def _():
+    return request_dialog()
+
+
+@rq.state("requested", "Already requested: the saved note is filled in and sending again updates it.")
+def _():
+    d = request_dialog(note_text="Size 7 if you find one, for her spring recital.", requested=True)
+    d.bg = ("listing-detail", "showcase-requested")
+    return d
+
+
+@rq.state("invalid", "The note is over 500 characters: refused inline with a summary; nothing is sent.")
+def _():
+    long_note = ("She dances every Saturday and this is exactly the tutu she has been dreaming of since her first recital. " * 5)[:501]
+    summary = error_summary([("rq-note", "Keep the note to 500 characters")])
+    return request_dialog(note_text=long_note, error="Keep the note to 500 characters", top=summary)
+
+
+@rq.state("busy", "Sending: the button is busy, the note read-only and Cancel disabled.")
+def _():
+    return request_dialog(note_text="Size 7 if you find one, for her spring recital.", busy=True)
+
+
+@rq.state("failed", "Sending failed: the note is kept; a reference and Try again.")
+def _():
+    top = alert("danger", "Couldn’t send your request", 'Try again in a moment. <span class="ref">Ref 7e21-90ab</span>')
+    return request_dialog(note_text="Size 7 if you find one, for her spring recital.", top=top, primary="Try again")
+
+
+@rq.state("limited", "A 21st new request today: refused with 429; updating an existing request still works (L2-109, L2-051).")
+def _():
+    top = alert("warning", "That’s 20 requests today", "Try again tomorrow. You can still change the requests you’ve sent.", icon="clock")
+    return request_dialog(note_text="Size 7 if you find one, for her spring recital.", top=top)
+
+
+# ---------------------------------------------------------------------------
+# Showcase request toasts (L2-109)
+# ---------------------------------------------------------------------------
+rqt = screen("showcase-request-toasts", "notification", "Showcase request toasts", opens_from="listing-detail", reqs=["L2-109"])
+
+
+def on_showcase(*toasts) -> Note:
+    return Note(bg=("listing-detail", "showcase-requested"), toasts=toast_region(*toasts))
+
+
+@rqt.state("info", "An existing request was sent again with a new note.")
+def _():
+    return on_showcase(toast("info", "Request updated"))
+
+
+@rqt.state("success", "A new request was sent.")
+def _():
+    return on_showcase(toast("success", "Request sent", "Thank you. TuTuMuch sees every request."))
+
+
+@rqt.state("warning", "The daily limit of new requests was reached.")
+def _():
+    return on_showcase(toast("warning", "That’s 20 requests today", "Try again tomorrow."))
+
+
+@rqt.state("danger", "Sending failed after the dialog closed (the connection dropped): stays until dismissed, offers Try again.")
+def _():
+    return on_showcase(toast("danger", "Couldn’t send your request", "Check your connection.", "Try again"))
 
 
 # ---------------------------------------------------------------------------

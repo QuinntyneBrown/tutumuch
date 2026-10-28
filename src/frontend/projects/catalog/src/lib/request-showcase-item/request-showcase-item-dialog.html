@@ -1,0 +1,57 @@
+<tl-dialog heading="Request this item" icon="heart">
+  <span description>Tell TuTuMuch you’d like one like it. Only TuTuMuch sees your request.</span>
+  @if (summary().length) {
+    <tl-error-summary top [errors]="summary()" />
+  } @else if (state() === 'failed') {
+    <tl-alert top tone="danger" heading="Couldn’t send your request"
+      >Try again in a moment. <span class="ref">{{ failureRef() }}</span></tl-alert
+    >
+  } @else if (state() === 'limited') {
+    <tl-alert top tone="warning" icon="clock" heading="That’s 20 requests today"
+      >Try again tomorrow. You can still change the requests you’ve sent.</tl-alert
+    >
+  }
+  <tl-item-row [title]="data.title" [meta]="data.meta">
+    <div thumb class="thumb">
+      <div class="photo photo--6">
+        @if (data.photo; as photo) {
+          <picture>
+            <source type="image/webp" [attr.srcset]="photo.webp" sizes="64px" />
+            <img [src]="photo.src" [attr.srcset]="photo.jpeg" sizes="64px" alt="" width="160" height="160" />
+          </picture>
+        }
+      </div>
+    </div>
+  </tl-item-row>
+  @if (requestedOn) {
+    <p class="text-sm text-muted">You asked for this on {{ requestedOn }}. Sending again updates your request.</p>
+  }
+  <tl-form-field
+    #field
+    fieldId="rq-note"
+    label="Note"
+    [optional]="true"
+    help="Anything that helps us find one like it: size, colour, when you need it."
+    [error]="error()"
+    [counter]="counter()"
+  >
+    <textarea
+      class="textarea"
+      id="rq-note"
+      name="note"
+      rows="4"
+      data-autofocus
+      [value]="note()"
+      [readOnly]="state() === 'busy'"
+      [attr.aria-describedby]="field.describedBy()"
+      [attr.aria-invalid]="field.invalid()"
+      (input)="input($event)"
+    ></textarea>
+  </tl-form-field>
+  <ng-container ngProjectAs="[footer]">
+    <button tlButton type="button" [disabled]="state() === 'busy'" (click)="ref.close()">Cancel</button>
+    <button tlButton="primary" type="button" [busy]="state() === 'busy'" (click)="submit()">
+      {{ state() === 'failed' ? 'Try again' : data.existing ? 'Update request' : 'Send request' }}
+    </button>
+  </ng-container>
+</tl-dialog>
