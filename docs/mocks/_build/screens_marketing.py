@@ -35,12 +35,15 @@ def poster() -> str:
 
 
 SOON = '<p class="marketing-hero__soon">Selling opens soon.</p>'
+# Decorative tulle field behind the hero: petals drift up and twirl around the pointer; a tap throws sparkles.
+# One still frame under prefers-reduced-motion; hidden from assistive technology.
+TULLE = '<canvas class="tulle-field" data-tulle aria-hidden="true"></canvas>'
 
 
 def hero(member: bool, selling: bool = True) -> str:
     # The one primary button of the page (L2-096); every other call to action is secondary.
     actions = btn("Shop the closet", "primary lg", P("catalog")) + (btn("Start selling", "lg", seller_href(member)) if selling else SOON)
-    return (f'<section class="marketing-hero" aria-labelledby="welcome-title"><div class="marketing-hero__inner">'
+    return (f'<section class="marketing-hero" aria-labelledby="welcome-title">{TULLE}<div class="marketing-hero__inner">'
             '<div><p class="marketing-hero__eyebrow">Clothes · Dance · Sports · Gear, all for girls</p>'
             '<h1 class="marketing-hero__title" id="welcome-title">Twirl it <em>forward.</em></h1>'
             '<p class="marketing-hero__lede">New and gently loved clothes and gear for girls. Shop her next favourite thing, or pass on what she has outgrown.</p>'
@@ -94,7 +97,7 @@ wl = screen("welcome", "page", "Marketing page", route="/welcome",
 @wl.state("default", "Signed out: hero with the video poster, shoppers, sellers, three steps and a closing CTA; Start selling goes to /join.")
 def _():
     pg = welcome(False)
-    pg.notes = note("Tilly twirls in the hero (the one Tilly on the page). No shapes or gradients. The poster opens the video dialog; nothing autoplays.",
+    pg.notes = note("Tilly twirls in the hero (the one Tilly on the page) over a tulle field: canvas petals drift up and twirl around the pointer, and a tap throws sparkles. One still frame under reduced motion. The poster opens the video dialog; nothing autoplays.",
                     "top: 6rem; right: 1rem;")
     return pg
 

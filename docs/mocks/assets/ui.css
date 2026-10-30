@@ -1493,3 +1493,17 @@ a.link:hover {
 .sold-notice__title { margin: 0; font: var(--text-h4); letter-spacing: var(--letter-spacing-tight); }
 .sold-notice__text { margin: 0; color: var(--color-fg-muted); }
 .sold-notice__actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+
+/* Tulle field: a decorative canvas behind the marketing hero (petals twirl around the pointer).
+   Its colours are Giddy palette tokens; the script reads them, so dark mode follows. */
+.tulle-field {
+  position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; pointer-events: none;
+  --tulle-a: var(--palette-raspberry-300); --tulle-b: var(--palette-lilac-300);
+  --tulle-c: var(--palette-raspberry-500); --tulle-d: var(--palette-sunny-300);
+}
+:root[data-theme="dark"] .tulle-field { --tulle-a: var(--palette-raspberry-400); --tulle-b: var(--palette-lilac-500); --tulle-c: var(--palette-raspberry-600); --tulle-d: var(--palette-sunny-400); }
+.marketing-hero { overflow: hidden; }
+
+/* Header logo: a bigger wordmark (2.5rem tall in the 4rem topbar), and a bigger mark below 640px. */
+.topbar .logo img { height: 2.5rem; }
+.topbar .logo__mark { width: 2.25rem; height: 2.25rem; }
