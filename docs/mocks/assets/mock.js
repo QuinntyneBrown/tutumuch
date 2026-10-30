@@ -220,3 +220,36 @@
     });
   });
 })();
+
+/* What's her closet worth? Chips toggle aria-pressed; the total counts up to the new sum. */
+(function () {
+  var section = document.querySelector('.worth');
+  if (!section) return;
+  var totalEl = section.querySelector('[data-worth-total]');
+  var countEl = section.querySelector('[data-worth-count]');
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var shown = parseInt(totalEl.textContent.replace(/\D/g, ''), 10) || 0, raf = 0;
+
+  function render(target) {
+    cancelAnimationFrame(raf);
+    var from = shown, start = performance.now(), ms = reduce ? 0 : 450;
+    (function tick(now) {
+      var t = ms ? Math.min(1, (now - start) / ms) : 1;
+      shown = Math.round(from + (target - from) * (1 - Math.pow(1 - t, 3)));
+      totalEl.textContent = '$' + shown;
+      if (t < 1) raf = requestAnimationFrame(tick);
+    })(start);
+    var box = totalEl.parentElement;
+    box.classList.remove('is-bumped'); void box.offsetWidth; box.classList.add('is-bumped');
+  }
+
+  section.addEventListener('click', function (event) {
+    var chip = event.target.closest('.worth__chip');
+    if (!chip) return;
+    chip.setAttribute('aria-pressed', chip.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+    var on = section.querySelectorAll('.worth__chip[aria-pressed="true"]'), sum = 0;
+    on.forEach(function (c) { sum += parseInt(c.dataset.worth, 10); });
+    countEl.textContent = on.length;
+    render(sum);
+  });
+})();

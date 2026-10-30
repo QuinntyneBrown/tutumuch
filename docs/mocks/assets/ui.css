@@ -1536,3 +1536,32 @@ a.link:hover {
   .closet-marquee__live::after { animation: none; }
   .closet-marquee__tile:has(a[aria-hidden="true"]) { display: none; }
 }
+
+/* What's her closet worth? A calculator band: chips toggle, the total counts up beside a join CTA. */
+.worth { padding-block: var(--space-16) var(--space-20); background: var(--color-bg-blush); color: var(--color-fg-default); }
+.worth__inner { display: grid; gap: var(--space-8); max-width: var(--layout-container-max); margin-inline: auto; padding-inline: var(--layout-margin); }
+@media (min-width: 62rem) {
+  .worth__inner { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); grid-template-areas: "intro result" "chips result"; column-gap: var(--space-16); align-items: start; }
+  .worth__intro { grid-area: intro; }
+  .worth__chips { grid-area: chips; }
+  .worth__result { grid-area: result; }
+}
+.worth .feature-band__title em { font-style: normal; color: var(--color-fg-showcase-accent); }
+.worth__lede { font: var(--text-body-lg); color: var(--color-fg-muted); margin: var(--space-4) 0 0; }
+.worth__chips { display: flex; flex-wrap: wrap; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
+.worth__chip { display: inline-flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-4) var(--space-2) var(--space-2); border: 1.5px solid var(--color-border-default); border-radius: var(--radius-full); background: var(--color-bg-surface); color: var(--color-fg-default); font: var(--text-body); cursor: pointer; transition: transform 150ms var(--ease-out), background-color 150ms var(--ease-out), border-color 150ms var(--ease-out); }
+.worth__chip img { width: 2.5rem; height: 2.5rem; border-radius: 50%; background: var(--color-bg-subtle); padding: 0.25rem; }
+.worth__chip b { font-weight: 600; color: var(--color-fg-muted); }
+.worth__chip:hover { transform: translateY(-2px); border-color: var(--palette-raspberry-300); }
+.worth__chip:focus-visible { outline: 2px solid var(--color-focus-ring); outline-offset: 2px; }
+.worth__chip[aria-pressed="true"] { background: var(--palette-raspberry-600); border-color: var(--palette-raspberry-600); color: var(--palette-paper-25); }
+.worth__chip[aria-pressed="true"] b { color: inherit; }
+.worth__chip[aria-pressed="true"] img { background: var(--palette-paper-25); }
+.worth__result { display: grid; justify-items: start; gap: var(--space-2); padding: var(--space-8); border-radius: var(--radius-lg); background: var(--color-bg-surface); box-shadow: 0 0 0 1px var(--color-border-default); }
+.worth__label, .worth__count { margin: 0; font: var(--text-body); color: var(--color-fg-muted); }
+.worth__total { margin: 0; font: var(--text-display); font-size: clamp(3.5rem, 7vw, 5.5rem); line-height: 1; letter-spacing: var(--letter-spacing-display); color: var(--color-fg-showcase-accent); font-variant-numeric: tabular-nums; }
+.worth__total.is-bumped { animation: worth-bump 320ms var(--ease-out); }
+.worth__result .btn { margin-top: var(--space-4); }
+.worth__small { margin: var(--space-1) 0 0; font: var(--text-body-sm); color: var(--color-fg-muted); max-width: 30ch; }
+@keyframes worth-bump { 40% { transform: scale(1.06); } }
+@media (prefers-reduced-motion: reduce) { .worth__total.is-bumped { animation: none; } .worth__chip { transition: none; } }
