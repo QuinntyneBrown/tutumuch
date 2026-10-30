@@ -17,6 +17,12 @@
   font-size: 2.75rem;
 }
 
+/* The header logo (the responsive one): a bigger wordmark, 2.9rem tall in the 4rem top bar
+   (ADR general/0010). */
+.logo--responsive {
+  font-size: 2.25rem;
+}
+
 /* Under 640px the responsive logo (the app header) shows the mark inside the same link. */
 .logo__mark {
   display: none;

@@ -480,7 +480,7 @@ uploads at once and a save sends the photo IDs in order. The footer stays visibl
 - Library: not yet composed
 - Local: not yet composed
 
-### Marketing page — `/welcome` (`pages/welcome`: default, signed-in, selling-opens-soon)
+### Marketing page — `/welcome` (`pages/welcome`: default, signed-in, selling-opens-soon, phase-one)
 
 Built in `@tutumuch/marketing` (`src/lib/welcome/`) by the marketing page. Calls no TuTuMuch API
 endpoint; the shell's `AuthState` decides the seller target. Title "Twirl it forward · TuTuMuch"
@@ -504,8 +504,21 @@ girls and never promises boys' or adult sizes ([ADR general/0005](adr/general/00
   "Selling opens soon." with the two points "Pass it on soon" and "Join today", and its
   actions slot holds `<p class="feature-band__note">For now, every item is hand-picked by TuTuMuch.</p>`;
   the closing hero keeps only "Shop the closet".
-- Local: `WelcomePage` (copy, CTA targets from `AuthState.member()` and `LaunchState.canSell()`) and
-  `PitchVideoDialog`.
+- Launch Phase 1 for anyone but an administrator (phase-one, `L2-112`,
+  [ADR general/0010](adr/general/0010-phase-one-marketing-page.md)): `tl-marketing-hero` (eyebrow "The first
+  closet is open · All for girls", the Phase 1 lede, the primary "Shop the closet" and, for a visitor, the
+  secondary "Join early" to `/join`) with `tl-tulle-field` in its `[backdrop]` slot; `tl-closet-marquee`
+  ("Hand-picked this week", the newest listings from `CatalogApi.listings(1)`, left out on failure or under 4
+  listings); `tl-feature-band` (For shoppers "Hand-picked, every one for girls.", `blush`, three points);
+  `tl-closet-worth` ("What’s her closet *worth?*", ten item chips, Tutu, Party dress and Sneakers pressed,
+  "Join and sell first" for a visitor and the "Selling opens soon" note); `tl-feature-band` (How it works
+  "Three steps to her next favourite.", `stacked`) with `tl-steps` `journey` (Find it `search`, Pay at
+  checkout `card`, It ships to you `truck`); the closing `tl-marketing-hero` (lede "A small closet,
+  hand-picked for girls. Join early to sell when selling opens.", "Shop the closet" and "Join early"). No seller
+  band and no "Start selling".
+- Local: `WelcomePage` (copy, CTA targets from `AuthState.member()` and `LaunchState.canSell()`, the Phase 1
+  choice from `LaunchState.phase()`, the marquee call and its card mapping, the calculator's typical prices)
+  and `PitchVideoDialog`.
 
 ### Privacy — `/privacy` (`pages/privacy`: default)
 

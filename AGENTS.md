@@ -107,7 +107,8 @@ tutumuch/
 │           ├── tutumuch/         the application (projectType "application")
 │           │   ├── src/app/     app.config.ts, app.routes.ts, shells only
 │           │   └── public/      media/ pitch video, captions, poster and share image (ADR platform/0011);
-│           │                    fonts/ Titan One, Fraunces, DM Sans with OFL files; tilly/ Tilly poses (ADR general/0009)
+│           │                    fonts/ Titan One, Fraunces, DM Sans with OFL files; tilly/ Tilly poses (ADR general/0009);
+           │                    items/ item illustrations for the closet-worth calculator (ADR general/0010)
 │           ├── api/             library: typed HTTP services, DTOs, auth state, interceptors
 │           ├── components/      library: design-system components and styles
 │           ├── accounts/        library: feature area

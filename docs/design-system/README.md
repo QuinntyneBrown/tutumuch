@@ -30,7 +30,10 @@ consent banner, the visible label and hint of the switch and the footer's Cookie
 the marketing page added the marketing hero, feature band, steps, video poster and video player, and the
 showcase tokens they use. The page guidelines (ADR general/0009) added the mark, Tilly, the condition badge
 and the skeleton, redrew every component to the brand kit and retired the decorative shapes. Request-items added the bell icon (the empty My requests page) and uses the removed tone of the
-status for an expired request; the request list on My requests is local UI of `@tutumuch/catalog`.
+status for an expired request; the request list on My requests is local UI of `@tutumuch/catalog`. The Phase 1
+marketing page ([ADR general/0010](../adr/general/0010-phase-one-marketing-page.md)) added the tulle field (the one
+decorative layer allowed, coloured by the `--color-tulle-*` tokens), the closet marquee, the closet worth calculator,
+the journey variant of the steps, the card and arrow-right icons and a bigger header logo.
 
 ## Foundations
 
@@ -104,9 +107,12 @@ status for an expired request; the request list on My requests is local UI of `@
 | [Status](components/status.html) | draft, active, reserved, sold, removed, info | static | problem-detail/default, problem-detail/resolved |
 | [Marketing hero](components/marketing-hero.html) | hero (solid blush, Tilly above the poster, one primary), closing (secondary only) | static | welcome, pitch-video |
 | [Feature band](components/feature-band.html) | blush, surface, default, stacked | static | welcome |
-| [Steps](components/steps.html) | one | static | welcome |
+| [Steps](components/steps.html) | default, journey | static; journey unlit and lit | welcome, welcome/phase-one |
 | [Video poster](components/video-poster.html) | one | default, hover, focus | welcome, pitch-video |
 | [Video player](components/video-player.html) | one | loading, playing, paused, captions, error | welcome, pitch-video |
+| [Tulle field](components/tulle-field.html) | one | drifting, twirling, burst, sleeping, still | welcome/phase-one |
+| [Closet marquee](components/closet-marquee.html) | one | gliding, paused, tile hover and focus, still | welcome/phase-one |
+| [Closet worth](components/closet-worth.html) | one | chip off, pressed, hover, focus; total counting | welcome/phase-one |
 
 ## Patterns
 

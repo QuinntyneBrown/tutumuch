@@ -1,5 +1,5 @@
 // Acceptance Test
-// Traces to: L2-090, L2-093, L2-094, L2-092
+// Traces to: L2-090, L2-093, L2-094, L2-092, L2-112
 // Description: The app reads the launch phase before its first render. Phase 1 has no category
 // links, menu button, Category filter or category pages; in Phases 1 and 2 only an administrator
 // is offered selling (top bar, sell routes, welcome page, payout banner); Phase 1 at the product
@@ -114,15 +114,13 @@ test.describe('launch phase 1', () => {
     );
   });
 
-  test('the welcome page says selling opens soon and offers no Start selling', async ({ page }) => {
+  test('the welcome page is the Phase 1 page and offers no Start selling', async ({ page }) => {
     await page.goto('/welcome');
 
     await expect(page.getByRole('heading', { level: 1 })).toContainText('Twirl it');
     await expect(page.getByRole('link', { name: 'Start selling' })).toHaveCount(0);
-    await expect(page.getByRole('heading', { level: 2, name: 'Selling opens soon.' })).toBeVisible();
-    await expect(page.getByText('Selling opens soon.', { exact: true }).first()).toBeVisible();
-    await expect(page.getByText('For now, every item is hand-picked by TuTuMuch.')).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Shop the closet' }).first()).toBeVisible();
+    await expect(page.getByRole('heading', { level: 2, name: 'Hand-picked this week' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Join early' }).first()).toHaveAttribute('href', '/join');
   });
 
   test('the administrator still sees Start selling on the welcome page', async ({ page }) => {
@@ -168,6 +166,17 @@ test.describe('launch phase 2', () => {
 
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Selling opens soon');
     await expect(page.getByText('Set up payouts to get paid')).toHaveCount(0);
+  });
+
+  test('the welcome page says selling opens soon and offers no Start selling', async ({ page }) => {
+    await page.goto('/welcome');
+
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('Twirl it');
+    await expect(page.getByRole('link', { name: 'Start selling' })).toHaveCount(0);
+    await expect(page.getByRole('heading', { level: 2, name: 'Selling opens soon.' })).toBeVisible();
+    await expect(page.getByText('Selling opens soon.', { exact: true }).first()).toBeVisible();
+    await expect(page.getByText('For now, every item is hand-picked by TuTuMuch.')).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Shop the closet' }).first()).toBeVisible();
   });
 
   test('the administrator opens the sell form', async ({ page }) => {
