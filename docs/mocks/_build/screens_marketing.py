@@ -51,6 +51,30 @@ def hero(member: bool, selling: bool = True) -> str:
             f'<div class="marketing-hero__media">{tilly("hero", "tilly--hero")}{poster()}</div></div></section>')
 
 
+# The closet marquee (inspired by 21st.dev marquee components): two rows of real listings
+# gliding in opposite directions, so the first scroll shows what is for sale, not only words.
+MARQUEE_ROWS = [["pink-tutu", "glitter-sneakers", "velvet-dress", "instant-camera", "ballet-leotard", "party-dress", "rag-doll", "rainbow-sweater"],
+                ["paint-set", "rainbow-romper", "soccer-ball", "cat-headphones", "kick-scooter", "rain-boots", "ballet-slippers", "heart-hoodie"]]
+
+
+def marquee_tile(key: str, copy: bool) -> str:
+    it = ITEMS[key]
+    hidden = ' aria-hidden="true" tabindex="-1"' if copy else ""
+    return (f'<li class="closet-marquee__tile"><a href="{P("listing-detail")}"{hidden}>{photo(key, alt="" if copy else None)}'
+            f'<span class="closet-marquee__meta"><span class="closet-marquee__title">{esc(it["title"])}</span>'
+            f'<span class="price">{price(it["price"])}</span></span></a></li>')
+
+
+def marquee() -> str:
+    rows = "".join(
+        f'<div class="closet-marquee__row{" closet-marquee__row--reverse" if i else ""}"><ul class="closet-marquee__track" role="list">'
+        + "".join(marquee_tile(k, False) for k in keys) + "".join(marquee_tile(k, True) for k in keys) + "</ul></div>"
+        for i, keys in enumerate(MARQUEE_ROWS))
+    return (f'<section class="closet-marquee" aria-labelledby="marquee-title"><div class="closet-marquee__head">'
+            f'<h2 class="closet-marquee__heading" id="marquee-title"><span class="closet-marquee__live" aria-hidden="true"></span>Fresh in the closet</h2>'
+            f'{btn("See everything", href=P("catalog"), icon_after="arrow-right")}</div>{rows}</section>')
+
+
 def points(items) -> str:
     return '<ul class="feature-band__points" role="list">' + "".join(
         f'<li class="feature-band__point"><strong>{t}</strong><span>{d}</span></li>' for t, d in items) + "</ul>"
@@ -82,6 +106,7 @@ def welcome(member: bool, selling: bool = True) -> Page:
                band("sellers-title", "For sellers", "Selling opens soon.", points(SELLER_POINTS_SOON),
                     '<p class="feature-band__note">For now, every item is hand-picked by TuTuMuch.</p>', "feature-band--surface"))
     main = (hero(member, selling)
+            + marquee()
             + band("shoppers-title", "For shoppers", "Everything here is for girls.", points(SHOPPER_POINTS),
                    btn("Shop the closet", href=P("catalog")), "feature-band--blush")
             + sellers
