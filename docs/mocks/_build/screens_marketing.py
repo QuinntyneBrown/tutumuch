@@ -14,6 +14,10 @@ STATIC_NA = {"loading": "Static content ships with the app; the page calls no Tu
 SHOPPER_POINTS = [("Every listing is for girls", "Clothes, dance and sports gear, cameras and more. Nothing to filter out."),
                   ("Outgrown, not worn out", "Most things still have plenty of twirl left in them."),
                   ("Honest condition", "Five grades, and flaws named up front.")]
+# Phase 1 shopper band: the closet is small and hand-picked by TuTuMuch.
+SHOPPER_POINTS_PHASE_ONE = [("Hand-picked by TuTuMuch", "Every piece is chosen, checked and photographed by us."),
+                            ("Every listing is for girls", "Clothes, dance and sports gear, cameras and more."),
+                            ("Honest condition", "Five grades, and flaws named up front.")]
 SELLER_POINTS = [("List in minutes", "Photos, a price and the condition. That’s it."),
                  ("Families are already looking", "Sell to parents who need exactly what she has outgrown.")]
 # The seller band in launch Phases 1 and 2 (L2-094): nothing promises that a member can list today.
@@ -65,13 +69,13 @@ def marquee_tile(key: str, copy: bool) -> str:
             f'<span class="price">{price(it["price"])}</span></span></a></li>')
 
 
-def marquee() -> str:
+def marquee(title: str = "Fresh in the closet", rows_keys=None) -> str:
     rows = "".join(
         f'<div class="closet-marquee__row{" closet-marquee__row--reverse" if i else ""}"><ul class="closet-marquee__track" role="list">'
         + "".join(marquee_tile(k, False) for k in keys) + "".join(marquee_tile(k, True) for k in keys) + "</ul></div>"
-        for i, keys in enumerate(MARQUEE_ROWS))
+        for i, keys in enumerate(rows_keys or MARQUEE_ROWS))
     return (f'<section class="closet-marquee" aria-labelledby="marquee-title"><div class="closet-marquee__head">'
-            f'<h2 class="closet-marquee__heading" id="marquee-title"><span class="closet-marquee__live" aria-hidden="true"></span>Fresh in the closet</h2>'
+            f'<h2 class="closet-marquee__heading" id="marquee-title"><span class="closet-marquee__live" aria-hidden="true"></span>{title}</h2>'
             f'{btn("See everything", href=P("catalog"), icon_after="arrow-right")}</div>{rows}</section>')
 
 
@@ -117,15 +121,21 @@ def band(bid: str, eyebrow: str, title: str, body: str, action: str = "", mod: s
 
 
 STEP_ICONS = ["camera", "truck", "dollar"]
+# Phase 1 (L2-093, L2-094): only TuTuMuch sells, so the journey is the shopper's, not the seller's.
+STEPS_PHASE_ONE = [("Find it", "Pick something she will love from the hand-picked closet."),
+                   ("Pay at checkout", "Card details go to Stripe, never to TuTuMuch."),
+                   ("It ships to you", "TuTuMuch ships within 5 business days.")]
+STEP_ICONS_PHASE_ONE = ["search", "card", "truck"]
 
 
-def steps() -> str:
+def steps(items=None, icons=None) -> str:
+    items, icons = items or STEPS, icons or STEP_ICONS
     # The journey: a rail fills as the band scrolls through view and each station lights up as
     # the fill reaches it. Without JavaScript or with reduced motion every station shows lit.
     return ('<div class="journey" data-journey><span class="journey__rail" aria-hidden="true"><span class="journey__fill"></span></span>'
             '<ol class="steps steps--journey">' + "".join(
                 f'<li class="steps__item"><span class="journey__station" aria-hidden="true">{ic(i, "icon icon--lg")}</span>'
-                f'<h3 class="steps__title">{t}</h3><p class="steps__text">{d}</p></li>' for (t, d), i in zip(STEPS, STEP_ICONS))
+                f'<h3 class="steps__title">{t}</h3><p class="steps__text">{d}</p></li>' for (t, d), i in zip(items, icons))
             + "</ol></div>")
 
 
@@ -135,6 +145,32 @@ def closing(member: bool, selling: bool = True) -> str:
             '<div class="marketing-hero__inner"><div><h2 class="marketing-hero__title" id="closing-title">Her next favourite thing is <em>waiting.</em></h2>'
             f'<p class="marketing-hero__lede">New listings every day, every one for girls.</p>'
             f'<div class="marketing-hero__actions">{actions}</div></div></div></section>')
+
+
+JOIN_EARLY = btn("Join early", "lg", P("register"))
+
+
+def welcome_phase_one() -> Page:
+    """Launch Phase 1, signed out: a small hand-picked closet. Every call to action is shop or join early."""
+    hero_html = (f'<section class="marketing-hero" aria-labelledby="welcome-title">{TULLE}<div class="marketing-hero__inner">'
+                 '<div><p class="marketing-hero__eyebrow">The first closet is open · All for girls</p>'
+                 '<h1 class="marketing-hero__title" id="welcome-title">Twirl it <em>forward.</em></h1>'
+                 '<p class="marketing-hero__lede">Clothes and gear for girls, every piece hand-picked by TuTuMuch. Shop her next favourite thing today.</p>'
+                 f'<div class="marketing-hero__actions">{btn("Shop the closet", "primary lg", P("catalog"))}{JOIN_EARLY}</div></div>'
+                 f'<div class="marketing-hero__media">{tilly("hero", "tilly--hero")}{poster()}</div></div></section>')
+    closing_html = ('<section class="marketing-hero marketing-hero--closing" aria-labelledby="closing-title">'
+                    '<div class="marketing-hero__inner"><div><h2 class="marketing-hero__title" id="closing-title">Her next favourite thing is <em>waiting.</em></h2>'
+                    '<p class="marketing-hero__lede">A small closet, hand-picked for girls. Join early to sell when selling opens.</p>'
+                    f'<div class="marketing-hero__actions">{btn("Shop the closet", "lg", P("catalog"))}{JOIN_EARLY}</div></div></div></section>')
+    main = (hero_html
+            + marquee("Hand-picked this week", [CATALOG[:8], CATALOG[8:16]])
+            + band("shoppers-title", "For shoppers", "Hand-picked, every one for girls.", points(SHOPPER_POINTS_PHASE_ONE),
+                   btn("Shop the closet", href=P("catalog")), "feature-band--blush")
+            + worth(False, False)
+            + band("how-title", "How it works", "Three steps to her next favourite.",
+                   steps(STEPS_PHASE_ONE, STEP_ICONS_PHASE_ONE), mod="feature-band--stacked")
+            + closing_html)
+    return Page(main=main, user="guest", main_class="marketing", phase=1)
 
 
 def welcome(member: bool, selling: bool = True) -> Page:
@@ -174,6 +210,14 @@ def _():
 def _():
     pg = welcome(False, selling=False)
     pg.notes = note("An administrator still sees Start selling (L2-094). The shopper band and steps are unchanged; the video is the shopper-only cut in every phase.", "top: 6rem; right: 1rem;")
+    return pg
+
+
+@wl.state("phase-one", "Launch Phase 1, signed out: the hand-picked closet. Marquee of the owner's listings, shopper journey, closet-worth calculator with Join early; no seller steps.")
+def _():
+    pg = welcome_phase_one()
+    pg.notes = note("Phase 1 (L2-093, L2-094): only TuTuMuch sells, so How it works is the shopper's journey and the seller band folds into the closet-worth calculator. "
+                    "Join early goes to /join; Shop the closet stays the one primary button.", "top: 6rem; right: 1rem;")
     return pg
 
 

@@ -365,7 +365,8 @@
       "states": [
         "default",
         "signed-in",
-        "selling-opens-soon"
+        "selling-opens-soon",
+        "phase-one"
       ],
       "not_applicable": {
         "loading": "Static content ships with the app; the page calls no TuTuMuch API endpoint.",
