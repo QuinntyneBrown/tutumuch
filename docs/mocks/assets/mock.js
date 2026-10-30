@@ -253,3 +253,34 @@
     render(sum);
   });
 })();
+
+/* The journey: sets --journey (0 to 1) from the band's scroll position and lights each station
+   the fill has reached. Reduced motion leaves the all-lit static journey. */
+(function () {
+  var journey = document.querySelector('[data-journey]');
+  if (!journey || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+  var items = journey.querySelectorAll('.steps__item');
+  journey.setAttribute('data-journey-live', '');
+  var queued = false;
+
+  function update() {
+    queued = false;
+    var rect = journey.getBoundingClientRect(), vh = window.innerHeight;
+    // 0 when the journey's top reaches 85% of the viewport, 1 when its bottom reaches 55%.
+    var p = (vh * 0.85 - rect.top) / (rect.height + vh * 0.3);
+    p = Math.max(0, Math.min(1, p));
+    journey.style.setProperty('--journey', p.toFixed(3));
+    items.forEach(function (item, i) { item.classList.toggle('is-lit', p >= i / (items.length - 1) - 0.001); });
+  }
+  // Stacked (phone) layout: end the rail at the last station's centre, not below its text.
+  var rail = journey.querySelector('.journey__rail'), stations = journey.querySelectorAll('.journey__station');
+  function fitRail() {
+    var box = journey.getBoundingClientRect(), first = stations[0].getBoundingClientRect(), last = stations[stations.length - 1].getBoundingClientRect();
+    rail.style.bottom = last.top > first.top + 1 ? (box.bottom - (last.top + last.height / 2)) + 'px' : '';
+  }
+  function queue() { if (!queued) { queued = true; requestAnimationFrame(update); } }
+  window.addEventListener('scroll', queue, { passive: true });
+  window.addEventListener('resize', function () { fitRail(); queue(); });
+  fitRail();
+  update();
+})();

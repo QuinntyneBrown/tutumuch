@@ -4,6 +4,7 @@ Bold changes to the `/welcome` mock (`pages/welcome/`), newest first.
 
 | Date | Change | Files |
 | --- | --- | --- |
+| 2026-10-30 | The journey: "How it works" becomes a rail that fills as you scroll. Each station (camera, truck, dollar) lights up when the fill reaches it. The rail runs across on desktop and down on phones. Without JavaScript or with reduced motion, every station shows lit. | `_build/screens_marketing.py`, `assets/mock.js`, `assets/ui.css` |
 | 2026-10-30 | What's her closet worth?: a calculator band after the sellers band. A visitor taps chips for what she has outgrown (each shows a typical price), and the total counts up next to a join CTA: Join and sell first in Phases 1 and 2, Start selling once selling opens. The total is announced to screen readers, and reduced motion skips the count-up. | `_build/screens_marketing.py`, `assets/mock.js`, `assets/ui.css` |
 | 2026-10-30 | Closet marquee: a "Fresh in the closet" band under the hero, with a live dot and two rows of real listings (photo, title, price) scrolling in opposite directions. Hovering or focusing a row pauses it. Reduced motion turns each row into a plain horizontal scroller. Every tile opens a listing, and See everything goes to the catalog. Inspired by 21st.dev marquee components. | `_build/screens_marketing.py`, `assets/ui.css` |
 | 2026-10-30 | Header logo bigger: the wordmark is 2.5rem tall (was 1.75rem); the mobile mark is 2.25rem. Applies to every page's topbar. | `assets/ui.css` |

@@ -116,9 +116,17 @@ def band(bid: str, eyebrow: str, title: str, body: str, action: str = "", mod: s
             f'<div>{body}</div></div></section>')
 
 
+STEP_ICONS = ["camera", "truck", "dollar"]
+
+
 def steps() -> str:
-    return '<ol class="steps">' + "".join(
-        f'<li class="steps__item"><h3 class="steps__title">{t}</h3><p class="steps__text">{d}</p></li>' for t, d in STEPS) + "</ol>"
+    # The journey: a rail fills as the band scrolls through view and each station lights up as
+    # the fill reaches it. Without JavaScript or with reduced motion every station shows lit.
+    return ('<div class="journey" data-journey><span class="journey__rail" aria-hidden="true"><span class="journey__fill"></span></span>'
+            '<ol class="steps steps--journey">' + "".join(
+                f'<li class="steps__item"><span class="journey__station" aria-hidden="true">{ic(i, "icon icon--lg")}</span>'
+                f'<h3 class="steps__title">{t}</h3><p class="steps__text">{d}</p></li>' for (t, d), i in zip(STEPS, STEP_ICONS))
+            + "</ol></div>")
 
 
 def closing(member: bool, selling: bool = True) -> str:

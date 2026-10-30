@@ -1565,3 +1565,27 @@ a.link:hover {
 .worth__small { margin: var(--space-1) 0 0; font: var(--text-body-sm); color: var(--color-fg-muted); max-width: 30ch; }
 @keyframes worth-bump { 40% { transform: scale(1.06); } }
 @media (prefers-reduced-motion: reduce) { .worth__total.is-bumped { animation: none; } .worth__chip { transition: none; } }
+
+/* The journey: "How it works" as a rail that fills while the band scrolls through view; each
+   station (camera, truck, dollar) lights up as the fill reaches it. --journey runs 0 to 1. */
+.journey { --journey: 1; position: relative; }
+.journey[data-journey-live] { --journey: 0; }
+.journey__rail { position: absolute; z-index: 0; background: var(--color-border-default); border-radius: var(--radius-full); overflow: hidden;
+  left: 1.75rem; top: 1.75rem; bottom: 1.75rem; width: 4px; transform: translateX(-50%); }
+.journey__fill { position: absolute; inset: 0; background: var(--palette-raspberry-500); transform-origin: top; transform: scaleY(var(--journey)); }
+.steps--journey { position: relative; z-index: 1; gap: var(--space-10); }
+.steps--journey .steps__item { border-top: 0; padding: 0 0 0 calc(3.5rem + var(--space-5)); position: relative; min-height: 3.5rem; }
+.steps--journey .steps__item::before { margin-bottom: var(--space-1); }
+.journey__station { position: absolute; left: 0; top: 0; display: grid; place-items: center; width: 3.5rem; height: 3.5rem; border-radius: 50%;
+  background: var(--color-bg-surface); color: var(--color-fg-muted); box-shadow: 0 0 0 2px var(--color-border-default);
+  transition: background-color 300ms var(--ease-out), color 300ms var(--ease-out), box-shadow 300ms var(--ease-out), transform 300ms var(--ease-out); }
+.steps--journey .steps__item.is-lit .journey__station,
+.journey:not([data-journey-live]) .journey__station { background: var(--palette-raspberry-600); color: var(--palette-paper-25); box-shadow: 0 0 0 6px var(--palette-raspberry-100); transform: scale(1.08); }
+@media (min-width: 48rem) {
+  .journey__rail { left: calc(1.75rem); right: calc(100% / 3 - 1.75rem); top: 1.75rem; bottom: auto; width: auto; height: 4px; transform: translateY(-50%); }
+  .journey__fill { transform-origin: left; transform: scaleX(var(--journey)); }
+  .steps--journey .steps__item { padding: calc(3.5rem + var(--space-5)) 0 0; }
+}
+:root[data-theme="dark"] .steps--journey .steps__item.is-lit .journey__station,
+:root[data-theme="dark"] .journey:not([data-journey-live]) .journey__station { box-shadow: 0 0 0 6px var(--palette-raspberry-900); }
+@media (prefers-reduced-motion: reduce) { .journey__station { transition: none; } }
