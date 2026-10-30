@@ -212,6 +212,11 @@
   --color-condition-well-loved-fg: var(--palette-plum-800);
   --color-condition-well-loved-ring: var(--palette-ink-alpha-15);
   --color-showcase-start: var(--palette-raspberry-100); /* marketing hero and closing band: a solid blush panel */
+  /* Tulle field behind the marketing hero (ADR general/0010): decorative petals, never text. */
+  --color-tulle-a: var(--palette-raspberry-300);
+  --color-tulle-b: var(--palette-lilac-300);
+  --color-tulle-c: var(--palette-raspberry-500);
+  --color-tulle-d: var(--palette-sunny-300);
   --color-showcase-end: var(--palette-raspberry-100);
   --color-showcase-subtle: var(--palette-raspberry-200);
   --color-fg-showcase: var(--palette-plum-800);
@@ -447,6 +452,10 @@
   --color-condition-well-loved-fg: var(--palette-plum-50);
   --color-condition-well-loved-ring: var(--palette-cream-alpha-20);
   --color-showcase-start: var(--palette-plum-850);
+  --color-tulle-a: var(--palette-raspberry-400);
+  --color-tulle-b: var(--palette-lilac-500);
+  --color-tulle-c: var(--palette-raspberry-600);
+  --color-tulle-d: var(--palette-sunny-400);
   --color-showcase-end: var(--palette-plum-850);
   --color-showcase-subtle: var(--palette-plum-700);
   --color-fg-showcase: var(--palette-plum-50);
@@ -535,6 +544,10 @@
     --color-condition-well-loved-fg: var(--palette-plum-50);
     --color-condition-well-loved-ring: var(--palette-cream-alpha-20);
     --color-showcase-start: var(--palette-plum-850);
+    --color-tulle-a: var(--palette-raspberry-400);
+    --color-tulle-b: var(--palette-lilac-500);
+    --color-tulle-c: var(--palette-raspberry-600);
+    --color-tulle-d: var(--palette-sunny-400);
     --color-showcase-end: var(--palette-plum-850);
     --color-showcase-subtle: var(--palette-plum-700);
     --color-fg-showcase: var(--palette-plum-50);

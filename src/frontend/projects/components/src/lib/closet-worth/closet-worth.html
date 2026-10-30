@@ -1,0 +1,47 @@
+<section class="worth" [attr.aria-labelledby]="headingId()">
+  <div class="worth__inner">
+    <div class="worth__intro">
+      @if (eyebrow()) {
+        <p class="feature-band__eyebrow">{{ eyebrow() }}</p>
+      }
+      <h2 class="feature-band__title" [id]="headingId()"><ng-content select="[title]" /></h2>
+      @if (lede()) {
+        <p class="worth__lede">{{ lede() }}</p>
+      }
+    </div>
+    <ul class="worth__chips" role="list">
+      @for (item of items(); track item.label) {
+        <li>
+          <button
+            type="button"
+            class="worth__chip"
+            [attr.aria-pressed]="pressed().has(item.label)"
+            (click)="toggle(item.label)"
+          >
+            <img [src]="item.image" alt="" width="40" height="40" />
+            <span>{{ item.label }}</span>
+            <b>${{ item.price }}</b>
+          </button>
+        </li>
+      }
+    </ul>
+    <div class="worth__result">
+      <p class="worth__label">Typical total on TuTuMuch</p>
+      <!-- The counting figure is visual; the live region announces only the final total. -->
+      <p
+        class="worth__total"
+        [class.is-bumped]="bump() % 2 === 1"
+        [class.is-bumped-again]="bump() > 0 && bump() % 2 === 0"
+        aria-hidden="true"
+      >
+        ${{ shown() }}
+      </p>
+      <p class="worth__count" aria-hidden="true">{{ count() }} {{ count() === 1 ? 'item' : 'items' }}</p>
+      <p class="visually-hidden" aria-live="polite">
+        ${{ total() }} for {{ count() }} {{ count() === 1 ? 'item' : 'items' }}
+      </p>
+      <ng-content select="[actions]" />
+      <p class="worth__small"><ng-content select="[note]" /></p>
+    </div>
+  </div>
+</section>

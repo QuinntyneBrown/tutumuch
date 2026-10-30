@@ -17,8 +17,8 @@ Terms used below:
   15.1 s (under 30 s, `L2-080`), with `tutumuch-pitch.vtt` captions (off until turned on), `tutumuch-pitch-poster.png`
   and `tutumuch-share.jpg`, the 1200×630 link-preview image
 
-The page calls no TuTuMuch API endpoint; the shell's `GET /api/auth/me` decides the seller
-target. Nothing in the size rules, the catalog, sell, accounts or the API changes. The copy
+The page calls no TuTuMuch API endpoint, except the Phase 1 page (below), which reads the catalog
+once for the closet marquee; the shell's `GET /api/auth/me` decides the seller target. Nothing in the size rules, the catalog, sell, accounts or the API changes. The copy
 says everything is for girls and never promises boys' or adult sizes
 ([ADR general/0005](../../../adr/general/0005-marketing-wording.md)).
 
@@ -107,15 +107,34 @@ media come from the build, and the error state routes `**/media/tutumuch-pitch.*
 `serve.mjs` learns the media content types. Covers `L2-078` to `L2-083`, including reduced
 motion and the footer link.
 
+### Phase 1 page ([ADR general/0010](../../../adr/general/0010-phase-one-marketing-page.md), `L2-112`)
+
+`WelcomePage.phaseOne` is `LaunchState.phase() === 1 && !LaunchState.canSell()`. When it holds,
+the page renders the Phase 1 template instead of the bands above:
+
+| Part | Component | Notes |
+|---|---|---|
+| Hero | `tl-marketing-hero` with `tl-tulle-field` in `[backdrop]` | "Join early" to `/join` for a visitor beside the primary "Shop the closet" |
+| Closet marquee | `tl-closet-marquee` | `CatalogApi.listings(1)` once (an `effect` guards the single call); the first 16 cards mapped locally; left out when the call fails or returns fewer than 4 |
+| For shoppers | `tl-feature-band` (`blush`) | "Hand-picked, every one for girls." |
+| Closet worth | `tl-closet-worth` | Ten static typical prices; illustrations from `public/items/`; "Join and sell first" for a visitor |
+| How it works | `tl-steps` with `journey` | Find it, Pay at checkout, It ships to you, with `search`, `card` and `truck` icons |
+| Closing | `tl-marketing-hero` `closing` | "Shop the closet" and, for a visitor, "Join early" |
+
+The tulle field and the journey run outside Angular's zone on `requestAnimationFrame`, sleep
+offscreen and stop under reduced motion. The closet worth announces only the final total in a
+visually hidden polite live region. The top bar logo is larger on every page (`2.25rem` wordmark,
+44px mark).
+
 ### Launch phases
 
-In launch Phases 1 and 2 ([launch-phases](../launch-phases/README.md), `L2-094`), unless the
-member is an administrator, `WelcomePage` reads `LaunchState.canSell()` and replaces the hero's
+In launch Phase 2 ([launch-phases](../launch-phases/README.md), `L2-094`; Phase 1 is the page
+above), unless the member is an administrator, `WelcomePage` reads `LaunchState.canSell()` and replaces the hero's
 "Start selling" with `<p class="marketing-hero__soon">Selling opens soon.</p>`, the seller band's
 heading with "Selling opens soon.", its points with "Pass it on soon" and "Join today", and its
 button with `<p class="feature-band__note">For now, every item is hand-picked by TuTuMuch.</p>`;
-the closing hero keeps only "Shop the closet" (mock `pages/welcome/selling-opens-soon`). The page
-still calls no endpoint itself: `LaunchState` is loaded by the app initializer.
+the closing hero keeps only "Shop the closet" (mock `pages/welcome/selling-opens-soon`). This page
+calls no endpoint itself: `LaunchState` is loaded by the app initializer.
 
 ## Requirements
 
@@ -126,7 +145,8 @@ still calls no endpoint itself: `LaunchState` is loaded by the app initializer.
 | `L2-080` | `L1-020` | Poster first, no autoplay, keyboard play and pause |
 | `L2-081` | `L1-020` | Captions off by default, Captions toggle |
 | `L2-082` | `L1-020` | Video error state; page stays usable |
-| `L2-094` | `L1-021`, `L1-020` | Seller CTAs say selling opens soon in launch Phases 1 and 2 |
+| `L2-094` | `L1-021`, `L1-020` | Seller CTAs say selling opens soon in launch Phase 2 |
+| `L2-112` | `L1-020`, `L1-021` | The Phase 1 page: tulle field, closet marquee, closet worth, shopper journey, Join early |
 | `L2-083` | `L1-020` | Contrast over gradients, heading order, reduced motion, title, meta description and link-preview tags |
 
 Related requirements applied without restating them: `L2-061` to `L2-065` (responsive,

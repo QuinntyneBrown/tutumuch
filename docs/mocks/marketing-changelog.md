@@ -1,0 +1,13 @@
+# Marketing page mock: change log
+
+Bold changes to the `/welcome` mock (`pages/welcome/`), newest first.
+
+| Date | Change | Files |
+| --- | --- | --- |
+| 2026-10-30 | Applied to the app (`L2-112`, ADR general/0010). Mock cleanup to match: tulle colours are now `--color-tulle-*` tokens, chips, the journey and the live dot use semantic tokens, the marquee has no fade-out gradient, and motion uses the duration tokens. | `assets/ui.css`, `assets/tokens.css` |
+| 2026-10-30 | New `phase-one` state (`pages/welcome/phase-one.html`): the hand-picked closet for Launch Phase 1. The hero says "The first closet is open" and pairs Shop the closet with Join early. The marquee is "Hand-picked this week", and the shopper band says "Hand-picked, every one for girls". The seller band gives way to the closet-worth calculator, How it works is the shopper's journey (find it, pay at checkout, it ships to you), and the closing CTA pairs Shop the closet with Join early. | `_build/screens_marketing.py` |
+| 2026-10-30 | The journey: "How it works" becomes a rail that fills as you scroll. Each station (camera, truck, dollar) lights up when the fill reaches it. The rail runs across on desktop and down on phones. Without JavaScript or with reduced motion, every station shows lit. | `_build/screens_marketing.py`, `assets/mock.js`, `assets/ui.css` |
+| 2026-10-30 | What's her closet worth?: a calculator band after the sellers band. A visitor taps chips for what she has outgrown (each shows a typical price), and the total counts up next to a join CTA: Join and sell first in Phases 1 and 2, Start selling once selling opens. The total is announced to screen readers, and reduced motion skips the count-up. | `_build/screens_marketing.py`, `assets/mock.js`, `assets/ui.css` |
+| 2026-10-30 | Closet marquee: a "Fresh in the closet" band under the hero, with a live dot and two rows of real listings (photo, title, price) scrolling in opposite directions. Hovering or focusing a row pauses it. Reduced motion turns each row into a plain horizontal scroller. Every tile opens a listing, and See everything goes to the catalog. Inspired by 21st.dev marquee components. | `_build/screens_marketing.py`, `assets/ui.css` |
+| 2026-10-30 | Header logo bigger: the wordmark is 2.5rem tall (was 1.75rem); the mobile mark is 2.25rem. Applies to every page's topbar. | `assets/ui.css` |
+| 2026-10-30 | Tulle field: a canvas behind the hero where tulle petals drift up and twirl around the pointer, and a tap throws sparkles. Colours are Giddy palette tokens, so dark mode works. Reduced motion paints one still frame, and the animation pauses when the hero is offscreen. | `_build/screens_marketing.py`, `assets/mock.js`, `assets/ui.css` |

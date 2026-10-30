@@ -1,8 +1,27 @@
-<ol class="steps">
-  @for (step of steps(); track step.title) {
-    <li class="steps__item">
-      <h3 class="steps__title">{{ step.title }}</h3>
-      <p class="steps__text">{{ step.text }}</p>
-    </li>
-  }
-</ol>
+@if (journey()) {
+  <div #journey class="journey" [attr.data-journey-live]="live() ? '' : null">
+    <span class="journey__rail" aria-hidden="true"><span class="journey__fill"></span></span>
+    <ol class="steps steps--journey">
+      @for (step of steps(); track step.title; let i = $index) {
+        <li class="steps__item" [class.is-lit]="i < lit()">
+          <span class="journey__station" aria-hidden="true">
+            @if (step.icon) {
+              <tl-icon [name]="step.icon" size="lg" />
+            }
+          </span>
+          <h3 class="steps__title">{{ step.title }}</h3>
+          <p class="steps__text">{{ step.text }}</p>
+        </li>
+      }
+    </ol>
+  </div>
+} @else {
+  <ol class="steps">
+    @for (step of steps(); track step.title) {
+      <li class="steps__item">
+        <h3 class="steps__title">{{ step.title }}</h3>
+        <p class="steps__text">{{ step.text }}</p>
+      </li>
+    }
+  </ol>
+}

@@ -1,0 +1,48 @@
+<ng-template #tile let-item let-copy="copy">
+  <li class="closet-marquee__tile">
+    <a [routerLink]="item.href" [attr.aria-hidden]="copy ? 'true' : null" [attr.tabindex]="copy ? -1 : null">
+      <div class="photo">
+        @if (item.photo; as photo) {
+          <picture>
+            <source type="image/webp" [attr.srcset]="photo.webp" sizes="176px" />
+            <img
+              [src]="photo.src"
+              [attr.srcset]="photo.jpeg"
+              sizes="176px"
+              [alt]="copy ? '' : photo.alt"
+              [width]="photo.width"
+              [height]="photo.height"
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+        }
+      </div>
+      <span class="closet-marquee__meta">
+        <span class="closet-marquee__title">{{ item.title }}</span>
+        <span class="price">{{ item.price }}</span>
+      </span>
+    </a>
+  </li>
+</ng-template>
+
+<section class="closet-marquee" [attr.aria-labelledby]="headingId()">
+  <div class="closet-marquee__head">
+    <h2 class="closet-marquee__heading" [id]="headingId()">
+      <span class="closet-marquee__live" aria-hidden="true"></span>{{ heading() }}
+    </h2>
+    <a tlButton [routerLink]="seeAllHref()">See everything <tl-icon name="arrow-right" /></a>
+  </div>
+  @for (row of rows(); track $index) {
+    <div class="closet-marquee__row" [class.closet-marquee__row--reverse]="$odd">
+      <ul class="closet-marquee__track" role="list">
+        @for (item of row; track item.href) {
+          <ng-container *ngTemplateOutlet="tile; context: { $implicit: item, copy: false }" />
+        }
+        @for (item of row; track item.href) {
+          <ng-container *ngTemplateOutlet="tile; context: { $implicit: item, copy: true }" />
+        }
+      </ul>
+    </div>
+  }
+</section>

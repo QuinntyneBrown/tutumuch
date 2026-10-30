@@ -1,11 +1,11 @@
 # Estimates
 
-- Overall effort: 145 days
+- Overall effort: 148 days
 - Complete: 76%
 
 | Subsystem | Effort | Complete |
 |---|---|---|
-| [platform](platform.md) | 49 days | 47% |
+| [platform](platform.md) | 52 days | 50% |
 | [accounts](accounts.md) | 10 days | 100% |
 | [privacy](privacy.md) | 7 days | 43% |
 | [listings](listings.md) | 17 days | 88% |

@@ -62,5 +62,8 @@ export { TopBarComponent, type TopBarMember } from './lib/top-bar/top-bar';
 export { FeatureBandComponent, type FeaturePoint } from './lib/feature-band/feature-band';
 export { MarketingHeroComponent } from './lib/marketing-hero/marketing-hero';
 export { StepsComponent, type Step } from './lib/steps/steps';
+export { TulleFieldComponent } from './lib/tulle-field/tulle-field';
+export { ClosetMarqueeComponent } from './lib/closet-marquee/closet-marquee';
+export { ClosetWorthComponent, type WorthItem } from './lib/closet-worth/closet-worth';
 export { VideoPlayerComponent, type VideoSource } from './lib/video-player/video-player';
 export { VideoPosterComponent } from './lib/video-poster/video-poster';

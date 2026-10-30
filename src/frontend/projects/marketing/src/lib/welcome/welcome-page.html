@@ -1,64 +1,154 @@
-<tl-marketing-hero
-  headingId="welcome-title"
-  eyebrow="Clothes · Dance · Sports · Gear, all for girls"
-  lede="New and gently loved clothes and gear for girls. Shop her next favourite thing, or pass on what she has outgrown."
->
-  <ng-container title>Twirl it <em>forward.</em></ng-container>
-  <!-- The one primary button of the page (L2-096); every other call to action is secondary. -->
-  <ng-container actions>
-    <a tlButton="primary" size="lg" routerLink="/">Shop the closet</a>
-    @if (launch.canSell()) {
-      <a tlButton size="lg" [routerLink]="sellHref()">Start selling</a>
-    } @else {
-      <p class="marketing-hero__soon">Selling opens soon.</p>
-    }
-  </ng-container>
-  <tl-tilly media pose="hero" size="hero" />
-  <tl-video-poster media poster="/media/tutumuch-pitch-poster.png" label="Play" duration="0:15" (watch)="openVideo()" />
-</tl-marketing-hero>
-
-<tl-feature-band
-  headingId="shoppers-title"
-  eyebrow="For shoppers"
-  heading="Everything here is for girls."
-  tone="blush"
-  [points]="shopperPoints"
->
-  <a tlButton routerLink="/" actions>Shop the closet</a>
-</tl-feature-band>
-
-@if (launch.canSell()) {
-  <tl-feature-band
-    headingId="sellers-title"
-    eyebrow="For sellers"
-    heading="Pass it on to the next girl."
-    tone="surface"
-    [points]="sellerPoints"
+@if (phaseOne()) {
+  <!-- Launch Phase 1 for anyone but an administrator (L2-112): the hand-picked closet. -->
+  <tl-marketing-hero
+    headingId="welcome-title"
+    eyebrow="The first closet is open · All for girls"
+    lede="Clothes and gear for girls, every piece hand-picked by TuTuMuch. Shop her next favourite thing today."
   >
-    <a tlButton [routerLink]="sellHref()" actions>Start selling</a>
+    <tl-tulle-field backdrop />
+    <ng-container title>Twirl it <em>forward.</em></ng-container>
+    <!-- The one primary button of the page (L2-096); every other call to action is secondary. -->
+    <ng-container actions>
+      <a tlButton="primary" size="lg" routerLink="/">Shop the closet</a>
+      @if (!signedIn()) {
+        <a tlButton size="lg" routerLink="/join">Join early</a>
+      }
+    </ng-container>
+    <tl-tilly media pose="hero" size="hero" />
+    <tl-video-poster
+      media
+      poster="/media/tutumuch-pitch-poster.png"
+      label="Play"
+      duration="0:15"
+      (watch)="openVideo()"
+    />
+  </tl-marketing-hero>
+
+  @if (marquee(); as items) {
+    <tl-closet-marquee headingId="marquee-title" heading="Hand-picked this week" [items]="items" />
+  }
+
+  <tl-feature-band
+    headingId="shoppers-title"
+    eyebrow="For shoppers"
+    heading="Hand-picked, every one for girls."
+    tone="blush"
+    [points]="shopperPointsPhaseOne"
+  >
+    <a tlButton routerLink="/" actions>Shop the closet</a>
   </tl-feature-band>
+
+  <tl-closet-worth
+    headingId="worth-title"
+    eyebrow="Her outgrown pile"
+    lede="Tap what she has outgrown."
+    [items]="worthItems"
+    [initial]="worthInitial"
+  >
+    <ng-container title>What’s her closet <em>worth?</em></ng-container>
+    <ng-container actions>
+      @if (!signedIn()) {
+        <a tlButton size="lg" routerLink="/join">Join and sell first</a>
+      }
+    </ng-container>
+    <ng-container note>{{
+      signedIn()
+        ? 'Selling opens soon. You’re all set to sell the day it does.'
+        : 'Selling opens soon. Join today and your account is ready the day it does.'
+    }}</ng-container>
+  </tl-closet-worth>
+
+  <tl-feature-band
+    headingId="how-title"
+    eyebrow="How it works"
+    heading="Three steps to her next favourite."
+    [stacked]="true"
+  >
+    <tl-steps [steps]="stepsPhaseOne" [journey]="true" />
+  </tl-feature-band>
+
+  <tl-marketing-hero
+    variant="closing"
+    headingId="closing-title"
+    lede="A small closet, hand-picked for girls. Join early to sell when selling opens."
+  >
+    <ng-container title>Her next favourite thing is <em>waiting.</em></ng-container>
+    <ng-container actions>
+      <a tlButton size="lg" routerLink="/">Shop the closet</a>
+      @if (!signedIn()) {
+        <a tlButton size="lg" routerLink="/join">Join early</a>
+      }
+    </ng-container>
+  </tl-marketing-hero>
 } @else {
-  <tl-feature-band
-    headingId="sellers-title"
-    eyebrow="For sellers"
-    heading="Selling opens soon."
-    tone="surface"
-    [points]="sellerPointsSoon"
+  <tl-marketing-hero
+    headingId="welcome-title"
+    eyebrow="Clothes · Dance · Sports · Gear, all for girls"
+    lede="New and gently loved clothes and gear for girls. Shop her next favourite thing, or pass on what she has outgrown."
   >
-    <p class="feature-band__note" actions>For now, every item is hand-picked by TuTuMuch.</p>
+    <ng-container title>Twirl it <em>forward.</em></ng-container>
+    <!-- The one primary button of the page (L2-096); every other call to action is secondary. -->
+    <ng-container actions>
+      <a tlButton="primary" size="lg" routerLink="/">Shop the closet</a>
+      @if (launch.canSell()) {
+        <a tlButton size="lg" [routerLink]="sellHref()">Start selling</a>
+      } @else {
+        <p class="marketing-hero__soon">Selling opens soon.</p>
+      }
+    </ng-container>
+    <tl-tilly media pose="hero" size="hero" />
+    <tl-video-poster
+      media
+      poster="/media/tutumuch-pitch-poster.png"
+      label="Play"
+      duration="0:15"
+      (watch)="openVideo()"
+    />
+  </tl-marketing-hero>
+
+  <tl-feature-band
+    headingId="shoppers-title"
+    eyebrow="For shoppers"
+    heading="Everything here is for girls."
+    tone="blush"
+    [points]="shopperPoints"
+  >
+    <a tlButton routerLink="/" actions>Shop the closet</a>
   </tl-feature-band>
+
+  @if (launch.canSell()) {
+    <tl-feature-band
+      headingId="sellers-title"
+      eyebrow="For sellers"
+      heading="Pass it on to the next girl."
+      tone="surface"
+      [points]="sellerPoints"
+    >
+      <a tlButton [routerLink]="sellHref()" actions>Start selling</a>
+    </tl-feature-band>
+  } @else {
+    <tl-feature-band
+      headingId="sellers-title"
+      eyebrow="For sellers"
+      heading="Selling opens soon."
+      tone="surface"
+      [points]="sellerPointsSoon"
+    >
+      <p class="feature-band__note" actions>For now, every item is hand-picked by TuTuMuch.</p>
+    </tl-feature-band>
+  }
+
+  <tl-feature-band headingId="how-title" eyebrow="How it works" heading="Three steps. That’s it." [stacked]="true">
+    <tl-steps [steps]="steps" />
+  </tl-feature-band>
+
+  <tl-marketing-hero variant="closing" headingId="closing-title" lede="New listings every day, every one for girls.">
+    <ng-container title>Her next favourite thing is <em>waiting.</em></ng-container>
+    <ng-container actions>
+      <a tlButton size="lg" routerLink="/">Shop the closet</a>
+      @if (launch.canSell()) {
+        <a tlButton size="lg" [routerLink]="sellHref()">Start selling</a>
+      }
+    </ng-container>
+  </tl-marketing-hero>
 }
-
-<tl-feature-band headingId="how-title" eyebrow="How it works" heading="Three steps. That’s it." [stacked]="true">
-  <tl-steps [steps]="steps" />
-</tl-feature-band>
-
-<tl-marketing-hero variant="closing" headingId="closing-title" lede="New listings every day, every one for girls.">
-  <ng-container title>Her next favourite thing is <em>waiting.</em></ng-container>
-  <ng-container actions>
-    <a tlButton size="lg" routerLink="/">Shop the closet</a>
-    @if (launch.canSell()) {
-      <a tlButton size="lg" [routerLink]="sellHref()">Start selling</a>
-    }
-  </ng-container>
-</tl-marketing-hero>
