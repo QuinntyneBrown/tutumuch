@@ -4,7 +4,6 @@ import { AuthState, CatalogApi, LaunchState, ListingCard } from '@tutumuch/api';
 import {
   ButtonDirective,
   ClosetMarqueeComponent,
-  ClosetWorthComponent,
   DialogService,
   FeatureBandComponent,
   FeaturePoint,
@@ -15,7 +14,6 @@ import {
   TillyComponent,
   TulleFieldComponent,
   VideoPosterComponent,
-  WorthItem,
 } from '@tutumuch/components';
 
 import { PitchVideoDialog } from './pitch-video-dialog';
@@ -53,7 +51,7 @@ function toCardView(card: ListingCard): ListingCardView {
  *
  * In launch Phase 1, for anyone but an administrator, it is the Phase 1 page (L2-112, ADR
  * general/0010): the tulle field, the closet marquee (the page's one TuTuMuch API call), the
- * closet-worth calculator, the shopper's journey and "Join early" for a visitor. Otherwise it is
+ * shopper's journey and "Join early" for a visitor. Otherwise it is
  * static: Start selling goes to /join for a visitor and /sell for a member; in Phase 2 only an
  * administrator sees it and everyone else reads "Selling opens soon." (L2-094).
  */
@@ -63,7 +61,6 @@ function toCardView(card: ListingCard): ListingCardView {
     RouterLink,
     ButtonDirective,
     ClosetMarqueeComponent,
-    ClosetWorthComponent,
     MarketingHeroComponent,
     FeatureBandComponent,
     StepsComponent,
@@ -122,20 +119,6 @@ export class WelcomePage {
     { title: 'Pay at checkout', text: 'Card details go to Stripe, never to TuTuMuch.', icon: 'card' },
     { title: 'It ships to you', text: 'TuTuMuch ships within 5 business days.', icon: 'truck' },
   ];
-  /** Typical prices for the calculator: static copy, not computed from listings (ADR general/0010). */
-  readonly worthItems: WorthItem[] = [
-    { label: 'Tutu', price: 32, image: '/items/tutu.svg' },
-    { label: 'Party dress', price: 42, image: '/items/party-dress.svg' },
-    { label: 'Sneakers', price: 22, image: '/items/sneakers.svg' },
-    { label: 'Leotard', price: 20, image: '/items/leotard.svg' },
-    { label: 'Winter coat', price: 34, image: '/items/puffer.svg' },
-    { label: 'Scooter', price: 48, image: '/items/scooter.svg' },
-    { label: 'Camera', price: 45, image: '/items/camera.svg' },
-    { label: 'Doll', price: 16, image: '/items/doll.svg' },
-    { label: 'Rain boots', price: 18, image: '/items/rain-boots.svg' },
-    { label: 'Sweater', price: 32, image: '/items/sweater.svg' },
-  ];
-  readonly worthInitial = ['Tutu', 'Party dress', 'Sneakers'];
 
   constructor() {
     let requested = false;

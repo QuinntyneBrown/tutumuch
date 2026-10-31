@@ -110,20 +110,22 @@ motion and the footer link.
 ### Phase 1 page ([ADR general/0010](../../../adr/general/0010-phase-one-marketing-page.md), `L2-112`)
 
 `WelcomePage.phaseOne` is `LaunchState.phase() === 1 && !LaunchState.canSell()`. When it holds,
-the page renders the Phase 1 template instead of the bands above:
+the page renders the Phase 1 template instead of the bands above. The app shell computes the same
+condition for a route with the `marketing` shell (`AppShellComponent.phaseOneMarketing`) and sets
+`tl-top-bar`'s `searchVisible` and `signInVisible` false, so the top bar shows the logo and, for a
+signed-in member, the account link: no search and no Sign in. The closet-worth calculator is not
+on the page.
 
 | Part | Component | Notes |
 |---|---|---|
 | Hero | `tl-marketing-hero` with `tl-tulle-field` in `[backdrop]` | "Join early" to `/join` for a visitor beside the primary "Shop the closet" |
 | Closet marquee | `tl-closet-marquee` | `CatalogApi.listings(1)` once (an `effect` guards the single call); the first 16 cards mapped locally; left out when the call fails or returns fewer than 4 |
 | For shoppers | `tl-feature-band` (`blush`) | "Hand-picked, every one for girls." |
-| Closet worth | `tl-closet-worth` | Ten static typical prices; illustrations from `public/items/`; "Join and sell first" for a visitor |
 | How it works | `tl-steps` with `journey` | Find it, Pay at checkout, It ships to you, with `search`, `card` and `truck` icons |
 | Closing | `tl-marketing-hero` `closing` | "Shop the closet" and, for a visitor, "Join early" |
 
 The tulle field and the journey run outside Angular's zone on `requestAnimationFrame`, sleep
-offscreen and stop under reduced motion. The closet worth announces only the final total in a
-visually hidden polite live region. The top bar logo is larger on every page (`2.25rem` wordmark,
+offscreen and stop under reduced motion. The top bar logo is larger on every page (`2.25rem` wordmark,
 44px mark).
 
 ### Launch phases
@@ -146,7 +148,7 @@ calls no endpoint itself: `LaunchState` is loaded by the app initializer.
 | `L2-081` | `L1-020` | Captions off by default, Captions toggle |
 | `L2-082` | `L1-020` | Video error state; page stays usable |
 | `L2-094` | `L1-021`, `L1-020` | Seller CTAs say selling opens soon in launch Phase 2 |
-| `L2-112` | `L1-020`, `L1-021` | The Phase 1 page: tulle field, closet marquee, closet worth, shopper journey, Join early |
+| `L2-112` | `L1-020`, `L1-021` | The Phase 1 page: tulle field, closet marquee, shopper journey, Join early, no search or Sign in |
 | `L2-083` | `L1-020` | Contrast over gradients, heading order, reduced motion, title, meta description and link-preview tags |
 
 Related requirements applied without restating them: `L2-061` to `L2-065` (responsive,

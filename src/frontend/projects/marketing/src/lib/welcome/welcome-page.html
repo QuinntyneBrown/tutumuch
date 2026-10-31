@@ -38,26 +38,6 @@
     <a tlButton routerLink="/" actions>Shop the closet</a>
   </tl-feature-band>
 
-  <tl-closet-worth
-    headingId="worth-title"
-    eyebrow="Her outgrown pile"
-    lede="Tap what she has outgrown."
-    [items]="worthItems"
-    [initial]="worthInitial"
-  >
-    <ng-container title>What’s her closet <em>worth?</em></ng-container>
-    <ng-container actions>
-      @if (!signedIn()) {
-        <a tlButton size="lg" routerLink="/join">Join and sell first</a>
-      }
-    </ng-container>
-    <ng-container note>{{
-      signedIn()
-        ? 'Selling opens soon. You’re all set to sell the day it does.'
-        : 'Selling opens soon. Join today and your account is ready the day it does.'
-    }}</ng-container>
-  </tl-closet-worth>
-
   <tl-feature-band
     headingId="how-title"
     eyebrow="How it works"

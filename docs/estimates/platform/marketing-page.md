@@ -22,10 +22,11 @@ requirements, design and mock work. They assume the app shell, the `DialogServic
 | Video build script, voice and music selection | 4 |
 | Phase 1 page ([ADR general/0010](../../adr/general/0010-phase-one-marketing-page.md)): `tl-tulle-field` canvas with reduced motion and theme colours | 6 |
 | Phase 1 page: `tl-closet-marquee` and the catalog call with its fallback | 5 |
-| Phase 1 page: `tl-closet-worth` with toggles, count-up and live region | 5 |
+| Phase 1 page: `tl-closet-worth` with toggles, count-up and live region (built, then taken off the page) | 5 |
+| Phase 1 page: top bar without search and Sign in, calculator removed | 1 |
 | Phase 1 page: `tl-steps` journey, icons, header logo size | 4 |
 | Phase 1 page: copy, phase choice and acceptance tests (`L2-112`) | 6 |
-| **Total** | **66** |
+| **Total** | **67** |
 
 ## Minimal scope
 
@@ -41,4 +42,3 @@ Captions and Play buttons, the shape motion and the Phase 1 tulle field and jour
 | WebM fallback | Playwright tests cannot play the video | 1 |
 | Narration and music | A silent video; captions carry the message | 3 |
 | Tulle field | A plain blush Phase 1 hero | 6 |
-| Closet-worth count-up | The total changes at once | 1 |

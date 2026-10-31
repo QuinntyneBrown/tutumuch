@@ -3,10 +3,11 @@
 // Description: The Phase 1 marketing page at /welcome: the hand-picked closet for visitors and
 // members without the Administrator role. Its sections and Join early, the closet marquee from
 // the catalog (with the loop copies hidden from assistive technology) and without it when the
-// call fails, the closet-worth calculator, the administrator's regular page, reduced motion and
-// one primary button.
+// call fails, a top bar with no search and no Sign in, the administrator's regular page, reduced
+// motion and one primary button.
 
 import { administrator, expect, marcus, problem, serveCatalog, serveLaunchPhase, signInAs, test } from '../fixtures';
+import { ShellPage } from '../pages/shell.page';
 import { WelcomePage } from '../pages/welcome.page';
 
 test.describe('phase 1 marketing page', () => {
@@ -23,7 +24,6 @@ test.describe('phase 1 marketing page', () => {
     for (const name of [
       'Hand-picked this week',
       'Hand-picked, every one for girls.',
-      'What’s her closet worth?',
       'Three steps to her next favourite.',
       'Her next favourite thing is waiting.',
     ]) {
@@ -46,7 +46,6 @@ test.describe('phase 1 marketing page', () => {
     const joins = welcome.main.getByRole('link', { name: 'Join early' });
     await expect(joins).toHaveCount(2);
     for (const link of await joins.all()) await expect(link).toHaveAttribute('href', '/join');
-    await expect(welcome.main.getByRole('link', { name: 'Join and sell first' })).toHaveAttribute('href', '/join');
   });
 
   test('the marquee shows the newest listings and hides its loop copies', async ({ page }) => {
@@ -75,27 +74,32 @@ test.describe('phase 1 marketing page', () => {
     const welcome = new WelcomePage(page);
     await welcome.goto();
 
-    await expect(welcome.main.getByRole('heading', { level: 2, name: 'What’s her closet worth?' })).toBeVisible();
+    await expect(
+      welcome.main.getByRole('heading', { level: 2, name: 'Three steps to her next favourite.' }),
+    ).toBeVisible();
     await expect(welcome.main.getByRole('heading', { level: 2, name: 'Hand-picked this week' })).toHaveCount(0);
   });
 
-  test('the calculator adds up what she has outgrown', async ({ page }) => {
+  test('the top bar has no search and no Sign in', async ({ page }) => {
+    await serveCatalog(page, 12);
+    const welcome = new WelcomePage(page);
+    const shell = new ShellPage(page);
+    await welcome.goto();
+
+    await expect(welcome.heading).toHaveText('Twirl it forward.');
+    await expect(shell.search).toHaveCount(0);
+    await expect(shell.searchButton).toHaveCount(0);
+    await expect(shell.signIn).toHaveCount(0);
+  });
+
+  test('the closet-worth calculator is gone', async ({ page }) => {
     await serveCatalog(page, 12);
     const welcome = new WelcomePage(page);
     await welcome.goto();
 
-    await expect(welcome.worthChip('Tutu')).toHaveAttribute('aria-pressed', 'true');
-    await expect(welcome.worthTotal).toHaveText('$96');
-    await welcome.worthChip('Scooter').click();
-    await expect(welcome.worthChip('Scooter')).toHaveAttribute('aria-pressed', 'true');
-    await expect(welcome.worthTotal).toHaveText('$144');
-    await expect(welcome.worthCount).toHaveText('4 items');
-    await welcome.worthChip('Tutu').click();
-    await expect(welcome.worthTotal).toHaveText('$112');
-    await expect(welcome.worthCount).toHaveText('3 items');
-    await expect(welcome.main.locator('[aria-live="polite"]').filter({ hasText: '$112' })).toHaveText(
-      '$112 for 3 items',
-    );
+    await expect(welcome.heading).toHaveText('Twirl it forward.');
+    await expect(welcome.main.getByRole('heading', { name: /closet worth/ })).toHaveCount(0);
+    await expect(welcome.main.getByRole('link', { name: 'Join and sell first' })).toHaveCount(0);
   });
 
   test('a signed-in member is not asked to join', async ({ page }) => {
@@ -106,7 +110,6 @@ test.describe('phase 1 marketing page', () => {
 
     await expect(welcome.main.getByRole('heading', { level: 2, name: 'Hand-picked this week' })).toBeVisible();
     await expect(welcome.main.getByRole('link', { name: /^Join/ })).toHaveCount(0);
-    await expect(welcome.main.getByText('You’re all set to sell the day it does.')).toBeVisible();
   });
 
   test('the administrator gets the regular page with Start selling', async ({ page }) => {
@@ -116,6 +119,7 @@ test.describe('phase 1 marketing page', () => {
 
     await expect(welcome.main.getByRole('heading', { level: 2, name: 'Pass it on to the next girl.' })).toBeVisible();
     await expect(welcome.sellLinks().first()).toHaveAttribute('href', '/sell');
+    await expect(new ShellPage(page).search).toHaveCount(1);
     await expect(welcome.main.getByRole('heading', { level: 2, name: 'Hand-picked this week' })).toHaveCount(0);
   });
 

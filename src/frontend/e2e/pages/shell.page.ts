@@ -6,6 +6,9 @@ export class ShellPage {
   readonly main: Locator;
   readonly topBar: Locator;
   readonly signIn: Locator;
+  /** The top-bar search box and the button that reveals it on narrow screens. */
+  readonly search: Locator;
+  readonly searchButton: Locator;
   readonly menuButton: Locator;
   readonly footer: Locator;
 
@@ -14,6 +17,8 @@ export class ShellPage {
     this.main = page.locator('main#main');
     this.topBar = page.getByRole('banner');
     this.signIn = this.topBar.getByRole('link', { name: 'Sign in' });
+    this.search = this.topBar.getByRole('search');
+    this.searchButton = this.topBar.getByRole('button', { name: 'Search' });
     this.menuButton = this.topBar.getByRole('button', { name: 'Open menu' });
     this.footer = page.getByRole('contentinfo');
   }

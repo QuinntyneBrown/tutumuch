@@ -10,9 +10,6 @@ export class WelcomePage {
   readonly playPause: Locator;
   readonly captions: Locator;
   readonly videoError: Locator;
-  /** The closet-worth calculator's visible total and item count (L2-112). */
-  readonly worthTotal: Locator;
-  readonly worthCount: Locator;
 
   constructor(private readonly page: Page) {
     this.main = page.locator('main#main');
@@ -23,8 +20,6 @@ export class WelcomePage {
     this.playPause = this.dialog.getByRole('button', { name: /^(Play|Pause)$/ });
     this.captions = this.dialog.getByRole('button', { name: 'Captions' });
     this.videoError = this.dialog.getByRole('alert');
-    this.worthTotal = this.main.locator('.worth__total');
-    this.worthCount = this.main.locator('.worth__count');
   }
 
   async goto(): Promise<void> {
@@ -39,11 +34,6 @@ export class WelcomePage {
   /** A section of the page by its heading. */
   region(name: string): Locator {
     return this.main.getByRole('region', { name });
-  }
-
-  /** One toggle button of the closet-worth calculator, such as "Tutu". */
-  worthChip(label: string): Locator {
-    return this.main.getByRole('button', { name: new RegExp(`^${label} \\$\\d+$`) });
   }
 
   link(name: string): Locator {

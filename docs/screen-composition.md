@@ -510,14 +510,14 @@ girls and never promises boys' or adult sizes ([ADR general/0005](adr/general/00
   secondary "Join early" to `/join`) with `tl-tulle-field` in its `[backdrop]` slot; `tl-closet-marquee`
   ("Hand-picked this week", the newest listings from `CatalogApi.listings(1)`, left out on failure or under 4
   listings); `tl-feature-band` (For shoppers "Hand-picked, every one for girls.", `blush`, three points);
-  `tl-closet-worth` ("What’s her closet *worth?*", ten item chips, Tutu, Party dress and Sneakers pressed,
-  "Join and sell first" for a visitor and the "Selling opens soon" note); `tl-feature-band` (How it works
+  `tl-feature-band` (How it works
   "Three steps to her next favourite.", `stacked`) with `tl-steps` `journey` (Find it `search`, Pay at
   checkout `card`, It ships to you `truck`); the closing `tl-marketing-hero` (lede "A small closet,
   hand-picked for girls. Join early to sell when selling opens.", "Shop the closet" and "Join early"). No seller
-  band and no "Start selling".
+  band and no "Start selling". The shell's `tl-top-bar` gets `searchVisible` and `signInVisible` false: no
+  search and no Sign in.
 - Local: `WelcomePage` (copy, CTA targets from `AuthState.member()` and `LaunchState.canSell()`, the Phase 1
-  choice from `LaunchState.phase()`, the marquee call and its card mapping, the calculator's typical prices)
+  choice from `LaunchState.phase()`, the marquee call and its card mapping)
   and `PitchVideoDialog`.
 
 ### Privacy — `/privacy` (`pages/privacy`: default)
