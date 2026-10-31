@@ -94,3 +94,17 @@ guidelines (section 2) forbid decorative shapes, and the page guidelines keep tr
 - Mock: `docs/mocks/_build/screens_marketing.py`, state `phase-one`.
 - Requirements: new `L2-112`; amended `L2-078`, `L2-083`, `L2-094`, `L2-096`.
 - Code: `WelcomePage` in `@tutumuch/marketing` picks the Phase 1 page from `LaunchState`.
+
+## Update 2026-10-31
+
+The product owner trimmed the Phase 1 page:
+
+- **The closet-worth calculator is off the page.** "What’s her closet worth?" and its "Join and sell
+  first" are gone from `/welcome` and from every `welcome` mock state. `tl-closet-worth` and the
+  item illustrations in `public/items/` stay in the components library and the design system,
+  unused, in case the calculator comes back.
+- **The top bar has no search and no Sign in** on the Phase 1 page. `tl-top-bar` gains
+  `searchVisible` and `signInVisible` inputs; the app shell sets both false for the marketing shell
+  when the Phase 1 page shows. A signed-in member keeps their account link.
+
+`L2-112` is amended to match.

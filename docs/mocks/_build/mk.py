@@ -456,6 +456,7 @@ class Page:
     main_class: str = "container page"
     notes: str = ""          # .mock-note annotations
     phase: int = 3           # launch phase (L2-089): 1 hides the category links and menu button; 1 and 2 hide Sell from non-admins
+    search: bool = True      # False drops the search box, the Search button and Sign in (the Phase 1 marketing page, L2-112)
 
 
 @dataclass
@@ -496,17 +497,18 @@ def topbar(pg: Page) -> str:
     nav = "".join(
         f'<a class="nav-link" href="{nav_href(k)}"{" aria-current=\"page\"" if pg.nav == k else ""}>{label}</a>' for k, label in NAV) if menus else ""
     search = (f'<form class="search" role="search" action="{P("catalog", "search")}"><label class="visually-hidden" for="q">Search TuTuMuch</label>'
-              f'{ic("search")}<input class="input" id="q" name="q" type="search" placeholder="Search the closet"></form>')
+              f'{ic("search")}<input class="input" id="q" name="q" type="search" placeholder="Search the closet"></form>') if pg.search else ""
+    search_btn = (f'<a class="btn btn--ghost btn--icon topbar__search-btn" href="{P("catalog", "search")}" aria-label="Search">{ic("search")}</a>'
+                  if pg.search else "")
     if pg.user == "guest":
         sell = f'<a class="btn btn--ghost topbar__sell" href="{P("sell")}">Sell</a>' if can_sell else ""
-        right = (f'<a class="btn btn--ghost btn--icon topbar__search-btn" href="{P("catalog", "search")}" aria-label="Search">{ic("search")}</a>'
-                 f'{sell}<a class="btn" href="{P("sign-in")}">Sign in</a>')
+        sign_in = f'<a class="btn" href="{P("sign-in")}">Sign in</a>' if pg.search else ""
+        right = f'{search_btn}{sell}{sign_in}'
     else:
         who = ADMIN if pg.user == "admin" else PEOPLE[ME]
         sell_cur = ' aria-current="page"' if pg.nav == "sell" else ""
         sell = f'<a class="nav-link topbar__sell" href="{P("sell")}"{sell_cur}>{ic("plus")}Sell</a>' if can_sell else ""
-        right = (f'<a class="btn btn--ghost btn--icon topbar__search-btn" href="{P("catalog", "search")}" aria-label="Search">{ic("search")}</a>'
-                 f'{sell}'
+        right = (f'{search_btn}{sell}'
                  f'<a class="avatar avatar--sm" href="{P("account")}" aria-label="Your account, {esc(who["name"])}" style="text-decoration: none;">{who["initials"]}</a>')
     menu = (f'<button class="btn btn--ghost btn--icon topbar__menu" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu">{ic("menu")}</button>'
             if menus else "")

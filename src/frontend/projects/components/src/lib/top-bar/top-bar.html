@@ -28,30 +28,34 @@
       }
       <tl-logo [responsive]="true" />
       <span class="topbar__spacer"></span>
-      <form class="search" [class.search--open]="searchOpen()" role="search" (submit)="submit($event, term.value)">
-        <label class="visually-hidden" for="q">Search TuTuMuch</label>
-        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <circle cx="11" cy="11" r="7" />
-          <path d="m20 20-3.5-3.5" />
-        </svg>
-        <input #term class="input" id="q" name="q" type="search" placeholder="Search the closet" [value]="query()" />
-      </form>
-      <span class="topbar__spacer"></span>
-      <div class="topbar__actions">
-        <button
-          tlButton="ghost"
-          class="btn--icon topbar__search-btn"
-          type="button"
-          aria-label="Search"
-          aria-controls="q"
-          [attr.aria-expanded]="searchOpen()"
-          (click)="toggleSearch()"
-        >
+      @if (searchVisible()) {
+        <form class="search" [class.search--open]="searchOpen()" role="search" (submit)="submit($event, term.value)">
+          <label class="visually-hidden" for="q">Search TuTuMuch</label>
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
             <circle cx="11" cy="11" r="7" />
             <path d="m20 20-3.5-3.5" />
           </svg>
-        </button>
+          <input #term class="input" id="q" name="q" type="search" placeholder="Search the closet" [value]="query()" />
+        </form>
+        <span class="topbar__spacer"></span>
+      }
+      <div class="topbar__actions">
+        @if (searchVisible()) {
+          <button
+            tlButton="ghost"
+            class="btn--icon topbar__search-btn"
+            type="button"
+            aria-label="Search"
+            aria-controls="q"
+            [attr.aria-expanded]="searchOpen()"
+            (click)="toggleSearch()"
+          >
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <circle cx="11" cy="11" r="7" />
+              <path d="m20 20-3.5-3.5" />
+            </svg>
+          </button>
+        }
         @if (member(); as member) {
           @if (sellVisible()) {
             <a
@@ -73,7 +77,9 @@
           @if (sellVisible()) {
             <a class="btn btn--ghost topbar__sell" routerLink="/sell">Sell</a>
           }
-          <a class="btn" routerLink="/sign-in">Sign in</a>
+          @if (signInVisible()) {
+            <a class="btn" routerLink="/sign-in">Sign in</a>
+          }
         }
       </div>
     </div>

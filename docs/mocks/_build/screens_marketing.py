@@ -79,35 +79,6 @@ def marquee(title: str = "Fresh in the closet", rows_keys=None) -> str:
             f'{btn("See everything", href=P("catalog"), icon_after="arrow-right")}</div>{rows}</section>')
 
 
-# What's her closet worth? A calculator band: tap what she has outgrown and watch a typical
-# total count up, so joining has a number on it. Prices are typical TuTuMuch listing prices.
-WORTH_ITEMS = [("tutu", "Tutu", 32), ("party-dress", "Party dress", 42), ("sneakers", "Sneakers", 22), ("leotard", "Leotard", 20),
-               ("puffer", "Winter coat", 34), ("scooter", "Scooter", 48), ("camera", "Camera", 45), ("doll", "Doll", 16),
-               ("rain-boots", "Rain boots", 18), ("sweater", "Sweater", 32)]
-WORTH_START = {"tutu", "party-dress", "sneakers"}
-
-
-def worth(member: bool, selling: bool) -> str:
-    chips = "".join(
-        f'<li><button type="button" class="worth__chip" data-worth="{v}" aria-pressed="{"true" if k in WORTH_START else "false"}">'
-        f'<img src="{A}items/{k}.svg" alt="" width="40" height="40"><span>{esc(label)}</span><b>${v}</b></button></li>'
-        for k, label, v in WORTH_ITEMS)
-    total = sum(v for k, _, v in WORTH_ITEMS if k in WORTH_START)
-    cta = (btn("Start selling", "lg", seller_href(member)) if selling
-           else btn("Join and sell first", "lg", P("register")))  # secondary: the hero keeps the one primary (L2-096)
-    small = ("List them in minutes. You keep the payout." if selling
-             else "Selling opens soon. Join today and your account is ready the day it does.")
-    return (f'<section class="worth" aria-labelledby="worth-title"><div class="worth__inner">'
-            f'<div class="worth__intro"><p class="feature-band__eyebrow">Her outgrown pile</p>'
-            f'<h2 class="feature-band__title" id="worth-title">What’s her closet <em>worth?</em></h2>'
-            f'<p class="worth__lede">Tap what she has outgrown.</p></div>'
-            f'<ul class="worth__chips" role="list">{chips}</ul>'
-            f'<div class="worth__result"><p class="worth__label" id="worth-label">Typical total on TuTuMuch</p>'
-            f'<p class="worth__total" aria-live="polite"><span data-worth-total>${total}</span></p>'
-            f'<p class="worth__count"><span data-worth-count>{len(WORTH_START)}</span> items</p>'
-            f'{cta}<p class="worth__small">{small}</p></div></div></section>')
-
-
 def points(items) -> str:
     return '<ul class="feature-band__points" role="list">' + "".join(
         f'<li class="feature-band__point"><strong>{t}</strong><span>{d}</span></li>' for t, d in items) + "</ul>"
@@ -166,11 +137,10 @@ def welcome_phase_one() -> Page:
             + marquee("Hand-picked this week", [CATALOG[:8], CATALOG[8:16]])
             + band("shoppers-title", "For shoppers", "Hand-picked, every one for girls.", points(SHOPPER_POINTS_PHASE_ONE),
                    btn("Shop the closet", href=P("catalog")), "feature-band--blush")
-            + worth(False, False)
             + band("how-title", "How it works", "Three steps to her next favourite.",
                    steps(STEPS_PHASE_ONE, STEP_ICONS_PHASE_ONE), mod="feature-band--stacked")
             + closing_html)
-    return Page(main=main, user="guest", main_class="marketing", phase=1)
+    return Page(main=main, user="guest", main_class="marketing", phase=1, search=False)
 
 
 def welcome(member: bool, selling: bool = True) -> Page:
@@ -183,7 +153,6 @@ def welcome(member: bool, selling: bool = True) -> Page:
             + band("shoppers-title", "For shoppers", "Everything here is for girls.", points(SHOPPER_POINTS),
                    btn("Shop the closet", href=P("catalog")), "feature-band--blush")
             + sellers
-            + worth(member, selling)
             + band("how-title", "How it works", "Three steps. That’s it.", steps(), mod="feature-band--stacked")
             + closing(member, selling))
     return Page(main=main, user="member" if member else "guest", main_class="marketing", phase=3 if selling else 1)
@@ -213,10 +182,10 @@ def _():
     return pg
 
 
-@wl.state("phase-one", "Launch Phase 1, signed out: the hand-picked closet. Marquee of the owner's listings, shopper journey, closet-worth calculator with Join early; no seller steps.")
+@wl.state("phase-one", "Launch Phase 1, signed out: the hand-picked closet. Marquee of the owner's listings, shopper journey and Join early; no seller steps, and a top bar with no search or Sign in.")
 def _():
     pg = welcome_phase_one()
-    pg.notes = note("Phase 1 (L2-093, L2-094): only TuTuMuch sells, so How it works is the shopper's journey and the seller band folds into the closet-worth calculator. "
+    pg.notes = note("Phase 1 (L2-093, L2-094): only TuTuMuch sells, so How it works is the shopper's journey and there is no seller band. The top bar has only the logo: no search and no Sign in. "
                     "Join early goes to /join; Shop the closet stays the one primary button.", "top: 6rem; right: 1rem;")
     return pg
 

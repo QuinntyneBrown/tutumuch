@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRouteSnapshot, NavigationEnd, ResolveEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
@@ -22,6 +22,8 @@ function shellOf(route: ActivatedRouteSnapshot): Shell {
  * outlet and the footer; the top bar follows the launch phase (LaunchState), whose "Cookie settings" opens the dialog; a top-bar search navigates to the catalog. Routes with data.shell 'auth' render in the auth shell: large logo above a centred card.
  * Routes with data.shell 'admin' render in the admin shell: the admin top bar and no footer.
  * Routes with data.shell 'marketing' get the app shell with a full-width main.marketing (ADR platform/0011).
+ * On the Phase 1 marketing page (marketing shell in launch Phase 1, for anyone but an administrator) the
+ * top bar has no search and no Sign in (L2-112).
  * Routes with data.shell 'wide' (the catalog's product grids) get the wider container of the page guidelines.
  */
 @Component({
@@ -43,6 +45,11 @@ export class AppShellComponent {
       map((event) => shellOf(event.state.root)),
     ),
     { initialValue: 'app' as Shell },
+  );
+
+  /** The Phase 1 marketing page, as the welcome page decides it (L2-112). */
+  readonly phaseOneMarketing = computed(
+    () => this.shell() === 'marketing' && this.launch.phase() === 1 && !this.launch.canSell(),
   );
 
   /** The keyword of the catalog URL, so the top-bar box keeps it. */

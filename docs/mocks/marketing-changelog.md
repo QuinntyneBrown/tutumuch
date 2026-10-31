@@ -4,6 +4,7 @@ Bold changes to the `/welcome` mock (`pages/welcome/`), newest first.
 
 | Date | Change | Files |
 | --- | --- | --- |
+| 2026-10-31 | Phase 1 trimmed: the closet-worth calculator is gone from every `welcome` state, and the `phase-one` top bar has no search and no Sign in (`Page.search`). | `_build/mk.py`, `_build/screens_marketing.py` |
 | 2026-10-30 | Applied to the app (`L2-112`, ADR general/0010). Mock cleanup to match: tulle colours are now `--color-tulle-*` tokens, chips, the journey and the live dot use semantic tokens, the marquee has no fade-out gradient, and motion uses the duration tokens. | `assets/ui.css`, `assets/tokens.css` |
 | 2026-10-30 | New `phase-one` state (`pages/welcome/phase-one.html`): the hand-picked closet for Launch Phase 1. The hero says "The first closet is open" and pairs Shop the closet with Join early. The marquee is "Hand-picked this week", and the shopper band says "Hand-picked, every one for girls". The seller band gives way to the closet-worth calculator, How it works is the shopper's journey (find it, pay at checkout, it ships to you), and the closing CTA pairs Shop the closet with Join early. | `_build/screens_marketing.py` |
 | 2026-10-30 | The journey: "How it works" becomes a rail that fills as you scroll. Each station (camera, truck, dollar) lights up when the fill reaches it. The rail runs across on desktop and down on phones. Without JavaScript or with reduced motion, every station shows lit. | `_build/screens_marketing.py`, `assets/mock.js`, `assets/ui.css` |

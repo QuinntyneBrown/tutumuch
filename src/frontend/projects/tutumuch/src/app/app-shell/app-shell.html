@@ -17,6 +17,8 @@
     [query]="query()"
     [categoryLinksVisible]="launch.categoryMenusVisible()"
     [sellVisible]="launch.canSell()"
+    [searchVisible]="!phaseOneMarketing()"
+    [signInVisible]="!phaseOneMarketing()"
     (searched)="search($event)"
   />
   <main
