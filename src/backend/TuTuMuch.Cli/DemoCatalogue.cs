@@ -234,6 +234,17 @@ public static class DemoCatalogue
     /// Her open item requests. The ballet slippers request is matched by the Dance listings
     /// published after it; the smartwatch one has no match yet, so My requests shows both states.
     /// </summary>
+    /// <summary>The member who posts the demo shelf finds (L2-113). Members offer no grabs; only administrators do (ADR catalog/0009).</summary>
+    public const string FindingMember = "TwirlyTara";
+
+    /// <summary>Three shelf finds, each seen the given number of days before the seed, so all are live (L2-114).</summary>
+    public static readonly IReadOnlyList<(int SeenDaysAgo, Domain.Finds.ShelfFindDetails Details)> Finds =
+    [
+        (1, new("Glitter ballet flats, pink", "Dance", 24.99m, "Target", "88 Atlantic Ave, Brooklyn, NY 11201", null, "Clearance end cap by the shoes, sizes 11 to 2.", null)),
+        (2, new("Soccer cleats, purple and teal", "Sports", 18.00m, "Play It Again Sports", "1200 Hylan Blvd, Staten Island, NY 10305", null, "Barely used, on the rack by the door.", null)),
+        (3, new("Instant camera, mint", "Cameras and tech", 49.99m, "Best Buy", "529 5th Ave, New York, NY 10017", null, null, null)),
+    ];
+
     public static readonly IReadOnlyList<Domain.Requests.ItemRequestDetails> ItemRequests =
     [
         new("Dance", Size: null, "ballet slippers", MaxPrice: 25m, MinimumCondition: "Used - Good"),

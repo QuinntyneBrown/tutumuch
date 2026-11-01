@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using TuTuMuch.Application.Accounts;
 using TuTuMuch.Application.Common;
+using TuTuMuch.Application.Finds;
 using TuTuMuch.Application.Listings;
 using TuTuMuch.Application.Requests;
 using TuTuMuch.Domain.Listings;
@@ -80,10 +81,24 @@ public sealed class DemoSeeder(ISender sender, TuTuMuchDbContext db, SeedClock c
             clock.Release();
         }
 
+        var finder = await FindingMemberIdAsync(cancellationToken);
+        foreach (var (seenDaysAgo, details) in DemoCatalogue.Finds)
+        {
+            var seenOn = DateOnly.FromDateTime(start.UtcDateTime).AddDays(-seenDaysAgo);
+            Expect(await sender.Send(new PostFindCommand(finder, details with { SeenOn = seenOn }), cancellationToken), $"Posting the find '{details.Title}'");
+        }
+
         await SuppressMatchEmailsAsync(cancellationToken);
         output.WriteLine($"Seeded {DemoCatalogue.Members.Count} members and {DemoCatalogue.Listings.Count} listings.");
         output.WriteLine($"Seeded {DemoCatalogue.ItemRequests.Count} item requests.");
+        output.WriteLine($"Seeded {DemoCatalogue.Finds.Count} shelf finds.");
         output.WriteLine($"Demo data targets launch phase {LaunchPhase:D}.");
+    }
+
+    private Task<Guid> FindingMemberIdAsync(CancellationToken cancellationToken)
+    {
+        var email = Member.Normalize(DemoCatalogue.Members.Single(m => m.DisplayName == DemoCatalogue.FindingMember).Email);
+        return db.Members.Where(m => m.NormalizedEmail == email).Select(m => m.Id).SingleAsync(cancellationToken);
     }
 
     /// <summary>Registers the member, verifies them with the link from their queued email, then suppresses that email.</summary>

@@ -1,0 +1,6 @@
+:host {
+  display: block;
+}
+.shelf-finds__item {
+  display: flex;
+}

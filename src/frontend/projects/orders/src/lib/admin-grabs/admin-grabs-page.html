@@ -1,0 +1,103 @@
+@if (view() === 'forbidden') {
+  <tl-center-state code="403" heading="You can’t open this">
+    <p class="text-muted">Only TuTuMuch’s administrators can see grabs.</p>
+    <a actions tlButton="primary" routerLink="/">Shop the closet</a>
+  </tl-center-state>
+} @else {
+  <div class="page-header">
+    <div>
+      <h1>Grabs</h1>
+      @if (view() === 'loaded' && grabs().length) {
+        <p class="subtitle">{{ subtitle() }}</p>
+      }
+    </div>
+  </div>
+  @switch (view()) {
+    @case ('loading') {
+      <ul class="request-list" role="list" aria-busy="true" aria-label="Loading grabs">
+        @for (row of [1, 2, 3]; track row) {
+          <li class="request">
+            <tl-skeleton shape="title" width="40%" />
+            <tl-skeleton width="70%" />
+          </li>
+        }
+      </ul>
+    }
+    @case ('error') {
+      <tl-empty-state icon="refresh" heading="Couldn’t load grabs" tone="error">
+        Something went wrong on our side. <span class="ref">{{ errorRef() }}</span>
+        <button actions tlButton="primary" type="button" (click)="load()"><tl-icon name="refresh" />Try again</button>
+      </tl-empty-state>
+    }
+    @default {
+      @if (!grabs().length) {
+        <tl-empty-state icon="map-pin" heading="No grabs yet">
+          When a shopper asks TuTuMuch to grab a find, it shows up here.
+        </tl-empty-state>
+      } @else {
+        <ul class="request-list" role="list">
+          @for (grab of grabs(); track grab.id) {
+            <li class="request">
+              <div class="request__head">
+                <div class="stack stack--sm">
+                  <h2 class="request__title">
+                    <a [routerLink]="['/finds', grab.findReference]">{{ grab.findTitle }}</a>
+                  </h2>
+                  <span class="text-sm text-muted"
+                    >{{ grab.reference }} · {{ grab.storeName }} · {{ grab.findReference }}</span
+                  >
+                  <span class="cluster admin-grabs__status">
+                    <tl-status [tone]="tone(grab.status)">{{ label(grab.status) }}</tl-status>
+                    @if (grab.deadline) {
+                      <span class="text-sm"
+                        >{{ grab.status === 'Requested' ? 'Answer by' : 'Buy by' }} {{ day(grab.deadline) }}</span
+                      >
+                    }
+                  </span>
+                </div>
+                <div class="stack stack--sm admin-grabs__who">
+                  <span class="text-label">{{ grab.shopperDisplayName }}</span>
+                  <a class="text-sm" [href]="'mailto:' + grab.shopperEmail">{{ grab.shopperEmail }}</a>
+                  <span class="text-sm">Total {{ money(grab.total) }} · deposit {{ money(grab.deposit) }}</span>
+                  @if (grab.refundedAmount) {
+                    <span class="text-sm text-muted">Refunded {{ money(grab.refundedAmount) }}</span>
+                  }
+                </div>
+              </div>
+              @if (grab.address; as address) {
+                <div class="stack stack--sm">
+                  <span class="text-label">Ship to</span>
+                  <address class="address">
+                    {{ address.fullName }}<br />{{ address.line1 }}{{ address.line2 ? ', ' + address.line2 : ''
+                    }}<br />{{ address.city }}, {{ address.state }} {{ address.zip }}
+                  </address>
+                </div>
+              }
+              @if (grab.status === 'Requested') {
+                <div class="cluster">
+                  <button
+                    tlButton="primary"
+                    size="sm"
+                    type="button"
+                    [busy]="acting() === grab.id"
+                    (click)="accept(grab)"
+                  >
+                    Accept
+                  </button>
+                  <button tlButton size="sm" type="button" (click)="decline(grab)">Decline</button>
+                </div>
+              } @else if (grab.status === 'Accepted') {
+                <div class="cluster">
+                  <button tlButton size="sm" type="button" [busy]="acting() === grab.id" (click)="bought(grab)">
+                    Bought it
+                  </button>
+                  <button tlButton="ghost" size="sm" type="button" (click)="unavailable(grab)">Couldn’t get it</button>
+                </div>
+              }
+            </li>
+          }
+        </ul>
+      }
+    }
+  }
+}

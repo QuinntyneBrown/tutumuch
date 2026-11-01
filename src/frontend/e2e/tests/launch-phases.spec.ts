@@ -23,6 +23,9 @@ import { ShellPage } from '../pages/shell.page';
 /** The six categories in the guideline order of the top bar (ADR general/0009). */
 const CATEGORIES = ['Dance', 'Sports', 'Clothing', 'Shoes', 'Cameras and tech', 'Toys and crafts'];
 
+/** The primary navigation: the categories, then Shelf finds (L2-114). */
+const PRIMARY = [...CATEGORIES, 'Shelf finds'];
+
 test.describe('launch phase 1', () => {
   test.beforeEach(async ({ page }) => {
     await serveLaunchPhase(page, 1);
@@ -143,7 +146,7 @@ test.describe('launch phase 2', () => {
     const shell = new ShellPage(page);
     await shell.goto();
 
-    await expect(page.getByRole('navigation', { name: 'Primary' }).getByRole('link')).toHaveText(CATEGORIES);
+    await expect(page.getByRole('navigation', { name: 'Primary' }).getByRole('link')).toHaveText(PRIMARY);
     await expect(shell.topBar.getByRole('link', { name: 'Sell' })).toHaveCount(0);
     await expect(
       page.getByRole('complementary', { name: 'Filters' }).getByRole('group', { name: 'Category' }),
@@ -198,7 +201,7 @@ test.describe('launch phase 3', () => {
     await shell.goto();
 
     await expect(shell.topBar.getByRole('link', { name: 'Sell' })).toBeVisible();
-    await expect(page.getByRole('navigation', { name: 'Primary' }).getByRole('link')).toHaveCount(6);
+    await expect(page.getByRole('navigation', { name: 'Primary' }).getByRole('link')).toHaveText(PRIMARY);
   });
 });
 

@@ -1,0 +1,129 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Shelf finds
+
+package "TuTuMuch.Domain.Finds" {
+  enum ShelfFindStatus {
+    Active
+    Gone
+    Withdrawn
+  }
+  class ShelfFind {
+    +Guid Id
+    +long Number
+    +string Reference
+    +Guid PosterId
+    +string Title
+    +string Category
+    +decimal ShelfPrice
+    +string StoreName
+    +string StoreAddress
+    +DateOnly SeenOn
+    +string? Note
+    +decimal? GrabFee
+    +ShelfFindStatus Status
+    +DateTime CreatedAt
+    +DateTime ChangedAt
+    +DateOnly ExpiresOn
+    +bool OffersGrab
+    +{static} int PostsPerDay = 20
+    +{static} Check(input, today): IReadOnlyList<RuleViolation>
+    +{static} Post(number, posterId, input, now): ShelfFind
+    +IsExpired(today): bool
+    +MarkGone(now): void
+    +Withdraw(now): void
+  }
+  class Grab {
+    +Guid FindId
+    +GrabStatus Status
+    +bool IsOpen
+  }
+}
+
+package "TuTuMuch.Domain.Members" {
+  class Member {
+    +Guid Id
+    +string DisplayName
+    +bool IsAdministrator
+    +DateTime? ClosedAt
+  }
+}
+
+package "TuTuMuch.Application.Finds" {
+  class PostFindCommand <<record>> {
+    +Guid PosterId
+    +bool IsAdministrator
+    +PostFindInput Input
+  }
+  class BrowseFindsQuery <<record>> {
+    +int Page
+    +int? PageSize
+  }
+  class GetFindQuery <<record>> {
+    +string Reference
+    +Guid? ViewerId
+  }
+  class MarkFindGoneCommand <<record>> {
+    +Guid PosterId
+    +string Reference
+  }
+  class WithdrawFindCommand <<record>> {
+    +Guid PosterId
+    +string Reference
+  }
+  class FindCommandHandlers {
+    +Handle(PostFindCommand): Result<FindDetailDto>
+    +Handle(BrowseFindsQuery): FindPageDto
+    +Handle(GetFindQuery): Result<FindDetailDto>
+    +Handle(MarkFindGoneCommand): Result<FindDetailDto>
+    +Handle(WithdrawFindCommand): Result<bool>
+  }
+  class FindCardDto <<record>> {
+    +string Reference
+    +string Title
+    +string Category
+    +string ShelfPrice
+    +string StoreName
+    +DateOnly SeenOn
+    +bool GrabAvailable
+  }
+  class FindDetailDto <<record>> {
+    +string Reference
+    +string Title
+    +string Category
+    +string ShelfPrice
+    +string StoreName
+    +string StoreAddress
+    +DateOnly SeenOn
+    +DateOnly ExpiresOn
+    +string? Note
+    +string Status
+    +string PosterDisplayName
+    +string? GrabFee
+    +bool GrabOpen
+    +bool Mine
+  }
+}
+
+ShelfFind --> ShelfFindStatus
+Member "1" -- "0..*" ShelfFind : posts >
+ShelfFind "1" -- "0..*" Grab : is grabbed in >
+FindCommandHandlers ..> PostFindCommand
+FindCommandHandlers ..> BrowseFindsQuery
+FindCommandHandlers ..> GetFindQuery
+FindCommandHandlers ..> MarkFindGoneCommand
+FindCommandHandlers ..> WithdrawFindCommand
+FindCommandHandlers ..> ShelfFind
+FindCommandHandlers ..> Grab : open grab exists?
+FindCommandHandlers ..> FindCardDto
+FindCommandHandlers ..> FindDetailDto
+@enduml

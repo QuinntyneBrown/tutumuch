@@ -1,0 +1,96 @@
+@switch (view()) {
+  @case ('loading') {
+    <h1 class="visually-hidden">Loading shelf find</h1>
+    <div class="detail" aria-busy="true" aria-label="Loading shelf find">
+      <tl-skeleton shape="rect" height="16rem" />
+      <div class="detail__info">
+        <div class="stack stack--sm">
+          <tl-skeleton width="30%" />
+          <tl-skeleton shape="title" width="80%" />
+        </div>
+        <tl-skeleton shape="title" width="30%" />
+        <div>
+          <tl-skeleton />
+          <tl-skeleton />
+          <tl-skeleton />
+        </div>
+      </div>
+    </div>
+  }
+  @case ('not-found') {
+    <tl-center-state code="404" heading="We couldn’t find that">
+      <p class="text-muted">It may have been withdrawn.</p>
+      <a actions tlButton="primary" routerLink="/finds">See more shelf finds</a>
+    </tl-center-state>
+  }
+  @case ('error') {
+    <tl-center-state heading="Couldn’t load this find">
+      <p class="text-muted">It’s us, not you. Try again in a moment.</p>
+      <span class="ref">{{ errorRef() }}</span>
+      <button actions tlButton="primary" type="button" (click)="load()"><tl-icon name="refresh" />Try again</button>
+      <a actions tlButton routerLink="/finds">See shelf finds</a>
+    </tl-center-state>
+  }
+  @default {
+    @if (find(); as find) {
+      <nav aria-label="Breadcrumb" class="find-detail__breadcrumb">
+        <ol class="breadcrumb">
+          <li><a routerLink="/finds">Shelf finds</a></li>
+          <li aria-current="page">{{ find.title }}</li>
+        </ol>
+      </nav>
+      <div class="detail">
+        <div class="find-card__well" aria-hidden="true"><tl-icon name="map-pin" /></div>
+        <div class="detail__info">
+          <div class="stack stack--sm">
+            <span class="eyebrow">Shelf find · {{ find.category }}</span>
+            <h1 class="detail__title">{{ find.title }}</h1>
+          </div>
+          <div class="detail__price">
+            <span class="price price--lg">{{ price(find.shelfPrice) }}</span>
+            <span class="text-muted text-sm">Shelf price · Girls’</span>
+          </div>
+          @if (find.status !== 'Active') {
+            <tl-sold-notice
+              label="Gone"
+              [heading]="find.status === 'Gone' ? 'This find is gone' : 'This find has expired'"
+            >
+              Seen at {{ find.storeName }} on {{ day(find.seenOn) }}.
+              <a actions tlButton="primary" routerLink="/finds">See more shelf finds</a>
+            </tl-sold-notice>
+          } @else {
+            <tl-facts [facts]="facts()" />
+            <a class="find-detail__maps" [href]="maps()" target="_blank" rel="noopener noreferrer"
+              ><tl-icon name="external" />Open in maps<span class="visually-hidden"> (opens in a new tab)</span></a
+            >
+            <tl-alert tone="info">Prices and stock change. Check with the store before you go.</tl-alert>
+            @if (find.mine) {
+              <div class="cluster">
+                <button tlButton type="button" (click)="markGone()">Mark as gone</button>
+                <button tlButton="ghost" type="button" (click)="withdraw()">Withdraw</button>
+              </div>
+            } @else if (find.grabFee) {
+              <section class="panel panel--sunken stack" aria-labelledby="grab-title">
+                <h2 id="grab-title" class="panel__title">Grab it for me</h2>
+                @if (find.grabOpen) {
+                  <p>Someone already asked TuTuMuch to grab this one</p>
+                } @else {
+                  <p>TuTuMuch buys it at the store and sends it to you for a {{ price(find.grabFee) }} grab fee.</p>
+                  <a tlButton="primary" size="lg" [routerLink]="grabLink().path" [queryParams]="grabLink().query"
+                    >Grab it for me</a
+                  >
+                }
+              </section>
+            }
+          }
+          @if (find.note) {
+            <p class="find-detail__note">{{ find.note }}</p>
+          }
+          <p class="text-sm text-muted">
+            Posted by <a [routerLink]="['/members', find.posterDisplayName]">{{ find.posterDisplayName }}</a>
+          </p>
+        </div>
+      </div>
+    }
+  }
+}

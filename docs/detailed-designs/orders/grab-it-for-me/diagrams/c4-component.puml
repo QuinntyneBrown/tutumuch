@@ -1,0 +1,38 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Grab it for me
+
+Container(web, "TuTuMuch Web", "Angular", "@tutumuch/orders GrabPage, MyGrabsPage, GrabDetailPage, AdminGrabsPage; @tutumuch/api GrabsApi")
+System_Ext(payments, "Payment provider", "IPaymentProvider adapter")
+Container(worker, "TuTuMuch Worker", ".NET", "GrabDeadlineJob")
+Container_Boundary(api, "TuTuMuch API and Application") {
+  Component(grabs, "GrabsController", "ASP.NET Core controller", "POST /api/grabs/quote, POST /api/grabs, /api/me/grabs")
+  Component(admin, "AdminGrabsController", "ASP.NET Core controller, Administrator policy", "GET /api/admin/grabs; accept, decline, bought, unavailable")
+  Component(webhook, "PaymentWebhookHandler", "MediatR handler", "Branches on Payment.GrabId")
+  Component(commands, "Grab commands and queries", "MediatR handlers", "Quote, start, cancel, received, admin actions")
+  Component(deadlines, "RunGrabDeadlinesCommand handler", "MediatR handler", "Answer-by, buy-by, receive-after")
+  Component(refunds, "GrabSupport", "Application helper", "Refund.ForGrab and RefundAsync")
+  Component(outbox, "IEmailOutbox", "Port", "GrabRequested, GrabUpdated")
+  Component(domain, "Grab, GrabPricing", "Domain", "State machine and deposit rule")
+  ComponentDb(db, "TuTuMuchDbContext", "EF Core", "Grabs, ShelfFinds, Payments, Refunds")
+}
+
+Rel(web, grabs, "Quotes, pays, follows", "JSON/HTTPS")
+Rel(web, admin, "Handles grabs", "JSON/HTTPS")
+Rel(payments, webhook, "Payment result", "Signed webhook")
+Rel(worker, deadlines, "Sends every 5 minutes")
+Rel(grabs, commands, "Sends")
+Rel(admin, commands, "Sends")
+Rel(commands, domain, "Checks and changes")
+Rel(deadlines, domain, "Expires and completes")
+Rel(webhook, domain, "Requested or PaymentFailed")
+Rel(commands, refunds, "Refunds")
+Rel(deadlines, refunds, "Refunds")
+Rel(refunds, payments, "RefundAsync", "HTTPS")
+Rel(commands, payments, "QuoteTaxAsync, CreatePaymentAsync", "HTTPS")
+Rel(commands, outbox, "Queues emails")
+Rel(webhook, outbox, "Queues GrabRequested")
+Rel(commands, db, "Reads and writes")
+Rel(webhook, db, "Reads and writes")
+@enduml

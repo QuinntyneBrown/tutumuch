@@ -1,7 +1,7 @@
 # Estimates
 
-- Overall effort: 148 days
-- Complete: 76%
+- Overall effort: 156 days
+- Complete: 77%
 
 | Subsystem | Effort | Complete |
 |---|---|---|
@@ -9,8 +9,8 @@
 | [accounts](accounts.md) | 10 days | 100% |
 | [privacy](privacy.md) | 7 days | 43% |
 | [listings](listings.md) | 17 days | 88% |
-| [catalog](catalog.md) | 22 days | 99% |
-| [orders](orders.md) | 30 days | 93% |
+| [catalog](catalog.md) | 25 days | 99% |
+| [orders](orders.md) | 35 days | 93% |
 | [reviews](reviews.md) | 3 days | 95% |
 | [notifications](notifications.md) | 7 days | 87% |
 

@@ -16,7 +16,7 @@ const sellingOpen: CanMatchFn = async () => {
 const notOpen = () => import('./selling-not-open/selling-not-open-page').then((m) => m.SellingNotOpenPage);
 const notOpenTitle = 'Selling opens soon · TuTuMuch';
 
-/** Lazy routes of the listings feature area, mounted at /: the sell form, the edit form and the seller's listings. */
+/** Lazy routes of the listings feature area, mounted at /: the sell form, the edit form, the seller's listings and the shelf find form (L2-113). */
 export const routes: Routes = [
   {
     path: 'sell',
@@ -42,7 +42,14 @@ export const routes: Routes = [
     loadComponent: () => import('./my-listings/my-listings-page').then((m) => m.MyListingsPage),
     title: 'Your listings · TuTuMuch',
   },
+  {
+    path: 'finds/new',
+    canMatch: [sellingOpen],
+    loadComponent: () => import('./post-find/post-find-page').then((m) => m.PostFindPage),
+    title: 'Post a shelf find · TuTuMuch',
+  },
   { path: 'sell', loadComponent: notOpen, title: notOpenTitle },
+  { path: 'finds/new', loadComponent: notOpen, title: notOpenTitle },
   { path: 'sell/:reference', loadComponent: notOpen, title: notOpenTitle },
   { path: 'items/:reference/edit', loadComponent: notOpen, title: notOpenTitle },
   { path: 'account/listings', loadComponent: notOpen, title: notOpenTitle },

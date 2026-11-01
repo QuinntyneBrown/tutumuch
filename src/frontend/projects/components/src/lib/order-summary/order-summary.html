@@ -14,17 +14,19 @@
             <source type="image/webp" [attr.srcset]="photo.webp" sizes="64px" />
             <img [src]="photo.src" [attr.srcset]="photo.jpeg" sizes="64px" alt="" width="160" height="160" />
           </picture>
+        } @else if (item().icon; as icon) {
+          <span class="thumb__icon" aria-hidden="true"><tl-icon [name]="icon" /></span>
         }
       </div>
     </div>
   </tl-item-row>
   <dl class="totals">
     <div>
-      <dt>Item</dt>
+      <dt>{{ itemLabel() }}</dt>
       <dd>{{ itemPrice() }}</dd>
     </div>
     <div>
-      <dt>Shipping</dt>
+      <dt>{{ shippingLabel() }}</dt>
       <dd>{{ shipping() }}</dd>
     </div>
     <div>
@@ -32,7 +34,7 @@
       <dd>{{ salesTax() ?? 'With your address' }}</dd>
     </div>
     <div class="totals__total">
-      <dt>Total</dt>
+      <dt>{{ totalLabel() }}</dt>
       <dd>{{ total() ?? '—' }}</dd>
     </div>
   </dl>

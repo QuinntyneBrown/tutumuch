@@ -233,6 +233,10 @@ to My requests. It belongs to the new `ItemRequests` category, so the dispatcher
 when the member turned item request emails off and, as for marketing, adds the one-click
 unsubscribe link and the `List-Unsubscribe` headers with a token of that category (`L2-103`).
 
+### Grab emails (grab-it-for-me)
+
+[grab-it-for-me](../../orders/grab-it-for-me/README.md) adds two transactional types that a member cannot turn off (`L2-120`): `GrabRequested` to the find's poster when a grab payment succeeds, with the model `GrabRequestedEmail(GrabReference, FindTitle, ShopperDisplayName, Total)` and a link to `/admin/grabs`; and `GrabUpdated` to the shopper when the grab is accepted, declined, bought, unavailable, expired or cancelled, with `GrabUpdatedEmail(GrabId, GrabReference, FindTitle, Status, Deadline, RefundedAmount, DepositKept, UnavailableReason)` and a link to `/account/grabs/{id}`. Both are queued in the same save as the grab change.
+
 ### Deferred
 
 - Built by [manage-notification-preferences](../manage-notification-preferences/README.md):

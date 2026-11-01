@@ -480,6 +480,7 @@ m = screen("nav-menu", "dialog", "Menu", opens_from="catalog", reqs=["L2-062", "
 
 def menu_sheet(guest: bool, selling: bool = True) -> str:
     cats = "".join(f'<li><a href="{nav_href(k)}">{t}{ic("chevron-right")}</a></li>' for k, t in NAV)
+    cats += f'<li><a href="{P("shelf-finds")}">Shelf finds{ic("chevron-right")}</a></li>'   # L2-114
     if guest:
         sell = f'<li><a href="{P("sell")}">Sell outgrown gear</a></li>' if selling else ""
         small = f'{sell}<li><a href="{P("rules")}">Marketplace rules</a></li>'

@@ -28,6 +28,30 @@ export {
   type SentShowcaseRequest,
   type ShowcaseRequest,
 } from './lib/catalog/showcase-api';
+export {
+  FindsApi,
+  mapsUrl,
+  type FindBody,
+  type FindCard,
+  type FindDetail,
+  type FindPage,
+  type FindStatus,
+} from './lib/finds/finds-api';
+export {
+  AdminGrabsApi,
+  GrabsApi,
+  grabStatusLabel,
+  grabStatusWords,
+  type AdminGrab,
+  type Grab,
+  type GrabAction,
+  type GrabAddress,
+  type GrabPayment,
+  type GrabQuote,
+  type GrabRow,
+  type GrabStatus,
+  type GrabUnavailableReason,
+} from './lib/finds/grabs-api';
 export { API_BASE_URL } from './lib/api-base-url';
 export { shortRef, toResult, type ApiProblem, type ApiResult, type FieldProblem } from './lib/api-result';
 export { AuthState, type CurrentMember } from './lib/auth/auth-state';

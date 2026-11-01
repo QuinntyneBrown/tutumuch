@@ -1,0 +1,27 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Grab it for me
+
+Person(shopper, "Shopper", "Verified member")
+Person(owner, "Owner", "Administrator")
+System_Ext(payments, "Payment provider", "Charges, refunds, webhooks")
+System_Ext(email, "Email provider", "Transactional email")
+System_Boundary(tutumuch, "TuTuMuch") {
+  Container(web, "TuTuMuch Web", "Angular", "GrabPage, MyGrabsPage, GrabDetailPage, AdminGrabsPage and dialogs")
+  Container(api, "TuTuMuch API", "ASP.NET Core", "/api/grabs, /api/me/grabs, /api/admin/grabs, payment webhook")
+  Container(worker, "TuTuMuch Worker", ".NET hosted services", "GrabDeadlineJob, EmailDispatchJob")
+  ContainerDb(db, "TuTuMuch database", "SQL Server", "Grabs, ShelfFinds, Payments, Refunds, OutboxMessages")
+}
+
+Rel(shopper, web, "Uses", "HTTPS")
+Rel(owner, web, "Uses the admin shell", "HTTPS")
+Rel(web, api, "Calls", "JSON/HTTPS")
+Rel(web, payments, "Mounts hosted card fields from", "HTTPS")
+Rel(api, payments, "Quotes tax, creates payments, refunds", "HTTPS")
+Rel(payments, api, "Posts payment results", "Signed webhook")
+Rel(api, db, "Reads and writes", "EF Core")
+Rel(worker, db, "Expires grabs; reads the outbox", "EF Core")
+Rel(worker, payments, "Refunds expired grabs", "HTTPS")
+Rel(worker, email, "Sends grab emails", "HTTPS")
+@enduml

@@ -1,0 +1,240 @@
+@switch (view()) {
+  @case ('loading') {
+    <h1 class="visually-hidden">Loading</h1>
+    <div class="split grab__skeleton" aria-busy="true" aria-label="Loading">
+      <div class="stack stack--lg">
+        <tl-skeleton shape="title" width="45%" />
+        <tl-skeleton shape="rect" height="6rem" />
+        <tl-skeleton shape="rect" height="6rem" />
+      </div>
+      <div class="panel stack">
+        <tl-skeleton />
+        <tl-skeleton />
+        <tl-skeleton width="50%" />
+      </div>
+    </div>
+  }
+  @case ('in-progress') {
+    <tl-center-state icon="clock" heading="Someone already asked TuTuMuch to grab this one">
+      <p class="text-muted">You can still go and buy it at the store yourself.</p>
+      <a actions tlButton="primary" [routerLink]="['/finds', reference()]">Back to the find</a>
+      <a actions tlButton routerLink="/finds">See shelf finds</a>
+    </tl-center-state>
+  }
+  @case ('unverified') {
+    <tl-center-state icon="mail" heading="Verify your email to ask for a grab">
+      <p class="text-muted">Open the link we emailed you, then come back.</p>
+      <a actions tlButton="primary" [routerLink]="['/finds', reference()]">Back to the find</a>
+    </tl-center-state>
+  }
+  @case ('error') {
+    <tl-center-state heading="Couldn’t price your grab">
+      <p class="text-muted">Something went wrong on our side. Try again in a moment.</p>
+      <span class="ref">{{ errorRef() }}</span>
+      <button actions tlButton="primary" type="button" (click)="load()"><tl-icon name="refresh" />Try again</button>
+      <a actions tlButton [routerLink]="['/finds', reference()]">Back to the find</a>
+    </tl-center-state>
+  }
+  @default {
+    @if (find(); as find) {
+      <div class="page-header">
+        <div class="stack stack--sm">
+          <span class="eyebrow">Shelf find {{ find.reference }}</span>
+          <h1>Grab it for me</h1>
+          <p class="subtitle">TuTuMuch goes to {{ find.storeName }}, buys it and sends it to you.</p>
+        </div>
+      </div>
+      <div class="split">
+        <form class="stack stack--lg" novalidate [formGroup]="form" (ngSubmit)="submit()">
+          <tl-error-summary [errors]="summary()" />
+          @if (alert(); as alert) {
+            @switch (alert.kind) {
+              @case ('non-us') {
+                <tl-alert tone="danger" heading="TuTuMuch ships within the United States only"
+                  >Choose a US address to continue.</tl-alert
+                >
+              }
+              @case ('declined') {
+                @if (alert.kind === 'declined') {
+                  <tl-alert tone="danger" heading="Your bank declined the card"
+                    >{{ alert.reason }} Try another card.</tl-alert
+                  >
+                }
+              }
+              @case ('total-changed') {
+                <tl-alert tone="warning" heading="The total changed">Check the new total and pay again.</tl-alert>
+              }
+              @case ('card') {
+                @if (alert.kind === 'card') {
+                  <tl-alert tone="danger" heading="Check your card">{{ alert.message }}</tl-alert>
+                }
+              }
+              @default {
+                @if (alert.kind === 'error') {
+                  <tl-alert tone="danger" heading="We couldn’t take the payment"
+                    >You weren’t charged. Try again in a moment.
+                    @if (alert.ref) {
+                      <span class="ref">{{ alert.ref }}</span>
+                    }
+                  </tl-alert>
+                }
+              }
+            }
+          }
+
+          <section class="checkout-step" aria-labelledby="ship-h">
+            <h2 id="ship-h">Send it to</h2>
+            <div class="stack">
+              <tl-form-field #fn fieldId="a-name" label="Full name" [error]="errors()['a-name']">
+                <input
+                  class="input"
+                  id="a-name"
+                  type="text"
+                  autocomplete="name"
+                  formControlName="fullName"
+                  [attr.aria-describedby]="fn.describedBy()"
+                  [attr.aria-invalid]="fn.invalid()"
+                />
+              </tl-form-field>
+              <tl-form-field #st fieldId="a-street" label="Street address" [error]="errors()['a-street']">
+                <input
+                  class="input"
+                  id="a-street"
+                  type="text"
+                  autocomplete="address-line1"
+                  formControlName="line1"
+                  [attr.aria-describedby]="st.describedBy()"
+                  [attr.aria-invalid]="st.invalid()"
+                />
+              </tl-form-field>
+              <tl-form-field
+                #apt
+                fieldId="a-apt"
+                label="Apartment, suite"
+                [optional]="true"
+                [error]="errors()['a-apt']"
+              >
+                <input
+                  class="input"
+                  id="a-apt"
+                  type="text"
+                  autocomplete="address-line2"
+                  formControlName="line2"
+                  [attr.aria-describedby]="apt.describedBy()"
+                  [attr.aria-invalid]="apt.invalid()"
+                />
+              </tl-form-field>
+              <div class="form-row">
+                <tl-form-field #ci fieldId="a-city" label="City" [error]="errors()['a-city']">
+                  <input
+                    class="input"
+                    id="a-city"
+                    type="text"
+                    autocomplete="address-level2"
+                    formControlName="city"
+                    [attr.aria-describedby]="ci.describedBy()"
+                    [attr.aria-invalid]="ci.invalid()"
+                  />
+                </tl-form-field>
+                <tl-form-field #sta fieldId="a-state" label="State" [error]="errors()['a-state']">
+                  <select
+                    class="select"
+                    id="a-state"
+                    autocomplete="address-level1"
+                    formControlName="state"
+                    [attr.aria-describedby]="sta.describedBy()"
+                    [attr.aria-invalid]="sta.invalid()"
+                  >
+                    <option value="">Select a state</option>
+                    @for (state of states; track state.code) {
+                      <option [value]="state.code">{{ state.name }}</option>
+                    }
+                  </select>
+                </tl-form-field>
+              </div>
+              <div class="form-row">
+                <tl-form-field #zp fieldId="a-zip" label="ZIP code" [error]="errors()['a-zip']">
+                  <input
+                    class="input"
+                    id="a-zip"
+                    type="text"
+                    inputmode="numeric"
+                    autocomplete="postal-code"
+                    formControlName="zip"
+                    [attr.aria-describedby]="zp.describedBy()"
+                    [attr.aria-invalid]="zp.invalid()"
+                  />
+                </tl-form-field>
+                <tl-form-field #co fieldId="a-country" label="Country" [error]="errors()['a-country']">
+                  <select
+                    class="select"
+                    id="a-country"
+                    autocomplete="country"
+                    formControlName="country"
+                    [attr.aria-describedby]="co.describedBy()"
+                    [attr.aria-invalid]="co.invalid()"
+                  >
+                    @for (country of countries; track country.code) {
+                      <option [value]="country.code">{{ country.name }}</option>
+                    }
+                  </select>
+                </tl-form-field>
+              </div>
+            </div>
+          </section>
+
+          @if (quote(); as quote) {
+            <section class="checkout-step" aria-labelledby="deposit-h">
+              <h2 id="deposit-h">The deposit</h2>
+              <tl-alert tone="info" heading="How the deposit works"
+                >You pay the total now. If TuTuMuch can’t grab it, you get everything back. If you cancel after TuTuMuch
+                accepts, you get everything back except the {{ money(quote.deposit) }} deposit.</tl-alert
+              >
+              <tl-choice #ack inputId="ack" [error]="ackError()">
+                <input
+                  type="checkbox"
+                  id="ack"
+                  [checked]="acknowledged()"
+                  (change)="toggleAck($any($event.target).checked)"
+                  [attr.aria-describedby]="ack.describedBy()"
+                  [attr.aria-invalid]="!!ackError()"
+                />
+                I understand the {{ money(quote.deposit) }} deposit is non-refundable once TuTuMuch accepts
+              </tl-choice>
+            </section>
+
+            <section class="checkout-step" aria-labelledby="pay-h">
+              <h2 id="pay-h">Pay</h2>
+              <tl-hosted-card-fields />
+            </section>
+          }
+
+          <div class="stack stack--sm">
+            <button tlButton="primary" size="lg" [block]="true" type="submit" [busy]="paying() || pricing()">
+              {{ payLabel() }}
+            </button>
+            @if (paying()) {
+              <p class="text-caption grab__paying" role="status">Confirming with your bank…</p>
+            }
+            <a tlButton="ghost" [block]="true" [routerLink]="['/finds', reference()]">Back to the find</a>
+          </div>
+        </form>
+        @if (summaryItem(); as item) {
+          <tl-order-summary
+            [item]="item"
+            itemLabel="Shelf price"
+            shippingLabel="Grab fee"
+            [itemPrice]="money(quote()?.shelfPrice ?? find.shelfPrice)"
+            [shipping]="money(quote()?.grabFee ?? find.grabFee ?? '0')"
+            [salesTax]="quote() ? money(quote()!.salesTax) : null"
+            [total]="quote() ? money(quote()!.total) : null"
+          >
+            @if (quote(); as quote) {
+              <p class="text-sm grab__deposit">Non-refundable deposit: {{ money(quote.deposit) }}</p>
+            }
+          </tl-order-summary>
+        }
+      </div>
+    }
+  }
+}

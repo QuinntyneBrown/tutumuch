@@ -82,6 +82,7 @@ the journey variant of the steps, the card and arrow-right icons and a bigger he
 | [Item row](components/item-row.html) | with or without thumbnail | default, truncated | sell/success |
 | [Empty state](components/empty-state.html) | Tilly (hello) by default; error (compact, icon well); `[tilly]="false"` | static | catalog/empty, my-listings/empty, catalog/error |
 | [Listing card](components/listing-card.html) | active, reserved, sold (greyed photo); photo, title, brand, "Girls · condition", price; grid of 2, 3 or 4 columns | default, hover, focus, loading skeleton | catalog/default, catalog/loading, catalog/category-dance, listing-detail/sold |
+| [Find card](components/find-card.html) | with "Grab available", without; map-pin well (finds have no photos), title, category, store, "Seen {date}", price; one column under 576 px | default, hover, focus, loading skeleton | shelf-finds/default, shelf-finds/loading |
 | [Load more](components/load-more.html) | one | default, busy, hidden when all shown | catalog/default |
 | [Gallery](components/gallery.html) | one photo, several photos | selected thumbnail, swiped | listing-detail/default |
 | [Buy bar](components/buy-bar.html) | Buy now, Edit listing | sticky below 992 px, inline from 992 px | listing-detail/default, listing-detail/guest, listing-detail/own |

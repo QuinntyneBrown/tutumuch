@@ -349,6 +349,212 @@
       }
     },
     {
+      "id": "admin-grabs",
+      "kind": "page",
+      "title": "Grabs",
+      "route": "/admin/grabs",
+      "requirements": [
+        "L2-118",
+        "L2-119",
+        "L2-121",
+        "L2-010",
+        "L2-061",
+        "L2-065"
+      ],
+      "states": [
+        "default",
+        "accepted",
+        "loading",
+        "empty",
+        "error",
+        "forbidden"
+      ]
+    },
+    {
+      "id": "find-detail",
+      "kind": "page",
+      "title": "Shelf find",
+      "route": "/finds/{reference}",
+      "requirements": [
+        "L2-115",
+        "L2-116",
+        "L2-117",
+        "L2-121",
+        "L2-049",
+        "L2-063",
+        "L2-065"
+      ],
+      "states": [
+        "default",
+        "guest",
+        "no-grab",
+        "grab-open",
+        "own",
+        "gone",
+        "expired",
+        "success",
+        "loading",
+        "error",
+        "not-found"
+      ],
+      "not_applicable": {
+        "empty": "A find always has its required fields; a missing one is the not-found state."
+      }
+    },
+    {
+      "id": "grab",
+      "kind": "page",
+      "title": "Grab it for me",
+      "route": "/finds/{reference}/grab",
+      "requirements": [
+        "L2-117",
+        "L2-027",
+        "L2-030",
+        "L2-029",
+        "L2-003",
+        "L2-063",
+        "L2-065"
+      ],
+      "states": [
+        "default",
+        "acknowledged",
+        "new-address",
+        "invalid",
+        "non-us",
+        "submitting",
+        "declined",
+        "in-progress",
+        "unverified",
+        "signed-out",
+        "loading",
+        "error"
+      ],
+      "not_applicable": {
+        "empty": "The page always has one find to grab."
+      }
+    },
+    {
+      "id": "grab-detail",
+      "kind": "page",
+      "title": "Grab",
+      "route": "/account/grabs/{id}",
+      "requirements": [
+        "L2-119",
+        "L2-117",
+        "L2-118",
+        "L2-121"
+      ],
+      "states": [
+        "default",
+        "accepted",
+        "bought",
+        "received",
+        "declined",
+        "unavailable",
+        "expired",
+        "cancelled",
+        "loading",
+        "error",
+        "not-found"
+      ],
+      "not_applicable": {
+        "empty": "A grab always has its find and its amounts."
+      }
+    },
+    {
+      "id": "grab-email",
+      "kind": "page",
+      "title": "Grab emails",
+      "route": "(email)",
+      "requirements": [
+        "L2-120",
+        "L2-042"
+      ],
+      "states": [
+        "default",
+        "accepted",
+        "refunded",
+        "cancelled"
+      ],
+      "not_applicable": {
+        "loading": "An email is static text.",
+        "empty": "An email is only sent for an event.",
+        "error": "Sending failures are retried by the outbox (L2-042); the member sees nothing."
+      }
+    },
+    {
+      "id": "my-grabs",
+      "kind": "page",
+      "title": "Your grabs",
+      "route": "/account/grabs",
+      "requirements": [
+        "L2-119",
+        "L2-121",
+        "L2-061",
+        "L2-065"
+      ],
+      "states": [
+        "default",
+        "loading",
+        "empty",
+        "error"
+      ]
+    },
+    {
+      "id": "post-find",
+      "kind": "page",
+      "title": "Post a shelf find",
+      "route": "/finds/new",
+      "requirements": [
+        "L2-113",
+        "L2-091",
+        "L2-049",
+        "L2-051",
+        "L2-003",
+        "L2-063",
+        "L2-065"
+      ],
+      "states": [
+        "default",
+        "filled",
+        "admin",
+        "invalid",
+        "invalid-fee",
+        "submitting",
+        "error",
+        "limited",
+        "selling-not-open",
+        "unverified",
+        "signed-out"
+      ],
+      "not_applicable": {
+        "empty": "The form is the page; a blank form is the default state.",
+        "loading": "Nothing loads before the form; the launch phase and the role come with the session."
+      }
+    },
+    {
+      "id": "shelf-finds",
+      "kind": "page",
+      "title": "Shelf finds",
+      "route": "/finds",
+      "requirements": [
+        "L2-114",
+        "L2-113",
+        "L2-121",
+        "L2-061",
+        "L2-065",
+        "L2-096"
+      ],
+      "states": [
+        "default",
+        "guest",
+        "phase-one",
+        "loading",
+        "empty",
+        "error"
+      ]
+    },
+    {
       "id": "welcome",
       "kind": "page",
       "title": "Marketing page",
@@ -995,6 +1201,110 @@
       ]
     },
     {
+      "id": "cancel-grab",
+      "kind": "dialog",
+      "title": "Cancel grab",
+      "opens_from": "grab-detail",
+      "requirements": [
+        "L2-119"
+      ],
+      "states": [
+        "default",
+        "requested",
+        "busy",
+        "bought",
+        "failed"
+      ],
+      "not_applicable": {
+        "invalid": "Confirming has no inputs to validate."
+      }
+    },
+    {
+      "id": "decline-grab",
+      "kind": "dialog",
+      "title": "Decline grab",
+      "opens_from": "admin-grabs",
+      "requirements": [
+        "L2-118"
+      ],
+      "states": [
+        "default",
+        "busy",
+        "changed"
+      ],
+      "not_applicable": {
+        "invalid": "Confirming has no inputs to validate."
+      }
+    },
+    {
+      "id": "grab-received",
+      "kind": "dialog",
+      "title": "I’ve got it",
+      "opens_from": "grab-detail",
+      "requirements": [
+        "L2-119"
+      ],
+      "states": [
+        "default",
+        "busy",
+        "failed"
+      ],
+      "not_applicable": {
+        "invalid": "A single confirmation; no inputs."
+      }
+    },
+    {
+      "id": "grab-unavailable",
+      "kind": "dialog",
+      "title": "Couldn’t get it",
+      "opens_from": "admin-grabs",
+      "requirements": [
+        "L2-118"
+      ],
+      "states": [
+        "default",
+        "invalid",
+        "busy",
+        "failed"
+      ]
+    },
+    {
+      "id": "mark-find-gone",
+      "kind": "dialog",
+      "title": "Mark as gone",
+      "opens_from": "find-detail",
+      "requirements": [
+        "L2-116"
+      ],
+      "states": [
+        "default",
+        "busy",
+        "in-progress",
+        "failed"
+      ],
+      "not_applicable": {
+        "invalid": "Confirming has no inputs to validate."
+      }
+    },
+    {
+      "id": "withdraw-find",
+      "kind": "dialog",
+      "title": "Withdraw find",
+      "opens_from": "find-detail",
+      "requirements": [
+        "L2-116"
+      ],
+      "states": [
+        "default",
+        "busy",
+        "in-progress",
+        "failed"
+      ],
+      "not_applicable": {
+        "invalid": "Confirming has no inputs to validate."
+      }
+    },
+    {
       "id": "pitch-video",
       "kind": "dialog",
       "title": "Pitch video",
@@ -1216,6 +1526,39 @@
       "opens_from": "listing-detail",
       "requirements": [
         "L2-109"
+      ],
+      "states": [
+        "info",
+        "success",
+        "warning",
+        "danger"
+      ]
+    },
+    {
+      "id": "find-toasts",
+      "kind": "notification",
+      "title": "Shelf find toasts",
+      "opens_from": "shelf-finds",
+      "requirements": [
+        "L2-113",
+        "L2-116"
+      ],
+      "states": [
+        "info",
+        "success",
+        "warning",
+        "danger"
+      ]
+    },
+    {
+      "id": "grab-toasts",
+      "kind": "notification",
+      "title": "Grab toasts",
+      "opens_from": "grab-detail",
+      "requirements": [
+        "L2-117",
+        "L2-118",
+        "L2-119"
       ],
       "states": [
         "info",

@@ -9,6 +9,7 @@
 import { Page } from '@playwright/test';
 
 import {
+  adminGrab,
   administrator,
   adminShowcaseRequest,
   buyerOrder,
@@ -26,6 +27,9 @@ import {
   payoutSummary,
   problemDetail,
   sale,
+  findCard,
+  findDetail,
+  grabFixture,
   serveCatalog,
   serveCatalogue,
   serveCheckout,
@@ -287,6 +291,81 @@ const cases: GuidelineCase[] = [
     heading: /P-1001|Not as described/,
   },
   {
+    name: 'shelf finds',
+    path: '/finds',
+    setup: (p) =>
+      p.route(/\/api\/finds\?/, (route) =>
+        route.fulfill({
+          json: { items: [findCard(1, { grabAvailable: true }), findCard(2)], page: 1, pageSize: 24, totalCount: 2 },
+        }),
+      ),
+    heading: 'Shelf finds',
+  },
+  {
+    name: 'shelf find',
+    path: '/finds/F-1001',
+    setup: (p) => p.route('**/api/finds/F-1001', (route) => route.fulfill({ json: findDetail() })),
+    heading: 'Glitter ballet flats, pink',
+  },
+  {
+    name: 'post a shelf find',
+    path: '/finds/new',
+    setup: (p) => signInAs(p, marcus),
+    heading: 'Post a shelf find',
+  },
+  {
+    name: 'grab it for me',
+    path: '/finds/F-1001/grab',
+    setup: async (p) => {
+      await signInAs(p, marcus);
+      await p.route('**/api/finds/F-1001', (route) => route.fulfill({ json: findDetail() }));
+    },
+    heading: 'Grab it for me',
+  },
+  {
+    name: 'your grabs',
+    path: '/account/grabs',
+    setup: async (p) => {
+      await signInAs(p, marcus);
+      await p.route('**/api/me/grabs', (route) =>
+        route.fulfill({
+          json: [
+            {
+              id: 'grab-1',
+              reference: 'GR-1001',
+              status: 'Requested',
+              findReference: 'F-1001',
+              findTitle: 'Glitter ballet flats, pink',
+              storeName: 'Target',
+              total: '52.26',
+              deadline: '2026-10-27T12:00:00Z',
+              createdAt: '2026-10-25T12:00:00Z',
+            },
+          ],
+        }),
+      );
+    },
+    heading: 'Your grabs',
+  },
+  {
+    name: 'grab',
+    path: '/account/grabs/grab-1',
+    setup: async (p) => {
+      await signInAs(p, marcus);
+      await p.route('**/api/me/grabs/grab-1', (route) => route.fulfill({ json: grabFixture() }));
+    },
+    heading: 'Grab GR-1001',
+  },
+  {
+    name: 'grabs (admin)',
+    path: '/admin/grabs',
+    setup: async (p) => {
+      await signInAs(p, administrator);
+      await p.route('**/api/admin/grabs', (route) => route.fulfill({ json: [adminGrab()] }));
+    },
+    heading: 'Grabs',
+  },
+  {
     name: 'unsubscribe',
     path: '/emails/unsubscribe?token=t-1',
     setup: (p) =>
@@ -347,6 +426,7 @@ test.describe('page guidelines', () => {
       'Shoes',
       'Cameras and tech',
       'Toys and crafts',
+      'Shelf finds',
     ]);
     const footer = page.getByRole('contentinfo');
     await expect(footer).toContainText('© TuTuMuch');

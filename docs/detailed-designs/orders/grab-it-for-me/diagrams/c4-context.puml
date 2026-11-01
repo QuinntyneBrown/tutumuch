@@ -1,0 +1,19 @@
+@startuml
+!include <C4/C4_Context>
+LAYOUT_WITH_LEGEND()
+title System Context — Grab it for me
+
+Person(shopper, "Shopper", "Verified member who wants a find grabbed")
+Person(owner, "Owner", "TuTuMuch's owner, signed in as an administrator")
+System(tutumuch, "TuTuMuch", "Marketplace for all things young girls")
+System_Ext(payments, "Payment provider", "Hosted card fields, charges, refunds, signed webhooks")
+System_Ext(email, "Email provider", "Sends transactional email")
+System_Ext(store, "Store", "Where the owner buys the item")
+
+Rel(shopper, tutumuch, "Pays for and follows grabs using", "HTTPS")
+Rel(owner, tutumuch, "Accepts, declines and closes grabs using", "HTTPS")
+Rel(tutumuch, payments, "Quotes tax, charges and refunds through", "HTTPS")
+Rel(payments, tutumuch, "Reports payment results to", "Signed webhook")
+Rel(tutumuch, email, "Sends grab emails through", "HTTPS")
+Rel(owner, store, "Buys the item at")
+@enduml

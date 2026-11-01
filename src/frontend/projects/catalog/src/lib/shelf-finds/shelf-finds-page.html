@@ -1,0 +1,46 @@
+<div class="page-header">
+  <div>
+    <h1>Shelf finds</h1>
+    <p class="subtitle">Spotted in a store by our community. Go get it, or let TuTuMuch grab it for you.</p>
+  </div>
+  @if (canPost()) {
+    <a tlButton="primary" routerLink="/finds/new"><tl-icon name="plus" />Post a shelf find</a>
+  }
+</div>
+@switch (view()) {
+  @case ('loading') {
+    <ul class="listing-grid find-grid" role="list" aria-busy="true" aria-label="Loading shelf finds">
+      @for (row of placeholders; track row) {
+        <li class="stack stack--sm">
+          <tl-skeleton shape="rect" height="10rem" />
+          <tl-skeleton width="80%" />
+          <tl-skeleton width="50%" />
+          <tl-skeleton width="30%" />
+        </li>
+      }
+    </ul>
+  }
+  @case ('error') {
+    <tl-empty-state icon="refresh" heading="Couldn’t load shelf finds" tone="error">
+      Something went wrong on our side. <span class="ref">{{ errorRef() }}</span>
+      <button actions tlButton="primary" type="button" (click)="load()"><tl-icon name="refresh" />Try again</button>
+    </tl-empty-state>
+  }
+  @default {
+    @if (!cards().length) {
+      <tl-empty-state icon="map-pin" heading="No shelf finds yet">
+        When someone spots something great in a store, it shows up here.
+        @if (canPost()) {
+          <a actions tlButton="primary" routerLink="/finds/new"><tl-icon name="plus" />Post a shelf find</a>
+        }
+      </tl-empty-state>
+    } @else {
+      <ul class="listing-grid find-grid" role="list" aria-label="Shelf finds">
+        @for (card of cards(); track card.href) {
+          <li class="shelf-finds__item"><tl-find-card [card]="card" /></li>
+        }
+      </ul>
+      <tl-load-more [shown]="cards().length" [total]="total()" [busy]="loadingMore()" (loadMore)="loadMore()" />
+    }
+  }
+}

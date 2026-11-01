@@ -39,7 +39,7 @@ test.describe('empty guest shell', () => {
     expect(unfixturedApiCalls).toEqual([]);
   });
 
-  test('at 320px the menu button opens a sheet listing every category', async ({ page }) => {
+  test('at 320px the menu button opens a sheet listing every category and Shelf finds', async ({ page }) => {
     const shell = new ShellPage(page);
     await shell.goto();
 
@@ -54,6 +54,7 @@ test.describe('empty guest shell', () => {
       'Shoes',
       'Cameras and tech',
       'Toys and crafts',
+      'Shelf finds',
     ]);
     expect(await shell.hasHorizontalScroll()).toBe(false);
 

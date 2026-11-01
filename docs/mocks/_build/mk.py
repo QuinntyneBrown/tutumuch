@@ -341,7 +341,10 @@ def btn(label: str, kind: str = "", href: str | None = None, icon: str | None = 
 def status(label: str) -> str:
     mod = {"Draft": "draft", "Active": "active", "Reserved": "reserved", "Sold": "sold", "Removed": "removed",
            "Paid": "info", "Shipped": "info", "Delivered": "info", "Completed": "active", "Cancelled": "removed", "Refunded": "removed",
-           "Open": "reserved", "Expired": "removed"}.get(label, "draft")
+           "Open": "reserved", "Expired": "removed",
+           # Grabs (L2-119) and shelf finds (L2-115)
+           "Requested": "reserved", "Accepted": "info", "Bought": "info", "Received": "active",
+           "Declined": "removed", "Couldn’t get it": "removed", "Gone": "removed"}.get(label, "draft")
     return f'<span class="status status--{mod}">{esc(label)}</span>'
 
 
@@ -446,10 +449,10 @@ def note(text: str, pos: str = "top: 6rem; right: 1rem;") -> str:
 @dataclass
 class Page:
     main: str
-    nav: str = ""            # shop | clothing | shoes | dance | sports | cameras-and-tech | toys-and-crafts | sell
+    nav: str = ""            # shop | finds | clothing | shoes | dance | sports | cameras-and-tech | toys-and-crafts | sell
     user: str = "member"     # member | guest | unverified | admin
     shell: str = "app"       # app | auth | admin | bare
-    account: str = ""        # active account subnav tab: overview | listings | purchases | requests | sales | payouts | profile | notifications | settings
+    account: str = ""        # active account subnav tab: overview | listings | purchases | requests | grabs | sales | payouts | profile | notifications | settings
     top: str = ""            # banners above the header
     after: str = ""          # toasts, sticky bars, overlays after main
     footer: bool = True
@@ -496,6 +499,8 @@ def topbar(pg: Page) -> str:
     can_sell = pg.phase == 3 or pg.user == "admin"          # L2-094: Sell only for administrators in Phases 1 and 2
     nav = "".join(
         f'<a class="nav-link" href="{nav_href(k)}"{" aria-current=\"page\"" if pg.nav == k else ""}>{label}</a>' for k, label in NAV) if menus else ""
+    # Shelf finds follows the six categories (L2-114); in Phase 1 it is reached from the footer.
+    nav += (f'<a class="nav-link" href="{P("shelf-finds")}"{" aria-current=\"page\"" if pg.nav == "finds" else ""}>Shelf finds</a>' if menus else "")
     search = (f'<form class="search" role="search" action="{P("catalog", "search")}"><label class="visually-hidden" for="q">Search TuTuMuch</label>'
               f'{ic("search")}<input class="input" id="q" name="q" type="search" placeholder="Search the closet"></form>') if pg.search else ""
     search_btn = (f'<a class="btn btn--ghost btn--icon topbar__search-btn" href="{P("catalog", "search")}" aria-label="Search">{ic("search")}</a>'
@@ -526,7 +531,7 @@ def admin_topbar(pg: Page) -> str:
 
 
 ACCOUNT_TABS = [("overview", "Overview", "account"), ("listings", "Listings", "my-listings"), ("purchases", "Purchases", "purchases"),
-                ("requests", "Requests", "my-requests"), ("sales", "Sales", "sales"), ("payouts", "Payouts", "payouts"), ("profile", "Profile", "edit-profile"),
+                ("requests", "Requests", "my-requests"), ("grabs", "Grabs", "my-grabs"),("sales", "Sales", "sales"), ("payouts", "Payouts", "payouts"), ("profile", "Profile", "edit-profile"),
                 ("notifications", "Emails", "notification-settings"), ("settings", "Settings", "settings")]
 
 
@@ -537,7 +542,7 @@ def account_nav(active: str) -> str:
 
 def footer() -> str:
     """Footer skeleton (page guidelines 7): the mark (not a second logo link), short links, "© TuTuMuch"."""
-    return (f'<footer class="footer"><span class="footer__mark">{mark()}</span><nav aria-label="Footer"><a href="{P("rules")}">Marketplace rules</a>'
+    return (f'<footer class="footer"><span class="footer__mark">{mark()}</span><nav aria-label="Footer"><a href="{P("shelf-finds")}">Shelf finds</a><a href="{P("rules")}">Marketplace rules</a>'
             f'<a href="{P("privacy")}">Privacy</a><a href="{P("terms")}">Terms</a><a href="{P("welcome")}">About TuTuMuch</a><a href="{D("cookie-settings")}">Cookie settings</a></nav>'
             f'<span>© TuTuMuch</span></footer>')
 

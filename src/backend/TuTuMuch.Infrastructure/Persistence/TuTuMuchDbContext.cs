@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TuTuMuch.Application.Abstractions;
+using TuTuMuch.Domain.Finds;
 using TuTuMuch.Domain.Listings;
 using TuTuMuch.Domain.Members;
 using TuTuMuch.Domain.Notifications;
@@ -53,6 +54,10 @@ public sealed class TuTuMuchDbContext(DbContextOptions<TuTuMuchDbContext> option
     public DbSet<ItemRequestMatch> ItemRequestMatches => Set<ItemRequestMatch>();
 
     public DbSet<ShowcaseRequest> ShowcaseRequests => Set<ShowcaseRequest>();
+
+    public DbSet<ShelfFind> ShelfFinds => Set<ShelfFind>();
+
+    public DbSet<Grab> Grabs => Set<Grab>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) =>
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(TuTuMuchDbContext).Assembly);

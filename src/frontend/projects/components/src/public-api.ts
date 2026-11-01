@@ -13,6 +13,7 @@ export { EarningsComponent } from './lib/earnings/earnings';
 export { EmptyStateComponent } from './lib/empty-state/empty-state';
 export { ErrorSummaryComponent, type SummaryError } from './lib/error-summary/error-summary';
 export { FactsComponent, type Fact } from './lib/facts/facts';
+export { FindCardComponent, type FindCardView } from './lib/find-card/find-card';
 export { FilterChipsComponent, type FilterChipOption } from './lib/filter-chips/filter-chips';
 export { FixedSizeComponent } from './lib/fixed-size/fixed-size';
 export { FooterComponent } from './lib/footer/footer';

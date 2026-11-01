@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
+import { IconComponent, type IconName } from '../icon/icon';
 import { ItemRowComponent } from '../item-row/item-row';
 
 /** The item of an order summary: title, meta line and an optional thumbnail (WebP and JPEG srcsets). */
@@ -7,6 +8,8 @@ export interface OrderSummaryItem {
   title: string;
   meta: string;
   photo: { src: string; webp: string; jpeg: string } | null;
+  /** Drawn in the thumbnail well when there is no photo, as for a shelf find (L2-117). */
+  icon?: IconName;
 }
 
 /**
@@ -17,7 +20,7 @@ export interface OrderSummaryItem {
  */
 @Component({
   selector: 'tl-order-summary',
-  imports: [ItemRowComponent],
+  imports: [IconComponent, ItemRowComponent],
   templateUrl: './order-summary.html',
   styleUrl: './order-summary.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,4 +32,8 @@ export class OrderSummaryComponent {
   readonly salesTax = input<string | null>(null);
   readonly total = input<string | null>(null);
   readonly heading = input('Summary');
+  /** The first two lines: "Item" and "Shipping", or "Shelf price" and "Grab fee" for a grab (L2-117). */
+  readonly itemLabel = input('Item');
+  readonly shippingLabel = input('Shipping');
+  readonly totalLabel = input('Total');
 }

@@ -1,0 +1,6 @@
+:host {
+  display: block;
+}
+.my-grabs__skeleton {
+  padding-block: var(--space-4);
+}

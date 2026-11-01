@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 
-/** Lazy routes of the orders feature area, mounted at /: checkout, the order confirmation, purchases and sales, the buyer's order, the seller's sale, payouts and the administrator's problem page (admin shell). */
+/** Lazy routes of the orders feature area, mounted at /: checkout, the order confirmation, purchases and sales, the buyer's order, the seller's sale, payouts, the administrator's problem page (admin shell), and Grab it for me with the shopper's and the administrator's grabs (L1-025). */
 export const routes: Routes = [
   {
     path: 'checkout/:reference',
@@ -38,6 +38,27 @@ export const routes: Routes = [
     path: 'account/payouts',
     loadComponent: () => import('./payouts/payouts-page').then((m) => m.PayoutsPage),
     title: 'Payouts · TuTuMuch',
+  },
+  {
+    path: 'finds/:reference/grab',
+    loadComponent: () => import('./grab/grab-page').then((m) => m.GrabPage),
+    title: 'Grab it for me · TuTuMuch',
+  },
+  {
+    path: 'account/grabs',
+    loadComponent: () => import('./my-grabs/my-grabs-page').then((m) => m.MyGrabsPage),
+    title: 'Your grabs · TuTuMuch',
+  },
+  {
+    path: 'account/grabs/:id',
+    loadComponent: () => import('./grab-detail/grab-detail-page').then((m) => m.GrabDetailPage),
+    title: 'Grab · TuTuMuch',
+  },
+  {
+    path: 'admin/grabs',
+    loadComponent: () => import('./admin-grabs/admin-grabs-page').then((m) => m.AdminGrabsPage),
+    title: 'Grabs · TuTuMuch admin',
+    data: { shell: 'admin' },
   },
   {
     path: 'admin/problems/:reference',
