@@ -39,7 +39,7 @@ handler -> handler : GrabPricing.Deposit (20%, at least $5.00, at most the shelf
 controller --> client : 200 GrabQuoteDto
 page --> actor : Summary, "Non-refundable deposit", "How the deposit works", unticked box
 actor -> page : Tick the box, card in hosted fields, Pay {total}
-page -> client : start({ ..., depositAcknowledged, paymentMethodToken, expectedTotal, idempotencyKey })
+page -> client : start({ ..., depositAcknowledged, paymentMethodToken, expectedTotal }, Idempotency-Key)
 client -> controller : POST /api/grabs
 controller -> handler : StartGrabCommand
 alt not acknowledged
@@ -53,7 +53,7 @@ alt filtered unique index on open grabs per find
 end
 handler -> provider : CreatePaymentAsync(amount = total, key)
 controller --> client : 201 GrabDto (PaymentPending)
-loop every 2 seconds while PaymentPending
+loop every second while PaymentPending (up to a minute)
   page -> client : get(id)
 end
 provider -> hook : Signed webhook

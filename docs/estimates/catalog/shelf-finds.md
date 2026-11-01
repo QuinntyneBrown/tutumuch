@@ -14,7 +14,7 @@ The hours assume an intermediate Angular/TypeScript and ASP.NET Core/C# develope
 | `FindsController` and API acceptance tests | 3 |
 | `FindsApi` and its DTOs | 1 |
 | `ShelfFindsPage` with every state, and the "Shelf finds" links in the top bar and footer | 3 |
-| `ShelfFindPage` with its variants, the maps link and the two dialogs | 3 |
+| `FindDetailPage` with its variants, the maps link and the two dialogs | 3 |
 | `PostFindPage` with the phase guard, validation and the administrator's grab fee | 3 |
 | Demo finds in `TuTuMuch.Cli` | 1 |
 | Playwright acceptance tests via page objects and `page.route` fixtures | 2 |

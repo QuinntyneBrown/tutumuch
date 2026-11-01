@@ -3,7 +3,7 @@
 LAYOUT_WITH_LEGEND()
 title Components — Shelf finds
 
-Container(web, "TuTuMuch Web", "Angular", "@tutumuch/catalog ShelfFindsPage, ShelfFindPage, dialogs; @tutumuch/listings PostFindPage; @tutumuch/api FindsApi")
+Container(web, "TuTuMuch Web", "Angular", "@tutumuch/catalog ShelfFindsPage, FindDetailPage, dialogs; @tutumuch/listings PostFindPage; @tutumuch/api FindsApi")
 Container_Boundary(api, "TuTuMuch API") {
   Component(controller, "FindsController", "ASP.NET Core controller", "GET /api/finds, GET /api/finds/{reference}, POST /api/finds (CanSell), POST /gone, DELETE")
   Component(policy, "CanSell policy", "Authorization handlers", "Verified member; administrator only in Phases 1 and 2")

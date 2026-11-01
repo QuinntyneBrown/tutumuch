@@ -8,7 +8,7 @@ skinparam ArrowColor #344054
 actor "Shopper" as shopper
 actor "Poster" as poster
 box "Frontend — TuTuMuch Web application" #E0F2FE
-  participant "ShelfFindsPage / ShelfFindPage (@tutumuch/catalog)" as page
+  participant "ShelfFindsPage / FindDetailPage (@tutumuch/catalog)" as page
   participant "MarkFindGoneDialog / WithdrawFindDialog" as dialog
   participant "FindsApi (@tutumuch/api)" as client
 end box

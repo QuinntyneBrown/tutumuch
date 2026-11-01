@@ -5,7 +5,7 @@
 | cancel-order | 3 days | 95% |
 | checkout-and-pay | 7 days | 90% |
 | complete-order | 3 days | 100% |
-| grab-it-for-me | 5 days | 0% |
+| grab-it-for-me | 5 days | 90% |
 | order-history | 3 days | 90% |
 | resolve-order-problems | 5 days | 90% |
 | seller-payouts | 5 days | 95% |
@@ -37,3 +37,7 @@ provider ([ADR orders/0007](../adr/orders/0007-order-problems-administrator-flag
 
 order-history is at 90%: paging and "Show more" wait for a supplied page size and copy
 ([ADR orders/0008](../adr/orders/0008-order-history-unpaged-lists-and-address-window-on-read.md)).
+
+grab-it-for-me is at 90%: grab payments and refunds go through the payment provider port, whose
+adapter waits for a provider as for checkout, and the "Your grabs" entry in the account menu waits for
+the account menu ([ADR orders/0009](../adr/orders/0009-grab-it-for-me-fee-and-non-refundable-deposit.md)).

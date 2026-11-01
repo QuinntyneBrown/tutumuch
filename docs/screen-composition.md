@@ -624,8 +624,8 @@ address step and hosted card fields (`L2-117`, ADR orders/0009). `POST /api/grab
 address; `POST /api/grabs` pays once per idempotency key; the page then polls
 `GET /api/me/grabs/{id}` until the webhook has decided and goes to `/account/grabs/{id}`.
 
-- Library: `tl-choice` radios (saved address or "New address", as checkout), `tl-form-field` and the
-  checkout address form (US states; country "TuTuMuch ships within the United States only"),
+- Library: `tl-form-field` and the checkout address form (US states; country "TuTuMuch ships within
+  the United States only"; no saved address for grabs in this release, "See the total" prices it),
   `tl-order-summary` (`itemLabel="Shelf price"`, `shippingLabel="Grab fee"`, `item.icon="map-pin"`,
   meta "{store} · {reference}", projected "Non-refundable deposit: {deposit}"), `tl-alert` (info
   "How the deposit works": "You pay the total now. If TuTuMuch can’t grab it, you get everything
@@ -633,7 +633,7 @@ address; `POST /api/grabs` pays once per idempotency key; the page then polls
   deposit."; danger "Your bank declined the card" with the reason; danger non-US), `tl-choice`
   checkbox ("I understand the {deposit} deposit is non-refundable once TuTuMuch accepts", error
   "Tick the box to confirm you understand the deposit"), `tl-error-summary` (invalid), the hosted
-  card fields of checkout (disabled until the box is ticked), `tl-button` (primary lg block "Pay
+  card fields of checkout (shown with the quote; Pay unticked shows the error and sends nothing), `tl-button` (primary lg block "Pay
   {total}" with busy and the "Confirming with your bank…" status line; ghost "Back to the find"),
   `tl-center-state` (in-progress: icon `clock`, "Someone already asked TuTuMuch to grab this one";
   unverified: "Verify your email to ask for a grab"; error "Couldn’t price your grab"),
@@ -645,7 +645,8 @@ address; `POST /api/grabs` pays once per idempotency key; the page then polls
 ### Your grabs — `/account/grabs` (`pages/my-grabs`: default, loading, empty, error)
 
 Built by shelf finds in `@tutumuch/orders` (`src/lib/my-grabs/`), reading `GET /api/me/grabs`
-(`L2-119`). The account tab "Grabs" sits after "Requests".
+(`L2-119`). The mocks put an account tab "Grabs" after "Requests"; the account tabs are not composed
+yet, so the page is reached from the grab flow and the grab emails.
 
 - Library: `tl-item-row` (map-pin well, find title, "{reference} · {store} · {total}"), `tl-status`
   (Requested reserved; Accepted and Bought info; Received active; Declined, Couldn’t get it, Expired
@@ -664,7 +665,7 @@ Built by shelf finds in `@tutumuch/orders` (`src/lib/grab-detail/`), reading `GE
   success with `truck` for Bought and `check-circle` for Received; warning for the refunded endings;
   the text is the status words of `L2-119`), `tl-facts` (Item linking to the find, Store with the
   address, Status as `tl-status`, Refunded, Deposit kept), `tl-order-summary` (as on the grab page,
-  heading "Summary", total line "Total paid"), `tl-button` ("Cancel grab" opening `CancelGrabDialog`
+  heading "Summary", `totalLabel="Total paid"`), `tl-button` ("Cancel grab" opening `CancelGrabDialog`
   for Requested and Accepted; primary "I’ve got it" opening `GrabReceivedDialog` for Bought),
   `tl-center-state` (error, not-found "We couldn’t find that grab"), `tl-skeleton`, `ToastService`
 - Local: the breadcrumb (Your grabs › {reference}), h1 "Grab {reference}", "Paid {date}", the
