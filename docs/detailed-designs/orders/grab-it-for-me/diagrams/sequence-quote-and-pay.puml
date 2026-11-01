@@ -1,0 +1,69 @@
+@startuml
+title UML sequence behaviour — Quote and pay for a grab
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+actor "Shopper" as actor
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "GrabPage (@tutumuch/orders)" as page
+  participant "GrabsApi (@tutumuch/api)" as client
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "GrabsController" as controller
+  participant "PaymentWebhookController" as hook
+end box
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
+  participant "GrabCommandHandlers" as handler
+  participant "PaymentWebhookHandler" as webhook
+end box
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
+  participant "IPaymentProvider adapter" as provider
+end box
+actor -> page : Open /finds/{reference}/grab
+alt visitor
+  page --> actor : /sign-in?returnUrl=%2Ffinds%2F{reference}%2Fgrab (L2-117)
+end
+actor -> page : US address, Continue
+page -> client : quote(findReference, address)
+client -> controller : POST /api/grabs/quote
+controller -> handler : QuoteGrabCommand(shopperId, reference, address)
+handler -> db : Active, unexpired find of an open poster; open grab?
+alt not found / own find / not offered / open grab
+  controller --> client : 404 FIND_NOT_FOUND / 422 CANNOT_GRAB_OWN_FIND / 409 GRAB_NOT_OFFERED / 409 GRAB_IN_PROGRESS
+end
+handler -> provider : QuoteTaxAsync(shelfPrice + grabFee, address)
+handler -> handler : GrabPricing.Deposit (20%, at least $5.00, at most the shelf price)
+controller --> client : 200 GrabQuoteDto
+page --> actor : Summary, "Non-refundable deposit", "How the deposit works", unticked box
+actor -> page : Tick the box, card in hosted fields, Pay {total}
+page -> client : start({ ..., depositAcknowledged, paymentMethodToken, expectedTotal, idempotencyKey })
+client -> controller : POST /api/grabs
+controller -> handler : StartGrabCommand
+alt not acknowledged
+  controller --> client : 422 DEPOSIT_NOT_ACKNOWLEDGED
+else total differs from the quote
+  controller --> client : 409 TOTAL_CHANGED
+end
+handler -> db : Insert Grab (PaymentPending) and Payment (GrabId) in one save
+alt filtered unique index on open grabs per find
+  controller --> client : 409 GRAB_IN_PROGRESS (L2-029)
+end
+handler -> provider : CreatePaymentAsync(amount = total, key)
+controller --> client : 201 GrabDto (PaymentPending)
+loop every 2 seconds while PaymentPending
+  page -> client : get(id)
+end
+provider -> hook : Signed webhook
+hook -> webhook : HandlePaymentWebhookCommand
+webhook -> db : Payment by ID; GrabId set
+alt succeeded
+  webhook -> db : Payment Succeeded; Grab Requested, AnswerBy = now + 48 h; outbox GrabRequested to the poster (L2-120)
+  page --> actor : /account/grabs/{id} "Waiting for TuTuMuch to accept"
+else failed
+  webhook -> db : Grab PaymentFailed (find has no open grab)
+  page --> actor : Decline reason; address and tick kept; pay again with a new key
+end
+@enduml

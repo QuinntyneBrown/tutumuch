@@ -86,6 +86,8 @@ never changes the count and is not limited.
 - **`@tutumuch/marketing`** — `WelcomePage` replaces the three "Start selling" links with
   "Selling opens soon." and the seller band copy of the `selling-opens-soon` mock.
 
+- **Shelf finds** ([shelf-finds](../../catalog/shelf-finds/README.md), `L2-113`) — `POST /api/finds` uses the `CanSell` policy, so posting a find follows the same phase rule as selling, and `/finds/new` shows the "Selling opens soon" state to anyone the phase does not allow. Browsing finds and asking for a grab work in every phase.
+
 ### Configuration and operations
 
 - `appsettings.json` gains `"Launch": { "Phase": 1, "PhaseOneProductLimit": 40 }`.

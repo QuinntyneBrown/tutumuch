@@ -1,0 +1,20 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Shelf finds
+
+Container(web, "TuTuMuch Web", "Angular", "@tutumuch/catalog ShelfFindsPage, ShelfFindPage, dialogs; @tutumuch/listings PostFindPage; @tutumuch/api FindsApi")
+Container_Boundary(api, "TuTuMuch API") {
+  Component(controller, "FindsController", "ASP.NET Core controller", "GET /api/finds, GET /api/finds/{reference}, POST /api/finds (CanSell), POST /gone, DELETE")
+  Component(policy, "CanSell policy", "Authorization handlers", "Verified member; administrator only in Phases 1 and 2")
+  Component(handlers, "Find command and query handlers", "MediatR handlers", "Post, browse, get, mark gone, withdraw")
+  Component(domain, "ShelfFind", "Domain entity", "Input rules, expiry, gone and withdraw")
+  ComponentDb(db, "TuTuMuchDbContext", "EF Core", "ShelfFinds, Grabs, Members")
+}
+
+Rel(web, controller, "Reads, posts and manages finds", "JSON/HTTPS")
+Rel(controller, policy, "Authorizes POST /api/finds")
+Rel(controller, handlers, "Sends commands and queries")
+Rel(handlers, domain, "Checks and changes")
+Rel(handlers, db, "Reads and writes finds; reads whether a grab is open")
+@enduml

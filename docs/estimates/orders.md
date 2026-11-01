@@ -5,6 +5,7 @@
 | cancel-order | 3 days | 95% |
 | checkout-and-pay | 7 days | 90% |
 | complete-order | 3 days | 100% |
+| grab-it-for-me | 5 days | 0% |
 | order-history | 3 days | 90% |
 | resolve-order-problems | 5 days | 90% |
 | seller-payouts | 5 days | 95% |

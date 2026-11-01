@@ -1,0 +1,16 @@
+@startuml
+!include <C4/C4_Context>
+LAYOUT_WITH_LEGEND()
+title System Context — Shelf finds
+
+Person(poster, "Poster", "Member who may sell in the current launch phase")
+Person(shopper, "Shopper", "Visitor or member")
+System(tutumuch, "TuTuMuch", "Marketplace for all things young girls")
+System_Ext(maps, "Google Maps", "Map search opened by a plain link")
+System_Ext(store, "Store", "Where the item sits on the shelf")
+
+Rel(poster, tutumuch, "Posts finds, marks them gone or withdraws them using", "HTTPS")
+Rel(shopper, tutumuch, "Browses and opens finds using", "HTTPS")
+Rel(shopper, maps, "Opens the store's address in", "HTTPS link")
+Rel(shopper, store, "Goes and buys the item at")
+@enduml

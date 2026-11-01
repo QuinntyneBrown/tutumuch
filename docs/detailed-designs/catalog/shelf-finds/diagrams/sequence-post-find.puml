@@ -1,0 +1,58 @@
+@startuml
+title UML sequence behaviour — Post a shelf find
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+actor "Poster" as actor
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "PostFindPage (@tutumuch/listings)" as page
+  participant "FindsApi (@tutumuch/api)" as client
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "CanSell policy" as policy
+  participant "FindsController" as controller
+end box
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
+  participant "FindCommandHandlers" as handler
+  participant "ShelfFind" as find
+end box
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
+end box
+actor -> page : Open /finds/new
+alt visitor
+  page --> actor : /sign-in?returnUrl=%2Ffinds%2Fnew
+else canSell() is false (Phase 1 or 2, not an administrator)
+  page --> actor : "Selling opens soon", Shop the closet (L2-091)
+else may sell
+  page --> actor : Form; "Offer to grab it" only for an administrator
+end
+actor -> page : Fill in and Post find
+page -> client : post(input)
+client -> controller : POST /api/finds
+controller -> policy : Authorize
+alt visitor
+  policy --> client : 401
+else phase refuses or email not verified
+  policy --> client : 403 SELLING_NOT_OPEN or EMAIL_NOT_VERIFIED
+end
+controller -> handler : PostFindCommand(posterId, isAdministrator, input)
+alt grab fee from a member without the role
+  handler --> controller : 422 GRAB_OFFER_NOT_ALLOWED
+end
+handler -> find : Check(input, today) (L2-113, audience rule of L1-003)
+alt violations
+  handler --> controller : 422 with field errors
+  page --> actor : Error summary
+end
+handler -> db : Count the poster's finds since 00:00 UTC
+alt 20 or more
+  controller --> client : 429 Retry-After "That's 20 finds today"
+else
+  handler -> db : Next number; insert ShelfFind (Active, F-{number})
+  controller --> client : 201 FindDetailDto
+  page --> actor : /finds/{reference}, toast "Your find is live"
+end
+@enduml

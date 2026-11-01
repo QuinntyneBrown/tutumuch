@@ -1,0 +1,71 @@
+@startuml
+title UML sequence behaviour — Handle, cancel and expire a grab
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+actor "Owner (administrator)" as owner
+actor "Shopper" as shopper
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "AdminGrabsPage" as admin
+  participant "GrabDetailPage / CancelGrabDialog" as detail
+end box
+box "Backend — TuTuMuch API and Worker" #D1FADF
+  participant "AdminGrabsController" as adminApi
+  participant "GrabsController" as grabsApi
+  participant "GrabDeadlineJob" as job
+end box
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
+  participant "Grab handlers" as handler
+  participant "GrabRefunds" as refunds
+end box
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
+  participant "IPaymentProvider adapter" as provider
+end box
+owner -> admin : Open /admin/grabs
+admin -> adminApi : GET /api/admin/grabs (Administrator policy, L2-010)
+adminApi --> admin : Open grabs by deadline, then ended grabs
+alt Accept (Requested)
+  owner -> admin : Accept
+  admin -> adminApi : POST /api/admin/grabs/{id}/accept
+  adminApi -> handler : AcceptGrabCommand
+  handler -> db : Accepted, BuyBy = now + 3 days; outbox GrabUpdated
+else Decline (Requested)
+  admin -> adminApi : POST .../decline
+  adminApi -> handler : DeclineGrabCommand
+  handler -> refunds : full refund
+else Bought it (Accepted)
+  admin -> adminApi : POST .../bought
+  adminApi -> handler : MarkGrabBoughtCommand
+  handler -> db : Bought; find Gone; outbox GrabUpdated
+else Couldn't get it (Accepted)
+  admin -> adminApi : POST .../unavailable { reason }
+  adminApi -> handler : MarkGrabUnavailableCommand
+  handler -> refunds : full refund; find Gone
+else status does not fit
+  adminApi --> admin : 409 GRAB_STATE_CHANGED
+end
+shopper -> detail : Cancel grab
+detail --> shopper : "You get {total} back" or "You get {total - deposit} back. TuTuMuch keeps the {deposit} deposit."
+shopper -> detail : Confirm
+detail -> grabsApi : POST /api/me/grabs/{id}/cancel
+grabsApi -> handler : CancelGrabCommand(shopperId, id)
+alt Requested
+  handler -> refunds : refund the total
+else Accepted
+  handler -> refunds : refund the total less the deposit (ADR orders/0009)
+else Bought or ended
+  grabsApi --> detail : 409 GRAB_STATE_CHANGED
+end
+shopper -> detail : I've got it (Bought)
+detail -> grabsApi : POST /api/me/grabs/{id}/received
+grabsApi -> handler : ConfirmGrabReceivedCommand -> Received
+job -> handler : ExpireGrabsCommand(now) every 5 minutes
+handler -> db : Requested past AnswerBy, Accepted past BuyBy -> Expired; Bought 14 days -> Received
+handler -> refunds : full refund for each expired grab
+refunds -> db : Refund.ForGrab (Pending) saved with the grab change and GrabUpdated email
+refunds -> provider : RefundAsync(providerPaymentId, amount, refund.Id)
+provider --> refunds : provider refund ID (Issued); a failure leaves it Pending
+@enduml

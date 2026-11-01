@@ -1,0 +1,62 @@
+@startuml
+title UML sequence behaviour — Browse, open, mark as gone and withdraw a shelf find
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+actor "Shopper" as shopper
+actor "Poster" as poster
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "ShelfFindsPage / ShelfFindPage (@tutumuch/catalog)" as page
+  participant "MarkFindGoneDialog / WithdrawFindDialog" as dialog
+  participant "FindsApi (@tutumuch/api)" as client
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "FindsController" as controller
+end box
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
+  participant "FindCommandHandlers" as handler
+end box
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
+end box
+shopper -> page : Open /finds
+page -> client : list(1)
+client -> controller : GET /api/finds?page=1&pageSize=24
+controller -> handler : BrowseFindsQuery
+handler -> db : Active, not expired, open posters, newest first; open grabs per find
+controller --> client : 200 { items, page, pageSize, totalCount } (L2-114)
+page --> shopper : Cards with "Grab available", or "No shelf finds yet"
+shopper -> page : Open /finds/{reference}
+page -> client : get(reference)
+client -> controller : GET /api/finds/{reference}
+controller -> handler : GetFindQuery(reference, viewerId?)
+alt unknown, withdrawn or closed poster
+  controller --> client : 404 FIND_NOT_FOUND
+  page --> shopper : "We couldn't find that"
+else Gone or Expired
+  page --> shopper : "This find is gone" / "This find has expired", See more shelf finds
+else Active
+  controller --> client : 200 FindDetailDto (grabOpen names no shopper, L2-121)
+  page --> shopper : Store, address, Open in maps, grab box when offered (L2-115)
+end
+shopper -> page : Open in maps (new tab, rel noopener noreferrer)
+poster -> page : Mark as gone (or Withdraw) on their own find
+page -> dialog : DialogService.open
+poster -> dialog : Confirm
+dialog -> client : markGone(reference) / withdraw(reference)
+client -> controller : POST /api/finds/{reference}/gone / DELETE /api/finds/{reference}
+controller -> handler : MarkFindGoneCommand / WithdrawFindCommand(posterId, reference)
+handler -> db : The poster's own Active find; any open grab?
+alt another member's find
+  controller --> client : 404 FIND_NOT_FOUND
+else open grab
+  controller --> client : 409 GRAB_IN_PROGRESS
+  dialog --> poster : "TuTuMuch is grabbing this one for a shopper"
+else
+  handler -> db : Status = Gone or Withdrawn
+  controller --> client : 200 FindDetailDto / 204
+  dialog --> poster : Toast "Marked as gone" / "Find withdrawn" and /finds (L2-116)
+end
+@enduml

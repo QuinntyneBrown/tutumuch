@@ -5,7 +5,7 @@ reserves a listing, the payment provider's signed webhook creates a `Paid` order
 the seller ships the item. The order then completes, is cancelled or is refunded after
 a problem, and the seller's payout follows the outcome. One order state machine, defined
 in [ship-order](ship-order/README.md), governs every status change across the seven
-features below.
+features below. [grab-it-for-me](grab-it-for-me/README.md) has its own small state machine for grabs of shelf finds, which are not orders.
 
 | Feature | L2 requirements | Estimate |
 |---------|-----------------|----------|
@@ -16,3 +16,4 @@ features below.
 | [cancel-order](cancel-order/README.md) | `L2-035` | [41 h](../../estimates/orders/cancel-order.md) |
 | [resolve-order-problems](resolve-order-problems/README.md) | `L2-036` | [65 h](../../estimates/orders/resolve-order-problems.md) |
 | [order-history](order-history/README.md) | `L2-037` | [35 h](../../estimates/orders/order-history.md) |
+| [grab-it-for-me](grab-it-for-me/README.md) | `L2-117` to `L2-121` | [40 h](../../estimates/orders/grab-it-for-me.md) |

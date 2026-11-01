@@ -1,0 +1,20 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Shelf finds
+
+Person(poster, "Poster", "Member who may sell")
+Person(shopper, "Shopper", "Visitor or member")
+System_Ext(maps, "Google Maps", "Map search")
+System_Boundary(tutumuch, "TuTuMuch") {
+  Container(web, "TuTuMuch Web", "Angular", "ShelfFindsPage, ShelfFindPage, MarkFindGoneDialog, WithdrawFindDialog, PostFindPage")
+  Container(api, "TuTuMuch API", "ASP.NET Core", "/api/finds, /api/finds/{reference}, /gone")
+  ContainerDb(db, "TuTuMuch database", "SQL Server", "ShelfFinds, Grabs (open check only), Members")
+}
+
+Rel(poster, web, "Posts and manages finds", "HTTPS")
+Rel(shopper, web, "Browses finds", "HTTPS")
+Rel(web, api, "Calls", "JSON/HTTPS")
+Rel(api, db, "Reads and writes finds", "EF Core")
+Rel(shopper, maps, "Follows Open in maps", "HTTPS link")
+@enduml

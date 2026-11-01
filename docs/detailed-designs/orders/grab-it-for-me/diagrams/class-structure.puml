@@ -1,0 +1,146 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Grab it for me
+
+package "TuTuMuch.Domain.Finds" {
+  enum GrabStatus {
+    PaymentPending
+    PaymentFailed
+    Requested
+    Accepted
+    Bought
+    Received
+    Declined
+    Unavailable
+    Expired
+    Cancelled
+  }
+  class Grab {
+    +Guid Id
+    +long Number
+    +string Reference
+    +Guid FindId
+    +Guid ShopperId
+    +GrabStatus Status
+    +decimal ShelfPrice
+    +decimal GrabFee
+    +decimal SalesTax
+    +decimal Total
+    +decimal Deposit
+    +ShippingAddress ShippingAddress
+    +Guid IdempotencyKey
+    +string? PaymentDeclineReason
+    +string? UnavailableReason
+    +decimal? RefundedAmount
+    +DateTime? AnswerBy
+    +DateTime? BuyBy
+    +DateTime? BoughtAt
+    +bool IsOpen
+    +decimal? RefundIfCancelled
+    +PaymentSucceeded(now): void
+    +PaymentFailed(reason, now): void
+    +Accept(now): void
+    +Decline(now): decimal
+    +MarkBought(now): void
+    +MarkUnavailable(reason, now): decimal
+    +Cancel(now): decimal
+    +MarkReceived(now): void
+    +Expire(now): decimal
+  }
+  class GrabPricing <<static>> {
+    +Deposit(shelfPrice, percent, minimum): decimal
+    +Total(shelfPrice, grabFee, tax): decimal
+    +RefundAfterAcceptance(total, deposit): decimal
+  }
+  class ShelfFind {
+    +Guid Id
+    +decimal ShelfPrice
+    +decimal? GrabFee
+    +MarkGone(now): void
+  }
+}
+
+package "TuTuMuch.Domain.Orders" {
+  class Payment {
+    +Guid Id
+    +Guid? CheckoutId
+    +Guid? GrabId
+    +decimal Amount
+    +PaymentStatus Status
+    +{static} ForGrab(grabId, key, amount, now): Payment
+  }
+  class Refund {
+    +Guid PaymentId
+    +decimal Amount
+    +RefundReason Reason
+    +{static} ForGrab(payment, amount, now): Refund
+  }
+  enum RefundReason {
+    ...
+    GrabRefunded
+  }
+}
+
+package "TuTuMuch.Application.Grabs" {
+  class GrabOptions {
+    +decimal DepositPercent = 20
+    +decimal MinimumDeposit = 5.00
+  }
+  class GrabCommandHandlers {
+    +Handle(QuoteGrabCommand): Result<GrabQuoteDto>
+    +Handle(StartGrabCommand): Result<GrabDto>
+    +Handle(GetMyGrabsQuery): IReadOnlyList<GrabSummaryDto>
+    +Handle(GetMyGrabQuery): Result<GrabDto>
+    +Handle(CancelGrabCommand): Result<GrabDto>
+    +Handle(ConfirmGrabReceivedCommand): Result<GrabDto>
+  }
+  class GrabAdminHandlers {
+    +Handle(GetAdminGrabsQuery): IReadOnlyList<AdminGrabDto>
+    +Handle(AcceptGrabCommand): Result<AdminGrabDto>
+    +Handle(DeclineGrabCommand): Result<AdminGrabDto>
+    +Handle(MarkGrabBoughtCommand): Result<AdminGrabDto>
+    +Handle(MarkGrabUnavailableCommand): Result<AdminGrabDto>
+  }
+  class ExpireGrabsHandler {
+    +Handle(ExpireGrabsCommand): int
+  }
+  class GrabRefunds {
+    +RefundAsync(grab, payment, amount): Task
+  }
+}
+
+package "TuTuMuch.Application.Abstractions" {
+  interface IPaymentProvider {
+    +QuoteTaxAsync(amount, address): decimal
+    +CreatePaymentAsync(request): string
+    +RefundAsync(providerPaymentId, amount, key): string
+  }
+}
+
+Grab --> GrabStatus
+ShelfFind "1" -- "0..*" Grab : is grabbed in >
+Grab "1" -- "1..*" Payment : is paid by >
+Payment "1" -- "0..*" Refund : is refunded by >
+Refund --> RefundReason
+GrabCommandHandlers ..> GrabPricing
+GrabCommandHandlers ..> GrabOptions
+GrabCommandHandlers ..> Grab
+GrabCommandHandlers ..> IPaymentProvider
+GrabCommandHandlers ..> GrabRefunds
+GrabAdminHandlers ..> Grab
+GrabAdminHandlers ..> ShelfFind : MarkGone
+GrabAdminHandlers ..> GrabRefunds
+ExpireGrabsHandler ..> Grab
+ExpireGrabsHandler ..> GrabRefunds
+GrabRefunds ..> Refund
+GrabRefunds ..> IPaymentProvider
+@enduml

@@ -120,6 +120,10 @@ Address columns are plain until [protect-personal-data](../../privacy/protect-pe
 
 [request-showcase-item](../../catalog/request-showcase-item/README.md) adds `Listing.IsShowcase`. `StartCheckoutCommand` refuses a showcase listing with `409 LISTING_SHOWCASE` after the visibility and own-listing checks, and the conditional reservation update also requires `IsShowcase = 0`, so a showcase listing is never reserved, sold or paid for ([ADR catalog/0008](../../../adr/catalog/0008-showcase-listings-and-showcase-requests.md)). `CheckoutPage` shows the `showcase` view for that code: "This one has already found a home" with "Request this item" back to the listing and no address or card field.
 
+### Grab payments
+
+[grab-it-for-me](../grab-it-for-me/README.md) reuses `Payment` and `Refund` for grabs of shelf finds. `Payment.CheckoutId` becomes nullable and `Payment.GrabId` is added; exactly one of the two is set. `PaymentWebhookHandler` reads the payment as today and, when `GrabId` is set, hands the event to the grab branch: a success makes the grab Requested and queues `GrabRequested`, a failure makes it PaymentFailed. Refunds of a grab use the new reason `GrabRefunded` with a stated amount ([ADR orders/0009](../../../adr/orders/0009-grab-it-for-me-fee-and-non-refundable-deposit.md)). Checkout, reservation and orders do not change.
+
 ### Open questions and deferred work
 
 - The payment provider, its SDK, webhook format and credentials are not chosen. The held `Payout`, the `SaleMade` notification and the `Payouts:FeePercent` snapshot on the order arrive with seller-payouts and send-email-notifications.

@@ -156,6 +156,8 @@ No plaintext address column exists once this feature is built. Searching by addr
 
 Showcase requests ([request-showcase-item](../../catalog/request-showcase-item/README.md), `L2-111`) hold a member's note and link to their account; the member's email reaches only the administrator's list. `ShowcaseRequests` cascades from `Members`, so erasing a member erases their requests, and a closed member's requests leave the administrator's list at once.
 
+Shelf finds and grabs ([shelf-finds](../../catalog/shelf-finds/README.md), [grab-it-for-me](../../orders/grab-it-for-me/README.md), `L2-121`): a find is public apart from its poster's member ID, and its store address is a business address, never the poster's. A grab, its shipping address and the shopper's email reach only the shopper and administrators; public find responses say only that a grab is open. `ShelfFinds` and `Grabs` cascade from `Members`, so erasing a member erases their finds and grabs, and a closed member's finds leave Shelf finds at once.
+
 ### Configuration
 
 | Key | Value |
