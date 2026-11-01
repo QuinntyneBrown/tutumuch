@@ -5,6 +5,7 @@ using TuTuMuch.Application.Abstractions;
 using TuTuMuch.Application.Common;
 using TuTuMuch.Application.Listings;
 using TuTuMuch.Application.Notifications;
+using TuTuMuch.Domain.Finds;
 using TuTuMuch.Domain.Listings;
 using TuTuMuch.Domain.Notifications;
 using TuTuMuch.Domain.Orders;
@@ -60,6 +61,11 @@ public sealed class PaymentWebhookHandler(
             return await SaveAsync(WebhookOutcome.Ignored, cancellationToken);
         }
 
+        if (payment.GrabId is { } grabId)
+        {
+            return await HandleGrabAsync(payment, grabId, paymentEvent, now, cancellationToken);
+        }
+
         var checkout = await db.Checkouts.SingleAsync(c => c.Id == payment.CheckoutId, cancellationToken);
         if (paymentEvent.Type == PaymentEventType.Failed)
         {
@@ -110,6 +116,49 @@ public sealed class PaymentWebhookHandler(
         }
 
         return outcome;
+    }
+
+    /// <summary>
+    /// A grab's payment (L2-117, ADR orders/0009): a success makes the grab Requested and emails the
+    /// poster; a decline ends it so the find is free again and the shopper can try again.
+    /// </summary>
+    private async Task<Result<WebhookOutcome>> HandleGrabAsync(Payment payment, Guid grabId, PaymentEvent paymentEvent, DateTime now, CancellationToken cancellationToken)
+    {
+        var grab = await db.Grabs.SingleAsync(g => g.Id == grabId, cancellationToken);
+        if (paymentEvent.Type == PaymentEventType.Failed)
+        {
+            payment.Fail(paymentEvent.ProviderPaymentId, paymentEvent.DeclineReason ?? "Your bank declined the card.", now);
+            if (grab.Status == GrabStatus.PaymentPending)
+            {
+                grab.PaymentFailed(payment.DeclineReason!, now);
+            }
+
+            return await SaveAsync(WebhookOutcome.Processed, cancellationToken);
+        }
+
+        payment.Succeed(paymentEvent.ProviderPaymentId, paymentEvent.CardBrand, paymentEvent.CardLast4, now);
+        if (grab.Status != GrabStatus.PaymentPending)
+        {
+            // The grab ended before the provider confirmed (the provider was unreachable at first): refund it.
+            var refund = Refund.ForDuplicate(payment, now);
+            db.Refunds.Add(refund);
+            var ignored = await SaveAsync(WebhookOutcome.Processed, cancellationToken);
+            if (ignored.IsSuccess && ignored.Value == WebhookOutcome.Processed)
+            {
+                await IssueAsync(refund, payment, cancellationToken);
+            }
+
+            return ignored;
+        }
+
+        grab.PaymentSucceeded(now);
+        var find = await db.ShelfFinds.AsNoTracking().SingleAsync(f => f.Id == grab.FindId, cancellationToken);
+        var shopper = await db.Members.AsNoTracking().Where(m => m.Id == grab.ShopperId).Select(m => m.DisplayName).SingleAsync(cancellationToken);
+        notifications.Enqueue(
+            NotificationType.GrabRequested,
+            find.PosterId,
+            new GrabRequestedEmail(grab.Reference, find.Title, find.StoreName, shopper, grab.Total, grab.AnswerBy!.Value));
+        return await SaveAsync(WebhookOutcome.Processed, cancellationToken);
     }
 
     /// <summary>Commits the event with its changes; a concurrent copy of the same event loses on the event key.</summary>

@@ -19,7 +19,11 @@ public sealed class Payment
 
     public Guid Id { get; private set; }
 
-    public Guid CheckoutId { get; private set; }
+    /// <summary>The checkout this payment is for; null for a grab payment.</summary>
+    public Guid? CheckoutId { get; private set; }
+
+    /// <summary>The grab this payment is for (L2-117, ADR orders/0009); null for a checkout payment.</summary>
+    public Guid? GrabId { get; private set; }
 
     /// <summary>The client's key for this attempt; a repeated request with it changes nothing (L2-030 AC6).</summary>
     public Guid IdempotencyKey { get; private set; }
@@ -44,6 +48,17 @@ public sealed class Payment
     {
         Id = Guid.NewGuid(),
         CheckoutId = checkoutId,
+        IdempotencyKey = idempotencyKey,
+        Amount = amount,
+        Status = PaymentStatus.Pending,
+        CreatedAt = now,
+    };
+
+    /// <summary>The up-front payment of a grab's total (L2-117).</summary>
+    public static Payment ForGrab(Guid grabId, Guid idempotencyKey, decimal amount, DateTime now) => new()
+    {
+        Id = Guid.NewGuid(),
+        GrabId = grabId,
         IdempotencyKey = idempotencyKey,
         Amount = amount,
         Status = PaymentStatus.Pending,

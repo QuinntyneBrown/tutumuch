@@ -33,6 +33,7 @@ public static class DependencyInjection
         services.Configure<AppOptions>(configuration.GetSection("App"));
         services.Configure<NotificationOptions>(configuration.GetSection("Notifications"));
         services.Configure<SellingOptions>(configuration.GetSection("Selling"));
+        services.Configure<Application.Grabs.GrabOptions>(configuration.GetSection(Application.Grabs.GrabOptions.Section));
         services.AddOptions<LaunchOptions>().Bind(configuration.GetSection(LaunchOptions.Section)).ValidateOnStart();
         services.AddSingleton<IValidateOptions<LaunchOptions>, LaunchOptionsValidator>();
         services.Configure<PhotoOptions>(configuration.GetSection("Photos"));

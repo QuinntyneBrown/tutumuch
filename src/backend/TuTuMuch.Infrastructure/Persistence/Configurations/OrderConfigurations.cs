@@ -52,6 +52,9 @@ internal sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         builder.HasOne<Checkout>().WithMany().HasForeignKey(p => p.CheckoutId).OnDelete(DeleteBehavior.Restrict);
         builder.HasIndex(p => p.IdempotencyKey).IsUnique().HasDatabaseName("UX_Payments_IdempotencyKey");
         builder.HasIndex(p => p.CheckoutId).HasDatabaseName("IX_Payments_CheckoutId");
+
+        // A grab's payment has no checkout (ADR orders/0009); no foreign key, so erasing a shopper keeps the payment record.
+        builder.HasIndex(p => p.GrabId).HasDatabaseName("IX_Payments_GrabId");
     }
 }
 

@@ -46,3 +46,14 @@ public sealed record DraftExpiryReminderEmail(string ListingReference, string Ti
 
 /// <summary>A listing that became Active matched one or more of the member's open item requests (L2-101); one email per member per listing.</summary>
 public sealed record ItemRequestMatchedEmail(string ListingReference, string Title, string Brand, decimal Price);
+
+/// <summary>A shopper paid for a grab of the poster's find (L2-120); the link goes to the admin list.</summary>
+public sealed record GrabRequestedEmail(string GrabReference, string FindTitle, string StoreName, string ShopperDisplayName, decimal Total, DateTime AnswerBy);
+
+/// <summary>
+/// The shopper's grab changed (L2-120). <paramref name="Status"/> is the grab status;
+/// <paramref name="Refunded"/> is the amount refunded when the grab ended with a refund,
+/// <paramref name="DepositKept"/> the deposit TuTuMuch kept on a cancellation after acceptance,
+/// and <paramref name="Reason"/> why TuTuMuch couldn't get it.
+/// </summary>
+public sealed record GrabUpdatedEmail(Guid GrabId, string GrabReference, string FindTitle, string Status, decimal? Refunded, decimal? DepositKept, string? Reason, DateTime? BuyBy);

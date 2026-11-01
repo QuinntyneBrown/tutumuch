@@ -22,6 +22,197 @@ namespace TuTuMuch.Infrastructure.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("TuTuMuch.Domain.Finds.Grab", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("AcceptedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("AnswerBy")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("BoughtAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("BuyBy")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Deposit")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<DateTime?>("EndedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("FindId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("GrabFee")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<long>("Number")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("PaidAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentDeclineReason")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<Guid?>("PaymentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ReceivedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Reference")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<decimal?>("RefundedAmount")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<decimal>("SalesTax")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<decimal>("ShelfPrice")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<Guid>("ShopperId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Status")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<decimal>("Total")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<string>("UnavailableReason")
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FindId")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Grabs_FindId_Open")
+                        .HasFilter("Status IN ('PaymentPending', 'Requested', 'Accepted', 'Bought')");
+
+                    b.HasIndex("Number")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Grabs_Number");
+
+                    b.HasIndex("Reference")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Grabs_Reference");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("IX_Grabs_Status");
+
+                    b.HasIndex("ShopperId", "CreatedAt")
+                        .HasDatabaseName("IX_Grabs_ShopperId_CreatedAt");
+
+                    b.ToTable("Grabs", (string)null);
+                });
+
+            modelBuilder.Entity("TuTuMuch.Domain.Finds.ShelfFind", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("GrabFee")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<long>("Number")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("PosterId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Reference")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<DateOnly>("SeenOn")
+                        .HasColumnType("date");
+
+                    b.Property<decimal>("ShelfPrice")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<string>("StoreAddress")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("StoreName")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Number")
+                        .IsUnique()
+                        .HasDatabaseName("UX_ShelfFinds_Number");
+
+                    b.HasIndex("Reference")
+                        .IsUnique()
+                        .HasDatabaseName("UX_ShelfFinds_Reference");
+
+                    b.HasIndex("PosterId", "CreatedAt")
+                        .HasDatabaseName("IX_ShelfFinds_PosterId_CreatedAt");
+
+                    b.HasIndex("Status", "SeenOn", "CreatedAt")
+                        .HasDatabaseName("IX_ShelfFinds_Status_SeenOn_CreatedAt");
+
+                    b.ToTable("ShelfFinds", (string)null);
+                });
+
             modelBuilder.Entity("TuTuMuch.Domain.Listings.Listing", b =>
                 {
                     b.Property<Guid>("Id")
@@ -876,7 +1067,7 @@ namespace TuTuMuch.Infrastructure.Persistence.Migrations
                         .HasColumnType("nchar(4)")
                         .IsFixedLength();
 
-                    b.Property<Guid>("CheckoutId")
+                    b.Property<Guid?>("CheckoutId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -885,6 +1076,9 @@ namespace TuTuMuch.Infrastructure.Persistence.Migrations
                     b.Property<string>("DeclineReason")
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<Guid?>("GrabId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("IdempotencyKey")
                         .HasColumnType("uniqueidentifier");
@@ -905,6 +1099,9 @@ namespace TuTuMuch.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("CheckoutId")
                         .HasDatabaseName("IX_Payments_CheckoutId");
+
+                    b.HasIndex("GrabId")
+                        .HasDatabaseName("IX_Payments_GrabId");
 
                     b.HasIndex("IdempotencyKey")
                         .IsUnique()
@@ -1241,6 +1438,87 @@ namespace TuTuMuch.Infrastructure.Persistence.Migrations
                     b.ToTable("ShowcaseRequests", (string)null);
                 });
 
+            modelBuilder.Entity("TuTuMuch.Domain.Finds.Grab", b =>
+                {
+                    b.HasOne("TuTuMuch.Domain.Finds.ShelfFind", null)
+                        .WithMany()
+                        .HasForeignKey("FindId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TuTuMuch.Domain.Members.Member", null)
+                        .WithMany()
+                        .HasForeignKey("ShopperId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("TuTuMuch.Domain.Orders.ShippingAddress", "Address", b1 =>
+                        {
+                            b1.Property<Guid>("GrabId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("City")
+                                .IsRequired()
+                                .HasMaxLength(60)
+                                .HasColumnType("nvarchar(60)")
+                                .HasColumnName("ShippingCity");
+
+                            b1.Property<string>("Country")
+                                .IsRequired()
+                                .HasMaxLength(2)
+                                .HasColumnType("nvarchar(2)")
+                                .HasColumnName("ShippingCountry");
+
+                            b1.Property<string>("FullName")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("nvarchar(100)")
+                                .HasColumnName("ShippingFullName");
+
+                            b1.Property<string>("Line1")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("nvarchar(100)")
+                                .HasColumnName("ShippingLine1");
+
+                            b1.Property<string>("Line2")
+                                .HasMaxLength(100)
+                                .HasColumnType("nvarchar(100)")
+                                .HasColumnName("ShippingLine2");
+
+                            b1.Property<string>("State")
+                                .IsRequired()
+                                .HasMaxLength(2)
+                                .HasColumnType("nvarchar(2)")
+                                .HasColumnName("ShippingState");
+
+                            b1.Property<string>("Zip")
+                                .IsRequired()
+                                .HasMaxLength(10)
+                                .HasColumnType("nvarchar(10)")
+                                .HasColumnName("ShippingZip");
+
+                            b1.HasKey("GrabId");
+
+                            b1.ToTable("Grabs");
+
+                            b1.WithOwner()
+                                .HasForeignKey("GrabId");
+                        });
+
+                    b.Navigation("Address")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("TuTuMuch.Domain.Finds.ShelfFind", b =>
+                {
+                    b.HasOne("TuTuMuch.Domain.Members.Member", null)
+                        .WithMany()
+                        .HasForeignKey("PosterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("TuTuMuch.Domain.Listings.Listing", b =>
                 {
                     b.HasOne("TuTuMuch.Domain.Members.Member", null)
@@ -1525,8 +1803,7 @@ namespace TuTuMuch.Infrastructure.Persistence.Migrations
                     b.HasOne("TuTuMuch.Domain.Orders.Checkout", null)
                         .WithMany()
                         .HasForeignKey("CheckoutId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("TuTuMuch.Domain.Orders.ProblemPhoto", b =>

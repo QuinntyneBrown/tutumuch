@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using TuTuMuch.Domain.Finds;
 using TuTuMuch.Domain.Listings;
 using TuTuMuch.Domain.Members;
 using TuTuMuch.Domain.Notifications;
@@ -54,6 +55,10 @@ public interface ITuTuMuchDbContext
     DbSet<ItemRequestMatch> ItemRequestMatches { get; }
 
     DbSet<ShowcaseRequest> ShowcaseRequests { get; }
+
+    DbSet<ShelfFind> ShelfFinds { get; }
+
+    DbSet<Grab> Grabs { get; }
 
     /// <summary>Transactions, for the steps of checkout that must commit together.</summary>
     DatabaseFacade Database { get; }

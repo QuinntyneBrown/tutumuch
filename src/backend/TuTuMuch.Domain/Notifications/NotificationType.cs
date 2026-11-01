@@ -23,4 +23,10 @@ public enum NotificationType
 
     /// <summary>A listing that became Active matched the member's open item requests (L2-101).</summary>
     ItemRequestMatched,
+
+    /// <summary>A shopper paid for a grab of the poster's shelf find (L2-120).</summary>
+    GrabRequested,
+
+    /// <summary>The shopper's grab was accepted, declined, bought, unavailable, expired or cancelled (L2-120).</summary>
+    GrabUpdated,
 }

@@ -35,6 +35,8 @@ public static class EmailTemplates
         NotificationType.Marketing => typeof(MarketingEmail),
         NotificationType.DraftExpiryReminder => typeof(DraftExpiryReminderEmail),
         NotificationType.ItemRequestMatched => typeof(ItemRequestMatchedEmail),
+        NotificationType.GrabRequested => typeof(GrabRequestedEmail),
+        NotificationType.GrabUpdated => typeof(GrabUpdatedEmail),
         _ => throw new ArgumentOutOfRangeException(nameof(type), type, "No template for this notification type."),
     };
 
@@ -91,6 +93,10 @@ public static class EmailTemplates
             ItemRequestMatchedEmail m => (
                 $"A match for your request: {m.Title}",
                 $"Something you asked for was just listed: {m.Title} by {m.Brand}, {Money(m.Price)}.\nSee it before it's gone:\n{root}/items/{m.ListingReference}\n\nYour requests: {root}/account/requests"),
+            GrabRequestedEmail m => (
+                $"{m.ShopperDisplayName} asked TuTuMuch to grab {m.FindTitle}",
+                $"{m.ShopperDisplayName} paid {Money(m.Total)} for grab {m.GrabReference}: {m.FindTitle} at {m.StoreName}.\n\nAccept or decline it by {Day(m.AnswerBy)}, or it expires and they are refunded:\n{root}/admin/grabs"),
+            GrabUpdatedEmail m => GrabUpdate(m, root),
             _ => throw new InvalidOperationException($"No template for {type}."),
         };
 
@@ -101,6 +107,21 @@ public static class EmailTemplates
             _ => [],
         };
         return new RenderedEmail(subject, $"Hi {displayName},\n\n{text}{string.Format(CultureInfo.InvariantCulture, Footer, root)}", identifiers);
+    }
+
+    private static (string Subject, string Text) GrabUpdate(GrabUpdatedEmail m, string root)
+    {
+        var refunded = m.Refunded is { } amount ? $" You've been refunded {Money(amount)}." : string.Empty;
+        var (subject, what) = m.Status switch
+        {
+            "Accepted" => ($"TuTuMuch accepted your grab {m.GrabReference}", $"TuTuMuch is going to the store for {m.FindTitle}{(m.BuyBy is { } by ? $" by {Day(by)}" : string.Empty)}. From now on, if you cancel, TuTuMuch keeps the deposit."),
+            "Declined" => ($"TuTuMuch couldn't take your grab {m.GrabReference}", $"TuTuMuch couldn't take this grab of {m.FindTitle}.{refunded}"),
+            "Bought" => ($"TuTuMuch has {m.FindTitle}", $"TuTuMuch has it and is sending it to you."),
+            "Unavailable" => ($"TuTuMuch couldn't get {m.FindTitle}", $"TuTuMuch couldn't get it ({m.Reason}).{refunded}"),
+            "Expired" => ($"Your grab {m.GrabReference} ran out of time", $"This grab of {m.FindTitle} ran out of time.{refunded}"),
+            _ => ($"You cancelled grab {m.GrabReference}", $"You cancelled your grab of {m.FindTitle}.{refunded}{(m.DepositKept is { } kept && kept > 0 ? $" TuTuMuch kept the {Money(kept)} deposit." : string.Empty)}"),
+        };
+        return (subject, $"{what}\n\nSee your grab:\n{root}/account/grabs/{m.GrabId}");
     }
 
     private static string Money(decimal amount) => "$" + amount.ToString("0.00", CultureInfo.InvariantCulture);

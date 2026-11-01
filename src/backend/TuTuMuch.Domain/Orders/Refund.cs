@@ -6,6 +6,9 @@ public enum RefundReason
     ShipDeadlinePassed,
     OrderCancelled,
     ProblemResolved,
+
+    /// <summary>A grab ended with money back to the shopper (ADR orders/0009).</summary>
+    GrabRefunded,
 }
 
 public enum RefundStatus
@@ -70,6 +73,28 @@ public sealed class Refund
         Status = RefundStatus.Pending,
         CreatedAt = now,
     };
+
+    /// <summary>
+    /// A grab's refund: the whole total, or the total less the deposit when the shopper cancelled
+    /// after TuTuMuch accepted (L2-119).
+    /// </summary>
+    public static Refund ForGrab(Payment payment, decimal amount, DateTime now)
+    {
+        if (amount <= 0m || amount > payment.Amount)
+        {
+            throw new ArgumentOutOfRangeException(nameof(amount));
+        }
+
+        return new()
+        {
+            Id = Guid.NewGuid(),
+            PaymentId = payment.Id,
+            Amount = amount,
+            Reason = RefundReason.GrabRefunded,
+            Status = RefundStatus.Pending,
+            CreatedAt = now,
+        };
+    }
 
     public void Issued(string providerRefundId)
     {
