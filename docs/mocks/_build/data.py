@@ -85,3 +85,41 @@ ORDERS = {
 
 SAVED_ADDRESS = ["Tessa Bell", "214 Kent Ave, Apt 3R", "Brooklyn, NY 11249"]
 CARD = ("Visa", "4242")
+
+# Shelf finds (L1-025, ADR catalog/0009): items for girls seen in a store. No photos; the card shows a
+# map-pin well. A find lives 14 days after the day it was seen. grab = the grab fee when TuTuMuch offers
+# to grab it (only the owner, AnasCloset, offers grabs); open = a grab is already open on it.
+FINDS = {
+    "find-leotard": {"id": "F-1042", "title": "Lilac ballet leotard", "cat": "Dance", "price": 40.00, "store": "Dancewear Corner",
+                     "address": "214 Smith St, Brooklyn, NY 11201", "seen": "Sat 24 Oct", "seen_iso": "2026-10-24", "expires": "Sat 7 Nov",
+                     "poster": "AnasCloset", "grab": 8.00, "note": "Rack at the back, sizes 6 to 10. Three left when I was there."},
+    "find-sneakers": {"id": "F-1039", "title": "Light-up glitter sneakers", "cat": "Shoes", "price": 24.99, "store": "Target",
+                      "address": "139 Flatbush Ave, Brooklyn, NY 11217", "seen": "Fri 23 Oct", "seen_iso": "2026-10-23", "expires": "Fri 6 Nov",
+                      "poster": "TwirlyTara", "grab": None, "note": "Clearance end cap by the kids’ shoes. Silver and pink."},
+    "find-camera": {"id": "F-1036", "title": "Mint instant camera bundle", "cat": "Cameras and tech", "price": 59.00, "store": "Best Buy",
+                    "address": "625 Atlantic Ave, Brooklyn, NY 11217", "seen": "Thu 22 Oct", "seen_iso": "2026-10-22", "expires": "Thu 5 Nov",
+                    "poster": "AnasCloset", "grab": 10.00, "open": True, "note": "Comes with two packs of film and a strap."},
+    "find-paint": {"id": "F-1031", "title": "Watercolour paint set, 36 colours", "cat": "Toys and crafts", "price": 9.50, "store": "Michaels",
+                   "address": "1 Pierrepont Plaza, Brooklyn, NY 11201", "seen": "Wed 21 Oct", "seen_iso": "2026-10-21", "expires": "Wed 4 Nov",
+                   "poster": "HandMeDownHana", "grab": None, "note": ""},
+    "find-soccer": {"id": "F-1028", "title": "Pink size 4 soccer ball", "cat": "Sports", "price": 14.99, "store": "Dick’s Sporting Goods",
+                    "address": "Atlantic Terminal Mall, 139 Flatbush Ave, Brooklyn, NY 11217", "seen": "Tue 20 Oct", "seen_iso": "2026-10-20", "expires": "Tue 3 Nov",
+                    "poster": "AnasCloset", "grab": 6.00, "note": ""},
+    "find-dress": {"id": "F-1025", "title": "Velvet holiday dress", "cat": "Clothing", "price": 32.00, "store": "Old Navy",
+                   "address": "Gateway Center, 409 Gateway Dr, Brooklyn, NY 11239", "seen": "Mon 19 Oct", "seen_iso": "2026-10-19", "expires": "Mon 2 Nov",
+                   "poster": "RainbowRosa", "grab": None, "note": "Green and burgundy, half price."},
+}
+FINDS_ORDER = ["find-leotard", "find-sneakers", "find-camera", "find-paint", "find-soccer", "find-dress"]
+
+# Grabs (L2-117 to L2-119, ADR orders/0009). Total = shelf price + grab fee + NY sales tax (8.875%) on both.
+# Deposit = 20% of the shelf price, at least $5.00, never more than the shelf price.
+GRABS = {
+    "GR-1007": {"find": "find-leotard", "shopper": "TutuTessa", "status": "Requested", "tax": 4.26, "total": 52.26, "deposit": 8.00,
+                "paid": "Today 10:40", "deadline": "Tue 27 Oct, 10:40"},
+    "GR-1006": {"find": "find-camera", "shopper": "PuddleJumperPia", "status": "Accepted", "tax": 6.12, "total": 75.12, "deposit": 11.80,
+                "paid": "Fri 23 Oct", "deadline": "Mon 26 Oct, 16:05"},
+    "GR-1004": {"find": "find-soccer", "shopper": "TutuTessa", "status": "Bought", "tax": 1.86, "total": 22.85, "deposit": 5.00,
+                "paid": "Wed 21 Oct", "deadline": ""},
+    "GR-1002": {"find": "find-leotard", "shopper": "RainbowRosa", "status": "Declined", "tax": 4.26, "total": 52.26, "deposit": 8.00,
+                "paid": "Mon 19 Oct", "deadline": ""},
+}
