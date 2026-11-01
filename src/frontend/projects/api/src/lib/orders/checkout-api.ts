@@ -47,6 +47,8 @@ export interface Checkout {
   savedAddress: ShippingAddress | null;
   lastDeclineReason: string | null;
   orderId: string | null;
+  /** Set when the item is an auction the buyer won: the price is the winning bid, payable until then (L2-118). */
+  auctionPayBy?: string | null;
 }
 
 /** A payment accepted for processing; the result arrives through the provider's webhook. */

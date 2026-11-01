@@ -16,6 +16,7 @@ import {
 import {
   draftExpiryText,
   draftExpiryTitle,
+  auctionLine,
   filterOptions,
   listingsSubtitle,
   rowDate,
@@ -79,6 +80,9 @@ export class MyListingsPage {
   readonly price = rowPrice;
   readonly link = rowLink;
   readonly tone = statusTone;
+  readonly auctionLine = auctionLine;
+  /** The row whose Relist is being sent. */
+  readonly relisting = signal<string | null>(null);
 
   constructor() {
     effect(() => {
@@ -91,6 +95,20 @@ export class MyListingsPage {
 
   filter(value: string): void {
     void this.router.navigate([], { queryParams: { status: value === 'all' ? null : value } });
+  }
+
+  /** Runs an unsold or unpaid auction again, from now, with no bids (L2-117 AC3). */
+  async relist(row: MyListingRow): Promise<void> {
+    if (this.relisting()) return;
+    this.relisting.set(row.reference);
+    const result = await this.api.relist(row.reference);
+    this.relisting.set(null);
+    if (!result.ok) {
+      this.toasts.show({ tone: 'danger', title: 'Couldn’t relist it', text: 'Try again in a moment.' });
+      return;
+    }
+    this.toasts.show({ tone: 'success', title: 'Relisted', text: `${rowTitle(row)} is back in the closet.` });
+    await this.load(this.status());
   }
 
   retry(): Promise<void> {

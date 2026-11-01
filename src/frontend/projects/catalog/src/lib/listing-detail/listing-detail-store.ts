@@ -1,13 +1,31 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { CatalogApi, ListingCard, ListingDetail, ShowcaseApi, ShowcaseRequest, shortRef } from '@tutumuch/api';
+import {
+  AuctionSummary,
+  CatalogApi,
+  ListingCard,
+  ListingDetail,
+  ShowcaseApi,
+  ShowcaseRequest,
+  shortRef,
+} from '@tutumuch/api';
 
 export type ListingDetailView = 'loading' | 'loaded' | 'unavailable' | 'error';
 
 /**
  * What the buy bar offers: checkout, sign in first, Buy now that shows the Sold notice of a
- * showcase listing (L2-108), the seller's own actions, or nothing.
+ * showcase listing (L2-108), the seller's own actions, or nothing. On an auction: Place bid, sign
+ * in to bid, or Pay now for the winner (L2-114, L2-118).
  */
-export type PrimaryAction = 'buy' | 'sign-in-to-buy' | 'showcase' | 'manage' | 'none';
+export type PrimaryAction =
+  | 'buy'
+  | 'sign-in-to-buy'
+  | 'showcase'
+  | 'manage'
+  | 'place-bid'
+  | 'sign-in-to-bid'
+  | 'pay-now'
+  | 'your-listings'
+  | 'none';
 
 /** How many other items a Sold listing suggests. */
 const SIMILAR_COUNT = 4;
@@ -36,6 +54,7 @@ export class ListingDetailStore {
 
   readonly primaryAction = computed<PrimaryAction>(() => {
     const listing = this.listing();
+    if (listing?.auction) return auctionAction(listing, listing.auction);
     if (!listing || listing.status !== 'Active') return 'none';
     if (listing.viewer.relation !== 'Seller' && listing.showcase) return 'showcase';
     switch (listing.viewer.relation) {
@@ -80,6 +99,12 @@ export class ListingDetailStore {
     this.myRequest.set(result.ok ? result.value : null);
   }
 
+  /** The auction as the bidder now sees it, after a bid was placed (L2-115). */
+  updateAuction(auction: AuctionSummary): void {
+    const listing = this.listing();
+    if (listing) this.listing.set({ ...listing, auction, price: auction.currentPrice });
+  }
+
   /** Marks or unmarks the owner's listing (L2-107); false when TuTuMuch API refused it. */
   async setShowcase(showcase: boolean): Promise<boolean> {
     const listing = this.listing();
@@ -94,4 +119,18 @@ export class ListingDetailStore {
     if (!result.ok) return;
     this.similar.set(result.value.items.filter((card) => card.reference !== listing.reference).slice(0, SIMILAR_COUNT));
   }
+}
+
+/**
+ * The buy bar of an auction (L2-114): the seller manages it only while it has no bids; the winner
+ * pays; anyone else bids while it runs, except the highest bidder, who has nothing to do.
+ */
+function auctionAction(listing: ListingDetail, auction: AuctionSummary): PrimaryAction {
+  if (listing.viewer.relation === 'Seller') {
+    if (listing.status === 'Removed') return 'your-listings';
+    return listing.status === 'Active' && auction.bidCount === 0 ? 'manage' : 'none';
+  }
+  if (auction.viewerIsWinner) return 'pay-now';
+  if (listing.status !== 'Active' || auction.ended || auction.viewerIsHighestBidder) return 'none';
+  return listing.viewer.relation === 'Anonymous' ? 'sign-in-to-bid' : 'place-bid';
 }

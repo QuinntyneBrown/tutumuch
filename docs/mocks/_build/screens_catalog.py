@@ -700,12 +700,12 @@ def _():
     return detail("pink-scooter", actions=acts, price_html=panel, report=False)
 
 
-@d.state("auction-unsold", "The seller's own auction that ended without bids (Removed, AuctionUnsold): out of the closet, with Relist.")
+@d.state("auction-unsold", "The seller's own auction that ended without bids (Removed, AuctionUnsold): out of the closet, with a link to Your listings, where Relist is.")
 def _():
     it = ITEMS["glitter-boots"]
     panel = auction_panel("glitter-boots", label="Starting bid", amount=it["price"], bids=0, ended=True,
-                          status=("", "This auction ended with no bids", " Relist it to run it again, with a new end time from now."))
-    pg = detail("glitter-boots", actions=btn("Relist", "primary lg"), price_html=panel, bar=bid_bar(it["price"], "Starting bid"), report=False)
+                          status=("", "This auction ended with no bids", " You can relist it from Your listings."))
+    pg = detail("glitter-boots", actions=btn("Your listings", "primary lg", href=P("my-listings", "auctions")), price_html=panel, bar=bid_bar(it["price"], "Starting bid"), report=False)
     pg.notes = note("Only the seller sees a Removed listing; anyone else gets “This item isn’t available” (L2-117). The same page follows an unpaid auction (AuctionUnpaid): “The winner didn’t pay in time”.",
                     "top: 8rem; right: 1rem;")
     return pg
@@ -715,7 +715,7 @@ def _():
 def _():
     panel = auction_panel("swan-tutu")
     pg = detail("swan-tutu", actions=PLACE_BID(P("sign-in", "return")), price_html=panel, bar=bid_bar(AUCTION["current"]), user="guest", report=False)
-    pg.notes = note("Signed out: /sign-in?returnUrl=/items/L-20944 (L2-109 return rule). An unverified member gets the verify-email prompt instead of the dialog (L2-002).",
+    pg.notes = note("Signed out: /sign-in?returnUrl=/items/L-20944 (L2-109 return rule). An unverified member is told in the Place bid dialog to verify their email first (L2-002).",
                     "top: 8rem; right: 1rem;")
     return pg
 

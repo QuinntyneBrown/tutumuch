@@ -1,4 +1,6 @@
 export { AlertComponent, type AlertTone } from './lib/alert/alert';
+export { AuctionPanelComponent, type AuctionStatus, type AuctionStatusTone } from './lib/auction-panel/auction-panel';
+export { auctionTime, timeLeft, type TimeLeft } from './lib/auction-panel/time-left';
 export { BuyBarComponent } from './lib/buy-bar/buy-bar';
 export { ButtonDirective } from './lib/button/button';
 export { CenterStateComponent } from './lib/center-state/center-state';

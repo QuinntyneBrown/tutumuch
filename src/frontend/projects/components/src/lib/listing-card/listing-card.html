@@ -20,14 +20,22 @@
       <span class="photo__stamp photo__stamp--sold">Sold</span>
     } @else if (card().reserved) {
       <span class="photo__stamp">Reserved</span>
+    } @else if (card().auction) {
+      <span class="photo__stamp">Auction</span>
     }
   </div>
   <div class="listing-card__meta">
     <span class="listing-card__title">{{ card().title }}</span>
     <span class="listing-card__brand">{{ card().brand }}</span>
     <span class="listing-card__facts">{{ card().sizeLabel }} · {{ card().condition }}</span>
-    <span class="listing-card__price"
-      ><span class="price">{{ card().price }}</span></span
+    <span class="listing-card__price">
+      @if (card().auction; as auction) {
+        <span class="visually-hidden">{{ auction.label }} </span>
+      }
+      <span class="price">{{ card().price }}</span></span
     >
+    @if (card().auction; as auction) {
+      <span class="listing-card__time" [class.listing-card__time--soon]="auction.soon">{{ auction.timeLeft }}</span>
+    }
   </div>
 </a>

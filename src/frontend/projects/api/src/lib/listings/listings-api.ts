@@ -22,6 +22,9 @@ export interface ListingDetails {
   shippingCost?: number;
   /** Uploaded photo IDs in display order; the first is the cover (L2-017). */
   photoIds?: string[];
+  /** Fixed price or auction, with the auction's length; both count only while a draft (L2-113). */
+  format?: 'FixedPrice' | 'Auction';
+  auctionDays?: number;
 }
 
 /** A listing as its seller sees it. */
@@ -42,10 +45,20 @@ export interface MyListing {
   updatedAt: string;
   publishedAt: string | null;
   /** Why a Removed listing is off the catalog; a withdrawn one cannot be edited or relisted. */
-  removalReason: 'Withdrawn' | 'OrderCancelled' | null;
+  removalReason: RemovalReason | null;
   /** Cover first. */
   photos: Photo[];
+  /** An auction's length and, once published, its end time, current bid and bid count (L2-113). */
+  format?: 'FixedPrice' | 'Auction';
+  auctionDays?: number | null;
+  auctionEndsAt?: string | null;
+  currentBid?: number | null;
+  bidCount?: number;
+  canRelist?: boolean;
 }
+
+/** Why a listing was Removed: withdrawn, its order cancelled, or an auction that ended unsold or unpaid (L2-117, L2-118). */
+export type RemovalReason = 'Withdrawn' | 'OrderCancelled' | 'AuctionUnsold' | 'AuctionUnpaid';
 
 /** A listing with the ETag TuTuMuch API sent for it, to send back in If-Match when saving (L2-020). */
 export interface VersionedListing {
@@ -65,6 +78,13 @@ export interface MyListingRow {
   photo: { width: number; height: number; src: string; webp: string; jpeg: string } | null;
   createdAt: string;
   saleOrderId: string | null;
+  /** An auction row adds its current bid, bid count and end time; canRelist marks an unsold or unpaid auction (L2-117). */
+  format?: 'FixedPrice' | 'Auction';
+  currentBid?: number | null;
+  bidCount?: number;
+  auctionEndsAt?: string | null;
+  removalReason?: RemovalReason | null;
+  canRelist?: boolean;
 }
 
 /** GET /api/me/listings: the rows newest first and how many listings are in each status. */
@@ -127,6 +147,11 @@ export class ListingsApi {
         .put<MyListing>(url, details, { observe: 'response', headers: { 'If-Match': etag } })
         .pipe(map(versioned)),
     );
+  }
+
+  /** Puts the listing of a cancelled order back on sale, or runs an unsold or unpaid auction again (L2-035, L2-117). */
+  relist(reference: string): Promise<ApiResult<void>> {
+    return toResult(this.http.post<void>(`${this.baseUrl}/listings/${encodeURIComponent(reference)}/relist`, null));
   }
 
   /** Takes an Active listing off the catalog for good (L2-020). */

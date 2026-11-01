@@ -25,6 +25,8 @@ export interface OrderSummaryItem {
 export class OrderSummaryComponent {
   readonly item = input.required<OrderSummaryItem>();
   readonly itemPrice = input.required<string>();
+  /** The item price's label: "Item", or "Winning bid" for an auction's winner (L2-118). */
+  readonly itemLabel = input('Item');
   readonly shipping = input.required<string>();
   readonly salesTax = input<string | null>(null);
   readonly total = input<string | null>(null);

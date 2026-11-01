@@ -16,7 +16,7 @@ import {
 import { ListingFormComponent } from '../listing-form/listing-form';
 import { ListingFormModel } from '../listing-form/listing-form-model';
 
-type View = 'loading' | 'error' | 'form' | 'locked' | 'sold' | 'withdrawn';
+type View = 'loading' | 'error' | 'form' | 'locked' | 'has-bids' | 'sold' | 'withdrawn';
 
 /**
  * Edit an Active listing at /items/{reference}/edit (edit-and-withdraw-listing, mocks
@@ -131,7 +131,9 @@ export class EditListingPage implements OnInit {
       this.view.set('locked');
     } else if (listing.status === 'Sold') {
       this.view.set('sold');
-    } else if (listing.status === 'Removed' && listing.removalReason !== 'OrderCancelled') {
+    } else if (listing.status === 'Active' && listing.format === 'Auction' && (listing.bidCount ?? 0) > 0) {
+      this.view.set('has-bids');
+    } else if (listing.status === 'Removed' && listing.removalReason !== 'OrderCancelled' && !listing.canRelist) {
       this.view.set('withdrawn');
     } else {
       this.model.fill(listing);
@@ -144,6 +146,8 @@ export class EditListingPage implements OnInit {
       this.changed.set(true);
     } else if (problem.code === 'LISTING_RESERVED') {
       this.view.set('locked');
+    } else if (problem.code === 'AUCTION_HAS_BIDS') {
+      this.view.set('has-bids');
     } else if (problem.code === 'LISTING_SOLD') {
       this.view.set('sold');
     } else if (problem.code === 'LISTING_NOT_EDITABLE') {

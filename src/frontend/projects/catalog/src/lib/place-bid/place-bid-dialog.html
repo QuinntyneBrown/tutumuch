@@ -1,0 +1,65 @@
+<tl-dialog heading="Place a bid" size="sm">
+  <span description>{{ description() }}</span>
+  @switch (state()) {
+    @case ('conflict') {
+      <tl-alert top tone="warning" heading="Someone just bid higher"
+        >The current bid is now {{ money(auction().currentPrice) }}.</tl-alert
+      >
+    }
+    @case ('ended') {
+      <tl-alert top tone="info" icon="clock" heading="This auction has ended">Your bid wasn’t placed.</tl-alert>
+    }
+    @case ('failed') {
+      <tl-alert top tone="danger" heading="Couldn’t place your bid"
+        >Try again in a moment. <span class="ref">{{ failureRef() }}</span></tl-alert
+      >
+    }
+  }
+  @if (!data.verified) {
+    <tl-alert top tone="warning" icon="mail" heading="Verify your email to bid"
+      >Check your inbox for the link we sent, then try again.</tl-alert
+    >
+  }
+  <tl-item-row [title]="data.title" [meta]="meta()">
+    <div thumb class="thumb">
+      <div class="photo photo--6">
+        @if (data.photo; as photo) {
+          <picture>
+            <source type="image/webp" [attr.srcset]="photo.webp" sizes="64px" />
+            <img [src]="photo.src" [attr.srcset]="photo.jpeg" sizes="64px" alt="" width="160" height="160" />
+          </picture>
+        }
+      </div>
+    </div>
+  </tl-item-row>
+  @if (state() !== 'ended') {
+    <tl-form-field #field fieldId="bid-amount" label="Your bid" [help]="help()" [error]="error()">
+      <tl-input-group addon="$">
+        <input
+          class="input"
+          id="bid-amount"
+          name="amount"
+          inputmode="decimal"
+          autocomplete="off"
+          data-autofocus
+          [value]="amount()"
+          [readOnly]="state() === 'busy'"
+          [attr.aria-describedby]="field.describedBy()"
+          [attr.aria-invalid]="field.invalid()"
+          (input)="input($event)"
+          (keydown.enter)="submit()"
+        />
+      </tl-input-group>
+    </tl-form-field>
+  }
+  <ng-container ngProjectAs="[footer]">
+    @if (state() === 'ended') {
+      <button tlButton="primary" type="button" data-autofocus (click)="ref.close('ended')">Close</button>
+    } @else {
+      <button tlButton type="button" [disabled]="state() === 'busy'" (click)="ref.close()">Cancel</button>
+      <button tlButton="primary" type="button" [busy]="state() === 'busy'" (click)="submit()">
+        {{ state() === 'failed' ? 'Try again' : 'Place bid' }}
+      </button>
+    }
+  </ng-container>
+</tl-dialog>

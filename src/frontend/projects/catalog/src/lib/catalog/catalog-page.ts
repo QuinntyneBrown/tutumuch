@@ -107,7 +107,7 @@ export class CatalogPage implements OnInit {
     const query = this.query();
     return { category: query.category ?? undefined, q: query.q ? query.q.slice(0, MAX_SEARCH_LENGTH) : undefined };
   });
-  readonly cards = computed(() => this.store.items().map(toCardView));
+  readonly cards = computed(() => this.store.items().map((card) => toCardView(card)));
 
   /** Runs after the route-data input is bound, so a category page is known. */
   ngOnInit(): void {

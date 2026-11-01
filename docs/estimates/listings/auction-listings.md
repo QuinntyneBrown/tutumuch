@@ -45,4 +45,4 @@ The minimal version ships the format and length on the sell form, publishing wit
 
 ## Status
 
-Complete: 0%. Nothing in the design is built and tested yet.
+Complete: 95%. Everything in the design is built and tested (domain, API, worker, CLI and Playwright tests) except the `bid=1` return: a visitor who signs in from "Place bid" comes back to the listing and presses "Place bid" again.

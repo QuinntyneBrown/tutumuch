@@ -1,5 +1,5 @@
 import { ListingStatus, MyListingRow, MyListings } from '@tutumuch/api';
-import { FilterChipOption, StatusTone } from '@tutumuch/components';
+import { FilterChipOption, StatusTone, timeLeft } from '@tutumuch/components';
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -78,3 +78,17 @@ export function statusTone(status: ListingStatus): StatusTone {
 /** The info toast of mocks notifications/toast for a seller with drafts (L2-019). */
 export const draftExpiryTitle = 'Drafts older than 90 days are deleted';
 export const draftExpiryText = 'We’ll email you a week before.';
+
+/**
+ * The line under an auction row's price (L2-114, L2-117): "Auction · 3 bids · Ends in 2d 4h" while
+ * it runs, "Auction ended, no bids" or "Winner didn’t pay" once Removed; null for a fixed price.
+ */
+export function auctionLine(row: MyListingRow, now = Date.now()): string | null {
+  if (row.format !== 'Auction') return null;
+  if (row.removalReason === 'AuctionUnsold') return 'Auction ended, no bids';
+  if (row.removalReason === 'AuctionUnpaid') return 'Winner didn’t pay';
+  const bids = row.bidCount ?? 0;
+  const count = bids === 1 ? '1 bid' : `${bids} bids`;
+  if (row.status !== 'Active' || !row.auctionEndsAt) return `Auction · ${count}`;
+  return `Auction · ${count} · ${timeLeft(row.auctionEndsAt, now).text}`;
+}

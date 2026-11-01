@@ -138,7 +138,7 @@ export class MyRequestsPage {
 
 function toRow(request: ItemRequest): RequestRow {
   const open = request.status === 'Open';
-  const cards = request.matches.map(toCardView);
+  const cards = request.matches.map((card) => toCardView(card));
   let note: string | null = null;
   if (!cards.length) {
     if (!open) note = 'Renew it to keep looking for 90 more days.';

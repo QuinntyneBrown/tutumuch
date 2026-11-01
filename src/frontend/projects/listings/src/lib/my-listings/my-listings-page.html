@@ -50,7 +50,7 @@
       } @else {
         <ul class="order-list" role="list">
           @for (row of listings.items; track row.reference) {
-            <li>
+            <li [class.order-list__row]="row.canRelist">
               <a [routerLink]="link(row)">
                 <tl-item-row [title]="title(row)">
                   <div thumb class="thumb thumb--lg">
@@ -75,10 +75,22 @@
                   <tl-status [tone]="tone(row.status)">{{ row.status }}</tl-status>
                 </tl-item-row>
                 <span class="order-list__end">
-                  <span class="price">{{ price(row.price) }}</span>
-                  <span class="text-caption">{{ date(row) }}</span>
+                  <span class="price">{{ price(row.currentBid ?? row.price) }}</span>
+                  <span class="text-caption">{{ auctionLine(row) ?? date(row) }}</span>
                 </span>
               </a>
+              @if (row.canRelist) {
+                <button
+                  tlButton
+                  size="sm"
+                  type="button"
+                  [attr.aria-label]="'Relist ' + title(row)"
+                  [busy]="relisting() === row.reference"
+                  (click)="relist(row)"
+                >
+                  Relist
+                </button>
+              }
             </li>
           }
         </ul>
