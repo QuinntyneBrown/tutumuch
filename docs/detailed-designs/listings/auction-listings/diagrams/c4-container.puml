@@ -1,0 +1,25 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Auction listings
+
+Person(seller, "Seller", "Verified member")
+Person(bidder, "Bidder", "Verified member")
+System_Boundary(tutumuch, "TuTuMuch") {
+  Container(web, "TuTuMuch Web", "Angular", "Sell form format choice, tl-auction-panel, PlaceBidDialog, auction card, winner checkout")
+  Container(api, "TuTuMuch API", "ASP.NET Core", "POST /api/listings/{reference}/bids; listing, catalog and checkout endpoints with auction rules")
+  Container(worker, "TuTuMuch Worker", ".NET worker service", "AuctionCloseJob every minute; EmailDispatchJob; ReservationExpiryJob")
+  ContainerDb(db, "TuTuMuch database", "SQL Server", "Listings (auction columns), Bids, Checkouts, OutboxMessages")
+}
+System_Ext(payments, "Payment provider", "Payments and webhooks")
+System_Ext(email, "Email provider", "Transactional email")
+
+Rel(seller, web, "Uses", "HTTPS")
+Rel(bidder, web, "Uses", "HTTPS")
+Rel(web, api, "Calls", "JSON/HTTPS")
+Rel(api, db, "Reads and writes; Version decides racing bids", "EF Core")
+Rel(worker, db, "Closes auctions and payment windows; reads the outbox", "EF Core")
+Rel(api, payments, "Creates the winner's payment", "HTTPS")
+Rel(payments, api, "Payment succeeded", "Signed webhook")
+Rel(worker, email, "Dispatches queued emails", "HTTPS")
+@enduml

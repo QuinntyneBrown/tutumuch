@@ -12,7 +12,8 @@ namespace TuTuMuch.Application.Listings;
 
 /// <summary>
 /// The seller's own view of a listing, returned by every listings command. RemovalReason is
-/// "Withdrawn" or "OrderCancelled" for a Removed listing. Version is not in the body: the API sends
+/// "Withdrawn", "OrderCancelled", "AuctionUnsold" or "AuctionUnpaid" for a Removed listing. An
+/// auction adds its length, end time, current bid and bid count (L2-113, L2-114). Version is not in the body: the API sends
 /// it as the ETag (edit-and-withdraw-listing).
 /// </summary>
 public sealed record MyListingDto(
@@ -33,13 +34,20 @@ public sealed record MyListingDto(
     DateTime? PublishedAt,
     string? RemovalReason,
     IReadOnlyList<PhotoDto> Photos,
-    [property: JsonIgnore] int Version)
+    [property: JsonIgnore] int Version,
+    string Format = "FixedPrice",
+    int? AuctionDays = null,
+    DateTime? AuctionEndsAt = null,
+    decimal? CurrentBid = null,
+    int BidCount = 0,
+    bool CanRelist = false)
 {
     /// <summary>The listing with its photos, cover first.</summary>
     public static MyListingDto From(Listing l, IEnumerable<ListingPhoto> photos, PhotoOptions options) => new(
         l.Reference, l.Status.ToString(), l.Category, l.Subcategory, l.Size, l.Title, l.Description, l.Brand,
         l.Condition?.ToLabel(), l.Flaws, l.Price, l.ShippingCost, l.CreatedAt, l.UpdatedAt, l.PublishedAt,
-        l.RemovalReason?.ToString(), photos.Select(p => PhotoDto.From(p, options)).ToList(), l.Version);
+        l.RemovalReason?.ToString(), photos.Select(p => PhotoDto.From(p, options)).ToList(), l.Version,
+        l.Format.ToString(), l.AuctionDays, l.AuctionEndsAt, l.CurrentBid, l.BidCount, l.CanRelist);
 }
 
 public sealed record PublishListingResult(string Reference, string Status, bool PayoutOnboardingRequired);

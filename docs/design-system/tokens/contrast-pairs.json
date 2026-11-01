@@ -534,6 +534,12 @@
       "bg": "--color-bg-canvas",
       "min": 3,
       "note": "primary button hover fill (ink) vs page"
+    },
+    {
+      "fg": "--color-warning-fg",
+      "bg": "--color-bg-canvas",
+      "min": 4.5,
+      "note": "auction ending-soon time left on the page (auction panel, listing card)"
     }
   ]
 }

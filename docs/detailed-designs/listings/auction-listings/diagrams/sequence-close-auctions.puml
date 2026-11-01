@@ -1,0 +1,51 @@
+@startuml
+title UML sequence behaviour — Close auctions and payment windows
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+box "Backend — TuTuMuch Worker application" #D1FADF
+  participant "AuctionCloseJob" as job
+end box
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
+  participant "CloseAuctionsCommandHandler" as handler
+  participant "Listing" as entity
+  participant "EmailOutbox" as outbox
+end box
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
+end box
+loop every minute (PeriodicTimer, L2-117)
+  job -> handler : ISender.Send(CloseAuctionsCommand)
+  handler -> db : Active auctions with AuctionEndsAt <= now
+  loop each ended auction
+    handler -> entity : Close(now)
+    alt BidCount > 0
+      entity -> entity : Status = Reserved; WinnerId = HighBidderId;\nPayBy = AuctionEndsAt + 48 h; ReservedUntil = PayBy
+      handler -> outbox : AuctionWonEmail to winner (winning bid, pay-by)
+      handler -> outbox : AuctionEndedEmail to seller (winning bid)
+    else no bids
+      entity -> entity : Status = Removed; RemovalReason = AuctionUnsold
+      handler -> outbox : AuctionEndedEmail to seller (no bids, relist link)
+    end
+    handler -> db : SaveChangesAsync (listing + outbox, Version checked)
+    note right of handler : A concurrency failure skips the listing;\nthe next run sees it again. A closed\nauction is no longer Active, so a second\nrun changes nothing and queues nothing.
+  end
+  handler -> db : Reserved auctions with PayBy <= now
+  loop each lapsed payment window
+    handler -> db : Open or Processing checkout for the listing?
+    alt payment in progress
+      handler -> handler : Skip until the webhook or expiry decides (L2-118)
+    else none
+      handler -> entity : ExpirePayment(now)
+      entity -> entity : Status = Removed; RemovalReason = AuctionUnpaid
+      handler -> outbox : AuctionPaymentMissedEmail to winner
+      handler -> outbox : AuctionPaymentMissedEmail to seller (relist)
+      handler -> db : SaveChangesAsync
+    end
+  end
+  handler --> job : CloseAuctionsResult(closed, unsold, unpaid)
+  job -> job : Log counts above zero; log and continue on error
+end
+@enduml

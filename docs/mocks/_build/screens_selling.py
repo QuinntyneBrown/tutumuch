@@ -53,7 +53,36 @@ def money_input(fid: str, value: str) -> str:
     return f'<div class="input-group"><span class="addon">$</span><input class="input" id="{fid}" name="{fid}" inputmode="decimal"{v}{{db}}></div>'
 
 
-def sell_form(v: dict, *, photos=(), errors: dict | None = None, rejected: bool = False, busy: bool = False, mode: str = "new", top: str = "") -> str:
+DAYS = ["3", "5", "7"]
+
+
+def format_group(fmt: str) -> str:
+    """"How do you want to sell it?" (L2-113): Fixed price (the default) or Auction, as a segmented control."""
+    opts = "".join(
+        f'<label for="format-{i}"><input type="radio" id="format-{i}" name="format" value="{val}"{" checked" if val == fmt else ""}><span>{label}</span></label>'
+        for i, (val, label) in enumerate([("fixed", "Fixed price"), ("auction", "Auction")]))
+    return f'<fieldset><legend>How do you want to sell it?</legend><div class="segmented">{opts}</div></fieldset>'
+
+
+def length_group(days: str, error: str | None = None) -> str:
+    """"Auction length" (L2-113): 3, 5 or 7 days, as a radio group; a draft may leave it empty."""
+    inv = ' aria-invalid="true"' if error else ""
+    opts = "".join(
+        f'<label class="choice"><input type="radio" id="days-{i}" name="days" value="{d}"{" checked" if d == days else ""}{inv}><span>{d} days</span></label>'
+        for i, d in enumerate(DAYS))
+    db = ' aria-describedby="days-error"' if error else ' aria-describedby="days-help"'
+    err = f'<span class="field__error" id="days-error">{esc(error)}</span>' if error else '<span class="field__help" id="days-help">It ends that many days after you publish, at the same time of day.</span>'
+    return f'<fieldset id="days"{db}><legend>Auction length</legend><div class="cluster">{opts}</div>{err}</fieldset>'
+
+
+def locked_format(days: str) -> str:
+    """A published auction's format and length, read-only on the edit form (L2-113)."""
+    return (f'<div class="fixed-size" id="format">{ic("clock")}<span>Auction · {days} days · ends {AUCTION["ends"]}</span>'
+            f'<span class="fixed-size__label">Set when published</span></div>')
+
+
+def sell_form(v: dict, *, photos=(), errors: dict | None = None, rejected: bool = False, busy: bool = False, mode: str = "new", top: str = "",
+              fmt: str = "fixed", days: str = "", locked: bool = False) -> str:
     e = errors or {}
     cat = v.get("cat", "")
     sizes = {c: s for c, _, s in CATEGORIES}
@@ -75,6 +104,8 @@ def sell_form(v: dict, *, photos=(), errors: dict | None = None, rejected: bool 
     dlen = len(v.get("desc", ""))
     brands = "".join(f'<option value="{esc(b)}"></option>' for b in BRANDS)
     dis = " disabled" if busy else ""
+    auction = fmt == "auction" or locked
+    earn_label = f"You earn at the starting bid, after the {FEE_PERCENT}% fee" if auction else f"You earn after the {FEE_PERCENT}% fee"
     if mode == "edit":
         actions = (f'<a class="btn btn--ghost" href="{P("listing-detail", "own")}">Cancel</a>'
                    f'{btn("Save changes", "primary", attrs=("aria-busy=\"true\"" if busy else "type=\"submit\""))}')
@@ -94,10 +125,15 @@ def sell_form(v: dict, *, photos=(), errors: dict | None = None, rejected: bool 
             + field("desc", "Description", f'<textarea class="textarea" id="desc" rows="4"{{db}}>{esc(v.get("desc", ""))}</textarea>',
                     error=e.get("desc"), counter=f"{dlen} / 2,000")
             + '</section>'
-            f'<section class="form-section" aria-labelledby="s-price"><h2 id="s-price">Price</h2><div class="form-row">'
-            + field("price", "Price", money_input("price", v.get("price", "")), error=e.get("price"))
+            f'<section class="form-section" aria-labelledby="s-price"><h2 id="s-price">Price</h2>'
+            + (locked_format(days) if locked else format_group(fmt))
+            + '<div class="form-row">'
+            + field("price", "Starting bid" if auction else "Price", money_input("price", v.get("price", "")), error=e.get("price"),
+                    help="Bids start here." if auction else None)
             + field("ship", "Shipping", money_input("ship", v.get("ship", "")), help="Flat rate. $0 shows as free shipping.")
-            + f'</div><p class="earnings"><span>You earn after the {FEE_PERCENT}% fee</span><strong>{earnings}</strong></p></section>'
+            + '</div>'
+            + (length_group(days, e.get("days")) if auction and not locked else "")
+            + f'<p class="earnings"><span>{earn_label}</span><strong>{earnings}</strong></p></section>'
             f'<div class="form-actions form-actions--sticky form-actions--split">{actions}</div></form>')
 
 
@@ -118,7 +154,7 @@ FILLED_PHOTOS = [("pink-tutu", 6), ("pink-tutu", 1), ("pink-tutu", 4)]
 # Sell
 # ---------------------------------------------------------------------------
 s = screen("sell", "page", "Sell an item", route="/sell",
-           reqs=["L2-003", "L2-011", "L2-012", "L2-015", "L2-016", "L2-017", "L2-018", "L2-019", "L2-031", "L2-051", "L2-063", "L2-091", "L2-092", "L2-094"],
+           reqs=["L2-003", "L2-011", "L2-012", "L2-015", "L2-016", "L2-017", "L2-018", "L2-019", "L2-031", "L2-051", "L2-063", "L2-091", "L2-092", "L2-094", "L2-113"],
            na={"loading": "A new listing form needs no data; categories ship with the app shell.",
                "empty": "The form is the page; an empty form is the default state."})
 
@@ -151,6 +187,26 @@ def _():
 @s.state("submitting", "Publishing: the button is busy, Save draft is disabled, nothing shifts.")
 def _():
     return sell_page(sell_form(NEW, photos=FILLED_PHOTOS, busy=True))
+
+
+SCOOTER = {"cat": "Sports", "sub": "Bikes and scooters", "title": "Pink two-wheel scooter", "brand": "Micro Kickboard", "cond": "Used - Good",
+           "desc": "Folds flat, both wheels light up. Grips a little scuffed, brakes work well.", "price": "20.00", "ship": "10.00"}
+SCOOTER_PHOTOS = [("pink-scooter", 6), ("pink-scooter", 2), ("pink-scooter", 4)]
+
+
+@s.state("auction", "Auction chosen: the price field reads “Starting bid” and “Auction length” offers 3, 5 or 7 days.")
+def _():
+    pg = sell_page(sell_form(SCOOTER, photos=SCOOTER_PHOTOS, fmt="auction", days="5"))
+    pg.notes = note("“Fixed price” is chosen when the form opens (L2-113). Choosing Auction relabels the price and shows the length; nothing else on the form changes. "
+                    "An auction is never matched against item requests and can't be a showcase listing.", "top: 40rem; right: 1rem;")
+    return pg
+
+
+@s.state("auction-invalid", "Publishing an auction without a length (422 AUCTION_LENGTH_REQUIRED): “Choose how long the auction runs” in the summary and on the group.")
+def _():
+    msg = "Choose how long the auction runs"
+    top = error_summary([("days", msg)])
+    return sell_page(sell_form(SCOOTER, photos=SCOOTER_PHOTOS, fmt="auction", errors={"days": msg}, top=top))
 
 
 @s.state("draft-saved", "Draft saved: kept out of the catalog, finish it later from Your listings.")
@@ -211,7 +267,7 @@ SUNDRESS = {"cat": "Clothing", "sub": "Dresses", "title": "Yellow gingham sundre
             "flaws": ITEMS["sundress"]["flaws"], "desc": "Light cotton with shoulder ties. Loved for a whole summer.", "price": "12.00", "ship": "5.00"}
 SUNDRESS_PHOTOS = [("sundress", 5), ("sundress", 1), ("sundress", 3)]
 
-e = screen("edit-listing", "page", "Edit listing", route="/items/{id}/edit", reqs=["L2-015", "L2-016", "L2-017", "L2-018", "L2-020", "L2-013"],
+e = screen("edit-listing", "page", "Edit listing", route="/items/{id}/edit", reqs=["L2-015", "L2-016", "L2-017", "L2-018", "L2-020", "L2-013", "L2-113", "L2-120"],
            na={"empty": "Only existing listings can be edited; a missing one is the listing's 'unavailable' page."})
 
 
@@ -260,6 +316,28 @@ def _():
     return edit_page(sell_form({**SUNDRESS, "price": "10.00"}, photos=SUNDRESS_PHOTOS, mode="edit", top=top))
 
 
+def edit_auction_page(form: str) -> Page:
+    head = (f'<div class="page-header"><div class="stack stack--sm"><a class="text-sm text-muted" href="{P("listing-detail", "auction-own-no-bids")}">Pink two-wheel scooter</a>'
+            f'<h1>Edit listing</h1></div>{status("Active")}</div>')
+    return Page(main=head + form, main_class="container page page--form", footer=False)
+
+
+@e.state("auction", "A published auction with no bids: the format and length are shown read-only; the starting bid and the rest can change.")
+def _():
+    pg = edit_auction_page(sell_form(SCOOTER, photos=SCOOTER_PHOTOS, mode="edit", locked=True, days="5"))
+    pg.notes = note("Format and length are fixed at publish; the API ignores them on an edit (L2-113). A new starting bid shows on the card and page right away (L2-120).",
+                    "top: 40rem; right: 1rem;")
+    return pg
+
+
+@e.state("auction-has-bids", "An auction with bids can't be edited (409 AUCTION_HAS_BIDS): the seller goes back to the listing.")
+def _():
+    main = (f'<div class="center-state"><div class="empty__icon">{ic("lock", "icon icon--lg")}</div><h1>This auction has bids, so it can’t be changed</h1>'
+            f'<p class="text-muted">It ends {AUCTION["ends"]}. We’ll email you when it does.</p>'
+            f'<div class="actions">{btn("Back to listing", "primary", P("listing-detail", "auction-own"))}{btn("Your listings", href=P("my-listings"))}</div></div>')
+    return Page(main=main)
+
+
 @e.state("locked", "Reserved listing: editing is blocked while a buyer is in checkout.")
 def _():
     main = (f'<div class="center-state"><div class="empty__icon">{ic("clock", "icon icon--lg")}</div><h1>This item is in someone’s checkout</h1>'
@@ -296,42 +374,65 @@ def _():
 # ---------------------------------------------------------------------------
 ROWS = [  # newest first: (title, photo key or None, price, status, date)
     ("Lilac sparkle tutu", "pink-tutu", "$24", "Draft", "Today"),
+    ("Pink two-wheel scooter", "pink-scooter", "$26", "Active", f"Auction · {AUCTION['own_bids']} bids · Ends in {AUCTION['left']}"),
     ("Untitled draft · Shoes", None, "—", "Draft", "Yesterday"),
     ("Pink heart hoodie", "heart-hoodie", "$38", "Sold", "Sat 24 Oct"),
     ("Yellow gingham sundress", "sundress", "$12", "Active", "Wed 21 Oct"),
     ("Floral cotton shorts", "floral-shorts", "$30", "Sold", "Fri 2 Oct"),
+    ("Glitter rain boots", "glitter-boots", "$10", "Removed", "Auction ended, no bids"),
 ]
 
 
 def listing_row(title, key, pr, st, date) -> str:
     th = photo(key, tag=False, alt="", cls="photo--sold" if st == "Sold" else "") if key else f'<div class="photo photo--none">{ic("image")}</div>'
-    href = {"Active": P("listing-detail", "own"), "Draft": P("sell", "draft-saved"), "Sold": P("sale-detail")}[st]
-    return (f'<li><a href="{href}"><div class="item-row"><div class="thumb thumb--lg">{th}</div>'
+    auction = key and ITEMS[key].get("format") == "Auction"
+    href = {"Active": P("listing-detail", "auction-own" if auction else "own"), "Draft": P("sell", "draft-saved"), "Sold": P("sale-detail"),
+            "Removed": P("listing-detail", "auction-unsold")}[st]
+    link = (f'<a href="{href}"><div class="item-row"><div class="thumb thumb--lg">{th}</div>'
             f'<div class="item-row__body"><span class="item-row__title">{esc(title)}</span>{status(st)}</div></div>'
-            f'<div class="order-list__end"><span class="price">{pr}</span><span class="text-caption">{date}</span></div></a></li>')
+            f'<div class="order-list__end"><span class="price">{pr}</span><span class="text-caption">{date}</span></div></a>')
+    if st == "Removed":   # an unsold or unpaid auction can be relisted (L2-117, L2-118)
+        return f'<li class="order-list__row">{link}{btn("Relist", "sm", attrs=f"aria-label=\"Relist {esc(title)}\"")}</li>'
+    return f'<li>{link}</li>'
+
+
+def counts(rows) -> dict:
+    c = {"All": len(rows)}
+    for r in rows:
+        c[r[3]] = c.get(r[3], 0) + 1
+    return c
 
 
 def filter_chips(active: str = "All") -> str:
-    counts = [("All", 5), ("Draft", 2), ("Active", 1), ("Reserved", 0), ("Sold", 2), ("Removed", 0)]
+    c = counts(ROWS)
     return ('<div class="cluster" role="group" aria-label="Filter by status" style="margin-bottom: var(--space-8);">' + "".join(
-        f'<button class="chip" type="button" aria-pressed="{"true" if n == active else "false"}">{n} <span class="num">{c}</span></button>'
-        for n, c in counts) + "</div>")
+        f'<button class="chip" type="button" aria-pressed="{"true" if n == active else "false"}">{n} <span class="num">{c.get(n, 0)}</span></button>'
+        for n in ["All", "Draft", "Active", "Reserved", "Sold", "Removed"]) + "</div>")
 
 
-def listings_page(body: str, sub: str = "5 listings · 1 active", action: bool = True) -> Page:
+def listings_page(body: str, sub: str = f"{len(ROWS)} listings · {counts(ROWS)['Active']} active", action: bool = True) -> Page:
     act = btn("Sell outgrown gear", "primary", P("sell"), icon="plus") if action else ""   # the empty state carries it instead
     head = (f'<div class="page-header"><div><h1>Your listings</h1>' + (f'<p class="subtitle">{sub}</p>' if sub else "")
             + f'</div>{act}</div>')
     return Page(main=head + body, account="listings")
 
 
-ml = screen("my-listings", "page", "Your listings", route="/account/listings", reqs=["L2-019", "L2-021"])
+ml = screen("my-listings", "page", "Your listings", route="/account/listings", reqs=["L2-019", "L2-021", "L2-117"])
 
 
 @ml.state("default", "All of Tessa's listings, newest first, filterable by status.")
 def _():
     rows = "".join(listing_row(*r) for r in ROWS)
     return listings_page(filter_chips() + f'<ul class="order-list" role="list">{rows}</ul>')
+
+
+@ml.state("auctions", "Filtered to Removed: an auction that ended without bids, with Relist beside it.")
+def _():
+    rows = "".join(listing_row(*r) for r in ROWS if r[3] == "Removed")
+    pg = listings_page(filter_chips("Removed") + f'<ul class="order-list" role="list">{rows}</ul>')
+    pg.notes = note("Relist puts it back in the closet with no bids and a new end time, its length from now (L2-117). An auction removed because the winner didn't pay reads “Winner didn't pay” and relists the same way.",
+                    "top: 14rem; right: 1rem;")
+    return pg
 
 
 @ml.state("filtered", "Filtered to Sold: only the two sold listings.")

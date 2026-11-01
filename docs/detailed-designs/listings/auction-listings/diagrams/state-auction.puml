@@ -1,0 +1,45 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam state {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title State machine — An auction listing
+
+[*] --> Draft : CreateDraft(format = Auction)
+Draft : starting bid in Price, AuctionDays may be empty
+Draft --> Active : Publish / AuctionEndsAt = now + AuctionDays (L2-113)
+
+state Active {
+  [*] --> NoBids
+  NoBids : editable, withdrawable
+  NoBids --> HasBids : PlaceBid
+  HasBids : AUCTION_HAS_BIDS on edit or withdraw (L2-120)
+  HasBids --> HasBids : PlaceBid / Outbid email
+}
+Active : running while AuctionEndsAt > now
+
+Active --> Reserved : CloseAuction with bids /\nWinnerId, PayBy = AuctionEndsAt + 48 h (L2-117)
+Active --> Removed : CloseAuction without bids /\nAuctionUnsold
+Active --> Removed : Withdraw (no bids) /\nWithdrawn, final
+
+state Reserved {
+  [*] --> AwaitingWinner
+  AwaitingWinner : ReservedByCheckoutId empty
+  AwaitingWinner --> WinnerCheckout : StartCheckout by winner before PayBy
+  WinnerCheckout : 10-minute hold (L2-028)
+  WinnerCheckout --> AwaitingWinner : ReleaseReservation /\nReservedUntil = PayBy (L2-118)
+}
+Reserved : awaiting the winner's payment
+
+Reserved --> Sold : Payment webhook / MarkSold
+Reserved --> Removed : ExpirePayment, PayBy passed,\nno checkout in progress / AuctionUnpaid
+Removed : AuctionUnsold or AuctionUnpaid are relistable
+Removed --> Active : Relist / new run, BidCount = 0,\nAuctionEndsAt = now + AuctionDays
+Sold --> [*]
+@enduml

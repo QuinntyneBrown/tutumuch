@@ -121,7 +121,10 @@ public sealed partial record CatalogCriteria(
         return new CatalogCriteria(WordsOf(filters.Q), category?.Name, subcategories, brands, conditions, min, max, sort);
     }
 
-    /// <summary>The visible listings these criteria keep; a keyword word must appear in title, brand or description.</summary>
+    /// <summary>
+    /// The visible listings these criteria keep; a keyword word must appear in title, brand or
+    /// description. Prices compare the current price: an auction's highest bid, else its starting bid (L2-114 AC5).
+    /// </summary>
     public IQueryable<Listing> Apply(IQueryable<Listing> listings)
     {
         var query = listings.Where(CatalogVisibility.IsVisible);
@@ -154,12 +157,12 @@ public sealed partial record CatalogCriteria(
 
         if (MinPrice is { } min)
         {
-            query = query.Where(l => l.Price >= min);
+            query = query.Where(l => (l.CurrentBid ?? l.Price) >= min);
         }
 
         if (MaxPrice is { } max)
         {
-            query = query.Where(l => l.Price <= max);
+            query = query.Where(l => (l.CurrentBid ?? l.Price) <= max);
         }
 
         return query;
@@ -177,8 +180,8 @@ public sealed partial record CatalogCriteria(
             ordered = listings.OrderBy(HeadlineMiss());
             ordered = Sort switch
             {
-                CatalogSort.PriceAscending => ordered.ThenBy(l => l.Price),
-                CatalogSort.PriceDescending => ordered.ThenByDescending(l => l.Price),
+                CatalogSort.PriceAscending => ordered.ThenBy(l => l.CurrentBid ?? l.Price),
+                CatalogSort.PriceDescending => ordered.ThenByDescending(l => l.CurrentBid ?? l.Price),
                 _ => ordered.ThenByDescending(l => l.PublishedAt),
             };
         }
@@ -186,8 +189,8 @@ public sealed partial record CatalogCriteria(
         {
             ordered = Sort switch
             {
-                CatalogSort.PriceAscending => listings.OrderBy(l => l.Price),
-                CatalogSort.PriceDescending => listings.OrderByDescending(l => l.Price),
+                CatalogSort.PriceAscending => listings.OrderBy(l => l.CurrentBid ?? l.Price),
+                CatalogSort.PriceDescending => listings.OrderByDescending(l => l.CurrentBid ?? l.Price),
                 _ => listings.OrderByDescending(l => l.PublishedAt),
             };
         }

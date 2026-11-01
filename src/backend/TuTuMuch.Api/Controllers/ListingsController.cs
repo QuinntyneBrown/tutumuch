@@ -93,7 +93,8 @@ public sealed class ListingsController(ISender sender) : ControllerBase
 /// <summary>
 /// The editable fields. There is no seller, status or timestamp member, so a
 /// client cannot set them (mass assignment, L2-049); unknown members are ignored. PhotoIds lists
-/// uploaded photos in display order (L2-017); leaving it out keeps the current photos.
+/// uploaded photos in display order (L2-017); leaving it out keeps the current photos. Format and
+/// AuctionDays choose an auction (L2-113); they count only while the listing is a draft.
 /// </summary>
 public sealed record ListingDetailsRequest(
     string? Category,
@@ -106,7 +107,9 @@ public sealed record ListingDetailsRequest(
     string? Flaws,
     decimal? Price,
     decimal? ShippingCost,
-    IReadOnlyList<Guid>? PhotoIds = null)
+    IReadOnlyList<Guid>? PhotoIds = null,
+    string? Format = null,
+    int? AuctionDays = null)
 {
-    public ListingDetails ToDetails() => new(Category, Subcategory, Size, Title, Description, Brand, Condition, Flaws, Price, ShippingCost);
+    public ListingDetails ToDetails() => new(Category, Subcategory, Size, Title, Description, Brand, Condition, Flaws, Price, ShippingCost, Format, AuctionDays);
 }

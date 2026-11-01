@@ -13,7 +13,22 @@ namespace TuTuMuch.Application.Listings;
 /// page names by its category), the price, the status and the date first saved, plus the order of a
 /// Sold listing so the row can open the sale.
 /// </summary>
-public sealed record MyListingRowDto(string Reference, string Status, string? Title, string Category, decimal? Price, CardPhotoDto? Photo, DateTime CreatedAt, Guid? SaleOrderId);
+/// <remarks>An auction row adds its current bid, bid count and end time; CanRelist marks an unsold or unpaid auction the seller can relist from the row (L2-117).</remarks>
+public sealed record MyListingRowDto(
+    string Reference,
+    string Status,
+    string? Title,
+    string Category,
+    decimal? Price,
+    CardPhotoDto? Photo,
+    DateTime CreatedAt,
+    Guid? SaleOrderId,
+    string Format = "FixedPrice",
+    decimal? CurrentBid = null,
+    int BidCount = 0,
+    DateTime? AuctionEndsAt = null,
+    string? RemovalReason = null,
+    bool CanRelist = false);
 
 /// <summary>How many of the seller's listings are in each status; the chips of the status filter read them.</summary>
 public sealed record MyListingCountsDto(int All, int Draft, int Active, int Reserved, int Sold, int Removed);
@@ -49,7 +64,7 @@ public sealed class GetMyListingsQueryHandler(ITuTuMuchDbContext db, IOptions<Ph
 
         var rows = await (status is { } only ? mine.Where(l => l.Status == only) : mine)
             .OrderByDescending(l => l.CreatedAt).ThenByDescending(l => l.Id)
-            .Select(l => new { l.Id, l.Reference, l.Status, l.Title, l.Category, l.Price, l.CreatedAt })
+            .Select(l => new { l.Id, l.Reference, l.Status, l.Title, l.Category, l.Price, l.CreatedAt, l.Format, l.CurrentBid, l.BidCount, l.AuctionEndsAt, l.RemovalReason })
             .ToListAsync(cancellationToken);
         var ids = rows.Select(r => r.Id).ToList();
         var covers = (await db.ListingPhotos.AsNoTracking()
@@ -71,7 +86,14 @@ public sealed class GetMyListingsQueryHandler(ITuTuMuchDbContext db, IOptions<Ph
             r.Price,
             covers.TryGetValue(r.Id, out var cover) ? CatalogPhotos.ToDto(cover, string.Empty, baseUrl) : null,
             r.CreatedAt,
-            orders.TryGetValue(r.Id, out var orderId) ? orderId : null)).ToList();
+            orders.TryGetValue(r.Id, out var orderId) ? orderId : null,
+            r.Format.ToString(),
+            r.CurrentBid,
+            r.BidCount,
+            r.AuctionEndsAt,
+            r.RemovalReason?.ToString(),
+            r.Format == ListingFormat.Auction && r.Status == ListingStatus.Removed
+                && r.RemovalReason is ListingRemovalReason.AuctionUnsold or ListingRemovalReason.AuctionUnpaid)).ToList();
 
         return new MyListingsDto(items, new MyListingCountsDto(
             counts.Sum(c => c.Count),

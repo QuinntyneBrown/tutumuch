@@ -33,7 +33,10 @@ and the skeleton, redrew every component to the brand kit and retired the decora
 status for an expired request; the request list on My requests is local UI of `@tutumuch/catalog`. The Phase 1
 marketing page ([ADR general/0010](../adr/general/0010-phase-one-marketing-page.md)) added the tulle field (the one
 decorative layer allowed, coloured by the `--color-tulle-*` tokens), the closet marquee, the closet worth calculator,
-the journey variant of the steps, the card and arrow-right icons and a bigger header logo.
+the journey variant of the steps, the card and arrow-right icons and a bigger header logo. Auctions ([ADR listings/0005](../adr/listings/0005-auctions-as-a-listing-format.md)) added the
+auction panel (its status line reuses the info, warning and success alert pairs; no new colours), the auction
+variant of the listing card (the "Auction" stamp and the time left under the price), the Place bid and Pay now
+uses of the buy bar, and the `.order-list__row` layout for a list row with an action beside it.
 
 ## Foundations
 
@@ -81,11 +84,12 @@ the journey variant of the steps, the card and arrow-right icons and a bigger he
 | [Input group](components/input-group.html) | leading addon | default, invalid | sell price and shipping |
 | [Item row](components/item-row.html) | with or without thumbnail | default, truncated | sell/success |
 | [Empty state](components/empty-state.html) | Tilly (hello) by default; error (compact, icon well); `[tilly]="false"` | static | catalog/empty, my-listings/empty, catalog/error |
-| [Listing card](components/listing-card.html) | active, reserved, sold (greyed photo); photo, title, brand, "Girls · condition", price; grid of 2, 3 or 4 columns | default, hover, focus, loading skeleton | catalog/default, catalog/loading, catalog/category-dance, listing-detail/sold |
+| [Listing card](components/listing-card.html) | active, reserved, sold (greyed photo), auction ("Auction" stamp, current price, time left); photo, title, brand, "Girls · condition", price; grid of 2, 3 or 4 columns | default, hover, focus, loading skeleton, ending soon | catalog/default, catalog/loading, catalog/category-dance, catalog/auctions, listing-detail/sold |
 | [Load more](components/load-more.html) | one | default, busy, hidden when all shown | catalog/default |
 | [Gallery](components/gallery.html) | one photo, several photos | selected thumbnail, swiped | listing-detail/default |
-| [Buy bar](components/buy-bar.html) | Buy now, Edit listing | sticky below 992 px, inline from 992 px | listing-detail/default, listing-detail/guest, listing-detail/own |
+| [Buy bar](components/buy-bar.html) | Buy now, Edit listing, Place bid, Pay now (auction: the amount labelled "Current bid", "Starting bid" or "Winning bid") | sticky below 992 px, inline from 992 px | listing-detail/default, listing-detail/guest, listing-detail/own |
 | [Sold notice](components/sold-notice.html) | first time, already requested; one action | static, announced politely, heading takes focus | listing-detail/showcase-sold, listing-detail/showcase-requested |
+| [Auction panel](components/auction-panel.html) | starting bid, current bid, winning bid; status line info (highest bidder), warning (outbid), success (won), neutral (ended, seller) | running, ending soon (minutes, warning colour), ended; status announced politely | listing-detail/auction, listing-detail/auction-bids, listing-detail/auction-outbid, listing-detail/auction-won, listing-detail/auction-ended |
 | [Seller summary](components/seller-summary.html) | established, new seller | static | listing-detail/default, listing-detail/new-seller |
 | [Rating summary](components/rating-summary.html) | rated; "No reviews yet" | static | profile/default, profile/own, profile/empty |
 | [Order summary](components/order-summary.html) | priced, not yet priced | static | checkout/default, checkout/new-address |

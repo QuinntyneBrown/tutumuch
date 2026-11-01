@@ -1,0 +1,44 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Auction listings
+
+Container(web, "TuTuMuch Web", "Angular", "@tutumuch/listings ListingForm; @tutumuch/catalog ListingDetailPage, PlaceBidDialog; @tutumuch/components tl-auction-panel, tl-listing-card; @tutumuch/orders CheckoutPage; @tutumuch/api BidsApi")
+Container_Boundary(api, "TuTuMuch API") {
+  Component(bids, "BidsController", "ASP.NET Core controller, VerifiedMember policy", "POST /api/listings/{reference}/bids")
+  Component(listings, "ListingsController", "ASP.NET Core controller, CanSell policy", "Create, update, publish, withdraw, relist with format and auctionDays")
+  Component(catalog, "CatalogController", "ASP.NET Core controller", "Cards and detail with format and auction")
+  Component(checkouts, "CheckoutsController", "ASP.NET Core controller", "POST /api/checkouts")
+  Component(place, "PlaceBidCommandHandler", "MediatR handler", "Checks the bid, adds it, queues OutbidEmail, saves once")
+  Component(listingHandlers, "ListingCommandHandlers", "MediatR handlers", "Draft and publish rules with the auction length")
+  Component(queries, "Catalog query handlers", "MediatR handlers", "Current price, AuctionSummaryDto, viewer flags")
+  Component(checkout, "CheckoutCommandHandlers", "MediatR handlers", "Winner-only conditional reservation at CurrentBid")
+}
+Container_Boundary(worker, "TuTuMuch Worker") {
+  Component(job, "AuctionCloseJob", "BackgroundService, PeriodicTimer 1 min", "Sends CloseAuctionsCommand")
+  Component(close, "CloseAuctionsCommandHandler", "MediatR handler", "Closes ended auctions; expires unpaid payment windows")
+}
+Container_Boundary(domain, "TuTuMuch.Domain") {
+  Component(listing, "Listing", "Aggregate", "Format, auction fields, PlaceBid, Close, ExpirePayment, Relist")
+  Component(bid, "Bid", "Entity", "One bid on one listing")
+}
+ComponentDb(db, "TuTuMuchDbContext", "EF Core", "Listings, Bids, Checkouts, OutboxMessages")
+
+Rel(web, bids, "Places bids", "JSON/HTTPS")
+Rel(web, listings, "Saves and publishes auctions", "JSON/HTTPS")
+Rel(web, catalog, "Reads cards and detail", "JSON/HTTPS")
+Rel(web, checkouts, "Starts the winner's checkout", "JSON/HTTPS")
+Rel(bids, place, "Sends PlaceBidCommand")
+Rel(listings, listingHandlers, "Sends commands")
+Rel(catalog, queries, "Sends queries")
+Rel(checkouts, checkout, "Sends StartCheckoutCommand")
+Rel(job, close, "Sends CloseAuctionsCommand")
+Rel(place, listing, "PlaceBid")
+Rel(listingHandlers, listing, "UpdateDetails, Publish, Withdraw, Relist")
+Rel(close, listing, "Close, ExpirePayment")
+Rel(listing, bid, "Creates")
+Rel(place, db, "Saves listing, bid and outbox row in one SaveChanges")
+Rel(close, db, "Saves each listing with its emails")
+Rel(queries, db, "Reads")
+Rel(checkout, db, "Conditional update WinnerId = buyer AND PayBy > now")
+@enduml

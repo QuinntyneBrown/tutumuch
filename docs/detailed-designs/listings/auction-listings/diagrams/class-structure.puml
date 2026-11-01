@@ -1,0 +1,151 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Auction listings
+
+package "TuTuMuch.Domain.Listings" {
+  enum ListingFormat {
+    FixedPrice
+    Auction
+  }
+  enum ListingStatus {
+    Draft
+    Active
+    Reserved
+    Sold
+    Removed
+  }
+  enum ListingRemovalReason {
+    OrderCancelled
+    Withdrawn
+    AuctionUnsold
+    AuctionUnpaid
+  }
+  class Listing {
+    +Guid Id
+    +string Reference
+    +Guid SellerId
+    +ListingStatus Status
+    +decimal? Price
+    +decimal? ShippingCost
+    +ListingFormat Format
+    +int? AuctionDays
+    +DateTime? AuctionEndsAt
+    +decimal? CurrentBid
+    +int BidCount
+    +Guid? HighBidderId
+    +Guid? WinnerId
+    +DateTime? PayBy
+    +Guid? ReservedByCheckoutId
+    +DateTime? ReservedUntil
+    +ListingRemovalReason? RemovalReason
+    +int Version
+    +decimal? CurrentPrice
+    +decimal? MinimumBid
+    +bool CanRelist
+    +bool CanBeShowcase
+    +string? EditRefusal
+    +Publish(now, photoCount): IReadOnlyList<RuleViolation>
+    +IsRunning(now): bool
+    +PlaceBid(bidderId, amount, now): BidResult
+    +Close(now): void
+    +ExpirePayment(now): bool
+    +ReleaseReservation(checkoutId, now): void
+    +MarkSold(now): void
+    +Relist(now): void
+    +Withdraw(now): void
+  }
+  class Bid {
+    +Guid Id
+    +Guid ListingId
+    +Guid BidderId
+    +decimal Amount
+    +DateTime PlacedAt
+  }
+  class BidResult <<record>> {
+    +Bid? Bid
+    +BidRefusal? Refusal
+  }
+  class BidRefusal <<record>> {
+    +string Code
+    +string Message
+    +decimal? MinimumBid
+  }
+}
+
+package "TuTuMuch.Application.Listings" {
+  class PlaceBidCommand <<record>> {
+    +Guid BidderId
+    +string Reference
+    +decimal Amount
+  }
+  class PlaceBidCommandHandler {
+    +Handle(PlaceBidCommand): Result<AuctionSummaryDto>
+  }
+  class CloseAuctionsCommand <<record>>
+  class CloseAuctionsCommandHandler {
+    +Handle(CloseAuctionsCommand): int
+  }
+  class AuctionSummaryDto <<record>> {
+    +string CurrentPrice
+    +string StartingBid
+    +int BidCount
+    +DateTime EndsAt
+    +string MinimumBid
+    +bool Ended
+    +bool ViewerIsHighestBidder
+    +bool ViewerHasBid
+    +bool ViewerIsWinner
+    +DateTime? PayBy
+  }
+}
+
+package "TuTuMuch.Application.Checkouts" {
+  class CheckoutCommandHandlers {
+    +{static} Error AuctionBidsOnly = 409 AUCTION_BIDS_ONLY
+    +{static} Error AuctionEnded = 409 AUCTION_ENDED
+    +Handle(StartCheckoutCommand): Result<CheckoutDto>
+  }
+}
+
+package "TuTuMuch.Domain.Notifications" {
+  enum NotificationType {
+    ...
+    Outbid
+    AuctionWon
+    AuctionEnded
+    AuctionPaymentMissed
+  }
+}
+
+package "TuTuMuch.Worker" {
+  class AuctionCloseJob {
+    +RunOnceAsync(ct): Task<int>
+  }
+}
+
+Listing --> ListingFormat
+Listing --> ListingStatus
+Listing --> ListingRemovalReason
+Listing "1" *-- "0..*" Bid : receives >
+Listing ..> BidResult : returns
+BidResult --> Bid
+BidResult --> BidRefusal
+PlaceBidCommandHandler ..> PlaceBidCommand : handles
+PlaceBidCommandHandler ..> Listing : PlaceBid
+PlaceBidCommandHandler ..> AuctionSummaryDto
+PlaceBidCommandHandler ..> NotificationType : Outbid
+CloseAuctionsCommandHandler ..> CloseAuctionsCommand : handles
+CloseAuctionsCommandHandler ..> Listing : Close, ExpirePayment
+CloseAuctionsCommandHandler ..> NotificationType : AuctionWon, AuctionEnded, AuctionPaymentMissed
+AuctionCloseJob ..> CloseAuctionsCommand : sends
+CheckoutCommandHandlers ..> Listing : reserves for WinnerId
+@enduml

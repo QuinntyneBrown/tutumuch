@@ -6,6 +6,7 @@ public sealed record DemoMember(string DisplayName, string Email);
 /// <summary>
 /// One demo listing as a seller would enter it. <see cref="Photos"/> are paths under the seed
 /// photos folder, cover first. The size is never given: it comes from the category (L2-013).
+/// <see cref="AuctionDays"/> makes it an auction with <see cref="Price"/> as the starting bid (L2-113).
 /// </summary>
 public sealed record DemoListing(
     string Category,
@@ -17,7 +18,8 @@ public sealed record DemoListing(
     string? Flaws,
     decimal Price,
     decimal ShippingCost,
-    IReadOnlyList<string> Photos);
+    IReadOnlyList<string> Photos,
+    int? AuctionDays = null);
 
 /// <summary>
 /// The fixed demo set (seed-demo-data design): 8 members and 72 listings, 12 in each of the
@@ -212,7 +214,13 @@ public static class DemoCatalogue
     /// photo are published six apart instead of side by side.
     /// </summary>
     public static readonly IReadOnlyList<DemoListing> Listings =
-        Interleave(Spread(Clothing), Spread(Shoes), Spread(Dance), Spread(Sports), Spread(CamerasAndTech), Spread(ToysAndCrafts));
+        AsAuctions(Interleave(Spread(Clothing), Spread(Shoes), Spread(Dance), Spread(Sports), Spread(CamerasAndTech), Spread(ToysAndCrafts)));
+
+    /// <summary>How many of the newest listings are 7-day auctions, still running after the seed (L1-025).</summary>
+    public const int AuctionCount = 2;
+
+    private static List<DemoListing> AsAuctions(List<DemoListing> listings) =>
+        listings.Select((l, i) => i >= listings.Count - AuctionCount ? l with { AuctionDays = 7 } : l).ToList();
 
     /// <summary>Every photo file the catalogue uses, relative to the seed photos folder.</summary>
     public static IReadOnlyList<string> PhotoFiles { get; } = Listings.SelectMany(l => l.Photos).Distinct().Order(StringComparer.Ordinal).ToList();

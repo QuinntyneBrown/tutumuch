@@ -27,4 +27,5 @@ Ordered by value to the user, highest first.
 | Sign in with Google | Visitor joins or signs in with their Google account | 6 |
 | Request items | Member asks for an item that is not in the closet yet (category, keywords, highest price, lowest condition), manages their requests on My requests and is emailed when a matching listing is published or relisted (`L1-023`) | 6 |
 | Request a showcase item | The owner marks one of their listings as a showcase; Buy now on it shows Sold and "Request this item" instead of checkout, a visitor signs in or joins and comes straight back to the request, a member sends a short note, and the owner sees every request in the admin shell (`L1-024`) | 4 |
-| **Total** | | **96** |
+| Auction an item | Seller uploads an item as an auction with a starting bid and a 3, 5 or 7 day length instead of a price; verified members bid, the highest bid when time runs out wins and pays through checkout within 48 hours, and everyone involved is emailed (`L1-025`) | 8 |
+| **Total** | | **104** |

@@ -108,7 +108,8 @@
       "requirements": [
         "L2-042",
         "L2-043",
-        "L2-103"
+        "L2-103",
+        "L2-119"
       ],
       "states": [
         "default",
@@ -291,13 +292,15 @@
         "L2-062",
         "L2-093",
         "L2-094",
-        "L2-104"
+        "L2-104",
+        "L2-114"
       ],
       "states": [
         "default",
         "guest",
         "category",
         "category-dance",
+        "auctions",
         "search",
         "filtered",
         "loading",
@@ -326,7 +329,12 @@
         "L2-107",
         "L2-108",
         "L2-109",
-        "L2-111"
+        "L2-111",
+        "L2-114",
+        "L2-115",
+        "L2-117",
+        "L2-118",
+        "L2-120"
       ],
       "states": [
         "default",
@@ -342,7 +350,18 @@
         "showcase-sold",
         "showcase-guest",
         "showcase-requested",
-        "showcase-own"
+        "showcase-own",
+        "auction",
+        "auction-bids",
+        "auction-highest",
+        "auction-outbid",
+        "auction-ending",
+        "auction-ended",
+        "auction-won",
+        "auction-own",
+        "auction-own-no-bids",
+        "auction-unsold",
+        "auction-guest"
       ],
       "not_applicable": {
         "empty": "A listing always has its required fields; a missing listing is the 'unavailable' state."
@@ -375,6 +394,31 @@
       }
     },
     {
+      "id": "auction-emails",
+      "kind": "page",
+      "title": "Auction emails",
+      "route": "(email)",
+      "requirements": [
+        "L2-119",
+        "L2-120",
+        "L2-042",
+        "L2-043"
+      ],
+      "states": [
+        "default",
+        "won",
+        "ended-sold",
+        "ended-unsold",
+        "missed-winner",
+        "missed-seller"
+      ],
+      "not_applicable": {
+        "loading": "An email is static text.",
+        "empty": "An email is only sent for an auction event.",
+        "error": "Sending failures are retried by the outbox (L2-042); the member sees nothing."
+      }
+    },
+    {
       "id": "checkout",
       "kind": "page",
       "title": "Checkout",
@@ -386,7 +430,8 @@
         "L2-030",
         "L2-063",
         "L2-065",
-        "L2-108"
+        "L2-108",
+        "L2-118"
       ],
       "states": [
         "default",
@@ -398,6 +443,8 @@
         "expired",
         "conflict",
         "showcase",
+        "auction-won",
+        "auction-ended",
         "loading",
         "error"
       ],
@@ -597,7 +644,9 @@
         "L2-017",
         "L2-018",
         "L2-020",
-        "L2-013"
+        "L2-013",
+        "L2-113",
+        "L2-120"
       ],
       "states": [
         "default",
@@ -606,6 +655,8 @@
         "invalid",
         "submitting",
         "success",
+        "auction",
+        "auction-has-bids",
         "locked",
         "changed",
         "sold",
@@ -622,10 +673,12 @@
       "route": "/account/listings",
       "requirements": [
         "L2-019",
-        "L2-021"
+        "L2-021",
+        "L2-117"
       ],
       "states": [
         "default",
+        "auctions",
         "filtered",
         "loading",
         "empty",
@@ -667,13 +720,16 @@
         "L2-063",
         "L2-091",
         "L2-092",
-        "L2-094"
+        "L2-094",
+        "L2-113"
       ],
       "states": [
         "default",
         "filled",
         "invalid",
         "submitting",
+        "auction",
+        "auction-invalid",
         "draft-saved",
         "success",
         "selling-not-open",
@@ -975,6 +1031,27 @@
       }
     },
     {
+      "id": "place-bid",
+      "kind": "dialog",
+      "title": "Place a bid",
+      "opens_from": "listing-detail",
+      "requirements": [
+        "L2-115",
+        "L2-116",
+        "L2-051",
+        "L2-065"
+      ],
+      "states": [
+        "default",
+        "first-bid",
+        "invalid",
+        "conflict",
+        "busy",
+        "ended",
+        "failed"
+      ]
+    },
+    {
       "id": "request-showcase-item",
       "kind": "dialog",
       "title": "Request this item",
@@ -1208,6 +1285,23 @@
       "not_applicable": {
         "danger": "Account suspension is deferred (see docs/adr/general/0001-defer-moderation-reviews-and-data-export.md); no danger banner exists."
       }
+    },
+    {
+      "id": "auction-toasts",
+      "kind": "notification",
+      "title": "Auction toasts",
+      "opens_from": "listing-detail",
+      "requirements": [
+        "L2-115",
+        "L2-116",
+        "L2-068"
+      ],
+      "states": [
+        "success",
+        "warning",
+        "info",
+        "danger"
+      ]
     },
     {
       "id": "showcase-request-toasts",

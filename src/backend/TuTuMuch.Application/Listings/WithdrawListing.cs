@@ -20,6 +20,9 @@ public static class ListingRefusals
     public static readonly Error PreconditionRequired = new(428, "PRECONDITION_REQUIRED", "Send the version you read in If-Match");
 
     /// <summary>Launch Phase 1 holds fewer listings than Launch:PhaseOneProductLimit (L2-092).</summary>
+    /// <summary>An auction with bids is fixed (L2-120).</summary>
+    public static readonly Error HasBids = new(409, "AUCTION_HAS_BIDS", "This auction has bids, so it can't be changed");
+
     public static readonly Error ProductLimitReached = new(409, "PRODUCT_LIMIT_REACHED", "The catalog is full for now");
 
     public static Error? For(Listing listing) => listing.EditRefusal switch
@@ -27,6 +30,7 @@ public static class ListingRefusals
         "LISTING_RESERVED" => Reserved,
         "LISTING_SOLD" => Sold,
         "LISTING_NOT_EDITABLE" => NotEditable,
+        "AUCTION_HAS_BIDS" => HasBids,
         _ => null,
     };
 
@@ -62,7 +66,7 @@ public sealed class WithdrawListingCommandHandler(ITuTuMuchDbContext db, TimePro
             return Error.NotFound("LISTING_NOT_FOUND");
         }
 
-        if (listing.Status is ListingStatus.Reserved or ListingStatus.Sold)
+        if (listing.Status is ListingStatus.Reserved or ListingStatus.Sold || listing.EditRefusal == "AUCTION_HAS_BIDS")
         {
             return ListingRefusals.For(listing)!;
         }

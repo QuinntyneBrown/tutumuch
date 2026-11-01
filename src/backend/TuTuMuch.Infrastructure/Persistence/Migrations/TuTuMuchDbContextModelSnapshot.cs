@@ -22,11 +22,53 @@ namespace TuTuMuch.Infrastructure.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("TuTuMuch.Domain.Listings.Bid", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(7, 2)
+                        .HasColumnType("decimal(7,2)");
+
+                    b.Property<Guid>("BidderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ListingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("PlacedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BidderId", "ListingId")
+                        .HasDatabaseName("IX_Bids_BidderId_ListingId");
+
+                    b.HasIndex("ListingId", "PlacedAt")
+                        .HasDatabaseName("IX_Bids_ListingId_PlacedAt");
+
+                    b.ToTable("Bids", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_Bids_Amount", "CAST(Amount AS REAL) BETWEEN 1 AND 5000");
+                        });
+                });
+
             modelBuilder.Entity("TuTuMuch.Domain.Listings.Listing", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("AuctionDays")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("AuctionEndsAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("BidCount")
+                        .HasColumnType("int");
 
                     b.Property<string>("Brand")
                         .HasMaxLength(50)
@@ -44,6 +86,10 @@ namespace TuTuMuch.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<decimal?>("CurrentBid")
+                        .HasPrecision(7, 2)
+                        .HasColumnType("decimal(7,2)");
+
                     b.Property<string>("Description")
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
@@ -55,11 +101,22 @@ namespace TuTuMuch.Infrastructure.Persistence.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<string>("Format")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<Guid?>("HighBidderId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsShowcase")
                         .HasColumnType("bit");
 
                     b.Property<long>("Number")
                         .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("PayBy")
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal?>("Price")
                         .HasPrecision(7, 2)
@@ -115,6 +172,9 @@ namespace TuTuMuch.Infrastructure.Persistence.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("int");
 
+                    b.Property<Guid?>("WinnerId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Number")
@@ -141,11 +201,18 @@ namespace TuTuMuch.Infrastructure.Persistence.Migrations
                     b.HasIndex("Status", "ReservedUntil")
                         .HasDatabaseName("IX_Listings_Status_ReservedUntil");
 
+                    b.HasIndex("Format", "Status", "AuctionEndsAt")
+                        .HasDatabaseName("IX_Listings_Format_Status_AuctionEndsAt");
+
                     b.HasIndex("SellerId", "Status", "CreatedAt")
                         .HasDatabaseName("IX_Listings_SellerId_Status_CreatedAt");
 
                     b.ToTable("Listings", null, t =>
                         {
+                            t.HasCheckConstraint("CK_Listings_AuctionDays", "AuctionDays IS NULL OR AuctionDays IN (3, 5, 7)");
+
+                            t.HasCheckConstraint("CK_Listings_CurrentBid", "CurrentBid IS NULL OR CAST(CurrentBid AS REAL) BETWEEN 1 AND 5000");
+
                             t.HasCheckConstraint("CK_Listings_Price", "Price IS NULL OR CAST(Price AS REAL) BETWEEN 1 AND 5000");
 
                             t.HasCheckConstraint("CK_Listings_ShippingCost", "ShippingCost IS NULL OR CAST(ShippingCost AS REAL) BETWEEN 0 AND 100");
@@ -1239,6 +1306,21 @@ namespace TuTuMuch.Infrastructure.Persistence.Migrations
                         .HasDatabaseName("IX_ShowcaseRequests_MemberId_ListingId");
 
                     b.ToTable("ShowcaseRequests", (string)null);
+                });
+
+            modelBuilder.Entity("TuTuMuch.Domain.Listings.Bid", b =>
+                {
+                    b.HasOne("TuTuMuch.Domain.Members.Member", null)
+                        .WithMany()
+                        .HasForeignKey("BidderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TuTuMuch.Domain.Listings.Listing", null)
+                        .WithMany()
+                        .HasForeignKey("ListingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("TuTuMuch.Domain.Listings.Listing", b =>
