@@ -17,6 +17,8 @@ public sealed record AddressDto(string FullName, string Line1, string? Line2, st
 /// <summary>
 /// One checkout as its buyer sees it. Money is two-place decimal strings (L2-018); tax and total
 /// are null until an address is set. Status is Expired as soon as the 10 minutes have passed.
+/// AuctionPayBy is set when the item is an auction the buyer won: the price is the winning bid and
+/// they must pay by then (L2-118).
 /// </summary>
 public sealed record CheckoutDto(
     Guid Id,
@@ -30,7 +32,8 @@ public sealed record CheckoutDto(
     AddressDto? Address,
     AddressDto? SavedAddress,
     string? LastDeclineReason,
-    Guid? OrderId);
+    Guid? OrderId,
+    DateTime? AuctionPayBy = null);
 
 /// <summary>A payment attempt accepted for processing; the result arrives by webhook.</summary>
 public sealed record PaymentDto(Guid Id, string Status);
@@ -59,6 +62,7 @@ internal static class CheckoutViews
             checkout.Address is null ? null : AddressDto.From(checkout.Address),
             saved is null ? null : AddressDto.From(saved),
             checkout.LastDeclineReason,
-            checkout.OrderId);
+            checkout.OrderId,
+            listing.IsAuction ? listing.PayBy : null);
     }
 }

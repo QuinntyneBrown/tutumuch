@@ -20,9 +20,10 @@ def address_block(lines) -> str:
     return '<address class="address">' + "<br>".join(esc(l) for l in lines) + "</address>"
 
 
-def order_summary(key: str, tax: float, total: float, *, heading: str = "Summary", extra: str = "") -> str:
+def order_summary(key: str, tax: float, total: float, *, heading: str = "Summary", extra: str = "", item_price: float | None = None,
+                  item_label: str = "Item") -> str:
     it = ITEMS[key]
-    rows = [("Item", money(it["price"])), ("Shipping", "Free" if it["ship"] == 0 else money(it["ship"])), ("Sales tax", money(tax))]
+    rows = [(item_label, money(it["price"] if item_price is None else item_price)), ("Shipping", "Free" if it["ship"] == 0 else money(it["ship"])), ("Sales tax", money(tax))]
     return (f'<aside class="panel stack stack--lg" aria-labelledby="sum-title"><h2 id="sum-title" class="panel__title">{heading}</h2>'
             f'{item_row(key, f"{esc(it["brand"])} · {size_long(it)} · {esc(it["cond"])}")}{totals(rows, ("Total", money(total)))}{extra}</aside>')
 
@@ -79,19 +80,31 @@ def card_fields() -> str:
             f'<p class="secure-note">{ic("lock", "icon icon--sm")}Card details go straight to our payment provider. TuTuMuch never sees them.</p></div>')
 
 
-def checkout(*, address: str | None = None, top: str = "", pay: str | None = None, tmr: str | None = None, pay_note: str = "") -> Page:
+def checkout(*, address: str | None = None, top: str = "", pay: str | None = None, tmr: str | None = None, pay_note: str = "", auction: bool = False) -> Page:
+    """auction=True is the winner's checkout (L2-118): the item price is locked at the winning bid and the hold lasts until the pay-by time."""
+    total = AUCTION_TOTAL if auction else BUY_TOTAL
     address = address if address is not None else saved_address()
-    pay = pay or btn(f"Pay {money(BUY_TOTAL)}", "primary lg block", attrs='type="submit"')
+    pay = pay or btn(f"Pay {money(total)}", "primary lg block", attrs='type="submit"')
     tmr = tmr if tmr is not None else timer()
+    if auction:
+        won = alert("success", "You won this auction",
+                    f'Pay by <time datetime="{AUCTION["pay_by_iso"]}">{AUCTION["pay_by"]}</time>. Until then it’s held for you, even if you leave checkout.',
+                    icon="check-circle", role="status")
+        top = won + top
+        cancel = f'<a class="btn btn--ghost btn--block" href="{P("listing-detail", "auction-won")}">Pay later</a>'
+        summary = order_summary("swan-tutu", AUCTION_TAX, total, item_price=AUCTION["current"], item_label="Winning bid")
+    else:
+        cancel = f'<a class="btn btn--ghost btn--block" href="{P("listing-detail")}">Cancel and release item</a>'
+        summary = order_summary(BUY, BUY_TAX, BUY_TOTAL)
     left = (f'<form class="stack stack--lg" novalidate>{top}'
             f'<section class="checkout-step" aria-labelledby="ship-h"><h2 id="ship-h">Ship to</h2>{address}</section>'
             f'<section class="checkout-step" aria-labelledby="pay-h"><h2 id="pay-h">Pay</h2>{card_fields()}</section>'
-            f'<div class="stack stack--sm">{pay}{pay_note}<a class="btn btn--ghost btn--block" href="{P("listing-detail")}">Cancel and release item</a></div></form>')
+            f'<div class="stack stack--sm">{pay}{pay_note}{cancel}</div></form>')
     head = f'<div class="page-header"><div class="stack stack--sm"><h1>Checkout</h1>{tmr}</div></div>'
-    return Page(main=f'{head}<div class="split">{left}{order_summary(BUY, BUY_TAX, BUY_TOTAL)}</div>', footer=False)
+    return Page(main=f'{head}<div class="split">{left}{summary}</div>', footer=False)
 
 
-c = screen("checkout", "page", "Checkout", route="/checkout/{id}", reqs=["L2-027", "L2-028", "L2-029", "L2-030", "L2-063", "L2-065", "L2-108"],
+c = screen("checkout", "page", "Checkout", route="/checkout/{id}", reqs=["L2-027", "L2-028", "L2-029", "L2-030", "L2-063", "L2-065", "L2-108", "L2-118"],
            na={"empty": "Checkout always holds exactly one reserved item."})
 
 
@@ -158,6 +171,25 @@ def _():
             f'<p class="text-muted">We can look for another one like it.</p>'
             f'<div class="actions">{btn("Request this item", "primary", P("listing-detail", "showcase-sold"))}{btn("Keep shopping", href=P("catalog"))}</div></div>')
     return Page(main=main)
+
+
+@c.state("auction-won", "The auction winner's checkout: “You won this auction”, the item price locked at the winning bid of $18.00, and the pay-by time.")
+def _():
+    pg = checkout(auction=True)
+    pg.notes = note("Only the winner can start this checkout, and only before the pay-by time (L2-118). Its 10-minute hold applies; if it lapses, the item stays held for the winner until the pay-by time and Pay now opens a new checkout at the same price.",
+                    "top: 7rem; right: 1rem;")
+    return pg
+
+
+@c.state("auction-ended", "Checkout refused for an auction (409 AUCTION_ENDED: not the winner, or the pay-by time passed): no address or card is asked for.")
+def _():
+    main = (f'<div class="center-state">{ic("clock", "icon icon--lg")}<h1>This auction has ended</h1>'
+            f'<p class="text-muted">Only the winner can pay for it, before the time to pay runs out.</p>'
+            f'<div class="actions">{btn("Back to the item", "primary", P("listing-detail", "auction-ended"))}{btn("Keep shopping", href=P("catalog"))}</div></div>')
+    pg = Page(main=main)
+    pg.notes = note("A running auction refuses checkout with 409 AUCTION_BIDS_ONLY “This item is sold by auction”; the page never offers it, as it shows Place bid instead of Buy now.",
+                    "top: 6rem; right: 1rem;")
+    return pg
 
 
 @c.state("loading", "Reserving the item and pricing the order: skeletons in the final two-column layout.")
@@ -718,3 +750,79 @@ def _():
 @rt.state("success", "Payment confirmed: success toast over the confirmation page.")
 def _():
     return Note(bg=("order-confirmation", "default"), toasts=toast_region(toast("success", "Payment confirmed", f"{money(BUY_TOTAL)} charged to {CARD[0]} ending {CARD[1]}.")))
+
+
+# ---------------------------------------------------------------------------
+# Auction emails (L2-119): order emails, always on, no unsubscribe link. They never name a bidder (L2-120).
+# ---------------------------------------------------------------------------
+ae = screen("auction-emails", "page", "Auction emails", route="(email)", reqs=["L2-119", "L2-120", "L2-042", "L2-043"],
+            na={"loading": "An email is static text.", "empty": "An email is only sent for an auction event.",
+                "error": "Sending failures are retried by the outbox (L2-042); the member sees nothing."})
+
+ORDER_FOOTER = ("TuTuMuch, the marketplace for all things girls.\n"
+                "Auction emails are order emails, so they’re always on. Manage your other emails: https://tutumuch.com/account/emails")
+
+
+def auction_email(subject: str, body: str, note_text: str) -> Page:
+    meta = (f'<dl class="facts"><dt>From</dt><dd>TuTuMuch</dd><dt>To</dt><dd>{esc(PEOPLE[ME]["email"])}</dd>'
+            f'<dt>Subject</dt><dd>{esc(subject)}</dd></dl>')
+    main = (f'<div class="page-header"><div><p class="eyebrow">Email</p><h1>{esc(subject)}</h1></div></div>'
+            f'<div class="panel stack stack--lg">{meta}<p style="white-space: pre-line; margin: 0;">{body}\n\n{ORDER_FOOTER}</p></div>')
+    pg = Page(main=main, shell="bare", main_class="container page page--form")
+    pg.notes = note(note_text, "top: 6rem; right: 1rem;")
+    return pg
+
+
+SWAN = ITEMS["swan-tutu"]
+SCOOT = ITEMS["pink-scooter"]
+BOOTS = ITEMS["glitter-boots"]
+
+
+@ae.state("default", "Outbid: to the member who held the highest bid when someone bid higher, with a link back to the listing.")
+def _():
+    subject = f"You’ve been outbid on {SWAN['title']}"
+    body = (f"Hi TutuTessa,\n\nSomeone bid higher on {esc(SWAN['title'])} by {esc(SWAN['brand'])}. The current bid is {money(AUCTION['raced'])}, "
+            f"and the auction ends {AUCTION['ends']}.\n\nBid {money(AUCTION['raced_minimum'])} or more to get back in:\nhttps://tutumuch.com/items/{SWAN['id']}")
+    return auction_email(subject, body, "Sent to the outbid member only; the new highest bidder gets no email (L2-119). Never names who bid.")
+
+
+@ae.state("won", "Won: to the winner when the auction closes, with the winning bid and the pay-by time.")
+def _():
+    subject = f"You won {SWAN['title']}"
+    body = (f"Hi TutuTessa,\n\nYour bid of {money(AUCTION['current'])} won {esc(SWAN['title'])} by {esc(SWAN['brand'])}.\n\n"
+            f"Pay by {AUCTION['pay_by']}: your bid plus {money(SWAN['ship'])} shipping and tax.\nPay now:\nhttps://tutumuch.com/items/{SWAN['id']}\n\n"
+            "If you don’t pay by then, the seller can relist it.")
+    return auction_email(subject, body, "Queued by the closing job once, however often it runs (L2-117). The pay-by time is 48 hours after the end, in the member's time zone.")
+
+
+@ae.state("ended-sold", "Ended with bids: to the seller, with the winning bid and the winner's time to pay; the winner is not named.")
+def _():
+    subject = f"Your auction for {SCOOT['title']} ended"
+    body = (f"Hi TutuTessa,\n\nYour auction for {esc(SCOOT['title'])} ended with a winning bid of {money(AUCTION['own_current'])} after {AUCTION['own_bids']} bids.\n\n"
+            f"The winner has until {AUCTION['pay_by']} to pay. We’ll email you when they do, and you ship it then.\n\n"
+            "Your listings: https://tutumuch.com/account/listings")
+    return auction_email(subject, body, "The seller learns who bought it through the order once it is paid, as for any sale (L2-120).")
+
+
+@ae.state("ended-unsold", "Ended without bids: to the seller, saying there were no bids, with a link to relist it on My listings.")
+def _():
+    subject = f"Your auction for {BOOTS['title']} ended"
+    body = (f"Hi TutuTessa,\n\nYour auction for {esc(BOOTS['title'])} ended with no bids, so it’s out of the closet for now.\n\n"
+            "Relist it to run it again:\nhttps://tutumuch.com/account/listings")
+    return auction_email(subject, body, "The listing is Removed with the reason AuctionUnsold and can be relisted (L2-117).")
+
+
+@ae.state("missed-winner", "Payment window missed: to the winner, saying the time to pay ran out.")
+def _():
+    subject = f"The time to pay for {SWAN['title']} ran out"
+    body = (f"Hi TutuTessa,\n\nYou won {esc(SWAN['title'])}, but the time to pay ran out on {AUCTION['pay_by']}. You weren’t charged, "
+            "and the item went back to the seller.\n\nShop the closet: https://tutumuch.com/")
+    return auction_email(subject, body, "Sent when the closing job removes the listing with AuctionUnpaid (L2-118).")
+
+
+@ae.state("missed-seller", "Payment window missed: to the seller, saying they can relist it.")
+def _():
+    subject = f"The winner didn’t pay for {SCOOT['title']}"
+    body = (f"Hi TutuTessa,\n\nThe winner of your auction for {esc(SCOOT['title'])} didn’t pay by {AUCTION['pay_by']}, so there’s no sale.\n\n"
+            "Relist it to run it again:\nhttps://tutumuch.com/account/listings")
+    return auction_email(subject, body, "Never names the winner (L2-120). The listing is Removed with the reason AuctionUnpaid and can be relisted.")

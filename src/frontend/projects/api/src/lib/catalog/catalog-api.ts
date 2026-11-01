@@ -14,7 +14,35 @@ export interface CardPhoto {
   jpeg: string;
 }
 
-/** One catalog card. price is a two-place decimal string such as "85.00" (L2-018). */
+/** How a listing is sold (L2-113). */
+export type ListingFormat = 'FixedPrice' | 'Auction';
+
+/** An auction on a catalog card (L2-114); the card's price is the current price. */
+export interface AuctionCard {
+  startingBid: string;
+  bidCount: number;
+  endsAt: string;
+}
+
+/**
+ * An auction as the viewer sees it on its detail page (L2-114): money as two-place strings, and
+ * only the viewer's own standing, never another bidder (L2-120). payBy is set while an ended
+ * auction waits for its winner to pay (L2-118).
+ */
+export interface AuctionSummary {
+  currentPrice: string;
+  startingBid: string;
+  bidCount: number;
+  endsAt: string;
+  minimumBid: string;
+  ended: boolean;
+  viewerIsHighestBidder: boolean;
+  viewerHasBid: boolean;
+  viewerIsWinner: boolean;
+  payBy: string | null;
+}
+
+/** One catalog card. price is a two-place decimal string such as "85.00" (L2-018); for an auction, the current price. */
 export interface ListingCard {
   id: string;
   reference: string;
@@ -28,6 +56,9 @@ export interface ListingCard {
   status: 'Active' | 'Reserved';
   publishedAt: string;
   coverPhoto: CardPhoto | null;
+  /** Missing in older fixtures; treat as FixedPrice. */
+  format?: ListingFormat;
+  auction?: AuctionCard | null;
 }
 
 export interface CatalogPage {
@@ -79,6 +110,9 @@ export interface ListingDetail {
   viewer: { relation: ViewerRelation };
   /** A showcase listing: Buy now shows the Sold notice instead of checkout (L2-108). */
   showcase: boolean;
+  /** An auction shows the auction panel and Place bid instead of Buy now (L2-114). */
+  format?: ListingFormat;
+  auction?: AuctionSummary | null;
 }
 
 /** Typed client for the public catalog: listings, their count, brands and one listing. */

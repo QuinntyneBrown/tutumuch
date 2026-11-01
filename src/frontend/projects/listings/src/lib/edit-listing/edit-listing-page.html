@@ -33,6 +33,13 @@
       <a actions tlButton="primary" [routerLink]="['/items', reference()]">Back to listing</a>
     </tl-center-state>
   }
+  @case ('has-bids') {
+    <tl-center-state icon="lock" heading="This auction has bids, so it can’t be changed">
+      <p class="text-muted">We’ll email you when it ends.</p>
+      <a actions tlButton="primary" [routerLink]="['/items', reference()]">Back to listing</a>
+      <a actions tlButton routerLink="/account/listings">Your listings</a>
+    </tl-center-state>
+  }
   @case ('sold') {
     <tl-center-state icon="check" heading="This item has sold">
       <p class="text-muted">Sold listings can’t be edited.</p>

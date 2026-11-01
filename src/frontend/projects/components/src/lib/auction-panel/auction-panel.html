@@ -1,0 +1,29 @@
+<section class="auction-panel" aria-label="Auction">
+  <div class="auction-panel__bid">
+    <span class="auction-panel__label">{{ label() }}</span>
+    <span class="price price--lg">{{ amount() }}</span>
+  </div>
+  <p class="auction-panel__facts">
+    <span>{{ bids() }}</span>
+    @if (timeLeft(); as left) {
+      <span aria-hidden="true">·</span>
+      <span class="auction-panel__time" [class.auction-panel__time--soon]="soon()">{{ left }}</span>
+    }
+  </p>
+  <p class="auction-panel__end">
+    {{ ended() ? 'Ended' : 'Ends' }} <time [attr.datetime]="endsAt()">{{ endText() }}</time> · {{ shipping() }}
+  </p>
+  @if (status(); as status) {
+    <p
+      class="auction-panel__status"
+      role="status"
+      [class.auction-panel__status--info]="status.tone === 'info'"
+      [class.auction-panel__status--warning]="status.tone === 'warning'"
+      [class.auction-panel__status--success]="status.tone === 'success'"
+    >
+      <tl-icon [name]="icon()" /><span
+        ><strong>{{ status.heading }}</strong> {{ status.text }}</span
+      >
+    </p>
+  }
+</section>

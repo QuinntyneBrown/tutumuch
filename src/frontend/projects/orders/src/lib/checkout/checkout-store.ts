@@ -4,7 +4,7 @@ import { ApiProblem, Checkout, CheckoutApi, ShippingAddress, TokenizeResult, sho
 
 import { formatMoney } from '../money';
 
-export type CheckoutView = 'loading' | 'ready' | 'conflict' | 'showcase' | 'expired' | 'error';
+export type CheckoutView = 'loading' | 'ready' | 'conflict' | 'showcase' | 'auction-ended' | 'expired' | 'error';
 
 /** The alert at the top of the checkout form. */
 export type CheckoutAlert =
@@ -168,6 +168,9 @@ export class CheckoutStore {
       await this.router.navigate(['/sign-in'], { queryParams: { returnUrl: `/checkout/${this.reference}` } });
     } else if (problem.code === 'LISTING_RESERVED') {
       this.view.set('conflict');
+    } else if (problem.code === 'AUCTION_ENDED' || problem.code === 'AUCTION_BIDS_ONLY') {
+      // Only an auction's winner pays, after it ends and before the time to pay runs out (L2-118).
+      this.view.set('auction-ended');
     } else if (problem.code === 'LISTING_SHOWCASE') {
       // A showcase listing is never bought: no address or card is asked for (L2-108).
       this.view.set('showcase');

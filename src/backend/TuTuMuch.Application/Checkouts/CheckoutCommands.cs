@@ -45,6 +45,12 @@ public sealed class CheckoutCommandHandlers(
     /// <summary>A showcase listing is never reserved, sold or paid for (L2-108, ADR catalog/0008).</summary>
     public static readonly Error Showcase = new(409, "LISTING_SHOWCASE", "This one has already found a home");
     public static readonly Error Expired = new(409, "RESERVATION_EXPIRED", "Your reservation ended");
+
+    /// <summary>A running auction is bought only by bidding (L2-118 AC2).</summary>
+    public static readonly Error AuctionBidsOnly = new(409, "AUCTION_BIDS_ONLY", "This item is sold by auction");
+
+    /// <summary>An ended auction is bought only by its winner, before the payment window ends (L2-118 AC3, AC5).</summary>
+    public static readonly Error AuctionEnded = new(409, "AUCTION_ENDED", "This auction has ended");
     public static readonly Error Processing = new(409, "PAYMENT_IN_PROGRESS", "Your payment is being confirmed");
     public static readonly Error AddressRequired = new(409, "ADDRESS_REQUIRED", "Add a shipping address first");
     public static readonly Error TotalChanged = new(409, "TOTAL_CHANGED", "The total changed. Check it and pay again");
@@ -67,6 +73,11 @@ public sealed class CheckoutCommandHandlers(
         if (listing.IsShowcase)
         {
             return Showcase;
+        }
+
+        if (listing.IsAuction)
+        {
+            return await StartAuctionCheckoutAsync(listing, command.BuyerId, cancellationToken);
         }
 
         var now = clock.GetUtcNow().UtcDateTime;
@@ -97,7 +108,7 @@ public sealed class CheckoutCommandHandlers(
             // The database decides the winner (L2-029): only one conditional update can match an
             // Active listing, or a Reserved one whose 10 minutes have passed.
             var reserved = await db.Listings
-                .Where(l => l.Id == listing.Id && !l.IsShowcase && (l.Status == ListingStatus.Active || (l.Status == ListingStatus.Reserved && l.ReservedUntil <= now)))
+                .Where(l => l.Id == listing.Id && !l.IsShowcase && l.Format == ListingFormat.FixedPrice && (l.Status == ListingStatus.Active || (l.Status == ListingStatus.Reserved && l.ReservedUntil <= now)))
                 .ExecuteUpdateAsync(
                     s => s.SetProperty(l => l.Status, ListingStatus.Reserved)
                         .SetProperty(l => l.ReservedByCheckoutId, checkout.Id)
@@ -119,6 +130,63 @@ public sealed class CheckoutCommandHandlers(
         catch (DbUpdateException)
         {
             // The filtered unique index on open checkouts backs up the conditional update.
+            return Reserved;
+        }
+
+        return await ToDtoAsync(checkout, listing, now, cancellationToken);
+    }
+
+    /// <summary>
+    /// The winner's checkout of an ended auction at the winning bid (L2-118, ADR orders/0009): the
+    /// conditional update matches only the winner, before PayBy, when no live checkout holds it.
+    /// </summary>
+    private async Task<Result<CheckoutDto>> StartAuctionCheckoutAsync(Listing listing, Guid buyerId, CancellationToken cancellationToken)
+    {
+        var now = clock.GetUtcNow().UtcDateTime;
+        if (listing.Status == ListingStatus.Active)
+        {
+            return AuctionBidsOnly;
+        }
+
+        if (!listing.IsAwaitingWinner || listing.WinnerId != buyerId || listing.PayBy <= now)
+        {
+            return AuctionEnded;
+        }
+
+        var mine = await db.Checkouts.SingleOrDefaultAsync(
+            c => c.ListingId == listing.Id && c.BuyerId == buyerId && (c.Status == CheckoutStatus.Open || c.Status == CheckoutStatus.Processing),
+            cancellationToken);
+        if (mine is not null && mine.IsLive(now))
+        {
+            return await ToDtoAsync(mine, listing, now, cancellationToken);
+        }
+
+        var checkout = Checkout.Start(Guid.NewGuid(), listing.Id, buyerId, listing.CurrentBid ?? 0m, listing.ShippingCost ?? 0m, now);
+        await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken);
+        try
+        {
+            var held = await db.Listings
+                .Where(l => l.Id == listing.Id && l.Format == ListingFormat.Auction && l.Status == ListingStatus.Reserved
+                    && l.WinnerId == buyerId && l.PayBy > now && (l.ReservedByCheckoutId == null || l.ReservedUntil <= now))
+                .ExecuteUpdateAsync(
+                    s => s.SetProperty(l => l.ReservedByCheckoutId, checkout.Id)
+                        .SetProperty(l => l.ReservedUntil, checkout.ExpiresAt)
+                        .SetProperty(l => l.Version, l => l.Version + 1),
+                    cancellationToken);
+            if (held == 0)
+            {
+                return AuctionEnded;
+            }
+
+            await db.Checkouts
+                .Where(c => c.ListingId == listing.Id && (c.Status == CheckoutStatus.Open || c.Status == CheckoutStatus.Processing))
+                .ExecuteUpdateAsync(s => s.SetProperty(c => c.Status, CheckoutStatus.Expired).SetProperty(c => c.EndedAt, now), cancellationToken);
+            db.Checkouts.Add(checkout);
+            await db.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+        }
+        catch (DbUpdateException)
+        {
             return Reserved;
         }
 

@@ -3,10 +3,12 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder } from '@angular/forms';
 import { map } from 'rxjs';
 import { ApiProblem, Category, ListingDetails, MyListing, Photo, PhotosApi, SellingOptions } from '@tutumuch/api';
-import { SummaryError, UploaderMove, UploaderTile } from '@tutumuch/components';
+import { SummaryError, UploaderMove, UploaderTile, auctionTime } from '@tutumuch/components';
 
 import {
+  AUCTION_DAYS,
   FIELD_IDS,
+  FORMATS,
   FieldErrors,
   ListingFormValue,
   MAX_PHOTO_BYTES,
@@ -43,7 +45,17 @@ export class ListingFormModel {
     description: '',
     price: '',
     shipping: '',
+    format: 'Fixed price',
+    auctionDays: '',
   });
+
+  /** The choices of "How do you want to sell it?" and the auction lengths (L2-113). */
+  readonly formats = FORMATS;
+  readonly auctionLengths = AUCTION_DAYS;
+  /** Published: the format and length are fixed and shown read-only (L2-113 AC8). */
+  readonly published = signal(false);
+  /** "Auction · 5 days · ends Tue 27 Oct at 7:30 PM EDT" for a published auction. */
+  readonly auctionSummary = signal<string | null>(null);
 
   readonly categories = signal<Category[]>([]);
   readonly options = signal<SellingOptions | null>(null);
@@ -61,6 +73,7 @@ export class ListingFormModel {
   readonly value = toSignal(this.form.valueChanges.pipe(map(() => this.raw())), { initialValue: this.raw() });
   readonly category = computed(() => this.categories().find((c) => c.name === this.value().category) ?? null);
   readonly isUsedFair = computed(() => this.value().condition === 'Used - Fair');
+  readonly isAuction = computed(() => this.value().format === 'Auction');
   readonly titleCount = computed(() => `${this.value().title.length} / 80`);
   readonly descriptionCount = computed(() => `${this.value().description.length.toLocaleString('en-US')} / 2,000`);
   readonly earnings = computed(() =>
@@ -163,13 +176,23 @@ export class ListingFormModel {
       description: listing.description ?? '',
       price: listing.price === null ? '' : listing.price.toFixed(2),
       shipping: listing.shippingCost === null ? '' : listing.shippingCost.toFixed(2),
+      format: listing.format === 'Auction' ? 'Auction' : 'Fixed price',
+      auctionDays: listing.auctionDays ? String(listing.auctionDays) : '',
     });
+    this.published.set(listing.status !== 'Draft');
+    this.auctionSummary.set(
+      listing.format === 'Auction' && listing.auctionEndsAt
+        ? `Auction · ${listing.auctionDays} days · ends ${auctionTime(listing.auctionEndsAt)}`
+        : null,
+    );
     this.errors.set({});
   }
 
   /** A blank form for a new listing. */
   reset(): void {
     this.form.reset();
+    this.published.set(false);
+    this.auctionSummary.set(null);
     this.photos.set([]);
     this.errors.set({});
   }

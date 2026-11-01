@@ -82,22 +82,45 @@ def load_more(shown: int = 16, total: str = "1,284") -> str:
             f'{btn("Load more", attrs="aria-describedby=\"lm-note\"")}<span id="lm-note" class="visually-hidden">Loads the next 24 items</span></div>')
 
 
+def auction_card(key: str, current: float, left: str, *, label: str = "Current bid", soon: bool = False, href: str | None = None) -> str:
+    """Listing card, auction variant (L2-114): the "Auction" stamp, the current price and the time left under it."""
+    it = ITEMS[key]
+    href = href or P("listing-detail", "auction-bids")
+    t = " listing-card__time--soon" if soon else ""
+    return (f'<li><a class="listing-card" href="{href}">{photo(key, stamp="Auction")}'
+            f'<div class="listing-card__meta"><span class="listing-card__title">{esc(it["title"])}</span>'
+            f'<span class="listing-card__brand">{esc(it["brand"])}</span>'
+            f'<span class="listing-card__facts">{esc(size_of(it).rstrip("\'"))} · {esc(it["cond"])}</span>'
+            f'<span class="listing-card__price"><span class="visually-hidden">{label} </span><span class="price">{price(current)}</span></span>'
+            f'<span class="listing-card__time{t}">Ends in {left}</span></div></a></li>')
+
+
+AUCTION_CARDS = {"swan-tutu": lambda: auction_card("swan-tutu", AUCTION["current"], AUCTION["left"])}
+# The shop grid with one running auction among the fixed-price items (16 cards, newest first).
+SHOP = CATALOG[:3] + ["swan-tutu"] + CATALOG[3:15]
+
+
+def shop_grid(keys) -> str:
+    """listing_grid, with auction keys drawn as the auction card."""
+    return '<ul class="listing-grid" role="list">' + "".join(AUCTION_CARDS[k]() if k in AUCTION_CARDS else listing_card(k) for k in keys) + "</ul>"
+
+
 # ---------------------------------------------------------------------------
 # Catalog
 # ---------------------------------------------------------------------------
-s = screen("catalog", "page", "Catalog", route="/", reqs=["L2-022", "L2-023", "L2-024", "L2-059", "L2-061", "L2-062", "L2-093", "L2-094", "L2-104"])
+s = screen("catalog", "page", "Catalog", route="/", reqs=["L2-022", "L2-023", "L2-024", "L2-059", "L2-061", "L2-062", "L2-093", "L2-094", "L2-104", "L2-114"])
 
 
 @s.state("default", "Home catalog for a signed-in member: newest listings, filters beside the grid on large screens.")
 def _():
-    pg = catalog_page(listing_grid(CATALOG), after_grid=load_more())
+    pg = catalog_page(shop_grid(SHOP), after_grid=load_more())
     pg.notes = note("Pages of 24, newest first. Images below the first screen are lazy loaded with fixed width and height (no layout shift).", "top: 30rem; right: 1rem;")
     return pg
 
 
 @s.state("guest", "The same catalog for an anonymous visitor: browsing needs no account.")
 def _():
-    return catalog_page(listing_grid(CATALOG), after_grid=load_more(), user="guest")
+    return catalog_page(shop_grid(SHOP), after_grid=load_more(), user="guest")
 
 
 @s.state("category", "Clothing only: subcategory chips and the fixed size, reached from the Clothing nav link.")
@@ -111,11 +134,24 @@ def _():
 
 @s.state("category-dance", "Dance, a sport category: the header shows Tilly dancing (one Tilly on the screen).")
 def _():
-    keys = [k for k in CATALOG if ITEMS[k]["cat"] == "Dance"]
+    keys = [k for k in SHOP if ITEMS[k]["cat"] == "Dance"]
     subs = '<div class="cluster" style="margin-bottom: var(--space-8);">' + "".join(
         f'<button class="chip" type="button" aria-pressed="{"true" if i == 0 else "false"}">{t}</button>' for i, t in enumerate(["All dance"] + CATEGORIES[2][1])) + "</div>"
-    pg = catalog_page(subs + listing_grid(keys), head=category_head("Dance"), count="186 items", side={"cat": "Dance"}, nav="dance", after_grid=load_more(len(keys), "186"))
+    pg = catalog_page(subs + shop_grid(keys), head=category_head("Dance"), count="186 items", side={"cat": "Dance"}, nav="dance", after_grid=load_more(len(keys), "186"))
     pg.notes = note("Sports shows the pose of the one selected subcategory (soccer, volleyball, gymnastics, the swimming tile) and soccer otherwise. Empty states on these pages drop Tilly.", "top: 14rem; right: 1rem;")
+    return pg
+
+
+@s.state("auctions", "Auction cards among fixed-price ones: the “Auction” stamp, the current price (the starting bid before any bid) and the time left; under an hour it reads in minutes.")
+def _():
+    cards = (auction_card("swan-tutu", AUCTION["current"], AUCTION["left"])
+             + auction_card("tap-shoes", ITEMS["tap-shoes"]["price"], AUCTION["soon_left"], label="Starting bid", soon=True, href=P("listing-detail", "auction-ending"))
+             + auction_card("pink-scooter", AUCTION["own_current"], AUCTION["left"], href=P("listing-detail", "auction-own"))
+             + listing_card("pink-tutu"))
+    head = '<div class="page-header"><div><p class="eyebrow">Search</p><h1>“tutu”</h1></div></div>'
+    pg = catalog_page(f'<ul class="listing-grid" role="list">{cards}</ul>', head=head, count="4 items", side={"cat": "Dance"})
+    pg.notes = note("The price filter and the price sort use the current price: the highest bid, or the starting bid before any bid (L2-114). The time left is plain text; it is not announced as it changes.",
+                    "top: 6rem; right: 1rem;")
     return pg
 
 
@@ -166,7 +202,7 @@ def _():
 
 @s.state("phase-two", "Launch Phase 2 for a member: all six category links and the menu, but no Sell link (selling opens to members in Phase 3).")
 def _():
-    return catalog_page(listing_grid(CATALOG), after_grid=load_more(), phase=2)
+    return catalog_page(shop_grid(SHOP), after_grid=load_more(), phase=2)
 
 
 @s.state("no-results", "Search and filters matched nothing; filters stay visible and clearable.")
@@ -231,19 +267,23 @@ def seller_block(handle: str) -> str:
             f'<a class="seller__name" href="{P("profile")}">{handle}</a><span class="seller__meta">{sales}{p["city"]}</span>{rep}</div></div>')
 
 
-def detail(key: str, *, actions: str, stamp: str | None = None, user: str = "member", extra_info: str = "", report: bool = True, below: str = "") -> Page:
+def detail(key: str, *, actions: str, stamp: str | None = None, user: str = "member", extra_info: str = "", report: bool = True, below: str = "",
+           price_html: str | None = None, bar: tuple[str, str] | None = None) -> Page:
+    """price_html replaces the price block (an auction's tl-auction-panel); bar is the buy bar's (amount, caption)."""
     it = ITEMS[key]
     total = it["price"] + it["ship"]
+    if price_html is None:
+        price_html = (f'<div class="detail__price"><span class="price price--lg">{money(it["price"])}</span>'
+                      f'<span class="text-muted text-sm">{ship_text(it["ship"])} · <span class="num">{money(total)}</span> total before tax</span></div>')
     flaws = f'<div class="flaws"><strong>Flaws:</strong> {esc(it["flaws"])}</div>' if it.get("flaws") else ""
     status_line = f'<span class="photo__stamp{" photo__stamp--sold" if stamp == "Sold" else ""}" style="position: static; align-self: flex-start;">{stamp}</span>' if stamp else ""
     rep = ""
     info = (f'<div class="detail__info">'
             f'<div class="stack stack--sm">{status_line}<span class="eyebrow">{esc(it["brand"])}</span><h1 class="detail__title">{esc(it["title"])}</h1>'
             f'<div class="cluster" style="gap: var(--space-3);">{size_tag(it, "size-tag--lg")}{condition_badge(it["cond"])}</div></div>'
-            f'<div class="detail__price"><span class="price price--lg">{money(it["price"])}</span>'
-            f'<span class="text-muted text-sm">{ship_text(it["ship"])} · <span class="num">{money(total)}</span> total before tax</span></div>'
+            f'{price_html}'
             f'{extra_info}'
-            f'{buy_bar(total, actions)}'
+            f'{buy_bar(total, actions, bar)}'
             f'{flaws}<p>{esc(DESC.get(key, "Freshly washed, light wear. Smoke-free, pet-free home."))}</p>'
             f'<dl class="facts"><dt>Size</dt><dd>{size_long(it)}</dd><dt>Category</dt><dd>{it["cat"]} · {it["sub"]}</dd>'
             f'<dt>Condition</dt><dd>{esc(it["cond"])}</dd><dt>Listed</dt><dd><time datetime="2026-10-25">{it["listed"]}</time></dd></dl>'
@@ -253,18 +293,19 @@ def detail(key: str, *, actions: str, stamp: str | None = None, user: str = "mem
     return Page(main=f'{crumbs}<div class="detail">{gallery(key, sold=stamp == "Sold")}{info}</div>{below}', user=user, nav=cat_key(it["cat"]))
 
 
-def buy_bar(total: float, actions: str) -> str:
+def buy_bar(total: float, actions: str, bar: tuple[str, str] | None = None) -> str:
     if not actions:
         return ""
-    return (f'<div class="buy-bar"><div class="buy-bar__price"><span class="price">{money(total)}</span>'
-            f'<span class="text-caption">incl. shipping</span></div>{actions}</div>')
+    amount, caption = bar or (money(total), "incl. shipping")
+    return (f'<div class="buy-bar"><div class="buy-bar__price"><span class="price">{amount}</span>'
+            f'<span class="text-caption">{caption}</span></div>{actions}</div>')
 
 
 def similar(keys) -> str:
     return f'<section class="section" id="similar" style="margin-top: var(--space-20);"><div class="section-head"><h2>Similar in the closet</h2></div>{listing_grid(keys)}</section>'
 
 
-d = screen("listing-detail", "page", "Listing detail", route="/items/{id}", reqs=["L2-025", "L2-026", "L2-028", "L2-016", "L2-063", "L2-065", "L2-107", "L2-108", "L2-109", "L2-111"],
+d = screen("listing-detail", "page", "Listing detail", route="/items/{id}", reqs=["L2-025", "L2-026", "L2-028", "L2-016", "L2-063", "L2-065", "L2-107", "L2-108", "L2-109", "L2-111", "L2-114", "L2-115", "L2-117", "L2-118", "L2-120"],
            na={"empty": "A listing always has its required fields; a missing listing is the 'unavailable' state."})
 
 
@@ -542,3 +583,227 @@ def _():
 @f.state("busy", "Counting results after a change: Apply is busy, the panel stays usable.")
 def _():
     return Dialog(bg=("catalog", "default"), html=filter_sheet(filters_form("m", cat="Clothing", conds=["New with tags", "New without tags"]), btn("Show items", "primary", attrs='aria-busy="true"')))
+
+
+# ---------------------------------------------------------------------------
+# Auctions on the detail page (L2-114 to L2-120): tl-auction-panel takes the price block's place;
+# "Place bid" and "Pay now" sit in the buy bar. No bidder is ever named (L2-120).
+# ---------------------------------------------------------------------------
+STATUS_ICON = {"info": "info", "warning": "alert", "success": "check-circle", "": "clock"}
+
+
+def bids_text(n: int) -> str:
+    return "No bids yet" if n == 0 else f"{n} bid" + ("" if n == 1 else "s")
+
+
+def auction_panel(key: str, *, label: str = "Current bid", amount: float | None = None, bids: int = AUCTION["bids"], left: str = AUCTION["left"],
+                  soon: bool = False, ended: bool = False, status: tuple[str, str, str] | None = None) -> str:
+    """The Auction panel (design system: Auction panel). status = (tone, title, text); tone "" is neutral."""
+    it = ITEMS[key]
+    amount = AUCTION["current"] if amount is None else amount
+    if ended:
+        time = ""
+        end = f'Ended <time datetime="{AUCTION["ended_iso"]}">{AUCTION["ended"]}</time>'
+    elif soon:
+        time = f'<span class="auction-panel__time auction-panel__time--soon">Ends in {left}</span>'
+        end = f'Ends <time datetime="{AUCTION["soon_iso"]}">{AUCTION["soon_ends"]}</time>'
+    else:
+        time = f'<span class="auction-panel__time">Ends in {left}</span>'
+        end = f'Ends <time datetime="{AUCTION["ends_iso"]}">{AUCTION["ends"]}</time>'
+    st = ""
+    if status:
+        tone, title, text = status
+        mod = f" auction-panel__status--{tone}" if tone else ""
+        st = (f'<p class="auction-panel__status{mod}" role="status">{ic(STATUS_ICON[tone])}'
+              f'<span><strong>{title}</strong>{text}</span></p>')
+    return (f'<section class="auction-panel" aria-label="Auction"><div class="auction-panel__bid"><span class="auction-panel__label">{label}</span>'
+            f'<span class="price price--lg">{money(amount)}</span></div>'
+            f'<p class="auction-panel__facts"><span>{bids_text(bids)}</span>{"<span aria-hidden=\"true\">·</span>" + time if time else ""}</p>'
+            f'<p class="auction-panel__end">{end} · {ship_text(it["ship"])}</p>{st}</section>')
+
+
+def bid_bar(amount: float, label: str = "Current bid") -> tuple[str, str]:
+    return (money(amount), label)
+
+
+PLACE_BID = lambda href=None: btn("Place bid", "primary lg", href or D("place-bid"))  # noqa: E731
+OUTBID_TEXT = f"Bid {money(AUCTION['minimum'])} or more to get back in."
+
+
+@d.state("auction", "An auction with no bids, seen by another member: “Starting bid $12.00”, “No bids yet”, the time left and the end time, Place bid instead of Buy now.")
+def _():
+    panel = auction_panel("swan-tutu", label="Starting bid", amount=AUCTION["start"], bids=0)
+    pg = detail("swan-tutu", actions=PLACE_BID(D("place-bid", "first-bid")), price_html=panel, bar=bid_bar(AUCTION["start"], "Starting bid"))
+    pg.notes = note("The end time is shown in the viewer's time zone. “Ends in” is plain text that updates each minute; it is not announced.", "top: 8rem; right: 1rem;")
+    return pg
+
+
+@d.state("auction-bids", "An auction with three bids: “Current bid $18.00”, “3 bids”, the time left and Place bid; no Buy now and no bidder names.")
+def _():
+    panel = auction_panel("swan-tutu")
+    pg = detail("swan-tutu", actions=PLACE_BID(), price_html=panel, bar=bid_bar(AUCTION["current"]))
+    pg.notes = note("No bid history and no bidder names, for anyone (L2-120). Under 992px Place bid sits in the sticky buy bar with the current bid.", "top: 8rem; right: 1rem;")
+    return pg
+
+
+@d.state("auction-highest", "The signed-in member holds the highest bid: “You’re the highest bidder”; no Place bid until someone bids higher.")
+def _():
+    panel = auction_panel("swan-tutu", status=("info", "You’re the highest bidder", " We’ll email you if someone bids higher."))
+    return detail("swan-tutu", actions="", price_html=panel)
+
+
+@d.state("auction-outbid", "The member bid and was outbid: “You’ve been outbid” and Place bid with the new lowest bid.")
+def _():
+    panel = auction_panel("swan-tutu", status=("warning", "You’ve been outbid", f" {OUTBID_TEXT}"))
+    return detail("swan-tutu", actions=PLACE_BID(), price_html=panel, bar=bid_bar(AUCTION["current"]))
+
+
+@d.state("auction-ending", "Less than an hour left: the time left reads in minutes, “Ends in 42 min”, in the warning colour.")
+def _():
+    it = ITEMS["tap-shoes"]
+    panel = auction_panel("tap-shoes", label="Starting bid", amount=it["price"], bids=0, left=AUCTION["soon_left"], soon=True)
+    return detail("tap-shoes", actions=PLACE_BID(), price_html=panel, bar=bid_bar(it["price"], "Starting bid"))
+
+
+@d.state("auction-ended", "An auction that ended with bids, seen by anyone but the winner: “This auction has ended” with the winning bid; no Place bid.")
+def _():
+    panel = auction_panel("swan-tutu", label="Winning bid", ended=True,
+                          status=("", "This auction has ended", f" It ended with a winning bid of {money(AUCTION['current'])}."))
+    find = f'<div class="cluster">{btn("Find similar", "primary", "#similar")}</div>'
+    return detail("swan-tutu", actions="", price_html=panel, extra_info=find, below=similar(["pink-tutu", "gold-tutu", "ballet-leotard", "velvet-dress"]))
+
+
+@d.state("auction-won", "The winner after the auction ended: “You won”, the pay-by time and Pay now in the buy bar.")
+def _():
+    panel = auction_panel("swan-tutu", label="Winning bid", ended=True,
+                          status=("success", "You won", f" Pay by <time datetime=\"{AUCTION['pay_by_iso']}\">{AUCTION['pay_by']}</time>: your bid plus shipping and tax."))
+    pg = detail("swan-tutu", actions=btn("Pay now", "primary lg", P("checkout", "auction-won")), price_html=panel, bar=bid_bar(AUCTION["current"], "Winning bid"))
+    pg.notes = note("The listing is Reserved for the winner until the pay-by time, 48 hours after the end (ADR orders/0009). Pay now opens checkout at the winning bid.",
+                    "top: 8rem; right: 1rem;")
+    return pg
+
+
+@d.state("auction-own", "The seller viewing their own auction with bids: the current bid and bids, no Place bid, and no Edit or Withdraw.")
+def _():
+    panel = auction_panel("pink-scooter", amount=AUCTION["own_current"], bids=AUCTION["own_bids"],
+                          status=("", "This auction has bids, so it can’t be changed", " We’ll email you when it ends."))
+    pg = detail("pink-scooter", actions="", price_html=panel, report=False)
+    pg.notes = note("The seller sees how many bids, never who bid (L2-120). They learn the buyer through the order, as for any sale.", "top: 8rem; right: 1rem;")
+    return pg
+
+
+@d.state("auction-own-no-bids", "The seller's own auction before any bid: Edit listing and Withdraw are still offered.")
+def _():
+    it = ITEMS["pink-scooter"]
+    panel = auction_panel("pink-scooter", label="Starting bid", amount=it["price"], bids=0)
+    acts = btn("Edit listing", "primary lg", P("edit-listing", "auction"), icon="edit") + btn("Withdraw", "lg", D("withdraw-listing"))
+    return detail("pink-scooter", actions=acts, price_html=panel, report=False)
+
+
+@d.state("auction-unsold", "The seller's own auction that ended without bids (Removed, AuctionUnsold): out of the closet, with a link to Your listings, where Relist is.")
+def _():
+    it = ITEMS["glitter-boots"]
+    panel = auction_panel("glitter-boots", label="Starting bid", amount=it["price"], bids=0, ended=True,
+                          status=("", "This auction ended with no bids", " You can relist it from Your listings."))
+    pg = detail("glitter-boots", actions=btn("Your listings", "primary lg", href=P("my-listings", "auctions")), price_html=panel, bar=bid_bar(it["price"], "Starting bid"), report=False)
+    pg.notes = note("Only the seller sees a Removed listing; anyone else gets “This item isn’t available” (L2-117). The same page follows an unpaid auction (AuctionUnpaid): “The winner didn’t pay in time”.",
+                    "top: 8rem; right: 1rem;")
+    return pg
+
+
+@d.state("auction-guest", "A visitor on an auction: Place bid goes to sign in and comes back to the listing.")
+def _():
+    panel = auction_panel("swan-tutu")
+    pg = detail("swan-tutu", actions=PLACE_BID(P("sign-in", "return")), price_html=panel, bar=bid_bar(AUCTION["current"]), user="guest", report=False)
+    pg.notes = note("Signed out: /sign-in?returnUrl=/items/L-20944 (L2-109 return rule). An unverified member is told in the Place bid dialog to verify their email first (L2-002).",
+                    "top: 8rem; right: 1rem;")
+    return pg
+
+
+# ---------------------------------------------------------------------------
+# Place a bid (L2-115, L2-116)
+# ---------------------------------------------------------------------------
+pb = screen("place-bid", "dialog", "Place a bid", opens_from="listing-detail", reqs=["L2-115", "L2-116", "L2-051", "L2-065"])
+
+
+def bid_dialog(*, value: str = "19.00", minimum: float = AUCTION["minimum"], current: float = AUCTION["current"], bids: int = AUCTION["bids"],
+               error: str | None = None, busy: bool = False, top: str = "", primary: str | None = None, bg=("listing-detail", "auction-bids"),
+               focus: bool = True) -> Dialog:
+    label = "Current bid" if bids else "Starting bid"
+    meta = f'{label} {money(current)} · {bids_text(bids)} · Ends in {AUCTION["left"]}'
+    attrs = (" readonly" if busy else "") + (" autofocus" if focus and not busy else "")
+    ctl = (f'<div class="input-group"><span class="addon">$</span><input class="input" id="bid" name="amount" inputmode="decimal" '
+           f'autocomplete="off" value="{value}"{{db}}{attrs}></div>')
+    help_ = None if error else f"Bid {money(minimum)} or more"
+    body = item_row("swan-tutu", meta) + field("bid", "Your bid", ctl, help=help_, error=error)
+    foot = (btn("Cancel", attrs="disabled" if busy else "")
+            + (primary or btn("Place bid", "primary", attrs='type="submit" aria-busy="true"' if busy else 'type="submit"')))
+    desc = f"If you win, you pay your bid plus {money(ITEMS['swan-tutu']['ship'])} shipping and tax within 48 hours."
+    return Dialog(bg=bg, html=dialog("Place a bid", body, foot, desc=desc, top=top))
+
+
+@pb.state("default", "The bid dialog on an auction with bids: “Your bid” filled in with the lowest acceptable bid, $19.00, and the hint “Bid $19.00 or more”.")
+def _():
+    d = bid_dialog()
+    d.notes = note("On success the dialog closes, the panel says “You’re the highest bidder” and the toast “Bid placed. You’re the highest bidder” is shown (notifications/auction-toasts: success).",
+                   "top: 1rem; left: 1rem;")
+    return d
+
+
+@pb.state("first-bid", "The first bid: filled in with the starting bid, $12.00.")
+def _():
+    return bid_dialog(value="12.00", minimum=AUCTION["start"], current=AUCTION["start"], bids=0, bg=("listing-detail", "auction"))
+
+
+@pb.state("invalid", "A bid under the lowest acceptable bid (422 BID_TOO_LOW): the amount is kept and the field says “Bid $19.00 or more”.")
+def _():
+    return bid_dialog(value="18.50", error=f"Bid {money(AUCTION['minimum'])} or more", focus=False)
+
+
+@pb.state("conflict", "Another bid won the race (409 OUTBID): “Someone just bid higher”, the current bid refreshed and the new lowest bid filled in.")
+def _():
+    top = alert("warning", "Someone just bid higher", f"The current bid is now {money(AUCTION['raced'])}.", role="status")
+    return bid_dialog(value=f"{AUCTION['raced_minimum']:.2f}", minimum=AUCTION["raced_minimum"], current=AUCTION["raced"], bids=AUCTION["bids"] + 1, top=top)
+
+
+@pb.state("busy", "Placing the bid: Place bid is busy, the amount read-only and Cancel disabled.")
+def _():
+    return bid_dialog(busy=True)
+
+
+@pb.state("ended", "The end time passed while the dialog was open (409 AUCTION_ENDED): no bid is placed.")
+def _():
+    top = alert("info", "This auction has ended", "Your bid wasn’t placed.", icon="clock", role="status")
+    return bid_dialog(top=top, focus=False, primary=btn("Close", "primary", attrs="autofocus"))
+
+
+@pb.state("failed", "The request failed (network or 5xx): the amount is kept, with Try again.")
+def _():
+    top = alert("danger", "Couldn’t place your bid", 'Your bid wasn’t placed. Try again. <span class="ref">Ref 4b70-e2c1</span>')
+    return bid_dialog(top=top, focus=False, primary=btn("Try again", "primary", attrs='type="submit"'))
+
+
+# ---------------------------------------------------------------------------
+# Auction toasts (L2-115, L2-116)
+# ---------------------------------------------------------------------------
+at = screen("auction-toasts", "notification", "Auction toasts", opens_from="listing-detail", reqs=["L2-115", "L2-116", "L2-068"])
+
+
+@at.state("success", "A bid was placed: the dialog closed and the panel says “You’re the highest bidder”.")
+def _():
+    return Note(bg=("listing-detail", "auction-highest"), toasts=toast_region(toast("success", "Bid placed. You’re the highest bidder")))
+
+
+@at.state("warning", "Someone bid higher while the member was on the page: the panel now says “You’ve been outbid”.")
+def _():
+    return Note(bg=("listing-detail", "auction-outbid"), toasts=toast_region(toast("warning", "Someone just bid higher", OUTBID_TEXT, "Place bid")))
+
+
+@at.state("info", "The auction ended while the member was on the page.")
+def _():
+    return Note(bg=("listing-detail", "auction-ended"), toasts=toast_region(toast("info", "This auction has ended")))
+
+
+@at.state("danger", "A bid failed after the dialog closed (the connection dropped): stays until dismissed, offers Try again.")
+def _():
+    return Note(bg=("listing-detail", "auction-bids"), toasts=toast_region(toast("danger", "Couldn’t place your bid", "Check your connection.", "Try again")))

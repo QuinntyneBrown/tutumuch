@@ -5101,3 +5101,105 @@ a.link:hover {
     transition: none;
   }
 }
+
+/* Auction panel (L2-114): the label ("Current bid", "Starting bid", "Winning bid"), the amount, the
+   bid count and time left, the end date and time, and the viewer's status line. It takes the price
+   block's place on an auction's detail page; "Place bid" and "Pay now" stay in the buy bar. */
+.auction-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.auction-panel__bid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.auction-panel__label {
+  font: var(--text-label);
+  color: var(--color-fg-muted);
+}
+.auction-panel__facts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin: 0;
+  font: var(--text-body-sm);
+  color: var(--color-fg-default);
+}
+.auction-panel__time {
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+.auction-panel__time--soon {
+  color: var(--color-warning-fg);
+}
+.auction-panel__end {
+  margin: 0;
+  font: var(--text-body-sm);
+  color: var(--color-fg-muted);
+}
+.auction-panel__status {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  margin: var(--space-2) 0 0;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-input);
+  font: var(--text-body-sm);
+  background: var(--color-bg-subtle);
+  color: var(--color-fg-default);
+}
+.auction-panel__status .icon {
+  flex: none;
+  margin-top: 0.125rem;
+}
+.auction-panel__status strong {
+  display: block;
+  font-weight: var(--font-weight-semibold);
+}
+.auction-panel__status--info {
+  background: var(--color-info-bg);
+  color: var(--color-info-fg);
+}
+.auction-panel__status--warning {
+  background: var(--color-warning-bg);
+  color: var(--color-warning-fg);
+}
+.auction-panel__status--success {
+  background: var(--color-success-bg);
+  color: var(--color-success-fg);
+}
+
+/* Listing card, auction variant: the "Auction" stamp on the photo and the time left under the price. */
+.listing-card__time {
+  font: var(--text-body-sm);
+  color: var(--color-fg-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.listing-card__time--soon {
+  color: var(--color-warning-fg);
+}
+
+/* A list row with an action beside its link (My listings: "Relist" on an unsold auction). */
+.order-list__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: var(--space-4);
+}
+.order-list__row > a {
+  flex: 1 1 20rem;
+  min-width: 0;
+}
+.order-list__row > .btn {
+  margin-left: auto;
+  margin-bottom: var(--space-4);
+}
+@media (min-width: 48rem) {
+  .order-list__row > .btn {
+    margin-bottom: 0;
+  }
+}

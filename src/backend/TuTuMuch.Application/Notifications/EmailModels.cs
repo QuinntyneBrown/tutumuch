@@ -46,3 +46,15 @@ public sealed record DraftExpiryReminderEmail(string ListingReference, string Ti
 
 /// <summary>A listing that became Active matched one or more of the member's open item requests (L2-101); one email per member per listing.</summary>
 public sealed record ItemRequestMatchedEmail(string ListingReference, string Title, string Brand, decimal Price);
+
+/// <summary>Someone outbid the member on an auction (L2-119 AC1). It names no other bidder (L2-120).</summary>
+public sealed record OutbidEmail(string ListingReference, string Title, decimal CurrentBid, DateTime EndsAt);
+
+/// <summary>The member won an auction and must pay by <paramref name="PayBy"/> (L2-118, L2-119 AC2).</summary>
+public sealed record AuctionWonEmail(string ListingReference, string Title, decimal WinningBid, DateTime PayBy);
+
+/// <summary>The seller's auction ended; <paramref name="WinningBid"/> is null when it had no bids (L2-119 AC2, AC3).</summary>
+public sealed record AuctionEndedEmail(string ListingReference, string Title, decimal? WinningBid);
+
+/// <summary>The winner did not pay in time (L2-118 AC5, L2-119 AC4); <paramref name="ToSeller"/> picks the seller's wording.</summary>
+public sealed record AuctionPaymentMissedEmail(string ListingReference, string Title, bool ToSeller);

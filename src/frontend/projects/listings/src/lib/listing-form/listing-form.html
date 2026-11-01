@@ -118,8 +118,24 @@
 
 <section class="form-section" aria-labelledby="s-price">
   <h2 id="s-price">Price</h2>
+  @if (model().auctionSummary(); as summary) {
+    <p class="listing-form__format">{{ summary }} <span class="text-caption">Set when published</span></p>
+  } @else if (!model().published()) {
+    <tl-segmented
+      legend="How do you want to sell it?"
+      groupId="format"
+      formControlName="format"
+      [options]="model().formats"
+    />
+  }
   <div class="form-row">
-    <tl-form-field #price fieldId="price" label="Price" [error]="model().errors().price">
+    <tl-form-field
+      #price
+      fieldId="price"
+      [label]="model().isAuction() ? 'Starting bid' : 'Price'"
+      [help]="model().isAuction() ? 'Bids start here.' : undefined"
+      [error]="model().errors().price"
+    >
       <tl-input-group addon="$">
         <input
           class="input"
@@ -150,5 +166,21 @@
       </tl-input-group>
     </tl-form-field>
   </div>
+  @if (model().isAuction() && !model().published()) {
+    <tl-radio-group legend="Auction length" [error]="model().errors().days">
+      @for (days of model().auctionLengths; track days; let first = $first) {
+        <tl-choice [inputId]="first ? 'days' : 'days-' + days">
+          <input
+            type="radio"
+            formControlName="auctionDays"
+            [id]="first ? 'days' : 'days-' + days"
+            [value]="days"
+            [attr.aria-invalid]="model().errors().days ? 'true' : null"
+          />{{ days }} days</tl-choice
+        >
+      }
+    </tl-radio-group>
+    <p class="text-caption">It ends that many days after you publish, at the same time of day.</p>
+  }
   <tl-earnings [feePercent]="model().options()?.feePercent ?? 0" [amount]="model().earnings()" />
 </section>

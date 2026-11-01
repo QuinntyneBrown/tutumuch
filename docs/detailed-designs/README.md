@@ -68,7 +68,7 @@ read it as the matching library.
 | Subsystem | Scope (L1) | Features |
 |-----------|------------|----------|
 | [accounts](accounts/README.md) | `L1-001`, `L1-002` | sign-up-and-sign-in (registration, email verification, sign-in, sessions, authorisation); still to design: reset-password, lockout, manage-sessions, edit-profile, close-account |
-| [listings](listings/) | `L1-003`, `L1-004` | create-listing, upload-listing-photos, edit-and-withdraw-listing, manage-my-listings |
+| [listings](listings/) | `L1-003`, `L1-004`, `L1-025` | create-listing, upload-listing-photos, edit-and-withdraw-listing, manage-my-listings, auction-listings |
 | [catalog](catalog/) | `L1-005`, `L1-006`, `L1-023`, `L1-024` | browse-catalog, search-and-filter-catalog, view-listing-detail, request-items, request-showcase-item |
 | [orders](orders/) | `L1-007`, `L1-008` | checkout-and-pay, seller-payouts, ship-order, complete-order, cancel-order, resolve-order-problems, order-history |
 | [reviews](reviews/) | `L1-009`, `L1-010` | view-member-profile |

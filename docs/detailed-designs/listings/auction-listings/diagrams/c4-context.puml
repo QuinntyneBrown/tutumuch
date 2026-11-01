@@ -1,0 +1,19 @@
+@startuml
+!include <C4/C4_Context>
+LAYOUT_WITH_LEGEND()
+title System Context — Auction listings
+
+Person(seller, "Seller", "Verified member who offers an item by auction")
+Person(bidder, "Bidder", "Verified member who bids and, as winner, pays")
+Person(visitor, "Visitor", "Browses auctions without signing in")
+System(tutumuch, "TuTuMuch", "Marketplace for all things young girls")
+System_Ext(payments, "Payment provider", "Hosted card fields, payments, signed webhooks")
+System_Ext(email, "Email provider", "Transactional email")
+
+Rel(seller, tutumuch, "Publishes, edits and relists auctions using", "HTTPS")
+Rel(bidder, tutumuch, "Bids and pays the winning bid using", "HTTPS")
+Rel(visitor, tutumuch, "Views current bids and time left using", "HTTPS")
+Rel(tutumuch, payments, "Charges the winner via", "HTTPS")
+Rel(payments, tutumuch, "Confirms payment via", "Signed webhook")
+Rel(tutumuch, email, "Sends outbid, won, ended and payment-missed emails via", "HTTPS")
+@enduml

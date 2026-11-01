@@ -1,0 +1,71 @@
+@startuml
+title UML sequence behaviour — Place a bid
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+actor "Bidder" as actor
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "ListingDetailPage (@tutumuch/catalog)" as page
+  participant "PlaceBidDialog" as dialog
+  participant "BidsApi (@tutumuch/api)" as client
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "BidsController" as controller
+end box
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
+  participant "PlaceBidCommandHandler" as handler
+  participant "Listing" as entity
+  participant "EmailOutbox" as outbox
+end box
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
+end box
+actor -> page : Place bid (tl-auction-panel)
+alt visitor
+  page --> actor : /sign-in?returnUrl=/items/{reference}?bid=1 (L2-109 return rule)
+else unverified member
+  page --> actor : Verify-email prompt (L2-002)
+else verified member
+  page -> dialog : DialogService.open, amount = minimumBid
+end
+actor -> dialog : Amount $19.00, Place bid
+dialog -> client : placeBid(reference, 19.00)
+client -> controller : POST /api/listings/{reference}/bids { amount: 19.00 }
+controller -> controller : VerifiedMember policy (401, 403 EMAIL_NOT_VERIFIED)
+controller -> handler : PlaceBidCommand(bidderId, reference, 19.00)
+handler -> db : Load listing by reference (tracked, Version = v)
+alt Draft, Removed, Sold or unknown
+  handler --> controller : 404 LISTING_NOT_FOUND
+end
+handler -> entity : PlaceBid(bidderId, 19.00, now)
+entity -> entity : NOT_AN_AUCTION, CANNOT_BID_OWN_LISTING,\nAUCTION_ENDED (AuctionEndsAt <= now), ALREADY_HIGHEST_BIDDER,\nBID_INVALID, BID_TOO_LOW (L2-115)
+alt refused
+  entity --> handler : BidRefusal(code, message, minimumBid)
+  handler --> controller : 409 or 422 problem details
+  controller --> client : ProblemDetails
+  dialog --> actor : Keeps the amount; message on the field
+else accepted
+  entity -> entity : CurrentBid = 19.00; BidCount++; HighBidderId = bidder; Version++
+  entity --> handler : Bid
+  handler -> db : Add Bid
+  opt previous highest bidder exists
+    handler -> outbox : Enqueue(Outbid, previousBidder, OutbidEmail) (L2-119)
+  end
+  handler -> db : SaveChangesAsync: UPDATE Listings ... WHERE Id = @id AND Version = v;\nINSERT Bids; INSERT OutboxMessages (one transaction)
+  alt another bid or edit saved first (0 rows updated)
+    db --> handler : DbUpdateConcurrencyException, all rolled back
+    handler -> db : Reload listing
+    handler --> controller : 409 OUTBID "Someone just bid higher", minimumBid (L2-116)
+    controller --> client : ProblemDetails
+    dialog --> actor : "Someone just bid higher", new minimum filled in
+  else committed
+    handler --> controller : AuctionSummaryDto (viewerIsHighestBidder = true)
+    controller --> client : 201 Created
+    client --> dialog : Ok
+    dialog --> page : Close, update the store
+    page --> actor : Toast "Bid placed. You're the highest bidder"
+  end
+end
+@enduml

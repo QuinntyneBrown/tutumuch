@@ -23,4 +23,16 @@ public enum NotificationType
 
     /// <summary>A listing that became Active matched the member's open item requests (L2-101).</summary>
     ItemRequestMatched,
+
+    /// <summary>Someone outbid the member on an auction (L2-119).</summary>
+    Outbid,
+
+    /// <summary>The member won an auction (L2-119).</summary>
+    AuctionWon,
+
+    /// <summary>The seller's auction ended, with or without bids (L2-119).</summary>
+    AuctionEnded,
+
+    /// <summary>The winner did not pay within the payment window; to the winner and the seller (L2-119).</summary>
+    AuctionPaymentMissed,
 }

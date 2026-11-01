@@ -1,0 +1,53 @@
+@startuml
+title UML sequence behaviour — Publish an auction
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+actor "Seller" as actor
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "SellPage / ListingForm (@tutumuch/listings)" as page
+  participant "ListingsApi (@tutumuch/api)" as client
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "ListingsController" as controller
+end box
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
+  participant "ListingCommandHandlers" as handler
+  participant "Listing" as entity
+  participant "MatchItemRequestsHandler" as matcher
+end box
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
+end box
+actor -> page : Choose "Auction" in "How do you want to sell it?"
+page --> actor : Price labelled "Starting bid"; "Auction length" 3, 5 or 7 days (L2-113)
+actor -> page : Starting bid $12.00, 5 days, Publish
+page -> page : checkListing(value, 'publish') incl. length rule
+page -> client : save draft, then publish(reference)
+client -> controller : PUT /api/listings/{reference} { format: Auction, auctionDays: 5, price: 12.00 }
+controller -> controller : CanSell policy (L2-091, L2-092)
+controller -> handler : UpdateListingCommand
+handler -> entity : CheckDraft: price $1.00 to $5,000.00 (L2-018), auctionDays in 3, 5, 7
+alt auctionDays not 3, 5 or 7
+  handler --> controller : 422 AUCTION_LENGTH_INVALID "Choose 3, 5 or 7 days"
+end
+handler -> db : Save draft
+client -> controller : POST /api/listings/{reference}/publish
+controller -> handler : PublishListingCommand
+handler -> db : Daily publish count (L2-051), phase limits
+handler -> entity : Publish(now, photoCount)
+alt no auction length
+  entity --> handler : AUCTION_LENGTH_REQUIRED "Choose how long the auction runs"
+  handler --> controller : 422 with every failing field
+else rules hold
+  entity -> entity : Status = Active; AuctionEndsAt = now + 5 days; Version++
+  handler -> db : SaveChanges
+  handler -> matcher : Publish ListingBecameActive
+  matcher -> db : Load listing
+  matcher -> matcher : Format = Auction: skip, no match, no email (L2-113)
+  controller --> client : 200 PublishListingResult
+  page --> actor : "It's live" with "View listing"
+end
+@enduml

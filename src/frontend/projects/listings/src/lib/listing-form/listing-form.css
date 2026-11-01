@@ -6,3 +6,6 @@
 :host .form-section:first-child {
   padding-top: var(--space-4);
 }
+.listing-form__format {
+  margin: 0;
+}

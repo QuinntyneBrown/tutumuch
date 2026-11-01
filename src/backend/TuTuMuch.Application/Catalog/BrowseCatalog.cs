@@ -23,7 +23,13 @@ public sealed class CatalogOptions
 /// </summary>
 public sealed record CardPhotoDto(int Width, int Height, string Alt, string Src, string Webp, string Jpeg);
 
-/// <summary>One catalog card. Price is a two-place decimal string, so no float crosses the wire (L2-018).</summary>
+/// <summary>An auction on a card (L2-114): the starting bid, how many bids and when it ends; Price on the card is the current price.</summary>
+public sealed record AuctionCardDto(string StartingBid, int BidCount, DateTime EndsAt);
+
+/// <summary>
+/// One catalog card. Price is a two-place decimal string, so no float crosses the wire (L2-018);
+/// for an auction it is the current price, and Auction carries the rest (L2-114).
+/// </summary>
 public sealed record ListingCardDto(
     Guid Id,
     string Reference,
@@ -36,7 +42,9 @@ public sealed record ListingCardDto(
     string Price,
     string Status,
     DateTime PublishedAt,
-    CardPhotoDto? CoverPhoto);
+    CardPhotoDto? CoverPhoto,
+    string Format = "FixedPrice",
+    AuctionCardDto? Auction = null);
 
 public sealed record CatalogPageDto(IReadOnlyList<ListingCardDto> Items, int Page, int PageSize, int TotalCount);
 
@@ -100,10 +108,14 @@ public static class CatalogCards
         listing.Subcategory,
         CategoryCatalog.Find(listing.Category)?.SizeLabel ?? listing.Size,
         listing.Condition?.ToLabel() ?? string.Empty,
-        (listing.Price ?? 0m).ToString("0.00", CultureInfo.InvariantCulture),
+        (listing.CurrentPrice ?? 0m).ToString("0.00", CultureInfo.InvariantCulture),
         listing.Status.ToString(),
         listing.PublishedAt ?? listing.CreatedAt,
-        cover is null ? null : CatalogPhotos.ToDto(cover, $"Photo 1 of {listing.Brand} {listing.Title}", baseUrl));
+        cover is null ? null : CatalogPhotos.ToDto(cover, $"Photo 1 of {listing.Brand} {listing.Title}", baseUrl),
+        listing.Format.ToString(),
+        listing.IsAuction && listing.AuctionEndsAt is { } endsAt
+            ? new AuctionCardDto((listing.Price ?? 0m).ToString("0.00", CultureInfo.InvariantCulture), listing.BidCount, endsAt)
+            : null);
 }
 
 /// <summary>Maps a stored photo to the srcset strings the frontend renders (L2-059).</summary>

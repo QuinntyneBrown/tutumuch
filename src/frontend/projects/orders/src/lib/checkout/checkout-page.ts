@@ -25,6 +25,7 @@ import {
   ReservationTimerComponent,
   SkeletonComponent,
   SummaryError,
+  auctionTime,
 } from '@tutumuch/components';
 
 import { formatMoney } from '../money';
@@ -67,6 +68,7 @@ export class CheckoutPage {
   readonly states = US_STATES;
   readonly countries = COUNTRIES;
   readonly money = formatMoney;
+  readonly auctionTime = auctionTime;
   readonly form = inject(NonNullableFormBuilder).group({
     fullName: '',
     line1: '',

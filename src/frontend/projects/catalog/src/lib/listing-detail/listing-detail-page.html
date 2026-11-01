@@ -64,13 +64,27 @@
               <tl-condition-badge [condition]="listing.condition" />
             </div>
           </div>
-          <div class="detail__price">
-            <span class="price price--lg">{{ money(listing.price) }}</span>
-            <span class="text-muted text-sm"
-              >{{ listing.shippingCost === '0.00' ? 'Free shipping' : money(listing.shippingCost) + ' shipping' }} ·
-              <span class="num">{{ money(listing.total) }}</span> total before tax</span
-            >
-          </div>
+          @if (auction(); as auction) {
+            <tl-auction-panel
+              [label]="auction.label"
+              [amount]="auction.amount"
+              [bids]="auction.bids"
+              [timeLeft]="auction.timeLeft"
+              [soon]="auction.soon"
+              [endsAt]="auction.endsAt"
+              [ended]="auction.ended"
+              [shipping]="auction.shipping"
+              [status]="auction.status"
+            />
+          } @else {
+            <div class="detail__price">
+              <span class="price price--lg">{{ money(listing.price) }}</span>
+              <span class="text-muted text-sm"
+                >{{ listing.shippingCost === '0.00' ? 'Free shipping' : money(listing.shippingCost) + ' shipping' }} ·
+                <span class="num">{{ money(listing.total) }}</span> total before tax</span
+              >
+            </div>
+          }
           @switch (store.primaryAction()) {
             @case ('buy') {
               <tl-buy-bar [total]="money(listing.total)">
@@ -106,8 +120,40 @@
                 </tl-buy-bar>
               }
             }
+            @case ('place-bid') {
+              @if (!auction()?.ended) {
+                <tl-buy-bar [total]="barTotal()" [caption]="barCaption()">
+                  <button tlButton="primary" size="lg" type="button" (click)="placeBid()">Place bid</button>
+                </tl-buy-bar>
+              }
+            }
+            @case ('sign-in-to-bid') {
+              @if (!auction()?.ended) {
+                <tl-buy-bar [total]="barTotal()" [caption]="barCaption()">
+                  <a
+                    tlButton="primary"
+                    size="lg"
+                    routerLink="/sign-in"
+                    [queryParams]="{ returnUrl: '/items/' + listing.reference }"
+                    >Place bid</a
+                  >
+                </tl-buy-bar>
+              }
+            }
+            @case ('pay-now') {
+              <tl-buy-bar [total]="barTotal()" [caption]="barCaption()">
+                <a tlButton="primary" size="lg" [routerLink]="['/checkout', listing.reference]">Pay now</a>
+              </tl-buy-bar>
+            }
+            @case ('your-listings') {
+              <tl-buy-bar [total]="barTotal()" [caption]="barCaption()">
+                <a tlButton="primary" size="lg" routerLink="/account/listings" [queryParams]="{ status: 'removed' }"
+                  >Your listings</a
+                >
+              </tl-buy-bar>
+            }
             @case ('manage') {
-              <tl-buy-bar [total]="money(listing.total)">
+              <tl-buy-bar [total]="barTotal()" [caption]="barCaption()">
                 <a tlButton="primary" size="lg" [routerLink]="['/items', listing.reference, 'edit']"
                   ><tl-icon name="edit" />Edit listing</a
                 >
@@ -133,7 +179,7 @@
               <a tlButton="primary" [routerLink]="categoryPath()">Find similar</a>
             </div>
           }
-          @if (listing.status === 'Reserved') {
+          @if (listing.status === 'Reserved' && !listing.auction) {
             <tl-alert tone="warning" icon="clock" heading="In someone’s checkout"
               >If they don’t finish within 10 minutes, it’s back on sale.</tl-alert
             >

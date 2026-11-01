@@ -2,6 +2,7 @@
 
 | Design | Effort | Complete |
 |---|---|---|
+| auction-listings | 8 days | 95% |
 | create-listing | 4 days | 90% |
 | edit-and-withdraw-listing | 4 days | 90% |
 | manage-my-listings | 3 days | 90% |

@@ -107,12 +107,17 @@ test.describe('sell an item', () => {
       const saved = page.getByRole('status').filter({ hasText: 'Draft saved' });
       await expect(saved).toContainText('Finish it any time from your listings.');
       await expect(saved.getByRole('link', { name: 'your listings' })).toHaveAttribute('href', '/account/listings');
-      expect(bodies).toEqual([{ category: 'Shoes', title: 'Grey hoodie', photoIds: [] }]);
+      expect(bodies).toEqual([{ category: 'Shoes', title: 'Grey hoodie', format: 'FixedPrice', photoIds: [] }]);
 
       await sell.title.fill('Grey hoodie, heavy');
       await sell.saveDraft.click();
       await expect.poll(() => updated?.method()).toBe('PUT');
-      expect(updated!.postDataJSON()).toEqual({ category: 'Shoes', title: 'Grey hoodie, heavy', photoIds: [] });
+      expect(updated!.postDataJSON()).toEqual({
+        category: 'Shoes',
+        title: 'Grey hoodie, heavy',
+        format: 'FixedPrice',
+        photoIds: [],
+      });
     });
 
     test('a draft needs a category', async ({ page, unfixturedApiCalls }) => {
@@ -186,6 +191,7 @@ test.describe('sell an item', () => {
         description: 'Light wear, colours still bright. Cleaned and ready to wear.',
         price: 60,
         shippingCost: 8,
+        format: 'FixedPrice',
         photoIds: ['p-1'],
       });
       expect(created).not.toHaveProperty('size');

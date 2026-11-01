@@ -14,12 +14,15 @@ export {
 } from './lib/accounts/notification-preferences-api';
 export {
   CatalogApi,
+  type AuctionCard,
+  type AuctionSummary,
   type CardPhoto,
   type CatalogBrand,
   type CatalogFilterParams,
   type CatalogPage,
   type ListingCard,
   type ListingDetail,
+  type ListingFormat,
   type ViewerRelation,
 } from './lib/catalog/catalog-api';
 export {
@@ -41,8 +44,10 @@ export {
   type MyListingRow,
   type MyListings,
   type PublishResult,
+  type RemovalReason,
   type VersionedListing,
 } from './lib/listings/listings-api';
+export { BidsApi } from './lib/listings/bids-api';
 export { PhotosApi, type Photo, type PhotoVersion } from './lib/listings/photos-api';
 export { SellingApi, type Category, type SellingOptions } from './lib/listings/selling-api';
 export {

@@ -17,6 +17,12 @@ public enum ListingRemovalReason
 
     /// <summary>The seller withdrew it (L2-020); a withdrawn listing cannot come back.</summary>
     Withdrawn,
+
+    /// <summary>The auction ended without bids (L2-117); the seller can relist it.</summary>
+    AuctionUnsold,
+
+    /// <summary>The auction's winner did not pay within the payment window (L2-118); the seller can relist it.</summary>
+    AuctionUnpaid,
 }
 
 /// <summary>The editable fields of a listing as a client sends them. Every field but the category may be missing in a draft.</summary>
@@ -30,7 +36,9 @@ public sealed record ListingDetails(
     string? Condition,
     string? Flaws,
     decimal? Price,
-    decimal? ShippingCost)
+    decimal? ShippingCost,
+    string? Format = null,
+    int? AuctionDays = null)
 {
     public static readonly ListingDetails Empty = new(null, null, null, null, null, null, null, null, null, null);
 }
@@ -54,6 +62,18 @@ public sealed class Listing
     public const decimal MinPrice = 1.00m;
     public const decimal MaxPrice = 5000.00m;
     public const decimal MaxShipping = 100.00m;
+
+    /// <summary>The lengths an auction may run, in days (L2-113).</summary>
+    public static readonly IReadOnlyList<int> AuctionLengths = [3, 5, 7];
+
+    /// <summary>A bid must beat the current bid by at least this much (L2-115, ADR listings/0005).</summary>
+    public const decimal MinBidIncrement = 1.00m;
+
+    /// <summary>The highest bid accepted, the same as the highest price (L2-115).</summary>
+    public const decimal MaxBid = 5000.00m;
+
+    /// <summary>How long the winner has to pay after the auction ends (L2-118, ADR orders/0009).</summary>
+    public static readonly TimeSpan PaymentWindow = TimeSpan.FromHours(48);
 
     private Listing()
     {
@@ -116,8 +136,153 @@ public sealed class Listing
     /// </summary>
     public bool IsShowcase { get; private set; }
 
-    /// <summary>Only a Draft or Active listing can be marked or unmarked (L2-107 AC4).</summary>
-    public bool CanBeShowcase => Status is ListingStatus.Draft or ListingStatus.Active;
+    /// <summary>Fixed price or auction (L2-113); fixed while Draft, then for good.</summary>
+    public ListingFormat Format { get; private set; }
+
+    /// <summary>3, 5 or 7 days for an auction; null for a fixed-price listing or an unfinished draft.</summary>
+    public int? AuctionDays { get; private set; }
+
+    /// <summary>When the current run of the auction ends: publish or relist time plus its length (L2-113, L2-117).</summary>
+    public DateTime? AuctionEndsAt { get; private set; }
+
+    /// <summary>The highest bid of the current run, or null without bids (L2-115).</summary>
+    public decimal? CurrentBid { get; private set; }
+
+    public int BidCount { get; private set; }
+
+    /// <summary>The member holding the highest bid; never sent to any client (L2-120).</summary>
+    public Guid? HighBidderId { get; private set; }
+
+    /// <summary>The highest bidder when the auction closed, who alone may check out (L2-118).</summary>
+    public Guid? WinnerId { get; private set; }
+
+    /// <summary>The end of the winner's payment window, 48 hours after the end time (L2-118).</summary>
+    public DateTime? PayBy { get; private set; }
+
+    public bool IsAuction => Format == ListingFormat.Auction;
+
+    /// <summary>What the item costs now: the highest bid, else the starting bid or fixed price (L2-114).</summary>
+    public decimal? CurrentPrice => CurrentBid ?? Price;
+
+    /// <summary>The lowest acceptable next bid: the starting bid, or the current bid plus $1.00 (L2-115).</summary>
+    public decimal? MinimumBid => CurrentBid is { } current ? current + MinBidIncrement : Price;
+
+    /// <summary>Taking bids: an Active auction before its end time.</summary>
+    public bool IsRunning(DateTime now) => IsAuction && Status == ListingStatus.Active && now < AuctionEndsAt;
+
+    /// <summary>
+    /// Checks a bid against the rules of L2-115 and, when it holds, raises the current bid, counts it
+    /// and bumps the version, so a bid or edit read against the old version loses (L2-116).
+    /// </summary>
+    public BidResult PlaceBid(Guid bidderId, decimal amount, DateTime now)
+    {
+        if (!IsAuction)
+        {
+            return BidResult.Refused(BidRefusal.NotAnAuction);
+        }
+
+        if (!IsRunning(now))
+        {
+            return BidResult.Refused(BidRefusal.Ended);
+        }
+
+        if (bidderId == SellerId)
+        {
+            return BidResult.Refused(BidRefusal.OwnListing);
+        }
+
+        if (bidderId == HighBidderId)
+        {
+            return BidResult.Refused(BidRefusal.AlreadyHighest);
+        }
+
+        if (!IsMoney(amount, MinPrice, MaxBid))
+        {
+            return BidResult.Refused(BidRefusal.Invalid);
+        }
+
+        if (amount < MinimumBid)
+        {
+            return BidResult.Refused(BidRefusal.TooLow);
+        }
+
+        var outbid = HighBidderId;
+        CurrentBid = amount;
+        BidCount++;
+        HighBidderId = bidderId;
+        Version++;
+        return new BidResult(Bid.Create(Id, bidderId, amount, now), null, outbid);
+    }
+
+    /// <summary>
+    /// Closes an Active auction whose end time has come (L2-117): with bids it is Reserved for the
+    /// winner until the payment window ends; without, it is Removed as unsold. Null when there is
+    /// nothing to close, so a second run changes nothing.
+    /// </summary>
+    public AuctionOutcome? Close(DateTime now)
+    {
+        if (!IsAuction || Status != ListingStatus.Active || now < AuctionEndsAt)
+        {
+            return null;
+        }
+
+        if (HighBidderId is { } winner)
+        {
+            Status = ListingStatus.Reserved;
+            WinnerId = winner;
+            PayBy = AuctionEndsAt!.Value + PaymentWindow;
+            ReservedByCheckoutId = null;
+            ReservedUntil = PayBy;
+            Touch(now);
+            return AuctionOutcome.Won;
+        }
+
+        Status = ListingStatus.Removed;
+        RemovalReason = ListingRemovalReason.AuctionUnsold;
+        Touch(now);
+        return AuctionOutcome.Unsold;
+    }
+
+    /// <summary>Whether the auction ended and waits for its winner to pay (L2-118).</summary>
+    public bool IsAwaitingWinner => IsAuction && Status == ListingStatus.Reserved && WinnerId is not null;
+
+    /// <summary>
+    /// Holds an ended auction for the winner's checkout until <paramref name="until"/>; the checkout
+    /// command does the same with a conditional update (ADR orders/0009).
+    /// </summary>
+    public void HoldForCheckout(Guid checkoutId, DateTime until)
+    {
+        if (!IsAwaitingWinner)
+        {
+            throw new InvalidOperationException("Only an auction awaiting its winner can be held for checkout.");
+        }
+
+        ReservedByCheckoutId = checkoutId;
+        ReservedUntil = until;
+        Version++;
+    }
+
+    /// <summary>
+    /// Ends a payment window that passed with no checkout holding the listing (L2-118): Removed as
+    /// unpaid, relistable. False when the window is still open or a checkout is in progress.
+    /// </summary>
+    public bool ExpirePayment(DateTime now)
+    {
+        if (!IsAwaitingWinner || now < PayBy || (ReservedByCheckoutId is not null && ReservedUntil > now))
+        {
+            return false;
+        }
+
+        Status = ListingStatus.Removed;
+        RemovalReason = ListingRemovalReason.AuctionUnpaid;
+        ReservedByCheckoutId = null;
+        ReservedUntil = null;
+        Touch(now);
+        return true;
+    }
+
+    /// <summary>Only a Draft or Active fixed-price listing can be marked or unmarked (L2-107 AC4, L2-120).</summary>
+    public bool CanBeShowcase => Status is ListingStatus.Draft or ListingStatus.Active && !IsAuction;
 
     /// <summary>Marks or unmarks the listing as a showcase listing; bumps the version like any change.</summary>
     public void SetShowcase(bool showcase, DateTime now)
@@ -134,8 +299,12 @@ public sealed class Listing
     /// <summary>Why the listing is Removed; null in any other status.</summary>
     public ListingRemovalReason? RemovalReason { get; private set; }
 
-    /// <summary>Whether the seller can relist it: removed because its order was cancelled (L2-035 AC4).</summary>
-    public bool CanRelist => Status == ListingStatus.Removed && RemovalReason == ListingRemovalReason.OrderCancelled;
+    /// <summary>
+    /// Whether the seller can relist it: removed because its order was cancelled (L2-035 AC4), or
+    /// an auction that ended unsold or unpaid (L2-117, L2-118).
+    /// </summary>
+    public bool CanRelist => Status == ListingStatus.Removed
+        && RemovalReason is ListingRemovalReason.OrderCancelled or ListingRemovalReason.AuctionUnsold or ListingRemovalReason.AuctionUnpaid;
 
     /// <summary>Sold → Removed when its order is cancelled, so it stays off the catalog until relisted (L2-035).</summary>
     public void RemoveAfterCancellation(DateTime now)
@@ -160,7 +329,23 @@ public sealed class Listing
 
         Status = ListingStatus.Active;
         RemovalReason = null;
+        if (IsAuction)
+        {
+            StartRun(now);
+        }
+
         Touch(now);
+    }
+
+    /// <summary>A new run of the auction: no bids, no winner, ending its length from now (L2-117 AC3).</summary>
+    private void StartRun(DateTime now)
+    {
+        AuctionEndsAt = now.AddDays(AuctionDays ?? throw new InvalidOperationException("An auction needs a length."));
+        CurrentBid = null;
+        BidCount = 0;
+        HighBidderId = null;
+        WinnerId = null;
+        PayBy = null;
     }
 
     /// <summary>
@@ -172,6 +357,7 @@ public sealed class Listing
         ListingStatus.Reserved => "LISTING_RESERVED",
         ListingStatus.Sold => "LISTING_SOLD",
         ListingStatus.Removed when !CanRelist => "LISTING_NOT_EDITABLE",
+        ListingStatus.Active when IsAuction && BidCount > 0 => "AUCTION_HAS_BIDS",
         _ => null,
     };
 
@@ -187,6 +373,8 @@ public sealed class Listing
             throw new InvalidOperationException("Only an active listing or the listing of a cancelled order can be edited.");
         }
 
+        // The format and length are fixed once published (L2-113 AC8).
+        details = details with { Format = Format.ToString(), AuctionDays = AuctionDays };
         var violations = CheckPublish(details, photoCount);
         if (violations.Count == 0)
         {
@@ -204,9 +392,9 @@ public sealed class Listing
             return;
         }
 
-        if (Status != ListingStatus.Active)
+        if (Status != ListingStatus.Active || EditRefusal is not null)
         {
-            throw new InvalidOperationException("Only an active listing can be withdrawn.");
+            throw new InvalidOperationException("Only an active listing without bids can be withdrawn.");
         }
 
         Status = ListingStatus.Removed;
@@ -220,7 +408,14 @@ public sealed class Listing
     /// <summary>Reserved → Active when the holding checkout ends without payment; any other checkout changes nothing.</summary>
     public void ReleaseReservation(Guid checkoutId, DateTime now)
     {
-        if (Status == ListingStatus.Reserved && ReservedByCheckoutId == checkoutId)
+        if (Status == ListingStatus.Reserved && ReservedByCheckoutId == checkoutId && IsAwaitingWinner)
+        {
+            // An ended auction keeps waiting for its winner until the payment window ends (L2-118 AC4).
+            ReservedByCheckoutId = null;
+            ReservedUntil = PayBy;
+            Touch(now);
+        }
+        else if (Status == ListingStatus.Reserved && ReservedByCheckoutId == checkoutId)
         {
             Status = ListingStatus.Active;
             ReservedByCheckoutId = null;
@@ -274,6 +469,14 @@ public sealed class Listing
         Flaws = Condition == ItemCondition.UsedFair ? Clean(details.Flaws) : null;
         Price = details.Price;
         ShippingCost = details.ShippingCost;
+        Format = ParseFormat(details.Format) ?? ListingFormat.FixedPrice;
+        AuctionDays = IsAuction ? details.AuctionDays : null;
+        if (IsAuction)
+        {
+            // An auction is never a showcase listing (L2-120).
+            IsShowcase = false;
+        }
+
         DraftReminderSentAt = null;
         Touch(now);
     }
@@ -367,6 +570,17 @@ public sealed class Listing
             violations.Add(ShippingOutOfRange);
         }
 
+        var format = ParseFormat(details.Format);
+        if (details.Format is not null && format is null)
+        {
+            violations.Add(new("format", "FORMAT_INVALID", "Choose fixed price or auction"));
+        }
+
+        if (format == ListingFormat.Auction && details.AuctionDays is { } days && !AuctionLengths.Contains(days))
+        {
+            violations.Add(AuctionLengthInvalid);
+        }
+
         return violations;
     }
 
@@ -382,12 +596,17 @@ public sealed class Listing
             throw new InvalidOperationException("Only a draft can be published.");
         }
 
-        var details = new ListingDetails(Category, Subcategory, Size, Title, Description, Brand, Condition?.ToLabel(), Flaws, Price, ShippingCost);
+        var details = new ListingDetails(Category, Subcategory, Size, Title, Description, Brand, Condition?.ToLabel(), Flaws, Price, ShippingCost, Format.ToString(), AuctionDays);
         var violations = CheckPublish(details, photoCount);
         if (violations.Count == 0)
         {
             Status = ListingStatus.Active;
             PublishedAt ??= now;
+            if (IsAuction)
+            {
+                StartRun(now);
+            }
+
             Touch(now);
         }
 
@@ -429,6 +648,16 @@ public sealed class Listing
 
         Check("price", details.Price is null, PriceOutOfRange);
         Check("shippingCost", details.ShippingCost is null, ShippingOutOfRange);
+        if (draft.TryGetValue("format", out var formatViolation))
+        {
+            violations.Add(formatViolation);
+        }
+
+        if (ParseFormat(details.Format) == ListingFormat.Auction)
+        {
+            Check("auctionDays", details.AuctionDays is null, new("auctionDays", "AUCTION_LENGTH_REQUIRED", "Choose how long the auction runs"));
+        }
+
         return violations;
     }
 
@@ -443,6 +672,12 @@ public sealed class Listing
     private static readonly RuleViolation BrandLength = new("brand", "BRAND_LENGTH", "Brand must be 1 to 50 characters");
     private static readonly RuleViolation PriceOutOfRange = new("price", "PRICE_OUT_OF_RANGE", "Enter a price from $1.00 to $5,000.00");
     private static readonly RuleViolation ShippingOutOfRange = new("shippingCost", "SHIPPING_OUT_OF_RANGE", "Enter shipping from $0.00 to $100.00");
+
+    private static readonly RuleViolation AuctionLengthInvalid = new("auctionDays", "AUCTION_LENGTH_INVALID", "Choose 3, 5 or 7 days");
+
+    /// <summary>"FixedPrice" or "Auction" in any case; null for a missing or unknown value.</summary>
+    private static ListingFormat? ParseFormat(string? value) =>
+        Enum.TryParse<ListingFormat>(value, ignoreCase: true, out var format) && Enum.IsDefined(format) ? format : null;
 
     private static bool IsMoney(decimal value, decimal min, decimal max) =>
         value >= min && value <= max && decimal.Round(value, 2) == value;

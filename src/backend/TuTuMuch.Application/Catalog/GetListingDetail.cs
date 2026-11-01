@@ -22,7 +22,8 @@ public sealed record ViewerDto(string Relation);
 /// <summary>
 /// Everything the detail page shows. Money is two-place decimal strings (L2-018); no email or real
 /// name (L2-054). Showcase tells the page that Buy now shows the Sold notice (L2-108); nothing says
-/// who requested it (L2-111).
+/// who requested it (L2-111). For an auction, Price is the current price and Auction holds the bid
+/// state as this viewer sees it, never naming a bidder (L2-114, L2-120).
 /// </summary>
 public sealed record ListingDetailDto(
     Guid Id,
@@ -43,7 +44,9 @@ public sealed record ListingDetailDto(
     IReadOnlyList<CardPhotoDto> Photos,
     SellerSummaryDto Seller,
     ViewerDto Viewer,
-    bool Showcase);
+    bool Showcase,
+    string Format = "FixedPrice",
+    AuctionViewDto? Auction = null);
 
 /// <summary>One listing by its reference, as seen by <paramref name="ViewerId"/> (null for a visitor).</summary>
 public sealed record GetListingDetailQuery(string Reference, Guid? ViewerId) : IRequest<Result<ListingDetailDto>>;
@@ -52,7 +55,7 @@ public sealed record GetListingDetailQuery(string Reference, Guid? ViewerId) : I
 /// Hides Draft and Removed listings from everyone but the seller with the same 404 as an unknown
 /// reference (<see cref="ListingDetailVisibility"/>), and reports how the viewer relates to it.
 /// </summary>
-public sealed class GetListingDetailQueryHandler(ITuTuMuchDbContext db, IOptions<PhotoOptions> photoOptions) :
+public sealed class GetListingDetailQueryHandler(ITuTuMuchDbContext db, IOptions<PhotoOptions> photoOptions, TimeProvider clock) :
     IRequestHandler<GetListingDetailQuery, Result<ListingDetailDto>>
 {
     public async Task<Result<ListingDetailDto>> Handle(GetListingDetailQuery query, CancellationToken cancellationToken)
@@ -69,7 +72,8 @@ public sealed class GetListingDetailQueryHandler(ITuTuMuchDbContext db, IOptions
             .Where(p => p.ListingId == listing.Id).OrderBy(p => p.Position)
             .ToListAsync(cancellationToken);
         var baseUrl = photoOptions.Value.PublicBaseUrl.TrimEnd('/');
-        var price = listing.Price ?? 0m;
+        var price = listing.CurrentPrice ?? 0m;
+        var viewerHasBid = await AuctionViews.ViewerHasBidAsync(db, listing, query.ViewerId, cancellationToken);
         var shipping = listing.ShippingCost ?? 0m;
         var relation = query.ViewerId is null ? "Anonymous" : query.ViewerId == listing.SellerId ? "Seller" : "OtherMember";
         return new ListingDetailDto(
@@ -91,7 +95,9 @@ public sealed class GetListingDetailQueryHandler(ITuTuMuchDbContext db, IOptions
             photos.Select((p, i) => CatalogPhotos.ToDto(p, $"Photo {i + 1} of {listing.Brand} {listing.Title}", baseUrl)).ToList(),
             new SellerSummaryDto(sellerName, completedSales, null, 0),
             new ViewerDto(relation),
-            listing.IsShowcase);
+            listing.IsShowcase,
+            listing.Format.ToString(),
+            AuctionViews.For(listing, query.ViewerId, viewerHasBid, clock.GetUtcNow().UtcDateTime));
     }
 
     private static string Money(decimal value) => value.ToString("0.00", CultureInfo.InvariantCulture);

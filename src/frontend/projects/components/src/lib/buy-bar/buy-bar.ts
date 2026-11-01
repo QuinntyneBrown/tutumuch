@@ -14,4 +14,6 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 export class BuyBarComponent {
   /** The formatted total, for example "$94.00". */
   readonly total = input.required<string>();
+  /** What the amount is: "incl. shipping" by default; "Current bid", "Starting bid" or "Winning bid" on an auction (L2-114). */
+  readonly caption = input('incl. shipping');
 }

@@ -51,6 +51,11 @@ ITEMS = {
     "rag-doll": {"id": "L-20876", "title": "Soft rag doll with yellow dress", "brand": "Melissa & Doug", "cat": "Toys and crafts", "sub": "Dolls", "cond": "Used - Excellent", "price": 16, "ship": 6, "seller": "TutuTessa", "img": "doll", "tone": 5, "listed": "Yesterday", "photos": 3},
     "paint-set": {"id": "L-20912", "title": "Watercolour paint set", "brand": "Crayola", "cat": "Toys and crafts", "sub": "Arts and crafts", "cond": "New with tags", "price": 11, "ship": 5, "seller": "RainbowRosa", "img": "paint-set", "tone": 3, "listed": "4 hours ago", "photos": 2},
     # A showcase listing (L2-107): looks Active, but Buy now shows Sold and "Request this item". Not in CATALOG.
+    # Auctions (L2-113 to L2-120): price is the starting bid. Not in CATALOG; screens add them where they show.
+    "swan-tutu": {"id": "L-20944", "title": "Sequin swan recital tutu", "brand": "Capezio", "cat": "Dance", "sub": "Tutus", "cond": "Used - Excellent", "price": 12, "ship": 6, "seller": "TwirlyTara", "img": "tutu", "tone": 2, "listed": "3 days ago", "photos": 5, "format": "Auction"},
+    "pink-scooter": {"id": "L-20946", "title": "Pink two-wheel scooter", "brand": "Micro Kickboard", "cat": "Sports", "sub": "Bikes and scooters", "cond": "Used - Good", "price": 20, "ship": 10, "seller": "TutuTessa", "img": "scooter", "tone": 6, "listed": "3 days ago", "photos": 4, "format": "Auction"},
+    "tap-shoes": {"id": "L-20947", "title": "Patent tap shoes", "brand": "Capezio", "cat": "Dance", "sub": "Dance shoes", "cond": "Used - Excellent", "price": 14, "ship": 5, "seller": "HandMeDownHana", "img": "ballet-slippers", "tone": 4, "listed": "5 days ago", "photos": 3, "format": "Auction"},
+    "glitter-boots": {"id": "L-20871", "title": "Glitter rain boots", "brand": "Hatley", "cat": "Shoes", "sub": "Boots", "cond": "Used - Good", "price": 10, "ship": 7, "seller": "TutuTessa", "img": "rain-boots", "tone": 6, "listed": "8 days ago", "photos": 3, "format": "Auction"},
     "gold-tutu": {"id": "L-20940", "title": "Gold sequin recital tutu", "brand": "Capezio", "cat": "Dance", "sub": "Tutus", "cond": "Used - Excellent", "price": 48, "ship": 6, "seller": "AnasCloset", "img": "tutu", "tone": 3, "listed": "1 day ago", "photos": 4},
 }
 
@@ -82,6 +87,23 @@ ORDERS = {
                   "address": ["Pia Reyes", "1450 Larimer St, Apt 6B", "Denver, CO 80202"]},
     "TM-47511": {"item": "floral-shorts", "buyer": "PuddleJumperPia", "seller": "TutuTessa", "status": "Completed", "date": "Fri 2 Oct", "tax": 2.59, "total": 39.59, "payout": 33.30, "fee": 3.70},
 }
+
+# Auction moments, all in Tessa's time zone (EDT; "now" is Sun 25 Oct, 3:30 PM). Bidders are never named (L2-120).
+# A running auction ends in 2d 4h; an ended one ended yesterday and its winner pays within 48 hours (ADR orders/0009).
+AUCTION = {
+    "ends": "Tue 27 Oct at 7:30 PM EDT", "ends_iso": "2026-10-27T19:30-04:00", "left": "2d 4h",
+    "soon_ends": "today at 4:12 PM EDT", "soon_iso": "2026-10-25T16:12-04:00", "soon_left": "42 min",
+    "ended": "Sat 24 Oct at 7:30 PM EDT", "ended_iso": "2026-10-24T19:30-04:00",
+    "pay_by": "Mon 26 Oct at 7:30 PM EDT", "pay_by_iso": "2026-10-26T19:30-04:00",
+    # swan-tutu (TwirlyTara's, Tessa bids): starting $12, three bids, current $18, lowest next bid $19
+    "start": 12, "current": 18, "bids": 3, "minimum": 19,
+    # the outbid race: someone bid $20 while Tessa's dialog was open
+    "raced": 20, "raced_minimum": 21,
+    # pink-scooter (Tessa's own): starting $20, three bids, current $26
+    "own_current": 26, "own_bids": 3,
+}
+AUCTION_TAX = 2.13                    # NY sales tax on the winning $18.00 bid + $6.00 shipping
+AUCTION_TOTAL = 18 + 6 + AUCTION_TAX  # $26.13
 
 SAVED_ADDRESS = ["Tessa Bell", "214 Kent Ave, Apt 3R", "Brooklyn, NY 11249"]
 CARD = ("Visa", "4242")

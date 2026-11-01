@@ -27,6 +27,9 @@ public interface ITuTuMuchDbContext
 
     DbSet<ListingPhoto> ListingPhotos { get; }
 
+    /// <summary>Accepted auction bids (L2-115).</summary>
+    DbSet<Bid> Bids { get; }
+
     DbSet<Checkout> Checkouts { get; }
 
     DbSet<Payment> Payments { get; }

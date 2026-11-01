@@ -1,0 +1,55 @@
+@startuml
+title UML sequence behaviour — Winner checkout
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+actor "Winner" as actor
+box "Frontend — TuTuMuch Web application" #E0F2FE
+  participant "ListingDetailPage (@tutumuch/catalog)" as page
+  participant "CheckoutPage (@tutumuch/orders)" as checkoutPage
+  participant "CheckoutApi (@tutumuch/api)" as client
+end box
+box "Backend — TuTuMuch API application" #D1FADF
+  participant "CheckoutsController" as controller
+  participant "PaymentWebhookController" as webhook
+end box
+box "Backend — TuTuMuch Application and Domain" #ECFDF3
+  participant "CheckoutCommandHandlers" as handler
+  participant "Listing" as entity
+end box
+box "Backend — TuTuMuch Infrastructure" #FFF4E5
+  database "TuTuMuch database" as db
+end box
+actor -> page : Open /items/{reference}
+page --> actor : "You won", "Pay by {date time}", Pay now (L2-114)
+actor -> page : Pay now
+page -> checkoutPage : /checkout/{reference}
+checkoutPage -> client : start(reference)
+client -> controller : POST /api/checkouts
+controller -> handler : StartCheckoutCommand(buyerId, reference)
+handler -> db : Load listing
+alt Active auction
+  handler --> controller : 409 AUCTION_BIDS_ONLY "This item is sold by auction"
+else buyer is not WinnerId, or PayBy <= now
+  handler --> controller : 409 AUCTION_ENDED "This auction has ended"
+else winner before PayBy
+  handler -> db : UPDATE Listings SET ReservedByCheckoutId, ReservedUntil = min(now + 10 min, PayBy), Version++\nWHERE Status = Reserved AND WinnerId = @buyer AND PayBy > @now\nAND (ReservedByCheckoutId IS NULL OR ReservedUntil <= @now)
+  handler -> db : Insert Checkout(ItemPrice = CurrentBid, ShippingCost)
+  handler --> controller : CheckoutDto(isWinningBid, payBy)
+  controller --> client : 201
+  checkoutPage --> actor : Item price $18.00 "Winning bid", shipping $5.00, tax, "Pay by" (L2-118)
+end
+alt winner pays
+  actor -> checkoutPage : Address, card, Pay
+  checkoutPage -> client : submitPayment (L2-027, L2-030)
+  webhook -> handler : payment_succeeded (signed)
+  handler -> entity : MarkSold(now)
+  handler -> db : Order created (UX_Orders_ListingId), "You made a sale" email queued (L2-042)
+else checkout released or 10 minutes pass
+  handler -> entity : ReleaseReservation(checkoutId, now)
+  entity -> entity : Auction: stays Reserved; ReservedByCheckoutId = null; ReservedUntil = PayBy
+  note right of entity : Pay now again before PayBy opens\na new checkout at the same price.\nAfter PayBy, AuctionCloseJob removes\nit as AuctionUnpaid.
+end
+@enduml

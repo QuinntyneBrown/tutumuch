@@ -11,7 +11,17 @@ export interface ListingFormValue {
   description: string;
   price: string;
   shipping: string;
+  /** "Fixed price" or "Auction", as the segmented control shows them (L2-113). */
+  format: string;
+  /** "3", "5" or "7" for an auction; empty until chosen. */
+  auctionDays: string;
 }
+
+/** The choices of "How do you want to sell it?" (L2-113). */
+export const FORMATS = ['Fixed price', 'Auction'] as const;
+
+/** The lengths an auction may run, in days (L2-113). */
+export const AUCTION_DAYS = ['3', '5', '7'] as const;
 
 /** Control ids of the form, in error summary order. The condition links to its first option. */
 export const FIELD_IDS = [
@@ -24,6 +34,7 @@ export const FIELD_IDS = [
   'flaws',
   'desc',
   'price',
+  'days',
   'ship',
 ] as const;
 
@@ -45,6 +56,8 @@ export const SERVER_FIELDS: Record<string, FieldId> = {
   description: 'desc',
   price: 'price',
   shippingCost: 'ship',
+  format: 'price',
+  auctionDays: 'days',
 };
 
 const USED_FAIR = 'Used - Fair';
@@ -101,6 +114,7 @@ export function checkListing(value: ListingFormValue, mode: 'draft' | 'publish',
   if ((value.shipping.trim() || publish) && !inRange(value.shipping, 0, 100)) {
     errors.ship = 'Enter shipping from $0.00 to $100.00';
   }
+  if (value.format === 'Auction' && publish && !value.auctionDays) errors.days = 'Choose how long the auction runs';
   return errors;
 }
 
@@ -117,6 +131,8 @@ export function toDetails(value: ListingFormValue): ListingDetails {
   details.description = text(value.description);
   details.price = parseMoney(value.price) ?? undefined;
   details.shippingCost = parseMoney(value.shipping) ?? undefined;
+  details.format = value.format === 'Auction' ? 'Auction' : 'FixedPrice';
+  details.auctionDays = value.format === 'Auction' && value.auctionDays ? Number(value.auctionDays) : undefined;
   return Object.fromEntries(Object.entries(details).filter(([, v]) => v !== undefined)) as ListingDetails;
 }
 

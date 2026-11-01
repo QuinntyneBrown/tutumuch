@@ -2,20 +2,24 @@ import {
   ChangeDetectionStrategy,
   Component,
   Injector,
+  DestroyRef,
   afterNextRender,
   computed,
   effect,
   inject,
   input,
   linkedSignal,
+  signal,
   untracked,
   viewChild,
 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router, RouterLink } from '@angular/router';
-import { AuthState, showcaseRequestUrl } from '@tutumuch/api';
+import { AuctionSummary, AuthState, ListingDetail, showcaseRequestUrl } from '@tutumuch/api';
 import {
   AlertComponent,
+  AuctionPanelComponent,
+  AuctionStatus,
   ButtonDirective,
   BuyBarComponent,
   CenterStateComponent,
@@ -30,6 +34,8 @@ import {
   SoldNoticeComponent,
   SwitchComponent,
   ToastService,
+  auctionTime,
+  timeLeft,
 } from '@tutumuch/components';
 
 import { toCardView } from '../card-view';
@@ -39,6 +45,7 @@ import {
   RequestShowcaseItemResult,
   requestedOn,
 } from '../request-showcase-item/request-showcase-item-dialog';
+import { PlaceBidData, PlaceBidDialog, PlaceBidResult } from '../place-bid/place-bid-dialog';
 import { WithdrawListingData, WithdrawListingDialog } from '../withdraw-listing/withdraw-listing-dialog';
 import { ListingDetailStore } from './listing-detail-store';
 
@@ -74,6 +81,7 @@ export function listedAgo(iso: string, now = Date.now()): string {
   imports: [
     RouterLink,
     AlertComponent,
+    AuctionPanelComponent,
     ButtonDirective,
     BuyBarComponent,
     CenterStateComponent,
@@ -108,7 +116,7 @@ export class ListingDetailPage {
   readonly request = input<string>();
 
   readonly money = formatMoney;
-  readonly similarCards = computed(() => this.store.similar().map(toCardView));
+  readonly similarCards = computed(() => this.store.similar().map((card) => toCardView(card)));
   readonly categoryPath = computed(() => `/${(this.store.listing()?.category ?? '').toLowerCase()}`);
   readonly listed = computed(() => {
     const listing = this.store.listing();
@@ -128,9 +136,46 @@ export class ListingDetailPage {
       !!listing &&
       listing.viewer.relation === 'Seller' &&
       this.auth.member()?.isAdministrator === true &&
+      !listing.auction &&
       (listing.status === 'Active' || listing.status === 'Draft')
     );
   });
+
+  /** Now, every 30 seconds, so the time left counts down and a running auction ends on the page. */
+  readonly now = signal(Date.now());
+  /** The auction panel of an auction listing (L2-114), as this viewer sees it; null for a fixed price. */
+  readonly auction = computed(() => {
+    const listing = this.store.listing();
+    return listing?.auction ? auctionPanel(listing, listing.auction, this.now()) : null;
+  });
+  readonly barTotal = computed(() => {
+    const listing = this.store.listing();
+    return this.auction()?.amount ?? (listing ? formatMoney(listing.total) : '');
+  });
+  readonly barCaption = computed(() => this.auction()?.label ?? 'incl. shipping');
+
+  /** Opens Place bid; a placed bid updates the panel and says so (L2-115). */
+  async placeBid(): Promise<void> {
+    const listing = this.store.listing();
+    if (!listing?.auction) return;
+    const ref = this.dialogs.open<PlaceBidDialog, PlaceBidData, PlaceBidResult>(PlaceBidDialog, {
+      reference: listing.reference,
+      title: listing.title,
+      photo: listing.photos[0] ?? null,
+      shipping: listing.shippingCost === '0.00' ? 'free' : formatMoney(listing.shippingCost),
+      auction: listing.auction,
+      verified: this.auth.isVerified(),
+    });
+    const result = await ref.closed;
+    if (result === 'signed-out') {
+      await this.router.navigate(['/sign-in'], { queryParams: { returnUrl: `/items/${listing.reference}` } });
+    } else if (result === 'ended') {
+      await this.store.load(listing.reference);
+    } else if (result) {
+      this.store.updateAuction(result);
+      this.toasts.show({ tone: 'success', title: 'Bid placed. You’re the highest bidder' });
+    }
+  }
 
   /** Buy now on a showcase listing: no checkout; the Sold notice takes the buy bar's place and focus (L2-108). */
   buyShowcase(): void {
@@ -189,6 +234,8 @@ export class ListingDetailPage {
   }
 
   constructor() {
+    const tick = setInterval(() => this.now.set(Date.now()), 30_000);
+    inject(DestroyRef).onDestroy(() => clearInterval(tick));
     effect(() => {
       const reference = this.reference();
       untracked(() => void this.store.load(reference));
@@ -208,4 +255,82 @@ export class ListingDetailPage {
     await this.store.showSoldNotice();
     if (this.store.listing()?.viewer.relation === 'OtherMember') await this.requestItem();
   }
+}
+
+/** The auction panel's inputs and the viewer's status line (L2-114, mocks pages/listing-detail auction states). */
+export interface AuctionPanelView {
+  label: string;
+  amount: string;
+  bids: string;
+  timeLeft: string | null;
+  soon: boolean;
+  ended: boolean;
+  endsAt: string;
+  shipping: string;
+  status: AuctionStatus | null;
+}
+
+/** What the auction panel shows to this viewer at `now`; never another bidder (L2-120). */
+export function auctionPanel(listing: ListingDetail, auction: AuctionSummary, now: number): AuctionPanelView {
+  const left = timeLeft(auction.endsAt, now);
+  const ended = auction.ended || left.ended;
+  const label = ended && auction.bidCount > 0 ? 'Winning bid' : auction.bidCount > 0 ? 'Current bid' : 'Starting bid';
+  return {
+    label,
+    amount: formatMoney(auction.currentPrice),
+    bids: auction.bidCount === 0 ? 'No bids yet' : auction.bidCount === 1 ? '1 bid' : `${auction.bidCount} bids`,
+    timeLeft: ended ? null : left.text,
+    soon: left.soon,
+    ended,
+    endsAt: auction.endsAt,
+    shipping: listing.shippingCost === '0.00' ? 'Free shipping' : `${formatMoney(listing.shippingCost)} shipping`,
+    status: auctionStatus(listing, auction, ended),
+  };
+}
+
+function auctionStatus(listing: ListingDetail, auction: AuctionSummary, ended: boolean): AuctionStatus | null {
+  if (listing.viewer.relation === 'Seller') {
+    if (listing.status === 'Removed') {
+      return {
+        tone: 'neutral',
+        heading: 'This auction ended with no bids',
+        text: 'You can relist it from Your listings.',
+      };
+    }
+    if (auction.bidCount > 0) {
+      return {
+        tone: 'neutral',
+        heading: 'This auction has bids, so it can’t be changed',
+        text: 'We’ll email you when it ends.',
+      };
+    }
+    return null;
+  }
+  if (auction.viewerIsWinner && auction.payBy) {
+    return {
+      tone: 'success',
+      heading: 'You won',
+      text: `Pay by ${auctionTime(auction.payBy)}: your bid plus shipping and tax.`,
+    };
+  }
+  if (ended) {
+    return auction.bidCount > 0
+      ? {
+          tone: 'neutral',
+          heading: 'This auction has ended',
+          text: `It ended with a winning bid of ${formatMoney(auction.currentPrice)}.`,
+        }
+      : { tone: 'neutral', heading: 'This auction has ended', text: 'It ended with no bids.' };
+  }
+  if (auction.viewerIsHighestBidder) {
+    return { tone: 'info', heading: 'You’re the highest bidder', text: 'We’ll email you if someone bids higher.' };
+  }
+  if (auction.viewerHasBid) {
+    return {
+      tone: 'warning',
+      heading: 'You’ve been outbid',
+      text: `Bid ${formatMoney(auction.minimumBid)} or more to get back in.`,
+    };
+  }
+  return null;
 }

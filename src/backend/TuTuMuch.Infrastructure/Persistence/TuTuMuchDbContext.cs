@@ -26,6 +26,8 @@ public sealed class TuTuMuchDbContext(DbContextOptions<TuTuMuchDbContext> option
 
     public DbSet<ListingPhoto> ListingPhotos => Set<ListingPhoto>();
 
+    public DbSet<Bid> Bids => Set<Bid>();
+
     public DbSet<Checkout> Checkouts => Set<Checkout>();
 
     public DbSet<Payment> Payments => Set<Payment>();

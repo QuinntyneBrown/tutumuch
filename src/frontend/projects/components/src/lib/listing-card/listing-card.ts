@@ -22,6 +22,12 @@ export interface ListingCardView {
   reserved: boolean;
   /** Sold out: the photo is greyed and stamped "Sold" (page guidelines 9). */
   sold?: boolean;
+  /**
+   * An auction (L2-114): the photo is stamped "Auction", the price is named for screen readers by
+   * `label` ("Current bid" or "Starting bid") and the time left shows under it, in the warning
+   * colour under an hour.
+   */
+  auction?: { label: string; timeLeft: string; soon: boolean };
   photo: ListingCardPhoto | null;
 }
 

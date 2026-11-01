@@ -35,6 +35,10 @@ public static class EmailTemplates
         NotificationType.Marketing => typeof(MarketingEmail),
         NotificationType.DraftExpiryReminder => typeof(DraftExpiryReminderEmail),
         NotificationType.ItemRequestMatched => typeof(ItemRequestMatchedEmail),
+        NotificationType.Outbid => typeof(OutbidEmail),
+        NotificationType.AuctionWon => typeof(AuctionWonEmail),
+        NotificationType.AuctionEnded => typeof(AuctionEndedEmail),
+        NotificationType.AuctionPaymentMissed => typeof(AuctionPaymentMissedEmail),
         _ => throw new ArgumentOutOfRangeException(nameof(type), type, "No template for this notification type."),
     };
 
@@ -91,6 +95,24 @@ public static class EmailTemplates
             ItemRequestMatchedEmail m => (
                 $"A match for your request: {m.Title}",
                 $"Something you asked for was just listed: {m.Title} by {m.Brand}, {Money(m.Price)}.\nSee it before it's gone:\n{root}/items/{m.ListingReference}\n\nYour requests: {root}/account/requests"),
+            OutbidEmail m => (
+                $"You've been outbid on {m.Title}",
+                $"Someone bid {Money(m.CurrentBid)} on {m.Title}. Bid {Money(m.CurrentBid + 1.00m)} or more before it ends on {Day(m.EndsAt)} at {Time(m.EndsAt)} UTC:\n{root}/items/{m.ListingReference}"),
+            AuctionWonEmail m => (
+                $"You won {m.Title}",
+                $"Your bid of {Money(m.WinningBid)} won {m.Title}. Pay by {Day(m.PayBy)} at {Time(m.PayBy)} UTC to make it yours:\n{root}/items/{m.ListingReference}"),
+            AuctionEndedEmail { WinningBid: { } winning } m => (
+                $"Your auction for {m.Title} ended",
+                $"Your auction for {m.Title} ended at {Money(winning)}. The winner has 48 hours to pay; we'll email you when it sells.\n{root}/items/{m.ListingReference}"),
+            AuctionEndedEmail m => (
+                $"Your auction for {m.Title} ended",
+                $"Your auction for {m.Title} ended with no bids. You can relist it from My listings:\n{root}/account/listings"),
+            AuctionPaymentMissedEmail { ToSeller: true } m => (
+                $"The winner didn't pay for {m.Title}",
+                $"The winner of {m.Title} didn't pay within 48 hours, so the auction has ended unsold. You can relist it from My listings:\n{root}/account/listings"),
+            AuctionPaymentMissedEmail m => (
+                $"Your time to pay for {m.Title} ran out",
+                $"You won {m.Title} but didn't pay within 48 hours, so the item has gone back to its seller.\n{root}/items/{m.ListingReference}"),
             _ => throw new InvalidOperationException($"No template for {type}."),
         };
 
@@ -106,6 +128,8 @@ public static class EmailTemplates
     private static string Money(decimal amount) => "$" + amount.ToString("0.00", CultureInfo.InvariantCulture);
 
     private static string Day(DateTime at) => at.ToString("dddd, MMMM d", CultureInfo.InvariantCulture);
+
+    private static string Time(DateTime at) => at.ToString("h:mm tt", CultureInfo.InvariantCulture);
 
     private static string Card(string? brand, string? last4) =>
         brand is null || last4 is null ? "your card" : $"{brand} ending {last4}";

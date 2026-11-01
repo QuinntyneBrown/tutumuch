@@ -23,7 +23,9 @@ components sign-in-with-google added (provider button with its "or" divider) and
 page-guidelines conformance added ([ADR general/0009](adr/general/0009-page-guidelines-on-the-angular-and-giddy-stack.md):
 `tl-mark`, `tl-tilly`, `tl-condition-badge`, `tl-skeleton`, the `tone` and `responsive` inputs of
 `tl-logo`, the `tilly` input of `tl-empty-state` and `tl-center-state`, the `sold` state of
-`tl-listing-card` and `tl-gallery`, the `blush` tone of `tl-feature-band`; `tl-shapes` is retired) and request-items added (the `bell` icon) and request-showcase-item added (`tl-sold-notice` and the `heart` icon).
+`tl-listing-card` and `tl-gallery`, the `blush` tone of `tl-feature-band`; `tl-shapes` is retired) and request-items added (the `bell` icon) and request-showcase-item added (`tl-sold-notice` and the `heart` icon) and auctions added
+([ADR listings/0005](adr/listings/0005-auctions-as-a-listing-format.md), `L2-113` to `L2-120`: `tl-auction-panel`,
+the `auction` input of `tl-listing-card`, the `caption` input of `tl-buy-bar`, the `itemLabel` input of `tl-order-summary` and the `.order-list__row` layout).
 Every screen follows [`docs/page-guidelines.md`](page-guidelines.md) (`L2-096`): one `h1`, one logo
 link, one primary button per view, loading states built from `tl-skeleton` (never a spinner),
 empty states with Tilly's hello pose, at most one Tilly per screen. Feature screens not built yet are inventoried below
@@ -74,7 +76,8 @@ manage-notification-preferences. The account sub-navigation of the mocks is comp
 account overview journey.
 
 - Library: `tl-switch` (5 rows: "Account security emails, always on" and "Order emails, always
-  on" checked and disabled; "Item request emails" (title "Item requests", "When something you asked
+  on" checked and disabled, its description "Sales, shipping, delivery, refunds, auctions" since auction emails are
+  order emails (`L2-119`); "Item request emails" (title "Item requests", "When something you asked
   for is listed", added by request-items, `L2-103`), "Review emails" and "Marketing emails", disabled while saving),
   `tlButton` (primary "Save" with `busy`; primary "Try again"), `tl-alert` (success "Email
   settings saved", `live="polite"`), `tl-empty-state` (error tone "Couldn’t load email settings"
@@ -162,7 +165,7 @@ Auth shell. `@tutumuch/accounts` `VerifyEmailPage` reads `token` from the query 
 - Library: `tl-mark` beside the polite "Checking your link…" status (loading), `tl-button` (Start shopping, Sell outgrown gear only while `LaunchState.canSell()` (the lead then reads "Buying is open."), Send a new link, Sign in, Try again), `tl-alert` (Link sent, Too many requests), `tl-icon` (refresh)
 - Local: heading block with the lead line; the reference line of the error state
 
-### Catalog — `/` (`pages/catalog`: default, guest, category, search, filtered, loading, empty, no-results, category-empty, error, offline, phase-one, phase-one-admin, phase-two)
+### Catalog — `/` (`pages/catalog`: default, guest, category, category-dance, auctions, search, filtered, loading, empty, no-results, category-empty, error, offline, phase-one, phase-one-admin, phase-two)
 
 Built in `@tutumuch/catalog` (`src/lib/catalog/`, `src/lib/filters/`) by browse-catalog (default,
 guest, category at `/dresses`, `/tops`, `/outerwear`, `/bottoms`, loading, empty, error, offline)
@@ -199,11 +202,17 @@ toggle, the chips and the sort select). The URL holds the result set (`q`, `cate
   subcategory group either) and the six category routes redirect to `/` through the
   `categoryMenusOpen` guard of `catalog.routes.ts` (phase-one). The empty state's "Sell outgrown gear"
   shows only while `LaunchState.canSell()` (phase-one-admin, phase-two).
+- Auctions (`L2-114`; default, guest, category-dance, phase-two and auctions): an auction card is `tl-listing-card` with
+  its `auction` input (`{ timeLeft, soon, label }` from the card response's `format` and `auction` object): the
+  "Auction" stamp on the photo, the current price (`auction.currentPrice`, the highest bid or the starting bid,
+  whole dollars like any card) with a visually hidden "Current bid" or "Starting bid", and "Ends in 2d 4h" under
+  it, or "Ends in 42 min" in the warning colour under an hour. No bid count and no bidder. The price filter and
+  sort use the current price on the server; nothing else on the page changes. Local: none.
 - Item requests (request-items, `L2-104`): the "Request it" link is a plain `routerLink` to `/account/requests/new`
   with `category` (the page's category slug, when one is chosen) and `q` (the keyword, cut to 100 characters);
   it is shown to visitors too, and the request form sends a visitor through sign-in (`L2-105`).
 
-### Listing detail — `/items/{id}` (`pages/listing-detail`: default, guest, new-seller, reserved, sold, own, loading, error, unavailable, showcase, showcase-sold, showcase-guest, showcase-requested, showcase-own)
+### Listing detail — `/items/{id}` (`pages/listing-detail`: default, guest, new-seller, reserved, sold, own, loading, error, unavailable, showcase, showcase-sold, showcase-guest, showcase-requested, showcase-own, auction, auction-bids, auction-highest, auction-outbid, auction-ending, auction-ended, auction-won, auction-own, auction-own-no-bids, auction-unsold, auction-guest)
 
 Built by view-listing-detail in `@tutumuch/catalog` (`src/lib/listing-detail/`) for every state. In
 the own state edit-and-withdraw-listing adds "Withdraw", which opens the Withdraw listing dialog
@@ -240,7 +249,29 @@ marked) and no "See requests".
 
 - Local: the switch row (`.cluster` with space-between) under the buy bar
 
-### Checkout — `/checkout/{id}` (`pages/checkout`: default, new-address, invalid, non-us, submitting, declined, expired, conflict, showcase, loading, error)
+Auction (`L2-114` to `L2-120`, ADR listings/0005): when the response has `format: "Auction"`, `tl-auction-panel`
+takes the place of the `.detail__price` block and is fed the `auction` object; everything else on the page is
+unchanged. Never a bidder's name or another member's bid (`L2-120`).
+
+- Library: `tl-auction-panel` (label "Starting bid" with "No bids yet" (auction), "Current bid" with "{n} bids"
+  (auction-bids), "Winning bid" once ended; "Ends in 2d 4h", or "Ends in 42 min" with `soon` under an hour
+  (auction-ending); the end date and time in the viewer's time zone and the shipping cost; status line: info "You’re
+  the highest bidder" / "We’ll email you if someone bids higher." (auction-highest), warning "You’ve been outbid" /
+  "Bid {minimumBid} or more to get back in." (auction-outbid), success "You won" / "Pay by {payBy}: your bid plus
+  shipping and tax." (auction-won), neutral "This auction has ended" / "It ended with a winning bid of {amount}."
+  (auction-ended), neutral "This auction has bids, so it can’t be changed" / "We’ll email you when it ends." (auction-own),
+  neutral "This auction ended with no bids" (auction-unsold)), `tl-buy-bar` with `caption` ("Current bid",
+  "Starting bid" or "Winning bid" for the amount) holding `tl-button` primary lg "Place bid" (auction, auction-bids,
+  auction-outbid, auction-ending: opens the Place bid dialog through `DialogService`; auction-guest: a link to
+  `/sign-in?returnUrl=/items/{id}`; for an unverified member the Place bid dialog says "Verify your email to bid"), primary lg "Pay now" (auction-won:
+  to `/checkout/{id}`), primary lg "Edit listing" with icon `edit` and lg "Withdraw" (auction-own-no-bids, only while
+  `bidCount` is 0), primary lg "Your listings" (auction-unsold, the seller's own Removed auction: to `/account/listings?status=removed`, where its Relist is); no buy bar for the highest
+  bidder, an ended auction seen by anyone but the winner, or the seller's auction with bids; `tlButton="primary"` "Find
+  similar" and `tl-listing-grid` "Similar in the closet" (auction-ended), `ToastService` (auction toasts)
+- Local: none beyond the detail page's; the minute tick that recomputes "Ends in" and reloads the listing when it
+  reaches zero lives in the page component
+
+### Checkout — `/checkout/{id}` (`pages/checkout`: default, new-address, invalid, non-us, submitting, declined, expired, conflict, showcase, auction-won, auction-ended, loading, error)
 
 Built by checkout-and-pay in `@tutumuch/orders` (`src/lib/checkout/`) for every state; `{id}` is
 the listing reference. A refused start for the seller's own, a sold or a missing listing goes
@@ -262,6 +293,13 @@ back to `/items/{id}`, and a visitor goes to sign in with checkout as the return
   radios (`.option`, `address.address`), `HostedCardFieldsComponent` (the "Card" field, the
   provider's hosted fields from `PAYMENT_FIELDS` in `@tutumuch/api` and the `.secure-note`), the
   "Confirming with your bank…" status line and the loading skeleton (`tl-skeleton`)
+- Auction winner (`L2-118`, ADR orders/0009; auction-won): the same composition with `tl-alert` (success, icon
+  `check-circle`, "You won this auction" / "Pay by {payBy}. Until then it’s held for you, even if you leave
+  checkout.") at the top of the form, `tl-order-summary` with `itemLabel` "Winning bid" at the winning bid,
+  and the ghost `tlButton` "Pay later" back to `/items/{id}` instead of "Cancel and release item" (leaving does not
+  release the item). `tl-reservation-timer` still shows the 10-minute hold. auction-ended (409 `AUCTION_ENDED`):
+  `tl-center-state` (icon `clock`, "This auction has ended", "Only the winner can pay for it, before the time to pay
+  runs out.", primary "Back to the item" and "Keep shopping"), no address or card field.
 
 ### Order confirmed — `/orders/{id}/confirmed` (`pages/order-confirmation`: default, loading, error)
 
@@ -352,7 +390,7 @@ App shell. The same `OrderHistoryPage` with route data `list: 'sales'`, built by
 - Local: the page header with "{n} to ship", the `.order-list` rows linking to `/sales/{id}`, and
   the skeleton rows (`tl-skeleton`)
 
-### Edit listing — `/items/{id}/edit` (`pages/edit-listing`: default, loading, error, invalid, submitting, success, locked, changed, sold, withdrawn)
+### Edit listing — `/items/{id}/edit` (`pages/edit-listing`: default, loading, error, invalid, submitting, success, auction, auction-has-bids, locked, changed, sold, withdrawn)
 
 App shell. `@tutumuch/listings` `EditListingPage` (`src/lib/edit-listing/`), built by
 edit-and-withdraw-listing. The fields are the sell form's, shared through the local
@@ -372,8 +410,13 @@ at `/sell/{reference}` instead.
 - Local: the page header (listing title link, heading, status), `ListingFormComponent` (the
   photos, item, price and confirmation sections), the sticky split actions row and the loading
   skeleton (3 photo tiles, 4 fields)
+- Auction (`L2-113`, `L2-120`): a published auction with no bids (auction) shows the format and length read-only as a local text line
+  ("Auction · {n} days · ends {date}" with the caption "Set when published") in place of the
+  format and length controls; the price field is labelled "Starting bid". With bids, a 409 `AUCTION_HAS_BIDS`
+  shows auction-has-bids: `tl-center-state` (icon `lock`, "This auction has bids, so it can’t be changed", "It ends
+  {date}. We’ll email you when it does.", primary "Back to listing" and "Your listings").
 
-### Your listings — `/account/listings` (`pages/my-listings`: default, filtered, loading, empty, error)
+### Your listings — `/account/listings` (`pages/my-listings`: default, auctions, filtered, loading, empty, error)
 
 In launch Phases 1 and 2 a non-administrator gets the `SellingNotOpenPage` of the sell page entry instead (`sellingOpen` route guard).
 
@@ -393,6 +436,11 @@ the account overview journey.
 - Local: the page header with "{n} listings · {n} active", the `.order-list` rows linking to
   `/sell/{reference}` (Draft), `/sales/{orderId}` (Sold) or `/items/{reference}` with the price
   ("$60" or "—") and the date ("Today", "Yesterday", "Sat 24 Oct"), and the four skeleton rows (`tl-skeleton`)
+- Auctions (`L2-117`): an Active auction row shows its current price and "Auction · {n} bids · Ends in 2d 4h" in place
+  of the date; a Removed auction (unsold or unpaid) shows
+  "Auction ended, no bids" (or "Winner didn’t pay") and a `tlButton` sm "Relist" ("Relist {title}" as its name) beside
+  the row link, in the `.order-list__row` layout (default, auctions: the Removed filter). Relist calls the relist
+  endpoint and shows the success toast.
 
 ### My requests — `/account/requests` (`pages/my-requests`: default, loading, empty, error, limit-reached, expired, no-matches, signed-out)
 
@@ -450,7 +498,7 @@ sub-navigation of the mocks is composed with the account overview journey.
   `.section-head` ("History" or "Held"), the `.order-list` rows with their thumbnail, amount and
   status caption, and the loading skeleton (`tl-skeleton`)
 
-### Sell an item — `/sell` (`pages/sell`: default, filled, invalid, submitting, draft-saved, success, unverified, limited, error, selling-not-open, product-limit)
+### Sell an item — `/sell` (`pages/sell`: default, filled, invalid, submitting, auction, auction-invalid, draft-saved, success, unverified, limited, error, selling-not-open, product-limit)
 
 App shell. `@tutumuch/listings` `SellPage` at `/sell` and `/sell/{reference}` (continue a draft).
 Visitors are sent to `/sign-in?returnUrl=/sell`. The Photos section comes first; each chosen file
@@ -458,6 +506,13 @@ uploads at once and a save sends the photo IDs in order. The footer stays visibl
 
 - Library: `tl-photo-uploader` (photos with cover, uploading and rejected tiles, add tile, help and error), `tl-error-summary` (invalid), `tl-alert` (draft-saved success, save or publish failure), `tl-form-field` (category, type, title with counter, brand, flaws, description with counter, price, shipping), `tl-input-group` (`$` addon), `tl-fixed-size` with `tl-size-tag` (after a category is chosen), `tl-segmented` (condition), `tl-earnings`, `tl-button` (Save draft, Publish with busy), `tl-center-state` (success "It’s live" with `tilly="show-and-tell"`, the big moment of page guidelines 6; unverified, limited, error with their icons) with `tl-item-row` (success panel) and `tl-icon`, `DialogService` (opens the verify-email prompt)
 - Local: `.page-header` with the h1, `.sell-form` sections (Photos, Item, Price, confirmation: `.form-section`, `.form-row`), the upload state of each tile and its client size check, the brand `<datalist>`, the sticky `.form-actions` bar, the success panel wrapper and the payouts line
+- Auction (`L2-113`; auction, auction-invalid): at the top of the Price section, `tl-segmented` (legend "How do you
+  want to sell it?", groupId `format`: "Fixed price", chosen when the form opens, and "Auction"). Choosing Auction
+  relabels the price `tl-form-field` "Starting bid" (help "Bids start here.") and adds `tl-radio-group` (legend
+  "Auction length", help "It ends that many days after you publish, at the same time of day.") with three `tl-choice`
+  radios "3 days", "5 days", "7 days"; `tl-earnings` estimates from the starting bid. Publishing
+  without a length (422 `AUCTION_LENGTH_REQUIRED`) puts "Choose how long the auction runs" on the group and in
+  `tl-error-summary`. The form sends `format` and `auctionDays`. Local: none beyond `ListingFormComponent`.
 - Launch phases ([ADR platform/0014](adr/platform/0014-launch-phase-configuration.md)): `listings.routes.ts` guards `/sell`, `/sell/{reference}`, `/items/{reference}/edit` and `/account/listings` with `sellingOpen` (`LaunchState.canSell()` after `AuthState.load()`); when it does not match, the same paths load `SellingNotOpenPage` (selling-not-open): `tl-center-state` (icon `tag`, "Selling opens soon", "For now, every item is hand-picked by TuTuMuch. You can still shop everything in the closet.") with primary `tlButton` "Shop the closet" to `/`. A save answered 409 `PRODUCT_LIMIT_REACHED` shows the product-limit state: `tl-center-state` (icon `info`, "The closet is full for now", the API's limit in the text) with primary "Your listings" and "Shop the closet".
 
 ### Forbidden — `/403` (`pages/forbidden`: default)
@@ -597,6 +652,7 @@ Built in `@tutumuch/marketing` (`src/lib/terms/`, exported as `infoRoutes`), in 
 | Withdraw listing (`dialogs/withdraw-listing`: default, busy, failed) | `DialogService` | `tl-dialog` (`size="sm"`, icon `trash`, tone danger, title "Withdraw “{title}”?", description "It leaves the shop right away. This can’t be undone."), `tl-alert` (danger "Couldn’t withdraw" / "Your listing is still live." in the top slot after a failure), `tl-button` ("Keep listing", focused, disabled while busy; danger "Withdraw" with busy, "Try again" after a failure) | `WithdrawListingDialog` in `@tutumuch/catalog` (ADR listings/0003); on success the page goes to `/account/listings` |
 | Delete request (`dialogs/delete-request`: default, busy, failed) | `DialogService` | `tl-dialog` (`size="sm"`, icon `trash`, tone danger, title "Delete this request?", description "“{keywords}” stops looking for new listings. This can’t be undone."), `tl-alert` (danger "Couldn’t delete" / "Your request is still open." in the top slot after a failure), `tl-button` ("Keep request", focused, disabled while busy; danger "Delete" with busy, "Try again" after a failure) | `DeleteRequestDialog` in `@tutumuch/catalog` (request-items, `L2-099`); on success My requests drops the request and shows "Request deleted" |
 | Request this item (`dialogs/request-showcase-item`: default, requested, invalid, busy, failed, limited) | `DialogService` | `tl-dialog` (icon `heart`, heading "Request this item", description "Tell TuTuMuch you’d like one like it. Only TuTuMuch sees your request."), `tl-item-row` (thumbnail, title, "{price} · {brand}"), `tl-form-field` (textarea "Note", optional, help "Anything that helps us find one like it: size, colour, when you need it.", counter "{n} / 500", error "Keep the note to 500 characters", focused on open), `tl-error-summary` (invalid, in the top slot), `tl-alert` (danger "Couldn’t send your request" with the reference; warning "That’s 20 requests today" with icon `clock`, in the top slot), `tl-button` (Cancel, disabled while busy; primary "Send request", or "Update request" when one exists, with busy; "Try again" after a failure) | `RequestShowcaseItemDialog` in `@tutumuch/catalog`; the "You asked for this on {date}. Sending again updates your request." line; on success the dialog closes and the page shows the toast |
+| Place a bid (`dialogs/place-bid`: default, first-bid, invalid, conflict, busy, ended, failed) | `DialogService` | `tl-dialog` (heading "Place a bid", description "If you win, you pay your bid plus {shipping} shipping and tax within 48 hours."), `tl-item-row` (thumbnail, title, "Current bid {amount} · {n} bids · Ends in 2d 4h", or "Starting bid {amount} · No bids yet"), `tl-form-field` ("Your bid", focused on open, help "Bid {minimumBid} or more", filled with `minimumBid`: the starting bid with no bids (first-bid), else the current bid plus $1.00) with `tl-input-group` (`$` addon, `inputmode="decimal"`); invalid: the API's message on the field ("Bid $19.00 or more" for `BID_TOO_LOW`; `BID_INVALID`, `ALREADY_HIGHEST_BIDDER`, `CANNOT_BID_OWN_LISTING` messages likewise), the amount kept; `tl-alert` in the top slot: warning "Someone just bid higher" / "The current bid is now {amount}." with the new lowest bid filled in (conflict, 409 `OUTBID`), info icon `clock` "This auction has ended" / "Your bid wasn’t placed." with primary "Close" (ended, 409 `AUCTION_ENDED`), danger "Couldn’t place your bid" with the reference and "Try again" (failed); warning icon `mail` "Verify your email to bid" / "Check your inbox for the link we sent, then try again." for an unverified member (the API answers 403 `EMAIL_NOT_VERIFIED`); `tl-button` (Cancel, disabled while busy; primary "Place bid" with busy and the input read-only); on success the dialog closes, the page reloads the auction and `ToastService` shows "Bid placed. You’re the highest bidder" | `PlaceBidDialog` in `@tutumuch/catalog` (`src/lib/place-bid/`, local UI), calling `POST /api/listings/{reference}/bids` through `@tutumuch/api` |
 | Pitch video (`dialogs/pitch-video`: default, loading, error, captions) | `DialogService` | `tl-dialog` (`size="lg"`, heading "TuTuMuch video" with `headingHidden`), `tl-video-player` (MP4 and WebM sources, English captions off by default, poster; Play/Pause, Captions toggle; loading spinner; error "The video didn’t load" with Try again) | `PitchVideoDialog` in `@tutumuch/marketing` |
 | Cookie settings (`dialogs/cookie-settings`: default, analytics-on) | `DialogService` through `CookieSettingsDialogService` | `tl-dialog` (size `sm`, heading "Cookie settings"), `tl-switch` with `hint` "Strictly necessary" ("Sign-in and checkout. Always on.", checked and disabled) and "Analytics" ("Helps us see which pages are slow.", `autofocus`), `tl-button` (Cancel; primary Save) | `CookieSettingsDialog` in `@tutumuch/privacy` |
 | Resolve problem (`dialogs/resolve-problem`: default, invalid, busy) | `DialogService` | `tl-dialog` (heading "Resolve problem {reference}"), `tl-radio-group` (legend "Decision") with `tl-choice` "Refund buyer in full" ("{total} to {buyer} · no payout") and "Release payout to seller" ("Order completes · {seller} is paid"), `tl-form-field` (textarea "Reason", help "Sent to both members.", error "Add a reason. Both members see it."), `tl-alert` (danger after a failure), `tl-button` (Cancel, disabled while busy; primary "Refund buyer" or "Release payout", busy "Refunding" or "Releasing") | `ResolveProblemDialog` in `@tutumuch/orders` |
@@ -613,6 +669,8 @@ Built in `@tutumuch/marketing` (`src/lib/terms/`, exported as `infoRoutes`), in 
 | System notices (`notifications/system-banner`: info, success, warning, danger) | banner above the top bar | not yet composed | not yet composed |
 | Request toasts (`notifications/request-toasts`: info, success, warning, danger) | toast region over My requests | `ToastService`: info "Request deleted"; success "Request saved" / "We’ll email you when it’s listed."; warning "You have 20 open requests" / "Delete one to renew this one." (Renew refused with 409); danger "Couldn’t delete your request" with "Try again" | None |
 | Showcase request toasts (`notifications/showcase-request-toasts`: info, success, warning, danger) | toast region over the listing | `ToastService`: success "Request sent" / "Thank you. TuTuMuch sees every request."; info "Request updated"; warning "That’s 20 requests today" / "Try again tomorrow."; danger "Couldn’t send your request" with "Try again" | None |
+| Auction toasts (`notifications/auction-toasts`: success, warning, info, danger) | toast region over the listing | `ToastService`: success "Bid placed. You’re the highest bidder" (after the Place bid dialog closes); warning "Someone just bid higher" / "Bid {minimumBid} or more to get back in." with "Place bid" (the reloaded auction shows the viewer was outbid); info "This auction has ended" (the time ran out on the page); danger "Couldn’t place your bid" / "Check your connection." with "Try again" | None |
+| Auction emails (`pages/auction-emails`: default (outbid), won, ended-sold, ended-unsold, missed-winner, missed-seller) | plain-text emails sent through the outbox in the `Orders` category, always on (`L2-043`), not web pages | None: rendered by `EmailTemplates` in `TuTuMuch.Application` ("You’ve been outbid on {title}", "You won {title}", "Your auction for {title} ended" with the winning bid or with no bids and the My listings link, "Your time to pay for {title} ran out", "The winner didn’t pay for {title}"); no unsubscribe link and no bidder named (`L2-119`, `L2-120`) | None |
 | Match email (`pages/request-match-email`: default) | plain-text email sent through the outbox, not a web page | None: rendered by `EmailTemplates` (`ItemRequestMatched`) in `TuTuMuch.Application`, with the item request unsubscribe link and `List-Unsubscribe` headers added by the dispatcher (`L2-101`, `L2-103`) | None |
 
 ## Summary of local UI to build
@@ -620,4 +678,5 @@ Built in `@tutumuch/marketing` (`src/lib/terms/`, exported as `infoRoutes`), in 
 1. `main#main` with the router outlet and the home placeholder (`projects/tutumuch`).
 2. The auth layout of the auth shell (`projects/tutumuch`).
 3. Heading blocks of the auth pages and the sell page header, form sections and sticky actions bar.
-4. Everything marked "not yet composed" is composed, and its library components added to the catalogue, when its journey is implemented.
+4. `PlaceBidDialog` in `@tutumuch/catalog` (auctions): the bid form inside `tl-dialog`, its refusal handling and the success toast.
+5. Everything marked "not yet composed" is composed, and its library components added to the catalogue, when its journey is implemented.

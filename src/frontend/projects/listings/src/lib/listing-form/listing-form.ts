@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { ControlContainer, ReactiveFormsModule } from '@angular/forms';
 import {
+  ChoiceComponent,
   EarningsComponent,
   FixedSizeComponent,
   FormFieldComponent,
   InputGroupComponent,
   PhotoUploaderComponent,
+  RadioGroupComponent,
   SegmentedComponent,
 } from '@tutumuch/components';
 
@@ -19,11 +21,13 @@ import { ListingFormModel } from './listing-form-model';
   selector: 'tl-listing-form',
   imports: [
     ReactiveFormsModule,
+    ChoiceComponent,
     EarningsComponent,
     FixedSizeComponent,
     FormFieldComponent,
     InputGroupComponent,
     PhotoUploaderComponent,
+    RadioGroupComponent,
     SegmentedComponent,
   ],
   templateUrl: './listing-form.html',
