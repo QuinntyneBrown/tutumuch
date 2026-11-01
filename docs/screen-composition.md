@@ -23,7 +23,7 @@ components sign-in-with-google added (provider button with its "or" divider) and
 page-guidelines conformance added ([ADR general/0009](adr/general/0009-page-guidelines-on-the-angular-and-giddy-stack.md):
 `tl-mark`, `tl-tilly`, `tl-condition-badge`, `tl-skeleton`, the `tone` and `responsive` inputs of
 `tl-logo`, the `tilly` input of `tl-empty-state` and `tl-center-state`, the `sold` state of
-`tl-listing-card` and `tl-gallery`, the `blush` tone of `tl-feature-band`; `tl-shapes` is retired) and request-items added (the `bell` icon) and request-showcase-item added (`tl-sold-notice` and the `heart` icon).
+`tl-listing-card` and `tl-gallery`, the `blush` tone of `tl-feature-band`; `tl-shapes` is retired) and request-items added (the `bell` icon) and request-showcase-item added (`tl-sold-notice` and the `heart` icon) and shelf finds added (`tl-find-card`, the `label` input of `tl-sold-notice`, the `itemLabel` and `shippingLabel` inputs and `item.icon` of `tl-order-summary`).
 Every screen follows [`docs/page-guidelines.md`](page-guidelines.md) (`L2-096`): one `h1`, one logo
 link, one primary button per view, loading states built from `tl-skeleton` (never a spinner),
 empty states with Tilly's hello pose, at most one Tilly per screen. Feature screens not built yet are inventoried below
@@ -34,12 +34,12 @@ implemented, and the catalogue grows in the same change.
 
 | Part | Library components | Local UI |
 |---|---|---|
-| App shell (`shell: 'app'`, and `shell: 'wide'` for the catalog's product grids with an 80rem container) | `tl-skip-link`, `tl-top-bar` (guest, member; page skeleton: `tl-logo` with `responsive` (the mark under 640px, inside the one home link) left, search "Search the closet" in the middle, Sell and Account right, the six category links in a second row from 768px in the guideline order Dance, Sports, Clothing, Shoes, Cameras and tech, Toys and crafts, menu button and nav-menu sheet below 768px; no Bag, as TuTuMuch has no cart; `[categoryLinksVisible]` from `LaunchState.categoryMenusVisible()` hides the links and the menu button in launch Phase 1, `[sellVisible]` from `LaunchState.canSell()` hides Sell from non-administrators in Phases 1 and 2, `pages/catalog`: phase-one, phase-one-admin, phase-two), `tl-footer` (`tl-mark`, short links, "© TuTuMuch"; its `cookieSettings` opens `CookieSettingsDialogService`), `tl-toast-region`, `@tutumuch/privacy` `tl-cookie-consent` in the root component | `<main id="main" tabindex="-1">` with the router outlet (`.container`, `.container--wide` for `shell: 'wide'`), in `projects/tutumuch` |
+| App shell (`shell: 'app'`, and `shell: 'wide'` for the catalog's product grids with an 80rem container) | `tl-skip-link`, `tl-top-bar` (guest, member; page skeleton: `tl-logo` with `responsive` (the mark under 640px, inside the one home link) left, search "Search the closet" in the middle, Sell and Account right, the six category links in a second row from 768px in the guideline order Dance, Sports, Clothing, Shoes, Cameras and tech, Toys and crafts, then the "Shelf finds" link to `/finds` (current on the finds pages, `L2-114`), menu button and nav-menu sheet below 768px; no Bag, as TuTuMuch has no cart; `[categoryLinksVisible]` from `LaunchState.categoryMenusVisible()` hides the links and the menu button in launch Phase 1, `[sellVisible]` from `LaunchState.canSell()` hides Sell from non-administrators in Phases 1 and 2, `pages/catalog`: phase-one, phase-one-admin, phase-two), `tl-footer` (`tl-mark`, short links starting with "Shelf finds" to `/finds`, the way in during Phase 1, "© TuTuMuch"; its `cookieSettings` opens `CookieSettingsDialogService`), `tl-toast-region`, `@tutumuch/privacy` `tl-cookie-consent` in the root component | `<main id="main" tabindex="-1">` with the router outlet (`.container`, `.container--wide` for `shell: 'wide'`), in `projects/tutumuch` |
 | Auth shell (`shell: 'auth'`) | `tl-skip-link`, `tl-logo` (lg), `tl-toast-region` | `.auth-layout` with `<main id="main" class="auth-card" tabindex="-1">` and the router outlet, in `projects/tutumuch`; chosen by route `data.shell = 'auth'` |
 | Admin shell (`shell: 'admin'`) | `tl-skip-link`, `tl-top-bar` (`variant="admin"`: responsive logo, "Admin" label, the member's initials), `tl-toast-region` | `<main id="main" class="container page" tabindex="-1">` with the router outlet and no footer, in `projects/tutumuch`; chosen by route `data.shell = 'admin'` |
 | Marketing shell (`shell: 'marketing'`) | `tl-skip-link`, `tl-top-bar` (guest, member), `tl-footer` (with "About TuTuMuch" to `/welcome`), `tl-toast-region` | `<main id="main" class="marketing" tabindex="-1">` with the router outlet and no container, in `projects/tutumuch`; chosen by route `data.shell = 'marketing'` ([ADR platform/0011](adr/platform/0011-marketing-feature-library.md)) |
 | Bare shell (`shell: 'bare'`) | `tl-skip-link`, `tl-top-bar` (bare variant), `tl-toast-region` | Not yet composed |
-| Nav-menu sheet (`dialogs/nav-menu`: default, guest, phase-two) | `tl-sheet`, `tl-button`, `tl-link`, `tl-mark` (in the mock's sheet head, never a second logo) | The six category links in the guideline order (Dance, Sports, Clothing, Shoes, Cameras and tech, Toys and crafts) at `/dance`, `/sports`, `/clothing`, `/shoes`, `/cameras-and-tech`, `/toys-and-crafts`; the top bar shows them in its second row from 768px (`--layout-breakpoint-md`) and the menu button opens this sheet below that. Composed as `tl-nav-menu` in `@tutumuch/components` (opened by `tl-top-bar` through `SheetService`) with the six category links; the member links, Sign out and the row chevrons of the mock are not composed yet. Never opened in launch Phase 1: the top bar has no menu button then (L2-093) |
+| Nav-menu sheet (`dialogs/nav-menu`: default, guest, phase-two) | `tl-sheet`, `tl-button`, `tl-link`, `tl-mark` (in the mock's sheet head, never a second logo) | The six category links in the guideline order (Dance, Sports, Clothing, Shoes, Cameras and tech, Toys and crafts) at `/dance`, `/sports`, `/clothing`, `/shoes`, `/cameras-and-tech`, `/toys-and-crafts`; the top bar shows them in its second row from 768px (`--layout-breakpoint-md`) and the menu button opens this sheet below that. Composed as `tl-nav-menu` in `@tutumuch/components` (opened by `tl-top-bar` through `SheetService`) with the six category links and "Shelf finds" (`L2-114`); the member links, Sign out and the row chevrons of the mock are not composed yet. Never opened in launch Phase 1: the top bar has no menu button then (L2-093) |
 | Toast region (`notifications/toast`: info, success, warning, danger, with-action, stacked) | `tl-toast-region`, `tl-toast`, `ToastService` | None |
 | System banner (`notifications/system-banner`: info, success, warning, danger) | `tl-system-banner` (not in the catalogue yet) | Not yet composed |
 
@@ -556,6 +556,138 @@ the API is the forbidden state.
   request: the listing title linking to `/items/{id}`, the reference and `time`, the member's
   display name and `mailto:` email, the note as text or "No note")
 
+### Shelf finds — `/finds` (`pages/shelf-finds`: default, guest, phase-one, loading, empty, error)
+
+Built by shelf finds in `@tutumuch/catalog` (`src/lib/shelf-finds/`), app shell with `shell: 'wide'`,
+reading `GET /api/finds` through `@tutumuch/api` (`L2-114`, ADR catalog/0009). The top bar marks
+"Shelf finds" current. "Post a shelf find" shows only when `LaunchState.canSell()` is true for the
+member (`L2-113`, `L2-091`); a visitor never sees it.
+
+- Library: `tl-find-card` in `.listing-grid.find-grid` (one column under 576px), `tl-load-more`
+  ("Load more", 24 per page), `tl-skeleton` (loading: well and three lines per card),
+  `tl-empty-state` (empty: Tilly, "No shelf finds yet", "When someone spots something great in a
+  store, it shows up here.", primary "Post a shelf find" when the member may post; error: "Couldn’t
+  load shelf finds" with the reference and "Try again" with icon `refresh`), `tl-button` (primary
+  "Post a shelf find" with icon `plus`, to `/finds/new`)
+- Local: the `.page-header` (h1 "Shelf finds", lede "Spotted in a store by our community. Go get
+  it, or let TuTuMuch grab it for you.")
+
+### Shelf find — `/finds/{reference}` (`pages/find-detail`: default, guest, no-grab, grab-open, own, gone, expired, success, loading, error, not-found)
+
+Built by shelf finds in `@tutumuch/catalog` (`src/lib/find-detail/`), reading `GET /api/finds/{reference}`
+(`L2-115`, `L2-116`). A 404 is the not-found state. The poster's own Active find (`mine: true`) shows
+"Mark as gone" and "Withdraw" instead of the grab box.
+
+- Library: `tl-icon` (`map-pin`, in the sunken well), `tl-facts` (Store; Address with the "Open
+  in maps" `tl-link` to `https://www.google.com/maps/search/?api=1&query={store, address}` in a new
+  tab, `rel="noopener noreferrer"`, icon `external` and the hidden "(opens in a new tab)"; Seen
+  "Seen in store on {date}"), `tl-alert` (info, "Prices and stock change. Check with the store before
+  you go."), `tl-sold-notice` (gone and expired: `label="Gone"`, heading "This find is gone" or "This
+  find has expired", "Seen at {store} on {date}.", primary "See more shelf finds" to `/finds`),
+  `tl-button` (primary lg "Grab it for me" to `/finds/{reference}/grab`, or to
+  `/sign-in?returnUrl=/finds/{reference}/grab` for a visitor; "Mark as gone" opening
+  `MarkFindGoneDialog`; ghost "Withdraw" opening `WithdrawFindDialog`), `tl-center-state` (error:
+  "Couldn’t load this find" with the reference, "Try again" and "See shelf finds"; not-found: code
+  "404", "We couldn’t find that", primary "See more shelf finds"), `tl-skeleton` (loading),
+  `ToastService` (success "Your find is live" after posting)
+- Local: the breadcrumb (Shelf finds › title), the eyebrow "Shelf find · {category}", the h1, the
+  price block ("{price}", "Shelf price · Girls’"), the "Grab it for me" `.panel.panel--sunken` box
+  (h2 "Grab it for me", "TuTuMuch buys it at the store and sends it to you for a {fee} grab fee.",
+  or "Someone already asked TuTuMuch to grab this one" with no button when `grabOpen`), the note as
+  text, and the "Posted by" block (initials and the display name linking to `/members/{displayName}`)
+
+### Post a shelf find — `/finds/new` (`pages/post-find`: default, filled, admin, invalid, invalid-fee, submitting, error, limited, selling-not-open, unverified, signed-out)
+
+Built by shelf finds in `@tutumuch/listings` (`src/lib/post-find/`), sending `POST /api/finds`
+(`L2-113`). The route is guarded like `/sell`: a visitor goes to `/sign-in?returnUrl=/finds/new`, a
+member the current phase does not let sell sees the selling-not-open state of `L2-091`.
+
+- Library: `tl-form-field` (Title with counter "{n} / 80"; Category select "Choose a category";
+  Store name; textarea "Store address" with help "The store’s street address or mall and city.
+  Never your home."; date "Seen on" with help "Today or up to 7 days ago."; textarea "Note",
+  optional, counter "{n} / 500"), `tl-input-group` (Shelf price and Grab fee with the `$` addon),
+  `tl-fixed-size` (Girls’, "Every find is for girls", once a category is chosen), `tl-switch`
+  (administrators only: "Offer to grab it" with hint "TuTuMuch buys it at the store and sends it to
+  the shopper."), `tl-error-summary` (invalid, invalid-fee), `tl-alert` (danger "Couldn’t post your
+  find" with the reference, in the top slot), `tl-center-state` (limited: icon `clock`, "That’s 20
+  finds today"; selling-not-open: "Selling opens soon", primary "Shop the closet"; unverified:
+  "Verify your email to post finds" with "Resend link" opening the verify-email prompt),
+  `tl-button` (ghost Cancel to `/finds`; primary "Post find" with busy)
+- Local: the `.page-header` (h1 "Post a shelf find", lede "Saw something great for girls in a store?
+  Tell everyone where to get it."), the form sections "The item", "Where you saw it" and, for an
+  administrator, "Grab it for me", and the sticky actions bar (`.form-actions--sticky`)
+
+### Grab it for me — `/finds/{reference}/grab` (`pages/grab`: default, acknowledged, new-address, invalid, non-us, submitting, declined, in-progress, unverified, signed-out, loading, error)
+
+Built by shelf finds in `@tutumuch/orders` (`src/lib/grab/`), beside checkout and reusing its
+address step and hosted card fields (`L2-117`, ADR orders/0009). `POST /api/grabs/quote` prices the
+address; `POST /api/grabs` pays once per idempotency key; the page then polls
+`GET /api/me/grabs/{id}` until the webhook has decided and goes to `/account/grabs/{id}`.
+
+- Library: `tl-choice` radios (saved address or "New address", as checkout), `tl-form-field` and the
+  checkout address form (US states; country "TuTuMuch ships within the United States only"),
+  `tl-order-summary` (`itemLabel="Shelf price"`, `shippingLabel="Grab fee"`, `item.icon="map-pin"`,
+  meta "{store} · {reference}", projected "Non-refundable deposit: {deposit}"), `tl-alert` (info
+  "How the deposit works": "You pay the total now. If TuTuMuch can’t grab it, you get everything
+  back. If you cancel after TuTuMuch accepts, you get everything back except the {deposit}
+  deposit."; danger "Your bank declined the card" with the reason; danger non-US), `tl-choice`
+  checkbox ("I understand the {deposit} deposit is non-refundable once TuTuMuch accepts", error
+  "Tick the box to confirm you understand the deposit"), `tl-error-summary` (invalid), the hosted
+  card fields of checkout (disabled until the box is ticked), `tl-button` (primary lg block "Pay
+  {total}" with busy and the "Confirming with your bank…" status line; ghost "Back to the find"),
+  `tl-center-state` (in-progress: icon `clock`, "Someone already asked TuTuMuch to grab this one";
+  unverified: "Verify your email to ask for a grab"; error "Couldn’t price your grab"),
+  `tl-skeleton` (loading)
+- Local: the `.page-header` (eyebrow "Shelf find {reference}", h1 "Grab it for me", "TuTuMuch goes
+  to {store}, buys it and sends it to you."), the three steps "Send it to", "The deposit" and "Pay"
+  (`.checkout-step`)
+
+### Your grabs — `/account/grabs` (`pages/my-grabs`: default, loading, empty, error)
+
+Built by shelf finds in `@tutumuch/orders` (`src/lib/my-grabs/`), reading `GET /api/me/grabs`
+(`L2-119`). The account tab "Grabs" sits after "Requests".
+
+- Library: `tl-item-row` (map-pin well, find title, "{reference} · {store} · {total}"), `tl-status`
+  (Requested reserved; Accepted and Bought info; Received active; Declined, Couldn’t get it, Expired
+  and Cancelled removed), `tl-skeleton` (loading), `tl-empty-state` (empty: Tilly, "No grabs yet",
+  "Ask TuTuMuch to grab a shelf find and it shows up here.", primary "See shelf finds"; error
+  "Couldn’t load your grabs" with the reference and "Try again")
+- Local: the `.page-header` (h1 "Your grabs", "{n} grabs"), the `.order-list` rows linking to
+  `/account/grabs/{id}` with the status words of `L2-119`
+
+### Grab — `/account/grabs/{id}` (`pages/grab-detail`: default, accepted, bought, received, declined, unavailable, expired, cancelled, loading, error, not-found)
+
+Built by shelf finds in `@tutumuch/orders` (`src/lib/grab-detail/`), reading `GET /api/me/grabs/{id}`
+(`L2-119`). Another member's grab answers 404 and shows the not-found state.
+
+- Library: `tl-alert` (`role="status"`: info with icon `clock` for Requested, `map-pin` for Accepted;
+  success with `truck` for Bought and `check-circle` for Received; warning for the refunded endings;
+  the text is the status words of `L2-119`), `tl-facts` (Item linking to the find, Store with the
+  address, Status as `tl-status`, Refunded, Deposit kept), `tl-order-summary` (as on the grab page,
+  heading "Summary", total line "Total paid"), `tl-button` ("Cancel grab" opening `CancelGrabDialog`
+  for Requested and Accepted; primary "I’ve got it" opening `GrabReceivedDialog` for Bought),
+  `tl-center-state` (error, not-found "We couldn’t find that grab"), `tl-skeleton`, `ToastService`
+- Local: the breadcrumb (Your grabs › {reference}), h1 "Grab {reference}", "Paid {date}", the
+  "Sending it to" address block
+
+### Grabs — `/admin/grabs` (`pages/admin-grabs`: default, accepted, loading, empty, error, forbidden)
+
+Built by shelf finds in `@tutumuch/orders` (`src/lib/admin-grabs/`), in the admin shell, reading
+`GET /api/admin/grabs` behind the `Administrator` check (`L2-118`, `L2-121`). A visitor goes to
+`/sign-in?returnUrl=/admin/grabs`; a 403 is the forbidden state.
+
+- Library: `tl-status`, `tl-button` (Requested: primary sm "Accept" acting at once, sm "Decline"
+  opening `DeclineGrabDialog`; Accepted: sm "Bought it" acting at once, ghost sm "Couldn’t get it"
+  opening `GrabUnavailableDialog`), `tl-skeleton` (loading), `tl-empty-state` (empty: "No grabs yet",
+  "When a shopper asks TuTuMuch to grab a find, it shows up here."; error "Couldn’t load grabs"),
+  `tl-center-state` (forbidden: code "403", "You can’t open this", "Only TuTuMuch’s administrators
+  can see grabs."), `ToastService` (success "Grab accepted" / "We emailed {shopper}. Buy it by
+  {date}."; "Marked as bought")
+- Local: the `.page-header` ("Grabs", "{n} open · {n} ended"), the grab list on `.request-list`
+  (find title linking to it, "{reference} · {store} · {find reference}", status and "Answer by" or
+  "Buy by", the shopper's display name and `mailto:` email, "Total {total} · deposit {deposit}",
+  the "Ship to" address for Accepted and Bought, the row actions)
+
 ### Marketplace rules — `/rules` (`pages/rules`: default)
 
 Built in `@tutumuch/marketing` (`src/lib/rules/`, exported as `infoRoutes`), in the app shell. Static copy.
@@ -600,6 +732,12 @@ Built in `@tutumuch/marketing` (`src/lib/terms/`, exported as `infoRoutes`), in 
 | Pitch video (`dialogs/pitch-video`: default, loading, error, captions) | `DialogService` | `tl-dialog` (`size="lg"`, heading "TuTuMuch video" with `headingHidden`), `tl-video-player` (MP4 and WebM sources, English captions off by default, poster; Play/Pause, Captions toggle; loading spinner; error "The video didn’t load" with Try again) | `PitchVideoDialog` in `@tutumuch/marketing` |
 | Cookie settings (`dialogs/cookie-settings`: default, analytics-on) | `DialogService` through `CookieSettingsDialogService` | `tl-dialog` (size `sm`, heading "Cookie settings"), `tl-switch` with `hint` "Strictly necessary" ("Sign-in and checkout. Always on.", checked and disabled) and "Analytics" ("Helps us see which pages are slow.", `autofocus`), `tl-button` (Cancel; primary Save) | `CookieSettingsDialog` in `@tutumuch/privacy` |
 | Resolve problem (`dialogs/resolve-problem`: default, invalid, busy) | `DialogService` | `tl-dialog` (heading "Resolve problem {reference}"), `tl-radio-group` (legend "Decision") with `tl-choice` "Refund buyer in full" ("{total} to {buyer} · no payout") and "Release payout to seller" ("Order completes · {seller} is paid"), `tl-form-field` (textarea "Reason", help "Sent to both members.", error "Add a reason. Both members see it."), `tl-alert` (danger after a failure), `tl-button` (Cancel, disabled while busy; primary "Refund buyer" or "Release payout", busy "Refunding" or "Releasing") | `ResolveProblemDialog` in `@tutumuch/orders` |
+| Mark as gone (`dialogs/mark-find-gone`: default, busy, in-progress, failed) | `DialogService` | `tl-dialog` (`size="sm"`, icon `map-pin`, title "Mark as gone?", description "Gone from the shelf? Shoppers will see it’s gone."), `tl-alert` (warning "TuTuMuch is grabbing this one for a shopper" on 409 `GRAB_IN_PROGRESS`; danger "Couldn’t mark it as gone" / "Your find is still live." in the top slot), `tl-button` ("Keep it up", focused, disabled while busy; primary "Mark as gone" with busy, "Try again" after a failure) | `MarkFindGoneDialog` in `@tutumuch/catalog` (`L2-116`); on success the page shows the gone state and the toast "Marked as gone" |
+| Withdraw find (`dialogs/withdraw-find`: default, busy, in-progress, failed) | `DialogService` | `tl-dialog` (`size="sm"`, icon `trash`, tone danger, title "Withdraw this find?", description "It disappears from Shelf finds."), `tl-alert` (warning on 409 `GRAB_IN_PROGRESS`; danger "Couldn’t withdraw" / "Your find is still live."), `tl-button` ("Keep find", focused, disabled while busy; danger "Withdraw" with busy, "Try again" after a failure) | `WithdrawFindDialog` in `@tutumuch/catalog` (`L2-116`); on success the member goes to `/finds` with the toast "Find withdrawn" |
+| Cancel grab (`dialogs/cancel-grab`: default, requested, busy, bought, failed) | `DialogService` | `tl-dialog` (`size="sm"`, icon `alert`, title "Cancel this grab?", description after acceptance "You get {refund} back. TuTuMuch keeps the {deposit} deposit." in tone danger, before it "TuTuMuch hasn’t accepted yet, so you get all {total} back."), `tl-alert` (warning "TuTuMuch already bought it" on 409 `GRAB_STATE_CHANGED`; danger "That didn’t go through"), `tl-button` ("Keep grab", focused; danger "Cancel grab" with busy) | `CancelGrabDialog` in `@tutumuch/orders` (`L2-119`); on success the page shows Cancelled and the toast "Grab cancelled" |
+| I’ve got it (`dialogs/grab-received`: default, busy, failed) | `DialogService` | `tl-dialog` (`size="sm"`, icon `check-circle`, title "Got it?", description "Tell TuTuMuch it arrived. This closes the grab."), `tl-alert` (danger after a failure), `tl-button` ("Not yet", focused; primary "Yes, I’ve got it" with busy) | `GrabReceivedDialog` in `@tutumuch/orders` (`L2-119`) |
+| Decline grab (`dialogs/decline-grab`: default, busy, changed) | `DialogService` | `tl-dialog` (`size="sm"`, icon `alert`, tone danger, title "Decline grab {reference}?", description "{shopper} is refunded {total} in full and emailed."), `tl-alert` (warning "This grab has changed" on 409 `GRAB_STATE_CHANGED`), `tl-button` ("Keep grab", focused; danger "Decline and refund" with busy) | `DeclineGrabDialog` in `@tutumuch/orders` (`L2-118`) |
+| Couldn’t get it (`dialogs/grab-unavailable`: default, invalid, busy, failed) | `DialogService` | `tl-dialog` (icon `map-pin`, title "Couldn’t get it?", description "{shopper} is refunded {total} in full and the find is marked gone."), `tl-radio-group` (legend "Why?", error "Choose a reason") with `tl-choice` "Gone from the shelf" and "Price went up", `tl-alert` (danger after a failure), `tl-button` (Cancel; danger "Refund in full" with busy) | `GrabUnavailableDialog` in `@tutumuch/orders` (`L2-118`) |
 
 ## Notifications
 
@@ -614,6 +752,9 @@ Built in `@tutumuch/marketing` (`src/lib/terms/`, exported as `infoRoutes`), in 
 | Request toasts (`notifications/request-toasts`: info, success, warning, danger) | toast region over My requests | `ToastService`: info "Request deleted"; success "Request saved" / "We’ll email you when it’s listed."; warning "You have 20 open requests" / "Delete one to renew this one." (Renew refused with 409); danger "Couldn’t delete your request" with "Try again" | None |
 | Showcase request toasts (`notifications/showcase-request-toasts`: info, success, warning, danger) | toast region over the listing | `ToastService`: success "Request sent" / "Thank you. TuTuMuch sees every request."; info "Request updated"; warning "That’s 20 requests today" / "Try again tomorrow."; danger "Couldn’t send your request" with "Try again" | None |
 | Match email (`pages/request-match-email`: default) | plain-text email sent through the outbox, not a web page | None: rendered by `EmailTemplates` (`ItemRequestMatched`) in `TuTuMuch.Application`, with the item request unsubscribe link and `List-Unsubscribe` headers added by the dispatcher (`L2-101`, `L2-103`) | None |
+| Shelf find toasts (`notifications/find-toasts`: info, success, warning, danger) | toast region over Shelf finds or the find | `ToastService`: info "Find withdrawn", "Marked as gone"; success "Your find is live" / "Shoppers can see it on Shelf finds."; warning "That’s 20 finds today" / "You can post again tomorrow."; danger "Couldn’t withdraw your find" with "Try again" | None |
+| Grab toasts (`notifications/grab-toasts`: info, success, warning, danger) | toast region over the grab or the find | `ToastService`: info "Grab cancelled" / "{refund} is on its way back to your card."; success "TuTuMuch has your grab" / "We’ll email you when it’s accepted."; warning "Someone already asked TuTuMuch to grab this one"; danger "That didn’t go through" / "Your grab is unchanged." with "Try again" | None |
+| Grab emails (`pages/grab-email`: default, accepted, refunded, cancelled) | plain-text transactional emails through the outbox, not web pages | None: rendered by `EmailTemplates` (`GrabRequested` to the poster, linking to `/admin/grabs`; `GrabUpdated` to the shopper, linking to `/account/grabs/{id}`, with the status words of `L2-119`, the amount refunded and the deposit kept); no unsubscribe, as they cannot be turned off (`L2-120`) | None |
 
 ## Summary of local UI to build
 

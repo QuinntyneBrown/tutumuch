@@ -1877,3 +1877,20 @@ a.link:hover {
     transition: none;
   }
 }
+
+/* Find card (shelf finds, L2-114, ADR catalog/0009): a find has no photo, so a sunken 4:3 well holds the
+   map-pin; then the title on one line, the category, the store, "Seen {date}" and the shelf price, pushed
+   down so the price rows of a grid row line up, with an optional "Grab available" badge. */
+.find-card { display: flex; flex-direction: column; gap: var(--space-3); flex: 1; min-width: 0; color: inherit; text-decoration: none; }
+.find-card:focus-visible { outline-offset: var(--space-1); }
+.find-card__well { display: grid; place-items: center; aspect-ratio: 4 / 3; border-radius: var(--radius-card); background: var(--color-bg-surface-sunken); color: var(--color-accent); }
+.find-card__well .icon { width: 2.5rem; height: 2.5rem; }
+.find-card__meta { display: flex; flex: 1; flex-direction: column; gap: var(--space-0-5); min-width: 0; }
+.find-card__title { font: var(--text-body); font-weight: var(--font-weight-medium); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.find-card:hover .find-card__title, .find-card[data-state="hover"] .find-card__title { text-decoration: underline; text-underline-offset: 4px; }
+.find-card__store, .find-card__seen { font: var(--text-body-sm); color: var(--color-fg-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.find-card__store { display: flex; align-items: center; gap: var(--space-1); }
+.find-card__store .icon { flex: none; width: 1rem; height: 1rem; }
+.find-card__foot { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-2); margin-top: auto; padding-top: var(--space-1); }
+/* One find per row under 576px (L2-114 AC7). */
+@media (max-width: 35.99rem) { .find-grid { grid-template-columns: minmax(0, 1fr); } }
