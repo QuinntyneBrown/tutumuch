@@ -1,0 +1,49 @@
+<div class="page-header">
+  <div class="stack stack--sm">
+    <h1>Your grabs</h1>
+    @if (view() === 'loaded' && grabs().length) {
+      <p class="subtitle">{{ subtitle() }}</p>
+    }
+  </div>
+</div>
+@switch (view()) {
+  @case ('loading') {
+    <ul class="order-list" role="list" aria-busy="true" aria-label="Loading grabs">
+      @for (row of [1, 2, 3]; track row) {
+        <li class="stack stack--sm my-grabs__skeleton">
+          <tl-skeleton width="50%" />
+          <tl-skeleton width="30%" />
+        </li>
+      }
+    </ul>
+  }
+  @case ('error') {
+    <tl-empty-state icon="refresh" heading="Couldn’t load your grabs" tone="error">
+      <span class="ref">{{ errorRef() }}</span>
+      <button actions tlButton="primary" type="button" (click)="load()"><tl-icon name="refresh" />Try again</button>
+    </tl-empty-state>
+  }
+  @default {
+    @if (!grabs().length) {
+      <tl-empty-state icon="map-pin" heading="No grabs yet">
+        Ask TuTuMuch to grab a shelf find and it shows up here.
+        <a actions tlButton="primary" routerLink="/finds">See shelf finds</a>
+      </tl-empty-state>
+    } @else {
+      <ul class="order-list" role="list">
+        @for (row of grabs(); track row.id) {
+          <li>
+            <a [routerLink]="['/account/grabs', row.id]">
+              <tl-item-row [title]="row.findTitle" [meta]="meta(row)">
+                <div thumb class="thumb">
+                  <div class="photo photo--6 thumb__icon"><tl-icon name="map-pin" /></div>
+                </div>
+                <tl-status [tone]="tone(row.status)">{{ label(row.status) }}</tl-status>
+              </tl-item-row>
+            </a>
+          </li>
+        }
+      </ul>
+    }
+  }
+}

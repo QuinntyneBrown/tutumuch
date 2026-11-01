@@ -1,0 +1,86 @@
+@switch (view()) {
+  @case ('loading') {
+    <h1 class="visually-hidden">Loading grab</h1>
+    <div class="split grab-detail__skeleton" aria-busy="true" aria-label="Loading grab">
+      <div class="stack stack--lg">
+        <tl-skeleton shape="title" width="40%" />
+        <tl-skeleton shape="rect" height="4rem" />
+        <tl-skeleton shape="rect" height="8rem" />
+      </div>
+      <div class="panel stack">
+        <tl-skeleton />
+        <tl-skeleton />
+        <tl-skeleton width="50%" />
+      </div>
+    </div>
+  }
+  @case ('not-found') {
+    <tl-center-state code="404" heading="We couldn’t find that grab">
+      <a actions tlButton="primary" routerLink="/account/grabs">Your grabs</a>
+    </tl-center-state>
+  }
+  @case ('error') {
+    <tl-center-state heading="Couldn’t load this grab">
+      <p class="text-muted">It’s us, not you. Try again in a moment.</p>
+      <span class="ref">{{ errorRef() }}</span>
+      <button actions tlButton="primary" type="button" (click)="load()"><tl-icon name="refresh" />Try again</button>
+    </tl-center-state>
+  }
+  @default {
+    @if (grab(); as grab) {
+      <nav aria-label="Breadcrumb" class="grab-detail__breadcrumb">
+        <ol class="breadcrumb">
+          <li><a routerLink="/account/grabs">Your grabs</a></li>
+          <li aria-current="page">{{ grab.reference }}</li>
+        </ol>
+      </nav>
+      <div class="page-header">
+        <div class="stack stack--sm">
+          <h1>Grab {{ grab.reference }}</h1>
+          <p class="subtitle">Paid {{ day(grab.createdAt) }}</p>
+        </div>
+      </div>
+      <div class="split">
+        <div class="stack stack--lg">
+          <tl-alert live="polite" [tone]="alert().tone" [icon]="alert().icon">{{ words() }}</tl-alert>
+          <section class="stack" aria-labelledby="find-h">
+            <h2 id="find-h" class="panel__title">
+              <a [routerLink]="['/finds', grab.findReference]">{{ grab.findTitle }}</a>
+            </h2>
+            <tl-facts [facts]="facts()" />
+          </section>
+          <section class="stack stack--sm" aria-labelledby="ship-h">
+            <h2 id="ship-h" class="panel__title">Sending it to</h2>
+            <address class="address">
+              {{ grab.address.fullName }}<br />{{ grab.address.line1
+              }}{{ grab.address.line2 ? ', ' + grab.address.line2 : '' }}<br />{{ grab.address.city }},
+              {{ grab.address.state }} {{ grab.address.zip }}
+            </address>
+          </section>
+          <div class="cluster">
+            @if (grab.status === 'Bought') {
+              <button tlButton="primary" type="button" (click)="received()">I’ve got it</button>
+            }
+            @if (grab.refundIfCancelled) {
+              <button tlButton type="button" (click)="cancel()">Cancel grab</button>
+            }
+          </div>
+        </div>
+        @if (summaryItem(); as item) {
+          <tl-order-summary
+            [item]="item"
+            itemLabel="Shelf price"
+            shippingLabel="Grab fee"
+            totalLabel="Total paid"
+            [itemPrice]="money(grab.shelfPrice)"
+            [shipping]="money(grab.grabFee)"
+            [salesTax]="money(grab.salesTax)"
+            [total]="money(grab.total)"
+          >
+            <p class="text-sm grab-detail__deposit">Non-refundable deposit: {{ money(grab.deposit) }}</p>
+          </tl-order-summary>
+        }
+      </div>
+    }
+  }
+}

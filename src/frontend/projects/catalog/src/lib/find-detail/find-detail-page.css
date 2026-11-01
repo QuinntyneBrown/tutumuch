@@ -1,0 +1,14 @@
+:host {
+  display: block;
+}
+.find-detail__breadcrumb {
+  margin-top: var(--space-6);
+}
+.find-detail__maps {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+.find-detail__note {
+  white-space: pre-line;
+}

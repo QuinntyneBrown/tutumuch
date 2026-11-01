@@ -797,3 +797,109 @@ export function adminShowcaseRequest(fields: Record<string, unknown> = {}): Reco
     ...fields,
   };
 }
+
+/** One card of GET /api/finds (L2-114). */
+export function findCard(n: number, fields: Record<string, unknown> = {}): Record<string, unknown> {
+  return {
+    reference: `F-${1000 + n}`,
+    title: `Shelf find ${n}`,
+    category: 'Dance',
+    shelfPrice: '24.99',
+    storeName: 'Target',
+    seenOn: '2026-10-24',
+    grabAvailable: false,
+    ...fields,
+  };
+}
+
+/** GET /api/finds/F-1001 (L2-115): an Active find of the administrator's that offers an $8.00 grab. */
+export function findDetail(fields: Record<string, unknown> = {}): Record<string, unknown> {
+  return {
+    reference: 'F-1001',
+    title: 'Glitter ballet flats, pink',
+    category: 'Dance',
+    shelfPrice: '40.00',
+    storeName: 'Target',
+    storeAddress: '88 Atlantic Ave, Brooklyn, NY 11201',
+    seenOn: '2026-10-24',
+    expiresOn: '2026-11-07',
+    note: 'Clearance end cap by the shoes.',
+    status: 'Active',
+    posterDisplayName: 'ana_ruiz',
+    grabFee: '8.00',
+    grabOpen: false,
+    mine: false,
+    ...fields,
+  };
+}
+
+/** POST /api/grabs/quote for the find of findDetail() and the Brooklyn address (L2-117). */
+export const grabQuote = {
+  findReference: 'F-1001',
+  findTitle: 'Glitter ballet flats, pink',
+  storeName: 'Target',
+  shelfPrice: '40.00',
+  grabFee: '8.00',
+  salesTax: '4.26',
+  total: '52.26',
+  deposit: '8.00',
+  refundAfterAcceptance: '44.26',
+};
+
+/** The shopper's grab GR-1001 (L2-119). */
+export function grabFixture(fields: Record<string, unknown> = {}): Record<string, unknown> {
+  return {
+    id: 'grab-1',
+    reference: 'GR-1001',
+    status: 'Requested',
+    findReference: 'F-1001',
+    findTitle: 'Glitter ballet flats, pink',
+    category: 'Dance',
+    storeName: 'Target',
+    storeAddress: '88 Atlantic Ave, Brooklyn, NY 11201',
+    shelfPrice: '40.00',
+    grabFee: '8.00',
+    salesTax: '4.26',
+    total: '52.26',
+    deposit: '8.00',
+    refundIfCancelled: '52.26',
+    refundedAmount: null,
+    unavailableReason: null,
+    paymentDeclineReason: null,
+    answerBy: '2026-10-27T12:00:00Z',
+    buyBy: null,
+    boughtAt: null,
+    createdAt: '2026-10-25T12:00:00Z',
+    address: {
+      fullName: 'Marcus Bell',
+      line1: '214 Kent Ave',
+      line2: 'Apt 3R',
+      city: 'Brooklyn',
+      state: 'NY',
+      zip: '11249',
+    },
+    ...fields,
+  };
+}
+
+/** One grab on the administrator's list (L2-118). */
+export function adminGrab(fields: Record<string, unknown> = {}): Record<string, unknown> {
+  return {
+    id: 'grab-1',
+    reference: 'GR-1001',
+    status: 'Requested',
+    findReference: 'F-1001',
+    findTitle: 'Glitter ballet flats, pink',
+    storeName: 'Target',
+    shopperDisplayName: 'marcus_12',
+    shopperEmail: 'marcus.bell@example.com',
+    total: '52.26',
+    deposit: '8.00',
+    refundedAmount: null,
+    unavailableReason: null,
+    deadline: '2026-10-27T12:00:00Z',
+    address: null,
+    createdAt: '2026-10-25T12:00:00Z',
+    ...fields,
+  };
+}

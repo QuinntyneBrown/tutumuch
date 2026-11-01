@@ -16,6 +16,8 @@ let nextId = 0;
 })
 export class SoldNoticeComponent {
   readonly heading = input('This one has already found a home');
+  /** The stamp: "Sold" on a showcase listing, "Gone" on a gone or expired shelf find (L2-115). */
+  readonly label = input('Sold');
 
   readonly id = `tl-sold-notice-${nextId++}`;
   private readonly title = viewChild.required<ElementRef<HTMLElement>>('title');

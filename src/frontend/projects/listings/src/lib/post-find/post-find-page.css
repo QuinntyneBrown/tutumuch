@@ -1,0 +1,7 @@
+:host {
+  display: block;
+}
+.post-find {
+  max-width: 44rem;
+  margin-inline: auto;
+}

@@ -95,6 +95,14 @@
             >{{ item.label }}</a
           >
         }
+        <a
+          class="nav-link"
+          routerLink="/finds"
+          routerLinkActive
+          #finds="routerLinkActive"
+          [attr.aria-current]="finds.isActive ? 'page' : null"
+          >Shelf finds</a
+        >
       </nav>
     }
   }

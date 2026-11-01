@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, Router, Routes } from '@angular/router';
+import { CanActivateFn, Router, Routes, UrlMatcher, UrlSegment } from '@angular/router';
 import { AuthState, LaunchState } from '@tutumuch/api';
 
 const page = () => import('./catalog/catalog-page').then((m) => m.CatalogPage);
@@ -20,8 +20,17 @@ const signedIn: CanActivateFn = async (_route, state) => {
 };
 
 /**
+ * A find's page matches only a find reference such as F-1001, so /finds/new falls through to the
+ * post form of @tutumuch/listings (L2-113, L2-115).
+ */
+const findReference: UrlMatcher = (segments: UrlSegment[]) =>
+  segments.length === 2 && segments[0].path === 'finds' && /^F-\d+$/.test(segments[1].path)
+    ? { consumed: segments, posParams: { reference: segments[1] } }
+    : null;
+
+/**
  * Lazy routes of the catalog feature area, mounted at /: the catalog, one page per category (from
- * launch Phase 2), the listing detail, the member's item requests (L1-023), which work in every
+ * launch Phase 2), the listing detail, shelf finds and their pages (L1-025), the member's item requests (L1-023), which work in every
  * launch phase, and the administrator's showcase requests in the admin shell (L1-024).
  */
 export const routes: Routes = [
@@ -92,6 +101,18 @@ export const routes: Routes = [
     loadComponent: () => import('./showcase-requests/showcase-requests-page').then((m) => m.ShowcaseRequestsPage),
     title: 'Showcase requests · TuTuMuch admin',
     data: { shell: 'admin' },
+  },
+  {
+    path: 'finds',
+    pathMatch: 'full',
+    loadComponent: () => import('./shelf-finds/shelf-finds-page').then((m) => m.ShelfFindsPage),
+    data: { shell: 'wide' },
+    title: 'Shelf finds · TuTuMuch',
+  },
+  {
+    matcher: findReference,
+    loadComponent: () => import('./find-detail/find-detail-page').then((m) => m.FindDetailPage),
+    title: 'Shelf find · TuTuMuch',
   },
   {
     path: 'items/:reference',

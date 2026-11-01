@@ -1,0 +1,12 @@
+:host {
+  display: block;
+}
+.grab-detail__breadcrumb {
+  margin-top: var(--space-6);
+}
+.grab-detail__skeleton {
+  margin-top: var(--space-10);
+}
+.grab-detail__deposit {
+  margin: 0;
+}

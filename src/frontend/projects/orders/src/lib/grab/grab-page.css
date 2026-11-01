@@ -1,0 +1,12 @@
+:host {
+  display: block;
+}
+.grab__skeleton {
+  margin-top: var(--space-10);
+}
+.grab__paying {
+  text-align: center;
+}
+.grab__deposit {
+  margin: 0;
+}

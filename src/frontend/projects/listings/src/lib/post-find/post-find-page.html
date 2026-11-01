@@ -1,0 +1,167 @@
+@switch (view()) {
+  @case ('loading') {
+    <h1 class="visually-hidden">Loading</h1>
+  }
+  @case ('limited') {
+    <tl-center-state icon="clock" heading="That’s 20 finds today">
+      <p class="text-muted">You can post again tomorrow.</p>
+      <a actions tlButton="primary" routerLink="/finds">See shelf finds</a>
+    </tl-center-state>
+  }
+  @case ('unverified') {
+    <tl-center-state icon="mail" heading="Verify your email to post finds">
+      <p class="text-muted">Open the link we emailed you, then come back.</p>
+      <button actions tlButton="primary" type="button" (click)="resend()">Resend link</button>
+      <a actions tlButton routerLink="/finds">See shelf finds</a>
+    </tl-center-state>
+  }
+  @default {
+    <div class="post-find">
+      <div class="page-header">
+        <div>
+          <h1>Post a shelf find</h1>
+          <p class="subtitle">Saw something great for girls in a store? Tell everyone where to get it.</p>
+        </div>
+      </div>
+      <form class="sell-form" novalidate [formGroup]="form" (ngSubmit)="post()">
+        @if (failure()) {
+          <tl-alert tone="danger" heading="Couldn’t post your find">{{ failure() }}</tl-alert>
+        }
+        <tl-error-summary [errors]="summary()" />
+        <section class="form-section" aria-labelledby="s-item">
+          <h2 id="s-item">The item</h2>
+          <tl-form-field #t fieldId="title" label="Title" [error]="errors()['title']" [counter]="titleCount()">
+            <input
+              class="input"
+              id="title"
+              type="text"
+              maxlength="80"
+              formControlName="title"
+              [attr.aria-describedby]="t.describedBy()"
+              [attr.aria-invalid]="t.invalid()"
+            />
+          </tl-form-field>
+          <tl-form-field #cat fieldId="cat" label="Category" [error]="errors()['cat']">
+            <select
+              class="select"
+              id="cat"
+              formControlName="category"
+              [attr.aria-describedby]="cat.describedBy()"
+              [attr.aria-invalid]="cat.invalid()"
+            >
+              <option value="">Choose a category</option>
+              @for (option of categories; track option) {
+                <option [value]="option">{{ option }}</option>
+              }
+            </select>
+          </tl-form-field>
+          @if (form.controls.category.value) {
+            <tl-fixed-size size="Girls'" sizeLabel="Girls" />
+          }
+          <tl-form-field #p fieldId="price" label="Shelf price" [error]="errors()['price']">
+            <tl-input-group addon="$">
+              <input
+                class="input"
+                id="price"
+                inputmode="decimal"
+                formControlName="shelfPrice"
+                [attr.aria-describedby]="p.describedBy()"
+                [attr.aria-invalid]="p.invalid()"
+              />
+            </tl-input-group>
+          </tl-form-field>
+        </section>
+        <section class="form-section" aria-labelledby="s-where">
+          <h2 id="s-where">Where you saw it</h2>
+          <tl-form-field #s fieldId="store" label="Store name" [error]="errors()['store']">
+            <input
+              class="input"
+              id="store"
+              type="text"
+              maxlength="80"
+              formControlName="storeName"
+              [attr.aria-describedby]="s.describedBy()"
+              [attr.aria-invalid]="s.invalid()"
+            />
+          </tl-form-field>
+          <tl-form-field
+            #a
+            fieldId="address"
+            label="Store address"
+            help="The store’s street address or mall and city. Never your home."
+            [error]="errors()['address']"
+          >
+            <textarea
+              class="textarea"
+              id="address"
+              rows="2"
+              maxlength="200"
+              formControlName="storeAddress"
+              [attr.aria-describedby]="a.describedBy()"
+              [attr.aria-invalid]="a.invalid()"
+            ></textarea>
+          </tl-form-field>
+          <tl-form-field #d fieldId="seen" label="Seen on" help="Today or up to 7 days ago." [error]="errors()['seen']">
+            <input
+              class="input"
+              id="seen"
+              type="date"
+              [attr.min]="earliest"
+              [attr.max]="today"
+              formControlName="seenOn"
+              [attr.aria-describedby]="d.describedBy()"
+              [attr.aria-invalid]="d.invalid()"
+            />
+          </tl-form-field>
+          <tl-form-field
+            #n
+            fieldId="note"
+            label="Note"
+            [optional]="true"
+            [error]="errors()['note']"
+            [counter]="noteCount()"
+          >
+            <textarea
+              class="textarea"
+              id="note"
+              rows="3"
+              maxlength="500"
+              formControlName="note"
+              [attr.aria-describedby]="n.describedBy()"
+              [attr.aria-invalid]="n.invalid()"
+            ></textarea>
+          </tl-form-field>
+        </section>
+        @if (isAdministrator()) {
+          <section class="form-section" aria-labelledby="s-grab">
+            <h2 id="s-grab">Grab it for me</h2>
+            <tl-switch
+              label="Offer to grab it"
+              hint="TuTuMuch buys it at the store and sends it to the shopper."
+              [checked]="offerGrab()"
+              (checkedChange)="offerGrab.set($event)"
+            />
+            @if (offerGrab()) {
+              <tl-form-field #f fieldId="fee" label="Grab fee" help="$1.00 to $50.00." [error]="errors()['fee']">
+                <tl-input-group addon="$">
+                  <input
+                    class="input"
+                    id="fee"
+                    inputmode="decimal"
+                    formControlName="grabFee"
+                    [attr.aria-describedby]="f.describedBy()"
+                    [attr.aria-invalid]="f.invalid()"
+                  />
+                </tl-input-group>
+              </tl-form-field>
+            }
+          </section>
+        }
+        <div class="form-actions form-actions--sticky form-actions--split">
+          <a tlButton="ghost" routerLink="/finds">Cancel</a>
+          <button tlButton="primary" type="submit" [busy]="busy()">Post find</button>
+        </div>
+      </form>
+    </div>
+  }
+}

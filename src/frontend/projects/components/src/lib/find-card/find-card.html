@@ -1,0 +1,17 @@
+<a class="find-card" [routerLink]="card().href">
+  <span class="find-card__well" aria-hidden="true"><tl-icon name="map-pin" /></span>
+  <span class="find-card__meta">
+    <span class="find-card__title">{{ card().title }}</span>
+    <span class="find-card__seen">{{ card().category }}</span>
+    <span class="find-card__store"><tl-icon name="map-pin" />{{ card().store }}</span>
+    <span class="find-card__seen"
+      ><time [attr.datetime]="card().seenOn">{{ card().seenLabel }}</time></span
+    >
+    <span class="find-card__foot">
+      <span class="price">{{ card().price }}</span>
+      @if (card().grabAvailable) {
+        <span class="badge badge--info">Grab available</span>
+      }
+    </span>
+  </span>
+</a>

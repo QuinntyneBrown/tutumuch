@@ -71,7 +71,9 @@ export class TopBarComponent {
 
   openMenu(): void {
     this.menuOpen.set(true);
-    this.sheets.open(NavMenuComponent, this.categories).closed.then(() => this.menuOpen.set(false));
+    this.sheets
+      .open(NavMenuComponent, [...this.categories, { label: 'Shelf finds', path: '/finds' }])
+      .closed.then(() => this.menuOpen.set(false));
   }
 
   toggleSearch(): void {
